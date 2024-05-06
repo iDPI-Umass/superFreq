@@ -2,11 +2,12 @@
 	import { Auth } from '@supabase/auth-ui-svelte'
 	import { ThemeSupa } from '@supabase/auth-ui-shared'
 
-
-
 	export let data
-	
 </script>
+
+<svelte:head>
+	<title>Login | Freq</title>
+</svelte:head>
 
 <div>
 	<div class="login">
@@ -14,7 +15,7 @@
 			supabaseClient={data.supabase}
 			view="magic_link"
 			redirectTo={`${data.url}/auth/callback`}
-			showLinks={true}
+			showLinks={false}
 			appearance={{ theme: ThemeSupa, style: { input: 'color: #fff' } }}
 		/>
 	</div>

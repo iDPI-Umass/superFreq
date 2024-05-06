@@ -1,0 +1,87 @@
+/* Default to dark mode */
+  
+html {
+    --freq-color-null: #454C6C;
+    --freq-color-panel: #313751;
+    --freq-color-border-panel: #282D43;
+    --freq-color-panel-focus: #454C6C;
+    --freq-border-panel: 1px solid #282D43;
+    --freq-border-hr: 1px solid #313751;
+    --freq-color-border-hr: #313751;
+    --freq-color-primary: #9b40fc;
+    --freq-color-text: #FFFFFF;
+    --freq-color-text-muted: #9EACC8;
+    --freq-color-text-menu: #7F90A2;
+    --freq-color-link: #3C96FF;
+    --freq-color-background-badge: #9EACC8;
+    --freq-color-badge: #313751;
+    --freq-color-button-lens: #9EACC8;
+
+    --freq-color-panel-background: #000000;
+
+    --freq-color-primary-text: #FFFFFF;
+    --freq-color-active: #3C96FF;
+    --freq-color-active-text: #FFFFFF;
+    --freq-color-cancel: var(--freq-color-panel);
+    --freq-color-cancel-text: var(--freq-color-text);
+    --freq-color-danger: #D52828;
+}
+
+html.freq-theme-light {
+    --freq-color-null: #F0F2F5;
+    --freq-color-panel: #FFFFFF;
+    --freq-border-panel: 1px solid #D8DEE6;
+    --freq-color-border-panel: #D8DEE6;
+    --freq-color-panel-focus: #F0F2F5;
+    --freq-border-hr: 1px solid #D8DEE6;
+    --freq-color-border-hr: #D8DEE6;
+    --freq-color-primary: #9b40fc;
+    --freq-color-text: #343434;
+    --freq-color-text-muted: #67778E;
+    --freq-color-text-menu: #313751;
+    --freq-color-link: #3A88E2;
+    --freq-color-background-badge: #313751;
+    --freq-color-badge: #FFFFFF;
+    --freq-color-button-lens: #313751;
+  
+    --freq-color-panel-background: #FBFBFB;
+}
+  
+html.freq-font-arial {
+    --freq-font-family: "Arial";
+}
+
+/* Spacings */
+html {
+    --freq-max-width-primary: 50rem;
+    --freq-width-spacer: 1.5625rem;
+    --freq-width-spacer-half: calc(0.5 * var(--freq-width-spacer));
+    --freq-height-spacer: 1.3125rem;
+    --freq-height-spacer-half: calc(0.5 * var(--freq-height-spacer));
+    --freq-border-radius: 0.625rem;
+
+    --freq-width-spacer-flex: var(--freq-width-spacer-half);
+    --freq-height-spacer-flex: var(--freq-height-spacer-half);
+}
+
+@media( min-width: 750px ) {
+    html {
+        --freq-width-spacer-flex: var(--freq-width-spacer);
+        --freq-height-spacer-flex: var(--freq-height-spacer);
+    }
+}
+
+/* Fonts */
+html {
+    --freq-font-family: "Roboto";
+    --freq-alt-font-family: "Krona_One";
+    --freq-font-weight-black: 900;
+    --freq-font-weight-bold: 700;
+    --freq-font-weight-medium: 500;
+    --freq-font-weight-regular: 400; 
+
+    --freq-font-size-x-large: 1.25rem;
+    --freq-font-size-large: 1rem;
+    --freq-font-size-copy: 0.9375rem;
+    --freq-font-size-detail: 0.875rem;
+}

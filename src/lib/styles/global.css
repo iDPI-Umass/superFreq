@@ -1,0 +1,227 @@
+/*
+
+*/
+
+body {
+	display: block;
+	max-width: 100%;
+	height: 100%;
+	margin: 0;
+	background: var(--freq-color-panel-background);
+	color: var(--freq-color-text);
+	font-family: 'Roboto';
+}
+
+a {
+	color: var(--freq-color-link);
+	text-decoration: none;
+}
+
+a:hover,
+:focus {
+	text-decoration: underline;
+}
+
+h1,
+h2,
+h3,
+h4{
+	font-family: 'Krona_One', monospace;
+}
+
+h5,
+h6 {
+	font-family: "Roboto", sans-serif;
+	font-weight: var(--freq-font-weight-regular);
+	color: var(--freq-color-text-muted);
+}
+
+h1 {
+	font-size: var(--freq-font-size-2x-large);
+}
+
+h2 {
+	font-size: 4vw;
+}
+
+h3 {
+	font-size: 3vw;
+}
+
+/* Metadata text classes */
+
+.metadata-attribution-text {
+	color: var(--freq-color-text-muted);
+	font-size: var(--freq-font-size-medium);
+}
+
+.metadata-attribution-text a {
+	color: var(--freq-color-text-muted);
+	font-weight: var(--freq-font-weight-bold);
+}
+
+.metadata-date-text {
+	color: var(--freq-color-text-muted);
+	font-size: var(--freq-font-size-small);
+}
+
+/* Grid classes */
+
+.media-grid {
+	display: grid;
+	grid-template-columns: repeat(6, minmax(0, 1fr));
+	grid-template-rows: minmax(min-content, max-content);
+	width: 100%;
+	/* background-color: black; */
+	/* background-color: var(--freq-color-background-badge); */
+	gap: var(--freq-grid-gap);
+	overflow: hidden;
+	--line-offset: calc(var(--freq-grid-gap)/2);
+}
+
+.media-grid-item {
+	display: flex;
+	flex-direction: column;
+	width: 1fr;
+	height: 100%;
+	/* margin: auto; */
+	/* padding: 0 5%; */
+	/* background-color: black; */
+	justify-content: center;
+	align-items: flex-start;
+	margin-left: -1px;
+}
+
+.media-grid-item {
+	position: relative;
+}
+
+.media-grid-item::before,
+.media-grid-item::after {
+	content: '';
+	position: absolute;
+	background-color: var(--freq-color-background-badge);
+	z-index: 1;
+}
+
+.media-grid-item::after  {
+	inline-size: 100vw;
+	block-size: var(--freq-grid-gap);
+	inset-inline-start: 0;
+	inset-block-start: calc(var(--line-offset) * -1);
+}
+
+.media-grid-item::before {
+	inline-size: var(--freq-grid-gap);
+	block-size: 100vh;
+	inset-block-start: calc(var(--line-offset) * -1);
+}
+
+.media-grid-item img {
+	vertical-align: middle;
+	width: 80%;
+	margin: 10% auto;
+}
+.media-grid-item h2 {
+	margin: 5% 10%;
+	font-family: sans-serif;
+	font-size: 16px;
+}
+.media-grid-item p {
+	margin: 0 5% 10% 10%;
+	color: var(--freq-color-background-badge);
+	font-family: sans-serif;
+}
+
+@media screen and (max-width: 600px) {
+	.media-grid {
+		grid-template-columns: repeat(4, 1fr);
+	}
+}
+
+
+/* bits-ui toolbar item classes */
+
+[data-toolbar-item]:active {
+    scale: 98%;
+    background: green;
+    color: pink;
+}
+
+[data-toolbar-item] [data-state=on]{
+    background: gray;
+}
+
+[data-toolbar-item] [data-state=on]:active{
+    background: green;
+}
+
+/* 
+
+Bits UI styling classes
+
+*/
+
+/* Button */
+
+[data-button-root] {
+	text-transform: uppercase;
+	padding: 8px 14px;
+	height: 30px;
+	background: var(--freq-color-panel-background);
+	border: 1px solid var(--freq-color-button-lens);
+	color: var(--freq-color-text);
+	font-size: 12px;
+	align-items: center;
+	text-justify: center;
+  }
+
+  [data-button-root]:hover, :focus {
+	border: 1px solid var(--freq-color-primary);
+	text-decoration: underline;
+}
+
+[data-button-root]:active {
+	scale: 98%;
+	transition: all;
+}
+
+[data-button-root] a {
+	color: var(--freq-color-text);
+}
+
+[data-button-root].purple-border-button {
+	display: flex;
+	flex-direction: row;
+	min-height: 34px;
+	max-height: 40px;
+	border-color: var(--freq-color-primary);
+	border-top: 4px double var(--freq-color-primary);
+}
+
+[data-button-root].purple-border-button:hover, :focus  {
+	border-color: var(--freq-color-button-lens);
+	border-top: 4px double var(--freq-color-button-lens);
+	text-decoration: underline;
+}
+
+/* Dropdown Menu */
+
+[data-menu-trigger] {
+	display: flex;
+	color: var( --freq-color-text-muted);
+	background: var(--freq-color-panel-background);
+	font-family: 'Krona_One', monospace;
+	border: none;
+	align-items: center;
+	justify-content: center;
+}
+
+[data-menu-content] {
+	display: flex;
+	color: var( --freq-color-text-muted);
+	background: var(--freq-color-panel-background);
+	font-family: 'Krona_One', monospace;
+	border: none;
+	overflow: visible;
+}

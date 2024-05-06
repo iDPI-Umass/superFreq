@@ -1,0 +1,3 @@
+<footer>
+    Freq
+</footer>
