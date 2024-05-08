@@ -1,6 +1,6 @@
 <script lang="ts">
 
-    import logo from "/images/logo/freq-logo-dark.svg";
+    import logo from "$lib/assets/images/logo/freq-logo-dark.png";
     //import { NavMenu } from '$lib/components/ui/dropdown-menu/nav'; 
     import { DropdownMenu } from "bits-ui";
     import ChevronDown from 'lucide-svelte/icons/chevron-down';
@@ -22,7 +22,7 @@
 </svelte:head>
 <div class="border-lower">
     <header>
-        <img alt="Freq logo" src={logo} />
+        <img alt="Freq logo" src={logo}/>
         <div class="nav-block">
             {#if !session}
                 <button class="nav-item">

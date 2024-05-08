@@ -10,9 +10,10 @@
 	TODO: move this to a "/home" route that layout redirects to if user is logged in
 	*/
 
-	import { invalidate } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { Header } from '$lib/components/headers/Header';
+	import PlainHeader from "$lib/components/headers/PlainHeader.svelte";
 	import Footer from '$lib/components/headers/footer/index.svelte';
 
 	import { DropdownMenu, Select } from "bits-ui";
@@ -26,8 +27,9 @@
 
 	export let data;
 
-	let { supabase, session } = data;
-	$: ({ supabase, session } = data);
+	let { supabase, session } = data
+	$: ({ supabase, session } = data)
+
 	
 	// let displayName = ""
 	// if ( session ) {
@@ -35,20 +37,32 @@
 	// }
 
 	onMount(() => {
-		const { data } = supabase.auth.onAuthStateChange((event, _session) => {
-			if (_session?.expires_at !== session?.expires_at) {
-				invalidate('supabase:auth')
+		const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
+			if (!newSession) {
+				/**
+				 * Queue this as a task so the navigation won't prevent the
+				 * triggering function from completing
+				 */
+				setTimeout(() => {
+					goto('/', { invalidateAll: true });
+				});
 			}
-		})
+			if (newSession?.expires_at !== session?.expires_at) {
+				invalidate('supabase:auth');
+			}
+		});
 
-		return () => data.subscription.unsubscribe()
-	})
+		return () => data.subscription.unsubscribe();
+	});
 </script>
 
-<Header
+<!-- <Header
 	session={session}
 	displayName="bass"
-/>
+/> -->
+
+<PlainHeader></PlainHeader>
+
 <body>
 	<slot />
 </body>

@@ -57,28 +57,46 @@ export const actions: Actions = {
     //   changelogEntry, ...changelog
     // };
 
-    const { data, status, error } = await supabase.from('profiles').update({
-      username: username,
-      display_name: displayName,
-      website: website,
-      avatar_url: avatarUrl,
-      changelog: {}
-    }).eq("id", session?.user.id)
-    .select();
+    // const { data, status, error } = await supabase.from('profiles').update({
+    //   username: username,
+    //   display_name: displayName,
+    //   website: website,
+    //   avatar_url: avatarUrl,
+    //   changelog: {}
+    // }).eq("id", session?.user.id)
+    // .select();
   
-    if (error) {
-      return fail(500, {
-        displayName,
-        username: "this username is already taken, try a new one",
-        website,
-        avatarUrl,
-      })
-    }
+    // if (error) {
+    //   return fail(500, {
+    //     displayName,
+    //     username: "this username is already taken, try a new one",
+    //     website,
+    //     avatarUrl,
+    //   })
+    // }
 
     // username = data["username"];
     // displayName = data["display_name"];
     // website = data["website"];
     // avatarUrl = data["avatar_url"];
+
+    const { error } = await supabase.from('profiles').upsert({
+      id: session?.user.id,
+      display_name: displayName,
+      username,
+      website,
+      avatar_url: avatarUrl,
+      updated_at: new Date(),
+    })
+
+    if (error) {
+      return fail(500, {
+        displayName,
+        username,
+        website,
+        avatarUrl,
+      })
+    }
 
     return {
       displayName,

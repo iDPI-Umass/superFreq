@@ -3,6 +3,7 @@
     import LayoutGrid from 'lucide-svelte/icons/layout-grid';
     import AlignJustify from 'lucide-svelte/icons/align-justify';
     import "$lib/styles/media-grid-list.css"
+    import "$lib/styles/metadata-formatting.css"
     // import type { PageData } from './$types';
 	
 	// export let data: PageData;
@@ -194,10 +195,10 @@
         "list": ["media-list", "media-list-item"]
     }
 
-    let formatSelect = "grid"
+    let formatSelect = "list"
     let testValue: string | undefined
 
-    console.log(testValue)
+    console.log(formatSelect)
 </script>
 
 <body>
@@ -217,13 +218,13 @@
                     </button>
                 {/if} -->
                 </div>
-                <p class="metadata-attribution-text">
+                <p class="frontmatter-info-text">
                     Collection of {categories.type} by 
                     <a href="/user/{username}">
                         {display_name}
                     </a>
                 </p>
-                <p class="metadata-date-text">Last updated on {updatedAt}</p>
+                <p class="frontmatter-date-text">Last updated on {updatedAt}</p>
             </div>
 
 
@@ -239,12 +240,14 @@
                     <Toolbar.GroupItem
                         aria-label="grid"
                         value="grid"
+                        class="toolbar-item"
                     >
                         <LayoutGrid></LayoutGrid>
                     </Toolbar.GroupItem>
                     <Toolbar.GroupItem
                     aria-label="list"
                     value="list"
+                    class="toolbar-item"
                     >
                         <AlignJustify></AlignJustify>
                     </Toolbar.GroupItem>
@@ -265,11 +268,11 @@
                 <div class={format[formatSelect][0]}>
                     {#each collectionContents as contentItem}
                     <div class={format[formatSelect][1]}>
-                        <!-- <div class="media-item"> -->
                             <img src={contentItem["release_groups"]["img_url"]} alt={contentItem["release_groups"]["release_group_name"]} />
-                            <h2>{contentItem["release_groups"]["release_group_name"]}</h2>
-                            <p>{contentItem["artists"]["artist_name"]}</p>
-                        <!-- </div> -->
+                            <div class="metadata-blurb">
+                                <h2>{contentItem["release_groups"]["release_group_name"]}</h2>
+                                <p>{contentItem["artists"]["artist_name"]}</p>
+                            </div>
                     </div>
                     {/each}
                 </div>
@@ -277,10 +280,8 @@
                 <div class="media-grid">
                     {#each collectionContents as contentItem}
                     <div class="media-grid-item">
-                        <!-- <div class="media-item"> -->
                             <img src={contentItem["release_groups"]["img_url"]}  alt={contentItem["recordings"]["recording_name"]} />
                             <p>{contentItem["recordings"]["recording_name"]}</p>
-                        <!-- </div> -->
                     </div>
                     {/each}
                 </div>
@@ -292,8 +293,7 @@
     .collection-container {
         max-width: var(--freq-max-width-primary);
         margin: 3vh 3vw;
-        border: 1px solid var(--freq-color-background-badge);
-        border-top: 3px double var(--freq-color-background-badge);
+        border: var(--freq-border-panel);
     }
     .collection-info {
         display: flex;
@@ -311,10 +311,11 @@
         margin-right: 2vw;
     }
     .sort {
+        display: flex;
+        flex-direction: row;
         width: inherit;
         border-bottom: 1px solid var(--freq-color-background-badge);
         padding: 0 var(--freq-width-spacer-half);
         border-top: 1px double var(--freq-color-background-badge);
-        border-bottom: 1px solid var(--freq-color-background-badge);
     }
 </style>

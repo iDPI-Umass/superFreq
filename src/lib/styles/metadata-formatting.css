@@ -1,0 +1,16 @@
+/* Metadata text classes */
+
+.frontmatter-info-text {
+	color: var(--freq-color-text-muted);
+	font-size: var(--freq-font-size-medium);
+}
+
+.frontmatter-info-text a {
+	color: var(--freq-color-text-muted);
+	font-weight: var(--freq-font-weight-bold);
+}
+
+.frontmatter-date-text {
+	color: var(--freq-color-text-muted);
+	font-size: var(--freq-font-size-small);
+}

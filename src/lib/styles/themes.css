@@ -3,19 +3,21 @@
 html {
     --freq-color-null: #454C6C;
     --freq-color-panel: #313751;
-    --freq-color-border-panel: #282D43;
+    --freq-color-border-panel: #9EACC8;
     --freq-color-panel-focus: #454C6C;
-    --freq-border-panel: 1px solid #282D43;
-    --freq-border-hr: 1px solid #313751;
-    --freq-color-border-hr: #313751;
+    --freq-border-panel: 1px solid #9EACC8;
+    --freq-border-hr: 1px solid #9EACC8;
+    --freq-color-border-hr: #9EACC8;
     --freq-color-primary: #9b40fc;
     --freq-color-text: #FFFFFF;
     --freq-color-text-muted: #9EACC8;
     --freq-color-text-menu: #7F90A2;
+    --freq-color-text-dark: #313751;
     --freq-color-link: #3C96FF;
     --freq-color-background-badge: #9EACC8;
     --freq-color-badge: #313751;
     --freq-color-button-lens: #9EACC8;
+    --freq-color-button-lens-active: #7F90A2;
 
     --freq-color-panel-background: #000000;
 

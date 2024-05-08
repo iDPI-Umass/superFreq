@@ -1,12 +1,10 @@
 <!-- src/routes/account/+page.svelte -->
 <script lang="ts">
-	import { enhance, applyAction } from '$app/forms';
+	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import type { PageData, ActionData } from './$types';
-	import type { ActionResult } from '@sveltejs/kit';
 
-	export let data: PageData;
-	export let form: ActionData;
+	export let data;
+	export let form;
 
 	let { session, supabase, profile } = data;
 	$: ({ session, supabase, profile } = data);
@@ -85,8 +83,7 @@
 	const handleSubmit: SubmitFunction = () => {
 		loading = true
 		return async ({ result }) => {
-			loading = false,
-			await applyAction(result)
+			loading = false
 		}
 	}
 
