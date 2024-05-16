@@ -60,6 +60,7 @@ html {
     --freq-width-spacer-half: calc(0.5 * var(--freq-width-spacer));
     --freq-height-spacer: 1.3125rem;
     --freq-height-spacer-half: calc(0.5 * var(--freq-height-spacer));
+    --freq-height-spacer-quarter: calc(0.25 * var(--freq-height-spacer));
     --freq-border-radius: 0.625rem;
 
     --freq-width-spacer-flex: var(--freq-width-spacer-half);

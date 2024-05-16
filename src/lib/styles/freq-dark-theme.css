@@ -358,6 +358,7 @@
    */
 
    --freq-grid-gap: 0.0625rem; /* 1px */
+   --freq-inline-gap: 0.25rem; /* 4px */
 
   /*
    * Transitions
@@ -404,6 +405,7 @@
   --freq-letter-spacing-looser: 0.15em;
 
   /* Line heights */
+  --freq-line-height-densest: 0.6;
   --freq-line-height-denser: 1;
   --freq-line-height-dense: 1.4;
   --freq-line-height-normal: 1.8;
@@ -425,8 +427,10 @@
   --freq-button-font-size-small: var(--freq-font-size-x-small);
   --freq-button-font-size-medium: var(--freq-font-size-small);
   --freq-button-font-size-large: var(--freq-font-size-medium);
+  --freq-button-font-size-x-large: var(--freq-font-size-large);
 
   /* Inputs */
+  --freq-input-height-x-small: 1.25rem; /* 20px */
   --freq-input-height-small: 1.875rem; /* 30px */
   --freq-input-height-medium: 2.5rem; /* 40px */
   --freq-input-height-large: 3.125rem; /* 50px */

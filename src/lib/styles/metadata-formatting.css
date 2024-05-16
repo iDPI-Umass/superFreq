@@ -3,6 +3,7 @@
 .frontmatter-info-text {
 	color: var(--freq-color-text-muted);
 	font-size: var(--freq-font-size-medium);
+	margin: var(--freq-spacing-x-small) 0;
 }
 
 .frontmatter-info-text a {
@@ -13,4 +14,5 @@
 .frontmatter-date-text {
 	color: var(--freq-color-text-muted);
 	font-size: var(--freq-font-size-small);
+	margin: var(--freq-spacing-x-small) 0;
 }

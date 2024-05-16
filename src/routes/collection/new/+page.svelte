@@ -8,7 +8,7 @@
 <script lang="ts">
 	// library imports
 	//import { supabase } from "$lib/supabaseClient";
-	import { userProfile } from "$lib/store.js";
+	//import { userProfile } from "$lib/store.js";
 	//import { GET } from './+server.ts';
 
 	//functions for UI stuff

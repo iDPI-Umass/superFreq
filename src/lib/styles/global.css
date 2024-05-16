@@ -48,57 +48,142 @@ h3 {
 	font-size: 3vw;
 }
 
-/* 
-
-Bits UI styling classes
-
+/*
+//
+** Button styling
+//	
 */
 
-/* Button */
-
-[data-button-root] {
-	text-transform: uppercase;
-	padding: 8px 14px;
-	height: 30px;
+button {
+	width: fit-content;
+	height: fit-content;
 	background: var(--freq-color-panel-background);
 	border: 1px solid var(--freq-color-border-panel);
-	color: var(--freq-color-text);
-	font-size: 12px;
-	align-items: center;
-	text-justify: center;
+	padding: 0;
+	color: var(--freq-color-text-muted);
   }
 
-/* [data-button-root]:hover, :focus {
-	border: 1px solid var(--freq-color-primary);
-	text-decoration: underline;
+button.standard {
+	text-transform: uppercase;
+	padding: var(--freq-height-spacer-quarter) var(--freq-width-spacer);
+	width: fit-content;
+	height: fit-content;
+	font-size: var(--freq-button-font-size-small);
+	align-items: center;
+	text-justify: center;
 }
 
-[data-button-root]:active {
+
+button:hover, :focus {
+	border-color: var(--freq-color-primary);
+	color: var(--freq-color-text);
+}
+
+button *:hover, :focus {
+	border-color: var(--freq-color-primary);
+}
+
+button:active {
 	scale: 98%;
-	background: var(--freq-color-button-lens);
+	background: var(--freq-color-button-lens-active);
 	transition: all;
 }
 
-[data-button-root] a {
+button a {
 	color: var(--freq-color-text); 
-} */
-
-/* 
-
- [data-button-root].purple-border-button {
-	display: flex;
-	flex-direction: row;
-	min-height: 34px;
-	max-height: 40px;
-	border-color: var(--freq-color-primary);
-	border-top: 4px double var(--freq-color-primary);
 }
 
-[data-button-root].purple-border-button:hover, :focus  {
-	border-color: var(--freq-color-button-lens);
-	border-top: 4px solid var(--freq-color-button-lens);
-	text-decoration: underline;
-} */
+button.double-border-top {
+	text-transform: uppercase;
+}
+
+/* 
+Styles to create button with second top border, intended for tag format
+
+<button class="double-border-top>
+	<div class="inner-border">
+		text
+	</div>
+</button>
+*/
+
+button.double-border-top .inner-border {
+	border-top: 1px solid;
+	margin: var(--freq-spacing-3x-small) 0;
+	padding: var(--freq-height-spacer-quarter) var(--freq-width-spacer);
+}
+
+button.double-border-top:hover > .inner-border   {
+	border-color: var(--freq-color-primary);
+}
+
+button.double-border-top:focus > .inner-border   {
+	border-color: var(--freq-color-primary);
+}
+
+/*
+//
+** Form styling
+//
+*/
+
+label {
+	font-size: var(--freq-font-size-x-small);
+	color: var(--freq-color-text-muted);
+}
+
+input {
+	margin: var(--freq-spacing-x-small) 0;
+}
+
+input.text {
+	height: var(--freq-input-height-x-small);
+}
+
+textarea {
+	resize: none;
+	margin: var(--freq-spacing-x-small) 0;
+}
+
+fieldset {
+	display: flex;
+	flex-direction: column;
+	width: auto;
+	border: none;
+	margin: var(--freq-width-spacer-half) auto auto 0;
+	padding-left: 0;
+}
+
+fieldset legend {
+	text-transform: uppercase;
+	color: var(--freq-color-text-muted);
+	font-size: var(--freq-font-size-x-small);
+}
+
+fieldset label {
+	font-size: var(--freq-font-size-small);
+	color: var(--freq-color-text)
+}
+
+fieldset ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	text-transform: capitalize;
+}
+fieldset ul li {
+	display: flex;
+	flex-direction: row;
+	align-items:baseline;
+	gap: var(--freq-inline-gap);
+	font-size: var(--freq-font-size-medium);
+}
+
+/* 
+//
+** Bits UI styling
+//
+*/
 
 /* Dropdown Menu */
 
@@ -160,25 +245,33 @@ Bits UI styling classes
 
 /* Toolbar */
 
-.toolbar-item {
+/* [data-toolbar-group] {
+	display: flex;
+	align-items: center;
+	margin: auto 5px;
+} */
+
+[data-toolbar-item] {
 	background: var(--freq-color-panel-background);
 	color: var(--freq-color-text-muted);
+	height: var(--freq-spacing-medium);
+	width: var(--freq-spacing-medium);
 }
 
-.toolbar-item:hover {
+[data-toolbar-item]:hover {
 	background: var(--freq-color-text);
 }
 
-.toolbar-item:active {
+[data-toolbar-item]:active {
 	scale: 98%;
-	background: var(--freq-color-text);
+	background: var(--freq-color-button-lens-active);
 }
 
-.toolbar-item[data-state='on'] {
+[data-toolbar-item][data-state='on'] {
 	background: var(--freq-color-text-muted);
 	color: var(--freq-color-text);
 }
 
-.toolbar-item:active[data-state='on'] {
+[data-toolbar-item][data-state='on'] {
 	background: var(--freq-color-text);
 }

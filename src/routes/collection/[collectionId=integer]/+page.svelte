@@ -1,4 +1,12 @@
 <script lang="ts">
+    import { Toolbar } from "bits-ui"
+    import LayoutGrid from 'lucide-svelte/icons/layout-grid'
+    import AlignJustify from 'lucide-svelte/icons/align-justify'
+
+    import "$lib/styles/media-grid-list.css"
+    import "$lib/styles/metadata-formatting.css"
+    import GridList from "$lib/components/CollectionDisplay/GridList.svelte";
+
 	import type { PageData } from './$types';
     import { insertCollectionFollow } from '$lib/resources/database/collections/insertCollectionFollow';
     import { updateCollectionFollow } from '$lib/resources/database/collections/updateCollectionFollow';
@@ -6,6 +14,10 @@
 	export let data: PageData;
     let { supabase, collectionId, verified, collectionInfo, session, sessionUserId, collectionContents, collectionReturned, socialData, socialResponseStatus, isFollowing, followButtonStatus } = data;
     $: ({ supabase, collectionId, verified, collectionInfo, session, sessionUserId, collectionContents, collectionReturned, socialData, socialResponseStatus, isFollowing, followButtonStatus } = data);
+
+    let gridListSelect = "grid"
+
+    console.log(collectionContents )
 
     const { title, updated_at, type, username, display_name } = collectionInfo[0];
 
@@ -75,133 +87,101 @@
 <body>
     <div class="collection-container">
         <div class="collection-info">
-            <div class="collection-title-follow-box">
-                <h1>{title}</h1>
-                {#if session && (sessionUserId != collectionInfo["owner_id"])}
-                <button class="purple-border-button" on:click|preventDefault={followButton} disabled={!socialResponseStatus}>
-                    {#if ( followButtonStatus == true )}
-                        unfollow
-                    {:else if ( followButtonStatus == false )}
-                        + follow
+            <div class="collection-metadata">
+                <div class="collection-title-follow-top-row">
+                    <h1>{title}</h1>
+                    {#if session && (sessionUserId != collectionInfo["owner_id"])}
+                        <button class="standard" on:click|preventDefault={followButton} disabled={!socialResponseStatus}>
+                            {#if ( followButtonStatus == true )}
+                                unfollow
+                            {:else if ( followButtonStatus == false )}
+                                + follow
+                            {/if}
+                        </button>
                     {/if}
-                </button>
-            {/if}
+                </div>
             </div>
-            <h2>
-                Collection of {categories[type]} by 
-                <a href="/user/{username}">
-                    {display_name}
-                </a>
-            </h2>
-            <h3>Last updated on {updatedAt}</h3>
-            <p>{collectionInfo["description_text"]}</p>
+            <div class="frontmatter blurb-formatting">
+                <p class="frontmatter-info-text">
+                    Collection of {categories[type]} by 
+                    <a href="/user/{username}">
+                        {display_name}
+                    </a>
+                </p>
+                <p class="frontmatter-date-text">Last updated on {updatedAt}</p>
+                {#if collectionInfo["description_text"]}
+                    <p>{collectionInfo["description_text"]}</p>
+                {/if}
+            </div>
         </div>
+
         <div class="sort">
             <p> sorting options </p>
+            <Toolbar.Root>
+                <Toolbar.Group
+                    bind:value={gridListSelect}
+                    type="single"
+                >
+                    <Toolbar.GroupItem
+                        aria-label="grid"
+                        value="grid"
+                        class="toolbar-item"
+                    >
+                        <LayoutGrid class="grid-list-icon"></LayoutGrid>
+                    </Toolbar.GroupItem>
+                    <Toolbar.GroupItem
+                    aria-label="list"
+                    value="list"
+                    class="toolbar-item"
+                    >
+                        <AlignJustify class="grid-list-icon"></AlignJustify>
+                    </Toolbar.GroupItem>
+                </Toolbar.Group>
+            </Toolbar.Root>
+            <p>{gridListSelect}</p>
         </div>
-        {#if collectionReturned}
-            {#if type == "artists"}
-                <div class="collection-grid">
-                    {#each collectionContents as contentItem}
-                        <div class="grid-item">
-                            <p>{contentItem["artists"]["artist_name"]}</p>
-                        </div>
-                    {/each}
-                </div>
-            {:else if type == "release_groups"}
-                <div class="collection-grid">
-                    {#each collectionContents as contentItem}
-                        <div class="grid-item">
-                            <img src={contentItem["release_groups"]["img_url"]} alt={contentItem["release_groups"]["release_group_name"]} />
-                            <h2>{contentItem["release_groups"]["release_group_name"]}</h2>
-                            <p>{contentItem["artists"]["artist_name"]}</p>
-                        </div>
-                    {/each}
-                </div>
-            {:else if type == "recordings"}
-                <div class="collection-grid">
-                    {#each collectionContents as contentItem}
-                        <div class="grid-item">
-                            <img src={contentItem["release_groups"]["img_url"]}  alt={contentItem["recordings"]["recording_name"]} />
-                            <p>{contentItem["recordings"]["recording_name"]}</p>
-                        </div>
-                    {/each}
-                </div>
-            {/if}
-        {/if}
+        <GridList
+            collectionContents={collectionContents}
+            collectionReturned={collectionReturned}
+            collectionType={type}
+            gridListSelect={gridListSelect}
+        >
+        </GridList>
+
     </div>
 </body>
+
 <style>
     .collection-container {
-        max-width: 900px;
+        max-width: var(--freq-max-width-primary);
         margin: 3vh 3vw;
-        border: 1px solid var(--dark-mode-secondary-color);
-        border-top: 3px double var(--dark-mode-secondary-color);
+        border: var(--freq-border-panel);
     }
     .collection-info {
         display: flex;
         flex-direction: column;
-        width: inherit;
+        padding: var(--freq-width-spacer-half);
     }
-    .collection-title-follow-box {
+    .collection-metadata * {
+        margin: var(--freq-spacing-x-small) 0;
+    }
+    .collection-title-follow-top-row {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
         margin-right: 2vw;
     }
-    .collection-info h1 {
-        font-size: xx-large;
-    }
-    .collection-info h2 {
-        font-family: "Roboto" sans-serif;
-        font-size: large;
-        color: var(--dark-mode-secondary-color);
-    }
-    .collection-info h3 {
-        font-family: "Roboto" sans-serif;
-        font-size: medium;
-        color: var(--dark-mode-secondary-color);
-    }
     .sort {
-        width: inherit;
-        border-bottom: 1px solid var(--dark-mode-secondary-color);
-        padding: 0 1vw;
-        border-top: 1px double var(--dark-mode-secondary-color);
-        border-bottom: 1px solid var(--dark-mode-secondary-color);
-    }
-    .collection-grid {
-        display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        grid-template-rows: minmax(min-content, max-content);
-        width: 100%;
-        background-color: var(--dark-mode-secondary-color);
-        gap: 1px;
-    }
-    .grid-item {
         display: flex;
-        flex-direction: column;
-        width: 1fr;
-        height: 100%;
-        margin: auto;
-        padding: 0 5%;
-        background-color: black;
-        justify-content: center;
-        align-items: left;
+        flex-direction: row;
+        width: inherit;
+        padding: 0 var(--freq-width-spacer-half);
+        border-top: 1px solid var(--freq-color-background-badge);
+        border-bottom: 1px solid var(--freq-color-background-badge);
+        align-items: center;
     }
-    .grid-item img {
-        vertical-align: middle;
-        width: 80%;
-        margin: 10% auto;
-    }
-    .grid-item h2 {
-        margin: 5% 10%;
-        font-family: sans-serif;
-        font-size: 16px;
-    }
-    .grid-item p {
-        margin: 0 5% 10% 10%;
-        color: var(--dark-mode-secondary-color);
-        font-family: sans-serif;
+    .sort * {
+        padding: var(--freq-spacing-2x-small) var(--freq-spacing-small);
     }
 </style>

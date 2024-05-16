@@ -2,8 +2,10 @@
     import { Toolbar, Button } from "bits-ui";
     import LayoutGrid from 'lucide-svelte/icons/layout-grid';
     import AlignJustify from 'lucide-svelte/icons/align-justify';
+
     import "$lib/styles/media-grid-list.css"
     import "$lib/styles/metadata-formatting.css"
+    import GridList from "$lib/components/CollectionDisplay/GridList.svelte";
     // import type { PageData } from './$types';
 	
 	// export let data: PageData;
@@ -195,10 +197,10 @@
         "list": ["media-list", "media-list-item"]
     }
 
-    let formatSelect = "list"
+    let gridListSelect = "grid"
     let testValue: string | undefined
 
-    console.log(formatSelect)
+    console.log(gridListSelect)
 </script>
 
 <body>
@@ -234,7 +236,7 @@
             <p> sorting options </p>
             <Toolbar.Root>
                 <Toolbar.Group
-                    bind:value={formatSelect}
+                    bind:value={gridListSelect}
                     type="single"
                 >
                     <Toolbar.GroupItem
@@ -253,40 +255,13 @@
                     </Toolbar.GroupItem>
                 </Toolbar.Group>
             </Toolbar.Root>
-            <p>{formatSelect}</p>
+            <p>{gridListSelect}</p>
         </div>
-        {#if collectionReturned}
-            {#if type == "artists"}
-                <div class={format[formatSelect][0]}>
-                    {#each collectionContents as contentItem}
-                        <div class={format[formatSelect][1]}>
-                            <p>{contentItem["artists"]["artist_name"]}</p>
-                        </div>
-                    {/each}
-                </div>
-            {:else if type == "release_groups"}
-                <div class={format[formatSelect][0]}>
-                    {#each collectionContents as contentItem}
-                    <div class={format[formatSelect][1]}>
-                            <img src={contentItem["release_groups"]["img_url"]} alt={contentItem["release_groups"]["release_group_name"]} />
-                            <div class="metadata-blurb">
-                                <h2>{contentItem["release_groups"]["release_group_name"]}</h2>
-                                <p>{contentItem["artists"]["artist_name"]}</p>
-                            </div>
-                    </div>
-                    {/each}
-                </div>
-            {:else if type == "recordings"}
-                <div class="media-grid">
-                    {#each collectionContents as contentItem}
-                    <div class="media-grid-item">
-                            <img src={contentItem["release_groups"]["img_url"]}  alt={contentItem["recordings"]["recording_name"]} />
-                            <p>{contentItem["recordings"]["recording_name"]}</p>
-                    </div>
-                    {/each}
-                </div>
-            {/if}
-        {/if}
+        <GridList
+            collectionContents={collectionContents}
+            gridListSelect={gridListSelect}
+        >
+        </GridList>
     </div>
 </body>
 <style>

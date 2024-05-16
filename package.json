@@ -41,6 +41,7 @@
 		"@supabase/ssr": "^0.3.0",
 		"@supabase/supabase-js": "^2.43.1",
 		"bits-ui": "^0.21.7",
-		"lucide-svelte": "^0.377.0"
+		"lucide-svelte": "^0.377.0",
+		"svelte-dnd-action": "^0.9.45"
 	}
 }
