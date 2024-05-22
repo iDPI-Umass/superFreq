@@ -58,6 +58,6 @@
 /* import Krona One */
 @font-face {
     font-family: 'Krona_One';
-    src: url('/fonts/Krona_One') format('ttf');
+    src: url('/fonts/KronaOne-Regular.ttf') format('truetype');
     font-style: normal;
 }

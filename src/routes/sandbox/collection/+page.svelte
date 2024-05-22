@@ -5,7 +5,7 @@
 
     import "$lib/styles/media-grid-list.css"
     import "$lib/styles/metadata-formatting.css"
-    import GridList from "$lib/components/CollectionDisplay/GridList.svelte";
+    import GridList from "$lib/components/GridList.svelte";
     // import type { PageData } from './$types';
 	
 	// export let data: PageData;

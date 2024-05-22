@@ -1,8 +1,8 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { checkCollectionViewPermissions } from '$lib/resources/database/collections/select/checkCollectionViewPermissions';
-import { selectCollectionContents } from '$lib/resources/database/collections/select/selectCollectionContents';
-import { selectCollectionSocialsFollowsInfo } from '$lib/resources/database/collections/select/selectCollectionSocialsFollowsInfo';
+import { checkCollectionViewPermissions } from '$lib/resources/backend-calls/collections/select/checkCollectionViewPermissions';
+import { selectCollectionContents } from '$lib/resources/backend-calls/collections/select/selectCollectionContents';
+import { selectCollectionSocialsFollowsInfo } from '$lib/resources/backend-calls/collections/select/selectCollectionSocialsFollowsInfo';
 
 export const load: PageServerLoad = async ({ params, locals: { supabase, safeGetSession } }) => {
     //convert param into useable collectionId for supabase

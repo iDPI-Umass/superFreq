@@ -1,8 +1,8 @@
 import type { PageServerLoad } from './$types';
-import { selectCollectionFollowsFeed } from '$lib/resources/database/users/feed/selectCollectionFollowsFeed';
-import { selectSocialFollows } from '$lib/resources/database/users/profile/select/selectSocialFollows';
-import { selectSocialFollowsActivity } from '$lib/resources/database/users/selectSocialFollowsActivity';
-import { selectFollowedUsersCollectionsActivity } from '$lib/resources/database/users/feed/selectFollowedUsersCollectionsActivity';
+import { selectCollectionFollowsFeed } from '$lib/resources/backend-calls/users/feed/selectCollectionFollowsFeed';
+import { selectSocialFollows } from '$lib/resources/backend-calls/users/profile/select/selectSocialFollows';
+import { selectSocialFollowsActivity } from '$lib/resources/backend-calls/users/selectSocialFollowsActivity';
+import { selectFollowedUsersCollectionsActivity } from '$lib/resources/backend-calls/users/feed/selectFollowedUsersCollectionsActivity';
 
 export const load: PageServerLoad = async ({ locals: { supabase, getSession } }) => {
     // get userId from session

@@ -48,6 +48,14 @@ h3 {
 	font-size: 3vw;
 }
 
+hr {
+	display: block;
+	height: 1px;
+	border: 100vw;
+	border-top: var(--freq-border-hr);
+	padding: 0;
+}
+
 /*
 //
 ** Button styling
@@ -93,10 +101,6 @@ button a {
 	color: var(--freq-color-text); 
 }
 
-button.double-border-top {
-	text-transform: uppercase;
-}
-
 /* 
 Styles to create button with second top border, intended for tag format
 
@@ -107,8 +111,13 @@ Styles to create button with second top border, intended for tag format
 </button>
 */
 
+
+button.double-border-top {
+	text-transform: uppercase;
+}
+
 button.double-border-top .inner-border {
-	border-top: 1px solid;
+	border-top: 1px solid var(--freq-color-button-lens);
 	margin: var(--freq-spacing-3x-small) 0;
 	padding: var(--freq-height-spacer-quarter) var(--freq-width-spacer);
 }
@@ -120,6 +129,18 @@ button.double-border-top:hover > .inner-border   {
 button.double-border-top:focus > .inner-border   {
 	border-color: var(--freq-color-primary);
 }
+
+button.double-border-top:active {
+	scale: 98%;
+	background: var(--freq-color-button-lens-active);
+	border-color: white;
+	transition: all;
+}
+
+button.double-border-top:active > .inner-border   {
+	border-color: white;
+}
+
 
 /*
 //
@@ -138,6 +159,32 @@ input {
 
 input.text {
 	height: var(--freq-input-height-x-small);
+}
+
+input.radio {
+	appearance: none;
+	border-radius: 50%;
+	min-width: var(--freq-font-size-medium);
+	height: var(--freq-font-size-medium);
+	border: solid 2px var(--freq-color-primary);
+	transition: 0.15s all steps(3, start);
+}
+
+input.radio:active {
+	scale: 95%;
+}
+
+input.radio:checked {
+	border: 6px double var(--freq-color-primary);
+}
+
+input.search {
+	display: flex;
+	height: calc( var(--freq-input-height-small) + var(--freq-spacing-3x-small));
+	background: var(--freq-color-panel-background);
+	border: 1px solid var(--freq-color-border-panel);
+	border-left: none;
+	padding-left: 5px;
 }
 
 textarea {
@@ -174,9 +221,13 @@ fieldset ul {
 fieldset ul li {
 	display: flex;
 	flex-direction: row;
-	align-items:baseline;
+	align-items: center;
 	gap: var(--freq-inline-gap);
 	font-size: var(--freq-font-size-medium);
+}
+
+fieldset ul li label {
+	margin-top: 2px;
 }
 
 /* 

@@ -5,11 +5,11 @@
 
     import "$lib/styles/media-grid-list.css"
     import "$lib/styles/metadata-formatting.css"
-    import GridList from "$lib/components/CollectionDisplay/GridList.svelte";
+    import GridList from "$lib/components/GridList.svelte";
 
 	import type { PageData } from './$types';
-    import { insertCollectionFollow } from '$lib/resources/database/collections/insertCollectionFollow';
-    import { updateCollectionFollow } from '$lib/resources/database/collections/updateCollectionFollow';
+    import { insertCollectionFollow } from '$lib/resources/backend-calls/collections/insertCollectionFollow';
+    import { updateCollectionFollow } from '$lib/resources/backend-calls/collections/updateCollectionFollow';
 	
 	export let data: PageData;
     let { supabase, collectionId, verified, collectionInfo, session, sessionUserId, collectionContents, collectionReturned, socialData, socialResponseStatus, isFollowing, followButtonStatus } = data;
@@ -82,6 +82,7 @@
             const update = await updateCollectionFollow({ id, followData, locals: { supabase }});
         }
     }
+    console.log(collectionContents)
 </script>
 
 <body>
@@ -144,7 +145,8 @@
             collectionContents={collectionContents}
             collectionReturned={collectionReturned}
             collectionType={type}
-            gridListSelect={gridListSelect}
+            layout={gridListSelect}
+            mode="view"
         >
         </GridList>
 

@@ -11,7 +11,7 @@ export const populateCollectionContents = function ( collectionItems: Array<obje
             "release_group_mbid": collectionItems[item]["releaseGroupMbid"],
             "recording_mbid": collectionItems[item]["recordingMbid"],
             "item_position": collectionItems[item]["position"],
-            "notes": collectionItems[item]["notes"]
+            "notes": collectionItems[item]["notes"],
         }];
     }
     return collectionContents;

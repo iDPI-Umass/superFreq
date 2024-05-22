@@ -3,8 +3,8 @@
     import { categoryParser } from '$lib/resources/parse-data/categoryParser.ts';
     import { profileName } from '$lib/resources/parse-data/profileName';
     import { formatDate } from '$lib/resources/parse-data/formatDate';
-    import { insertUserFollow } from '$lib/resources/database/users/profile/insert/insertUserFollow';
-    import { updateUserFollow } from '$lib/resources/database/users/profile/update/updateUserFollow';
+    import { insertUserFollow } from '$lib/resources/backend-calls/users/profile/insert/insertUserFollow';
+    import { updateUserFollow } from '$lib/resources/backend-calls/users/profile/update/updateUserFollow';
 	
 	export let data: PageData;
     let { supabase, profileData, viewableCollections, followsUsers, followsCollections, isFollowing,selectUserFollowResponseStatus, profileUserId, session, sessionUserId, followButtonStatus } = data;

@@ -26,7 +26,7 @@ export const mbSearch = async function ( query, collectionType ) {
     
     const searchComplete =  true;
 
-    const thisSession = await session;
+    //const thisSession = await session;
 
     return {
         mbData, searchComplete

@@ -1,11 +1,11 @@
 import { error } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
-import { selectUser } from '$lib/resources/database/users/profile/select/selectUser'
-import { selectProfileUsersCollections } from '$lib/resources/database/collections/select/selectProfileUsersCollections'
-import { selectSocialFollows } from '$lib/resources/database/users/profile/select/selectSocialFollows'
-import { selectCollectionFollows } from '$lib/resources/database/users/feed/selectCollectionFollowsFeed'
-import { selectUserCollectionFollows } from '$lib/resources/database/users/profile/select/selectUserCollectionFollows'
-import { selectUserFollow } from '$lib/resources/database/users/profile/select/selectUserFollow'
+import { selectUser } from '$lib/resources/backend-calls/users/profile/select/selectUser'
+import { selectProfileUsersCollections } from '$lib/resources/backend-calls/collections/select/selectProfileUsersCollections'
+import { selectSocialFollows } from '$lib/resources/backend-calls/users/profile/select/selectSocialFollows'
+import { selectCollectionFollows } from '$lib/resources/backend-calls/users/feed/selectCollectionFollowsFeed'
+import { selectUserCollectionFollows } from '$lib/resources/backend-calls/users/profile/select/selectUserCollectionFollows'
+import { selectUserFollow } from '$lib/resources/backend-calls/users/profile/select/selectUserFollow'
 
 
 export const load: PageServerLoad = async ({ params, locals: { supabase, getSession } }) => {

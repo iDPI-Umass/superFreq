@@ -1,7 +1,15 @@
 // to convert categories <select> value to suffix for API endpoint
 	
-export const categoriesTable = {
-    "artists": "artist",
+interface stringIndex {
+    [index: string]: string
+}
+
+export const categoriesTable: stringIndex = {
+    "artists": "artists",
+    "release-groups": "release-group",
     "release_groups": "release-group",
-    "recordings": "recording"
-};
+    "recordings": "recordings",
+    "albums": "release-group",
+    "tracks": "recordings",
+    "songs": "recordings"
+}

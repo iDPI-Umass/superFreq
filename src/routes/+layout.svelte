@@ -16,25 +16,8 @@
 	import PlainHeader from "$lib/components/headers/PlainHeader.svelte";
 	import Footer from '$lib/components/headers/footer/index.svelte';
 
-	import { DropdownMenu, Select } from "bits-ui";
-	let accountMenuItems = [
-		{ value: '/account', label: 'account settings' },
-		{ value: '/feed', label: 'feed' },
-		{ value: '/collections', label: 'discover' },
-		{ value: '/collection/new', label: 'new collection' }
-	]
-
-
 	export let data;
-
-	let { supabase, session } = data
 	$: ({ supabase, session } = data)
-
-	
-	// let displayName = ""
-	// if ( session ) {
-	// 	displayName = user["data"][0]["display_name"]
-	// }
 
 	onMount(() => {
 		const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
@@ -66,17 +49,4 @@
 <body>
 	<slot />
 </body>
-<DropdownMenu.Root>
-	<DropdownMenu.Trigger>
-		cheese
-	</DropdownMenu.Trigger>
-	<DropdownMenu.Content class="dropdown">
-		<DropdownMenu.Item>
-			cheese1
-		</DropdownMenu.Item>
-		<DropdownMenu.Item>
-			cheese2
-		</DropdownMenu.Item>
-	</DropdownMenu.Content>
-</DropdownMenu.Root>
 <!-- <Footer /> -->

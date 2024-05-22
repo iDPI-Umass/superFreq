@@ -3,7 +3,7 @@
 -->
 
 <script lang="ts">
-	import { itemSelect } from '$lib/resources/database/music-data/itemSelect';
+	import { itemSelect } from '$lib/resources/backend-calls/music-data/itemSelect';
     import { getNavOptions } from '../context'
 
     export let open = false;

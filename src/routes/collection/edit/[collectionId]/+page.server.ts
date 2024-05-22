@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { selectEditableCollection } from '$lib/resources/database/collections/select/selectEditableCollection';
+import { selectEditableCollection } from '$lib/resources/backend-calls/collections/select/selectEditableCollection';
 
 export const load: PageServerLoad = async ({ params, locals: { supabase, getSession } }) => {
     //convert param into useable collectionId for supabase

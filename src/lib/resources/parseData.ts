@@ -1,0 +1,87 @@
+interface collectionItem {
+    [index: string]: string
+}
+
+/*
+Prepare data for table upsert in format expected by: artists, release_groups, and recordings.
+*/
+
+export const prepareMusicDataUpsert = function ( collectionItems: object[], collectionType: string ) {
+
+    let upsertArtists: object[] = []
+    let upsertReleaseGroups: object[] = []
+    let upsertRecordings: object[] = []
+
+    for (const item in collectionItems) {
+        const thisItem = collectionItems[item] as collectionItem
+
+        if ( collectionType == "artists" ) {
+            upsertArtists = [...upsertArtists, {
+                "artist_mbid": thisItem["artistMbid"],
+                "artist_name": thisItem["artistName"]
+            }];
+        }
+        else if	( collectionType == "release_groups" ) {
+            upsertArtists = [...upsertArtists, {
+                "artist_mbid": thisItem["artistMbid"],
+                "artist_name": thisItem["artistName"]
+            }];
+
+            upsertReleaseGroups = [...upsertReleaseGroups, {
+                "artist_mbid": thisItem["artistMbid"],
+                "release_group_mbid": thisItem["releaseGroupMbid"],
+                "release_group_name": thisItem["releaseGroupName"],
+                "release_date": thisItem["releaseDate"],
+                "label": thisItem["label"],
+                "img_url": thisItem["imgUrl"]
+            }];
+        }
+        else if ( collectionType == "recordings" ) {
+            upsertArtists = [...upsertArtists, {
+                "artist_mbid": thisItem["artistMbid"],
+                "artist_name": thisItem["artistName"]
+            }];
+
+            upsertReleaseGroups = [...upsertReleaseGroups, {
+                "artist_mbid": thisItem["artistMbid"],
+                "release_group_mbid": thisItem["releaseGroupMbid"],
+                "release_group_name": thisItem["releaseGroupName"],
+                "release_date": thisItem["releaseDate"],
+                "label": thisItem["label"],
+                "img_url": thisItem["imgUrl"]
+            }];
+
+            upsertRecordings = [...upsertRecordings, {
+                "artist_mbid": thisItem["artistMbid"],
+                "recording_mbid": thisItem["recordingMbid"],
+                "recording_name": thisItem["recordingName"],
+                "remixer_mbid": thisItem["remixerMbid"],
+                "release_date": thisItem["releaseDate"]
+            }];
+        }
+    }
+
+    return { upsertArtists, upsertReleaseGroups, upsertRecordings };
+}
+
+/*
+Parse data for table upsert in format expected by collections_contents.
+*/
+
+export const populateCollectionContents = function ( collectionItems: object[], collectionId: string ) {
+    let collectionContents: object[] = [];
+
+    for (const item in collectionItems) {
+        const thisItem = collectionItems[item] as collectionItem
+
+        collectionContents = [...collectionContents, {
+            "collection_id": collectionId,
+            "artist_mbid": thisItem["artistMbid"],
+            "release_group_mbid": thisItem["releaseGroupMbid"],
+            "recording_mbid": thisItem["recordingMbid"],
+            "item_position": thisItem["position"],
+            "notes": thisItem["notes"],
+        }];
+    }
+    return collectionContents;
+}
