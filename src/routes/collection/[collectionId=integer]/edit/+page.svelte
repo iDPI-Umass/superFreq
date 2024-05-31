@@ -1,10 +1,16 @@
 <!--
-	Search MusicBrainz database, populate an object with collection items, and insert rows into tables collections_info, collections_contents, and collections_social to create new collection in database.
+	Retrieve existing collection if user has edit permission.
+    
+    Search MusicBrainz database, populate an object with collection items, and insert rows into tables collections_info, collections_contents, and collections_social to create new collection in database.
+
+    Upsert updates.
 
 	All of this is done on the client side.
 -->
 
 <script lang="ts">
+    import type { PageData } from './$types';
+
     import GridList from '$lib/components/GridList.svelte'
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
 
@@ -15,29 +21,22 @@
 	import { prepareMusicDataUpsert, populateCollectionContents } from '$lib/resources/parseData';
 	import { insertCollectionInfo, insertCollectionSocial, insertCollectionContents, insertCollectionUpdateRecord } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions.js'
 	import { AppWindow } from 'lucide-svelte';
-	import { redirect } from '@sveltejs/kit';
 
-	/* 
-	Get user session
-	*/
-	export let data
-	$: data
-
-	const { session } = data
-	const { user: { id }} =  session
-
-    const { supabase } = data
+	export let data: PageData;
+    let { supabase, collectionId, verified, collectionInfo, session, sessionUserId, collectionContents, collectionReturned} = data;
+    $: ({ supabase, collectionId, verified, collectionInfo, session, sessionUserId, collectionContents, collectionReturned } = data);
 
 	/* 
 	Let's declare some variables for...
 	*/
 
 	// collections_info
-	let collectionId = ""
-	let collectionTitle = ""
-	let collectionType = ""
-	let collectionStatus = ""
-	let descriptionText = ""
+	let collectionTitle = collectionInfo[0]["title"]
+	let collectionType = collectionInfo[0]["type"]
+	let collectionStatus = collectionInfo[0]["status"]
+	let descriptionText = collectionInfo[0]["description_text"]
+
+    console.log(collectionContents)
 
 	// collections_contents
 	interface collectionObject {
@@ -63,7 +62,7 @@
 	*/
 
 	// Insert row into tables: artists, release_groups, recordings
-	async function upsertMusicData() {
+	async function upsertMusicData({locals: { supabase }}: { locals: App.Locals }) {
 		const { upsertArtists, upsertReleaseGroups, upsertRecordings } = await prepareMusicDataUpsert( collectionItems, collectionType )
 
 		let item = {
@@ -105,7 +104,7 @@
 	}
 
 	// Insert row into table collections_info, returns collection_id to be used in subsequent REST requests
-	async function submitCollectionInfo() {
+	async function submitCollectionInfo({ locals: { supabase }}: { locals: { supabase: App.Locals["supabase"] } }) {
 
 		// formats data as expected by collections_info
 		const collectionInfo = {
@@ -132,44 +131,21 @@
 	 }
 	
 	// Inserts rows into table collections_contents using collection_id returned after "submitCollectionContents" runs, and only once relevant mbids have been added to their respective music data tables (artists, release_groups, and/or recordings)
-	async function submitCollectionContents() {
-        console.log("button clicked")
-
+	async function submitCollectionContents({ locals: { supabase }}: { locals: { supabase: App.Locals["supabase"] } }) {
 		for ( const collectionItem of collectionItems ) {
 			const thisItem = collectionItem as collectionObject
 			thisItem["item_position"] = thisItem["id"];
 			delete thisItem["id"];
 		}
 		
-        console.log("IDs updated")
-
-		await submitCollectionInfo();
-        console.log("collection info submitted")
-
-		await upsertMusicData();
-        console.log("music data upserted")
-
+		await submitCollectionInfo({ locals: { supabase }});
+		await upsertMusicData({ locals: { supabase }});
 		const collectionContents = await populateCollectionContents( collectionItems, collectionId );
-        console.log("collection contents populated")
 
 		const res = await insertCollectionContents( { collectionContents, locals: { supabase }});
 
-        if ( res.status === 201 ) {
-            throw redirect( 302, `/collection/${collectionId}`)
-        }
-        else {
-            throw redirect( 301, `/collections`)
-        }
-
+		return res.toString();
 	}
-
-    async function handleClick(event: any) {
-		const res = await submitCollectionContents()
-        const { post: {status} } = res
-        if ( status === 201 ) {
-            throw redirect( 302, `/collection/${collectionId}`)
-        }
-    }
 </script>
 
 <div class="collection-builder">

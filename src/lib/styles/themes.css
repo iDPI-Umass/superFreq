@@ -20,6 +20,7 @@ html {
     --freq-color-button-lens-active: #7F90A2;
 
     --freq-color-panel-background: #000000;
+    --freq-color-grid-2: #5a6490;
 
     --freq-color-primary-text: #FFFFFF;
     --freq-color-active: #3C96FF;
@@ -51,6 +52,13 @@ html.freq-theme-light {
   
 html.freq-font-arial {
     --freq-font-family: "Arial";
+}
+
+/* Body sizing and breakpoints */
+html {
+    --freq-desktop-width: 1600px;
+    --freq-table-width: 700px;
+    --freq-mobile-width: 400px;
 }
 
 /* Spacings */
@@ -87,4 +95,12 @@ html {
     --freq-font-size-large: 1rem;
     --freq-font-size-copy: 0.9375rem;
     --freq-font-size-detail: 0.875rem;
+}
+
+/* Images */
+html {
+    --freq-image-thumbnail-x-small: 50px;
+    --freq-image-thumbnail-small: 75px;
+    --freq-image-thumbnail-medium: 100px;
+    --freq-image-thumbnail-large: 150px;
 }

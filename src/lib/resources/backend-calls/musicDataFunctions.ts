@@ -15,7 +15,7 @@ interface upsertInfo {
   itemData: object
 }
 
-export const itemUpsert = async function ( {item, locals: { supabase }}: {item: upsertInfo, locals: any}) {
+export const itemUpsert = async function ( {item, locals: { supabase }}: {item: upsertInfo, locals: { supabase: App.Locals["supabase"] }}) {
   const { tableName, itemData } = item;
 
     let columnConstraint = tableName.substring(0, tableName.length - 1);
@@ -40,7 +40,7 @@ export const itemUpsert = async function ( {item, locals: { supabase }}: {item: 
 Generic select for music data including aritsts, release_groups, and recordings. Expects two arguments: "tableName" for table to be selected from and "mbid" for item's identifier.
 */
 
-export const itemSelect = async function ( {tableName, mbid, locals: {supabase}} : {tableName: string, mbid: string, locals: any }) {
+export const itemSelect = async function ( {tableName, mbid, locals: {supabase}} : {tableName: string, mbid: string, locals: { supabase: App.Locals["supabase"] } }) {
   
   const category = tableName.substring(0, tableName.length - 1);
   const columnTitle = category.concat("_mbid");

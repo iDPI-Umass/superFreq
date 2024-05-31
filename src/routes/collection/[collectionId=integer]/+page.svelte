@@ -8,20 +8,20 @@
     import GridList from "$lib/components/GridList.svelte";
 
 	import type { PageData } from './$types';
-    import { insertCollectionFollow } from '$lib/resources/backend-calls/collections/insertCollectionFollow';
-    import { updateCollectionFollow } from '$lib/resources/backend-calls/collections/updateCollectionFollow';
+    import { insertCollectionFollow, updateCollectionFollow } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions';
 	
 	export let data: PageData;
     let { supabase, collectionId, verified, collectionInfo, session, sessionUserId, collectionContents, collectionReturned, socialData, socialResponseStatus, isFollowing, followButtonStatus } = data;
     $: ({ supabase, collectionId, verified, collectionInfo, session, sessionUserId, collectionContents, collectionReturned, socialData, socialResponseStatus, isFollowing, followButtonStatus } = data);
 
     let gridListSelect = "grid"
+    collectionReturned = ( collectionReturned === undefined) ? false : true
 
     console.log(collectionContents )
 
     const { title, updated_at, type, username, display_name } = collectionInfo[0];
 
-    const categories = {
+    const categories: App.Lookup = {
         "artists": "artists",
         "release_groups": "albums",
         "recording": "tracks"

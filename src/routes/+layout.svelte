@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	// Base themes and fonts for project.
 	import "$lib/styles/global.css";
 	import "$lib/styles/themes.css";
@@ -12,12 +12,18 @@
 
 	import { goto, invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { setContext } from 'svelte';
+	import { writable } from 'svelte/store';
+
 	import { Header } from '$lib/components/headers/Header';
 	import PlainHeader from "$lib/components/headers/PlainHeader.svelte";
 	import Footer from '$lib/components/headers/footer/index.svelte';
 
 	export let data;
-	$: ({ supabase, session } = data)
+	$: ({ supabase, session, profile } = data)
+
+	let displayName: string
+	let avatarUrl: string
 
 	onMount(() => {
 		const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
@@ -35,6 +41,9 @@
 			}
 		});
 
+		displayName = profile?.display_name ?? ''
+		avatarUrl = profile?.avatar_url ?? ''
+
 		return () => data.subscription.unsubscribe();
 	});
 </script>
@@ -44,9 +53,13 @@
 	displayName="bass"
 /> -->
 
-<PlainHeader></PlainHeader>
+<PlainHeader
+displayName={displayName}
+avatarUrl={avatarUrl}
+></PlainHeader>
 
+<div class="double-border-full-vw"></div>
 <body>
-	<slot />
+		<slot />
 </body>
 <!-- <Footer /> -->

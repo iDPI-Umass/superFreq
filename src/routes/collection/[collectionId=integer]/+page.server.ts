@@ -1,8 +1,6 @@
-import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { checkCollectionViewPermissions } from '$lib/resources/backend-calls/collections/select/checkCollectionViewPermissions';
-import { selectCollectionContents } from '$lib/resources/backend-calls/collections/select/selectCollectionContents';
-import { selectCollectionSocialsFollowsInfo } from '$lib/resources/backend-calls/collections/select/selectCollectionSocialsFollowsInfo';
+import { checkCollectionViewPermissions } from '$lib/resources/backend-calls/checkSesssionUserPermissions';
+import { selectCollectionContents, selectCollectionSocialsFollowsInfo } from '$lib/resources/backend-calls/collectionSelectFunctions';
 
 export const load: PageServerLoad = async ({ params, locals: { supabase, safeGetSession } }) => {
     //convert param into useable collectionId for supabase
@@ -27,17 +25,20 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, safeGet
     if (verified != true || responseError == true) { 
         console.warn(` Can not return collection ${collectionId}. `)
         return {
-            status: 404,
+            status: 401,
             redirect: "/collections"
-        };
+        }
     }
 
     //select collection contents and get collection social graph if view access is verified
-    const { collectionContents, collectionReturned } =  await selectCollectionContents({collectionId, locals: {supabase}});
-    let socialData
-    let socialResponseStatus
+    const selectCollectionContentsResponse: any = await selectCollectionContents({collectionId, locals: {supabase}});
+    const { collectionContents, collectionReturned }: { collectionContents: any, collectionReturned: boolean } =  
+    selectCollectionContentsResponse
+    let socialData: any
+    let socialResponseStatus: number
     if ( session ){
-        let { socialData, socialResponseStatus } = await selectCollectionSocialsFollowsInfo({collectionId, sessionUserId, locals: {supabase}});
+        const sessionData = await selectCollectionSocialsFollowsInfo({collectionId, sessionUserId, locals: {supabase}});
+        ({ socialData, socialResponseStatus } = sessionData)
     }
 
     console.log(collectionReturned)
@@ -59,7 +60,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, safeGet
     }
     else if ( verified == false || responseError == true ) {
         return {
-            status: 302,
+            status: 403,
             redirect: "/collections"
         }
     }

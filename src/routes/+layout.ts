@@ -47,5 +47,15 @@ export const load: LayoutLoad = async ({ data, depends, fetch }) => {
     data: { user },
   } = await supabase.auth.getUser()
 
+  if ( user ) {
+    const { data: profile } = await supabase
+    .from('profiles')
+    .select(`username, display_name, website, avatar_url, changelog, updated_at`)
+    .eq('id', session.user.id)
+    .single()
+
+    return { session, supabase, user, profile }
+  }
+
   return { session, supabase, user }
 }

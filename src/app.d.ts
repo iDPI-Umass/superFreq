@@ -12,6 +12,12 @@ declare global {
     // interface PageData {}
     // interface PageState {}
     // interface Platform {}
+    interface NestedObject {
+      [index: string]: any
+    }
+    interface Lookup {
+      [index: string]: string | string[] | number | number[]
+    }
   }
 }
 

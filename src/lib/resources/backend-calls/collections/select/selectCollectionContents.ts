@@ -2,7 +2,7 @@
 Gets contents for a collection. Make sure to user checkCollectionViewPermission first to verify user has access to view this collection.
 */
 
-export const selectCollectionContents = async function({ collectionId, locals: { supabase }}) {
+export const selectCollectionContents = async function({ collectionId, locals: { supabase }}: { collectionId: number, locals: { supabase: App.Locals["supabase"] }}) {
 
     const select = supabase
     .from("collections_contents")

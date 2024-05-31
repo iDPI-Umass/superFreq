@@ -2,7 +2,7 @@
 Get social graph for collection
 */
 
-export const selectCollectionSocialsFollowsInfo = async function ( { collectionId, sessionUserId, locals: {supabase}} ) {
+export const selectCollectionSocialsFollowsInfo = async function ( { collectionId, sessionUserId, locals: {supabase}}: { collectionId: number, sessionUserId: string, locals: { supabase: App.Locals["supabase"] }} ) {
 
     /* Get contents from collections_contents using collection_id */
     const select = supabase

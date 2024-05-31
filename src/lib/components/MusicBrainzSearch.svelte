@@ -1,29 +1,26 @@
 <script lang="ts">
     import { categoriesTable } from '$lib/resources/parse-data/categoriesTable.ts'
 
-    export let collectionType: string
+	export let searchCategory: string //expects "albums", "release_groups", "recordings", or "labels"
     export let searchButtonText: string
     export let searchPlaceholder: string
-    export let collectionItems: object[]
-    export let itemAdded: boolean
+    export let addedItems: any
+    export let newItemAdded: boolean
+	export let mode: string //expects "single" or "collection"
 
     let dialog: any
-
-	interface itemData {
-		[index: string]: string
-	}
 
     /*
 	Functions to call MusicBrainz database and parse relevant data.
 	*/
 
 	// search MusicBrainz using form info
-	let mbData: itemData[]
-	let query: String
+	let mbData: any
+	let query: string
 	let searchComplete: boolean
 	async function mbSearch() {
-		console.log(collectionType, query)
-		const apiCategory = categoriesTable[`${collectionType}`]
+		console.log(searchCategory, query)
+		const apiCategory = categoriesTable[`${searchCategory}`]
 
 		let apiString = "https://musicbrainz.org/ws/2/"
 		apiString = apiString.concat(apiCategory)
@@ -32,7 +29,7 @@
 		endpoint.searchParams.set("fmt", "json");
         endpoint.searchParams.set("query", `${query}`)
 
-		if (collectionType == "recordings") {
+		if (searchCategory == "recordings") {
 			endpoint.searchParams.set("inc", "releases+release-groups+artist-rels")
 		}
 
@@ -43,16 +40,13 @@
 		mbData = searchResults[mbObjectKey]
 		
 		searchComplete =  true
-
-        console.log(mbData)
-
 		return {
 			mbData, searchComplete
 		}
     }
 
 	// returns mbid and label name for earliest release in release group
-	async function getLabel( item: itemData ) {
+	async function getLabel( item: any ) {
 		const releaseGroupMbid = item["mbid"];
 		const releaseDate = item["releaseDate"];
 		const endpoint = `https://musicbrainz.org/ws/2/release?release-group=${releaseGroupMbid}&inc=labels&fmt=json`;
@@ -86,10 +80,10 @@
     }
 
     // adds item from MusicBrainz search results to collection editor
-	async function addItem( item: itemData ) {
-		if ( collectionType == "artists" ) {
-			collectionItems = [...collectionItems, {
-				"item_position": collectionItems.length,
+	async function addCollectionItem( item: any ) {
+		if ( searchCategory == "artists" ) {
+			addedItems = [...addedItems, {
+				"item_position": addedItems.length,
 				"artistMbid": item["id"],
 				"artistName": item["name"],
 				"releaseGroupMbid": null,
@@ -101,18 +95,18 @@
 				"imgUrl": null,
 				"label": null,
 				"notes": null,
-				"id": collectionItems.length + 1
+				"id": addedItems.length + 1
 			}];
 		}
-		else if ( collectionType == "release_groups" ) {
+		else if ( searchCategory == "release_groups" ) {
 			const releaseGroup = {
 				mbid: item["id"],
 				releaseDate: item["first-release-date"] 
 			}
 			const { label } = await getLabel(releaseGroup);
 			const coverArt = await getCoverArt( releaseGroup.mbid );
-			collectionItems = [...collectionItems, {
-				"item_position": collectionItems.length,
+			addedItems = [...addedItems, {
+				"item_position": addedItems.length,
 				"artistMbid": item["artist-credit"][0]["artist"]["id"],
 				"artistName": item["artist-credit"][0]["artist"]["name"],
 				"releaseGroupMbid": item["id"],
@@ -124,16 +118,16 @@
 				"imgUrl": coverArt,
 				"label": label, 
 				"notes": null,
-				"id": collectionItems.length + 1
+				"id": addedItems.length + 1
 			}];
 		}
-		else if ( collectionType == "recordings" ) {
+		else if ( searchCategory == "recordings" ) {
 			let remixerMbid = null;
 			if ( item["relations"][0]["artist"]["type"] == "remixer" ) {
 				remixerMbid = item["relations"][0]["artist"]["id"];
 			}
-			collectionItems = [...collectionItems, {
-				"item_position": collectionItems.length,
+			addedItems = [...addedItems, {
+				"item_position": addedItems.length,
 				"artistMbid": item["artist-credit"][0]["artist"]["id"],
 				"artistName": item["artist-credit"][0]["artist"]["name"],
 				"releaseGroupMbid": item["release-group"]["id"],
@@ -145,13 +139,70 @@
 				"imgUrl": null,
 				"label": null,
 				"notes": null,
-				"id": collectionItems.length +1
+				"id": addedItems.length +1
 			}];
 		}
-		itemAdded = true;
-		//items = collectionItems;
-		console.log(collectionItems)
-		return itemAdded
+		return newItemAdded = true
+	}
+
+	// adds single item from MusicBrainz search results to whatever needs it
+	async function addSingleItem( item: any ) {
+		if ( searchCategory == "artists" ) {
+			addedItems =  {
+				"artistMbid": item["id"],
+				"artistName": item["name"],
+				"releaseGroupMbid": null,
+				"releaseGroupName": null,
+				"releaseDate": null,
+				"recordingMbid": null,
+				"recordingName": null,
+				"remixerMbid": null,
+				"imgUrl": null,
+				"label": null,
+				"notes": null,
+			};
+		}
+		else if ( searchCategory == "release_groups" ) {
+			const releaseGroup = {
+				mbid: item["id"],
+				releaseDate: item["first-release-date"] 
+			}
+			const { label } = await getLabel(releaseGroup);
+			const coverArt = await getCoverArt( releaseGroup.mbid );
+			addedItems = {
+				"artistMbid": item["artist-credit"][0]["artist"]["id"],
+				"artistName": item["artist-credit"][0]["artist"]["name"],
+				"releaseGroupMbid": item["id"],
+				"releaseGroupName": item["title"],
+				"releaseDate": item["first-release-date"],
+				"recordingMbid": null,
+				"recordingName": null,
+				"remixerMbid": null,
+				"imgUrl": coverArt,
+				"label": label, 
+				"notes": null,
+			};
+		}
+		else if ( searchCategory == "recordings" ) {
+			let remixerMbid = null;
+			if ( item["relations"][0]["artist"]["type"] == "remixer" ) {
+				remixerMbid = item["relations"][0]["artist"]["id"];
+			}
+			addedItems = {
+				"artistMbid": item["artist-credit"][0]["artist"]["id"],
+				"artistName": item["artist-credit"][0]["artist"]["name"],
+				"releaseGroupMbid": item["release-group"]["id"],
+				"releaseGroupName": item["release-group"]["title"],
+				"recordingMbid": item["id"],
+				"recordingName": item["name"],
+				"releaseDate": item["first-release-date"],
+				"remixerMbid": remixerMbid,
+				"imgUrl": null,
+				"label": null,
+				"notes": null,
+			};
+		}
+		return newItemAdded = true
 	}
 
 </script>
@@ -169,24 +220,35 @@
         <ul>
             {#each mbData as item}
             <li>
-                <button 
-                    class="standard"
-					aria-label="add item"
-                    on:click|preventDefault={() => addItem(item)}
-                    on:click={() => dialog.close()}
-                >
-                    + add
-                </button>
+				{#if mode === "collection"}
+					<button 
+						class="standard"
+						aria-label="add item"
+						on:click|preventDefault={() => addCollectionItem(item)}
+						on:click={() => dialog.close()}
+					>
+						+ add
+					</button>
+				{:else if mode === "single"}
+					<button 
+						class="standard"
+						aria-label="add item"
+						on:click|preventDefault={() => addSingleItem(item)}
+						on:click={() => dialog.close()}
+					>
+						+ add
+					</button>
+				{/if}
 				<p>
-					{#if collectionType == "artists"}
+					{#if searchCategory == "artists"}
                     <span>{item["name"]}</span>
                     ({item["area"]["name"]}, 
                     {item["life-span"]["begin"]})
-                {:else if collectionType == "release_groups"}
+                {:else if searchCategory == "release_groups"}
                     <span >{item["title"]}</span>  by 
                     {item["artist-credit"][0]["artist"]["name"]} 
                     ({item["first-release-date"]})
-                {:else if collectionType == "recordings"}
+                {:else if searchCategory == "recordings"}
                     <span>{item["name"]}</span> by 
                     {item["artist-credit"][0]["artist"]["name"]} 
                     ({item["first-release-date"]})
@@ -202,7 +264,7 @@
         class="double-border-top"
         on:click={() => dialog.showModal()}
         on:click|preventDefault={mbSearch} 
-        disabled={!(collectionType)}
+        disabled={!(searchCategory)}
     >
         <div class="inner-border">
             {searchButtonText}

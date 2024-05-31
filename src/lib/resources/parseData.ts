@@ -71,17 +71,19 @@ Parse data for table upsert in format expected by collections_contents.
 export const populateCollectionContents = function ( collectionItems: object[], collectionId: string ) {
     let collectionContents: object[] = [];
 
-    for (const item in collectionItems) {
-        const thisItem = collectionItems[item] as collectionItem
+    for (const [index, item] of collectionItems.entries()) {
+        const thisItem = item as collectionItem
 
         collectionContents = [...collectionContents, {
             "collection_id": collectionId,
             "artist_mbid": thisItem["artistMbid"],
             "release_group_mbid": thisItem["releaseGroupMbid"],
             "recording_mbid": thisItem["recordingMbid"],
-            "item_position": thisItem["position"],
+            "item_position": index,
             "notes": thisItem["notes"],
         }];
+
+        console.log(collectionContents)
     }
     return collectionContents;
 }

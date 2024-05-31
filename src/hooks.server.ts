@@ -37,7 +37,7 @@ const supabase: Handle = async ({ event, resolve }) => {
       data: { session },
     } = await event.locals.supabase.auth.getSession()
     if (!session) {
-      return { session: null, user: null }
+      return { session: null, user: null}
     }
 
     const {

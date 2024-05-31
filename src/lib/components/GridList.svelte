@@ -17,22 +17,18 @@
     import "$lib/styles/media-grid-list.css"
     import "$lib/styles/metadata-formatting.css"
 
-    export let collectionContents: itemData[]
+    export let collectionContents: any
     export let collectionReturned: boolean
     export let collectionType: string
     export let layout: string
     export let mode: string
 
-    const format: itemData = {
+    const format: App.NestedObject = {
         "grid": ["media-grid", "media-grid-item"],
         "list": ["media-list", "media-list-item"]
     }
 
     let items = collectionContents
-
-    interface itemData {
-		[index: string]: number | string | string[] | itemData
-	}
 
     const flipDurationMs = 300;
 
@@ -41,15 +37,12 @@
     }
 
 	function handleFinalize( e: any ) {
-		const {items:newItems} = e.detail;
+		const { items: newItems } = e.detail;
         items = newItems
         collectionContents = newItems
-		for (const item of newItems) {
-            console.log(item.id, item["release_groups"]["release_group_name"])
-		}
 	}
 
-    function updateIds( collectionContents: itemData[] ) {
+    function updateIds( collectionContents: any ) {
         for (const [index, item] of collectionContents.entries()) {
 			item.id = index + 1
             console.log(item.id, item["release_groups"]["release_group_name"])
@@ -58,7 +51,7 @@
     }
 
     // delete item from collection editor
-	function deleteItem( item: itemData ) {
+	function deleteItem( item: any ) {
 		items = items.filter(i => i != item);
 		for (const i of items) {
 			i["id"] = items.indexOf(i) + 1;

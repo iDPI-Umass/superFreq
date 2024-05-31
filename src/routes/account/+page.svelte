@@ -2,12 +2,15 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
+	import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte';
 
 	export let data;
 	export let form;
 
 	let { session, supabase, profile } = data;
 	$: ({ session, supabase, profile } = data);
+
+	console.log( session )
 
 	let profileForm: HTMLFormElement
 	let loading = false
@@ -17,71 +20,14 @@
 	let website: string = profile?.website ?? ''
 	let avatarUrl: string = profile?.avatar_url ?? ''
 
-
-	/*
-	Functions to call MusicBrainz and Cover Art Archive databases
-	*/
-
-	//headers for fetch request
-	const init = {
-		method: "GET"
-	};
-
-	// search MusicBrainz using form info
-	let mbData = "";
-	let query = "";
-	let searchComplete: boolean;
-	async function mbSearch() {
-		let apiString = "https://musicbrainz.org/ws/2/";
-		apiString = apiString.concat("release-group");
-        const endpoint = new URL (apiString);
-            
-		endpoint.searchParams.set("fmt", "json");
-        endpoint.searchParams.set("query", `${query}`)
-		endpoint.searchParams.set("limit", "10");
-
-        const res = await fetch(endpoint);
-        const searchResults = await res.json();
-		mbData = searchResults["release-groups"];
-
-		searchComplete =  true;
-	
-		for ( const result of mbData ) {
-			const mbid = result["id"];
-			const { coverArtUrl, status} = await getCoverArt ( mbid );
-			if (status != 404){
-				result["coverArtUrl"] = coverArtUrl;
-			}
-		}
-
-		return {
-			mbData, searchComplete
-		}
-    };
-
-	// API call to Cover Art Archive using releaseMbid returned by getLabel()
-	let gotImage;
-	async function getCoverArt ( release_group_mbid ) {
-		const endpoint = `http://coverartarchive.org/release-group/${release_group_mbid}/front`;
-		const res = await fetch(endpoint);
-		const coverArtUrl = await res["url"];
-		gotImage = await coverArtUrl;
-
-		const status = res["status"];
-
-		return  { coverArtUrl, status };
-	}
+	let avatarItem: any
+	let newItemAdded: boolean
 
 	// adds item from MusicBrainz search results to collection editor
-	let itemAdded: boolean;
-	async function addItem(item) {
-		avatarUrl = item["coverArtUrl"];
-		itemAdded = true;
-		return itemAdded
-	}
 
 	const handleSubmit: SubmitFunction = () => {
 		loading = true
+		console.log(avatarItem)
 		return async ({ result }) => {
 			loading = false
 		}
@@ -124,11 +70,14 @@
 
 		<div class="form-item">
 			<label for="avatarUrl">avatarUrl</label>
-			<input id="avatarUrl" name="avatarUrl" type="url" value={form?.avatarUrl ?? avatarUrl} />
+			<input id="avatarUrl" name="avatarUrl" type="url" value={form?.avatarUrl ?? (avatarItem?.imgUrl ?? avatarUrl)} />
 		</div>
 
-		{#if avatarUrl}
-		<img src={avatarUrl} />
+		<!-- add alt text and change column in postgres -->
+		{#if avatarUrl && !newItemAdded}
+			<img src={avatarUrl} alt="user avatar"/>
+		{:else if avatarItem && newItemAdded}
+			<img src={avatarItem.imgUrl} alt="user avatar"/>
 		{/if}
 
 		<div class="form-item">
@@ -152,46 +101,15 @@
 <!--
 	Form to search for avatar url
 -->
-<form>
-	<p>Pick an album cover as your avatar. ALBUM IMAGES DON'T DISPLAY IN SEARCH RESULTS (YET)</p>
-	<input type="search" name="query" bind:value={query} placeholder="Search for an album, EP, single, etc."/>
-	<button on:click|preventDefault={mbSearch}>search</button>
-</form>
-
-<!--
-	Table to display search results
--->
-{#if searchComplete}
-<table>
-	<caption>search results</caption>
-	<thead>
-		<tr>
-		  <th class="w-[100px]"></th>
-			<th>Album</th>
-			<th>Artist</th>
-			<th>Cover</th>
-		</tr>
-	  </thead>
-	  <tbody>
-		{#each mbData as item}
-			<tr>
-				<td>
-					<button on:click|preventDefault={() => addItem(item)}>select</button>
-				</td>
-				{#await gotImage}
-					<td>...waiting</td>
-				{:then coverArtUrl}
-					<td >{item["title"]}</td>
-					<td>{item["artist-credit"][0]["artist"]["name"]}</td>
-					<td><img src={item["coverArtUrl"]} alt="{item["title"]} by {item["artist-credit"][0]["artist"]["name"]}" /></td>
-				{:catch error}
-					<td style="color: red">{error.message}</td>
-				{/await}
-		</tr>
-		{/each}
-		</tbody>
-	</table>
-{/if}
+<MusicBrainzSearch
+	collectionType="release_groups"
+	searchButtonText="search"
+	searchPlaceholder="enter album name"
+	bind:addedItems={avatarItem}
+	bind:newItemAdded={newItemAdded}
+	mode="single"
+>
+</MusicBrainzSearch>
 
 <style>
 	.account-form {

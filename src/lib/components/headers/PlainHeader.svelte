@@ -1,12 +1,13 @@
 <script lang="ts">
   import { DropdownMenu, Avatar } from "bits-ui";
   import ChevronDown from 'lucide-svelte/icons/chevron-down';
-  import logo from "$lib/assets/images/logo/freq-logo-dark.png";
+  import logo from "$lib/assets/images/logo/freq-logo-dark.svg";
 
   import hats from '$lib/assets/images/hats.jpg'
 
   // export let session
-    export let displayName = "bass"
+  export let displayName
+  export let avatarUrl
   //   //let open = false;
 
     let accountMenuItems = [
@@ -19,12 +20,12 @@
 
 <header>
   <a class="logo" href="/">
-    <img alt="Freq" src={logo}>
+    <img alt="Freq" src={logo} />
   </a>
   <nav>
     <DropdownMenu.Root>
       <DropdownMenu.Trigger>
-        <img src={hats} alt="bass's avatar" />
+        <img src={avatarUrl} alt="{displayName}'s avatar" />
         {displayName} 
         <ChevronDown></ChevronDown>
       </DropdownMenu.Trigger>
@@ -58,7 +59,8 @@
   }
   img {
       position: sticky;
-      max-height: 46px; 
+      height: 46px; 
+      width: auto;
       margin: auto 1vw;
   }
   nav { 

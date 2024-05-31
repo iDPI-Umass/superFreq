@@ -1,5 +1,5 @@
 /*
-Select all that are open or public
+Select all collections that are open or public
 */
 
 export const selectAllOpenPublicCollections = async function ({ locals: { supabase }}) {
