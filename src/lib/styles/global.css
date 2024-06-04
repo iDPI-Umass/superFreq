@@ -13,6 +13,12 @@ body {
 	font-family: 'Roboto';
 }
 
+.panel {
+	width: var(--freq-max-width-primary);
+	margin: 3vh 3vw;
+	border: var(--freq-border-panel);
+}
+
 hr {
 	display: block;
 	height: 1px;
@@ -148,7 +154,7 @@ button a {
 /* 
 Styles to create button with second top border, intended for tag format
 
-<button class="double-border-top>
+<button class="double-border-top">
 	<div class="inner-border">
 		text
 	</div>
@@ -204,17 +210,59 @@ button.double-border-top:active > *   {
 //
 */
 
+form.vertical {
+	display: flex;
+	flex-direction: column;
+	margin: var(--freq-height-spacer) var(--freq-width-spacer);
+}
+
+form.horizontal {
+	display: flex;
+	flex-direction: row;
+	gap: var(--freq-width-spacer);
+	margin: var(--freq-height-spacer) var(--freq-width-spacer);
+}
+
+form.signout {
+	margin: var(--freq-height-spacer) var(--freq-width-spacer);
+}
+
+label.text-label {
+	text-transform: uppercase;
+}
+
+input {
+	width: auto;
+}
+
+form.vertical input {
+	margin-bottom: var(--freq-height-spacer);
+}
+
+.form-column {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+.form-row {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+}
+
 label {
 	font-size: var(--freq-font-size-x-small);
 	color: var(--freq-color-text-muted);
 }
 
 input {
-	margin: var(--freq-spacing-x-small) 0;
+	margin: var(--freq-height-spacer-quarter) 0;
 }
 
 input.text {
 	height: var(--freq-input-height-x-small);
+	margin-bottom: var(--freq-height-spacer);
 }
 
 input.radio {
@@ -253,7 +301,8 @@ input.data {
 
 textarea {
 	resize: none;
-	margin: var(--freq-spacing-x-small) 0;
+	margin: var(--freq-height-spacer-quarter) 0 var(--freq-height-spacer) 0;
+	font-family: var(--freq-font-family);
 }
 
 fieldset {
@@ -261,7 +310,7 @@ fieldset {
 	flex-direction: column;
 	width: auto;
 	border: none;
-	margin: var(--freq-width-spacer-half) auto auto 0;
+	margin: var(--freq-height-spacer) auto auto 0;
 	padding-left: 0;
 }
 
@@ -306,7 +355,7 @@ fieldset ul li label {
 	display: flex;
 	flex-direction: row;
 	color: var( --freq-color-text-muted);
-	background: var(--freq-color-panel-background);
+	background: transparent;
 	font-family: 'Krona_One', monospace;
 	border: none;
 	align-items: center;
@@ -326,6 +375,8 @@ fieldset ul li label {
 }
 
 [data-menu-content] {
+	display: flex;
+	flex-direction: column;
 	color: var( --freq-color-text-muted);
 	background: var(--freq-color-panel-background);
 	font-family: 'Krona_One', monospace;

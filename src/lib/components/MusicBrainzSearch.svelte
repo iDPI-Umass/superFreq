@@ -291,7 +291,7 @@
         align-items: center;
     }
     .search-bar button{
-        width: 140px;
+        width: auto;
     }
     dialog {
         text-decoration: none;

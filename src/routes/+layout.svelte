@@ -16,14 +16,28 @@
 	import { writable } from 'svelte/store';
 
 	import { Header } from '$lib/components/headers/Header';
-	import PlainHeader from "$lib/components/headers/PlainHeader.svelte";
+	import PlainHeader from "$lib/components/headers/PlainHeader/page.svelte";
 	import Footer from '$lib/components/headers/footer/index.svelte';
+	
 
 	export let data;
 	$: ({ supabase, session, profile } = data)
 
+
 	let displayName: string
 	let avatarUrl: string
+	$: displayName
+	$: avatarUrl
+
+	let profileUpdatedAt: Date
+
+	if (typeof window !== 'undefined') {   
+		const profileStorage = localStorage.getItem("profile") as string
+		const profileObject = JSON.parse(profileStorage)
+
+		displayName = profileObject.displayName
+		avatarUrl = profileObject.avatarUrl
+	}
 
 	onMount(() => {
 		const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
@@ -54,12 +68,12 @@
 /> -->
 
 <PlainHeader
-displayName={displayName}
-avatarUrl={avatarUrl}
+	displayName={displayName}
+	avatarUrl={avatarUrl}
 ></PlainHeader>
 
 <div class="double-border-full-vw"></div>
-<body>
+<body >
 		<slot />
 </body>
 <!-- <Footer /> -->

@@ -6,7 +6,6 @@ let updatedAt = "";
 let userProfile;
 
 export const load: PageServerLoad = async ({ locals: { supabase, session } }) => {
-  // const session = await safeGetSession()
 
   if (!session) {
     throw redirect(303, '/')
@@ -14,7 +13,7 @@ export const load: PageServerLoad = async ({ locals: { supabase, session } }) =>
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select(`username, display_name, website, avatar_url, changelog, updated_at`)
+    .select(`username, display_name, website, avatar_url, avatar_mbid, changelog, about, updated_at`)
     .eq('id', session.user.id)
     .single()
 
@@ -24,8 +23,10 @@ export const load: PageServerLoad = async ({ locals: { supabase, session } }) =>
     changelog[updatedAt] = {
       "user_name": profile["username"],
       "display_name": profile["display_name"],
-      "website": profile["webiste"],
+      "website": profile["website"],
+      "avatar_mbid": profile["avatar_mbid"],
       "avatar_url": profile["avatar_url"],
+      "about": profile["about"]
     }
 
     userProfile = profile;
@@ -39,58 +40,21 @@ export const actions: Actions = {
     const displayName = formData.get('displayName') as string
     const username = formData.get('username') as string
     const website = formData.get('website') as string
+    const avatarMbid = formData.get('avatarMbid') as string
     const avatarUrl = formData.get('avatarUrl') as string
+    const about = formData.get('about') as string
 
-    // let changelogData = {
-    //   "display_name": displayName,
-    //   "username": username,
-    //   "website": website,
-    //   "avatar_url": avatarUrl
-    // }
-
-    // // let changelogEntry = JSON.stringify(changelogData);
-    // let updatedDate = JSON.stringify(updatedAt);
-
-    // let changelogEntry = {
-    //   updatedAt: changelogData
-    // };
-
-    // changelogEntry = JSON.stringify(changelogEntry);
-
-    // changelog = {
-    //   changelogEntry, ...changelog
-    // };
-
-    // const { data, status, error } = await supabase.from('profiles').update({
-    //   username: username,
-    //   display_name: displayName,
-    //   website: website,
-    //   avatar_url: avatarUrl,
-    //   changelog: {}
-    // }).eq("id", session?.user.id)
-    // .select();
-  
-    // if (error) {
-    //   return fail(500, {
-    //     displayName,
-    //     username: "this username is already taken, try a new one",
-    //     website,
-    //     avatarUrl,
-    //   })
-    // }
-
-    // username = data["username"];
-    // displayName = data["display_name"];
-    // website = data["website"];
-    // avatarUrl = data["avatar_url"];
+    console.log(formData)
 
     const { error, data } = await supabase.from('profiles').update({
       id: session?.user.id,
       display_name: displayName,
       username: username,
       website: website,
+      avatar_mbid: avatarMbid,
       avatar_url: avatarUrl,
       updated_at: new Date(),
+      about: about,
       changelog
     })
     .eq('id', session.user.id)
@@ -98,25 +62,17 @@ export const actions: Actions = {
 
     // console.log(error)
 
-    if (error) {
-      const { code, message } = error
-      return fail(code, message)
-    }
-
-    const profileStorageItem = {
-      "display_name": displayName,
-      "username": username,
-      "avatar_url": avatarUrl
-    }
-
-    //localStorage.setItem("profile", JSON.stringify(profileStorageItem))
-    console.log(data, error)
+    // if (error) {
+    //   const { code, message } = error
+    //   return fail(code, message)
+    // }
 
     return {
       displayName,
       username,
       website,
-      avatarUrl,  
+      avatarUrl,
+      about,  
       success: true
     }
 
@@ -125,7 +81,6 @@ export const actions: Actions = {
   signout: async ({ locals: { supabase, session } }) => {
     if ( session ) {
       await supabase.auth.signOut()
-      localStorage.removeItem("profile")
       throw redirect(303, '/')
     }
   },

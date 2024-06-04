@@ -89,7 +89,7 @@
 <div class="border-full-vw"></div>
 
 <style>
-    :root {
+    .stats-box {
         --grid: url('$lib/assets/images/repeat-grid-2.svg')
     }
     .profile-info {

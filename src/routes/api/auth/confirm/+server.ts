@@ -17,6 +17,8 @@ export const GET: RequestHandler = async ({ url, locals: { supabase, session } }
       .select()
       .eq("id", id)
 
+      console.log(session, id)
+
       if ( !error && status === 200 ) {
         redirectTo.pathname = '/api/auth/check'
       }
