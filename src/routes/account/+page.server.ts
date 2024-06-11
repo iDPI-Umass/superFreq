@@ -57,7 +57,7 @@ export const actions: Actions = {
       about: about,
       changelog
     })
-    .eq('id', session.user.id)
+    .eq('id', session?.user.id)
     .select()
 
     // console.log(error)

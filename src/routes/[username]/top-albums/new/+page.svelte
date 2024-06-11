@@ -6,6 +6,7 @@
 
 <script lang="ts">
     import { goto } from '$app/navigation'
+    import { username } from '$lib/resources/localStorage.ts'
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import GridList from '$lib/components/GridList.svelte'
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
@@ -29,25 +30,33 @@
 
     const { supabase } = data
 
+    // const { username } =  getLocalProfile(localStorage.getItem('profile') as string)
+
 	/* 
 	Let's declare some variables for...
 	*/
 
 	// collections_info
-	let collectionId = ""
-	let collectionTitle = ""
-	let collectionType = ""
-	let collectionStatus = ""
+	let collectionId: string
+	let collectionTitle: string = `${username}'s' top albums`
+	let collectionType = "release_groups"
+	let collectionStatus = "public"
 	let descriptionText = ""
 
 	// collections_contents
-	interface collectionObject {
+	interface collectionItemObject {
 		[index: string]: string
 	}
 
 	let collectionItems: object[] = []
 	$: collectionItems
 	let itemAdded = false
+    let collectionItemCount = collectionItems.length
+    
+    // limit size of collection to 8, in order to profile UI
+    function limitCollection() {
+
+    }
 	
 	// UI
 	const buttonTextLookup: {[index: string]: string} = {
@@ -127,6 +136,12 @@
 			"user_role": "owner",
 		}
 
+		// log that collectionId in user's profile
+		await supabase
+			.from('profiles')
+			.update({'top_albums_collection_id': collectionId})
+			.eq('id', id)
+
 		await insertCollectionSocial( { socialInfo, locals: {supabase} } );
 		await insertCollectionUpdateRecord({ id, collectionId, locals: { supabase }});
 
@@ -137,7 +152,7 @@
         console.log("button clicked")
 
 		for ( const collectionItem of collectionItems ) {
-			const thisItem = collectionItem as collectionObject
+			const thisItem = collectionItem as collectionItemObject
 			thisItem["item_position"] = thisItem["id"];
 			delete thisItem["id"];
 		}
@@ -156,10 +171,10 @@
 		const res = await insertCollectionContents( { collectionContents, locals: { supabase }});
 
         if ( res.status === 201 ) {
-            goto(`/collection/${collectionId}`)
+            goto(`/${username}`)
         }
         else {
-            goto(`/collections`)
+            goto(`/`)
         }
 
 	}
@@ -167,126 +182,39 @@
 
 <div class="panel">
     <PanelHeader>
-        new collection
+        {username}'s top albums
     </PanelHeader>
     <form class="horizontal">
-        <div class="form-column">
-            <label 
-                class="text-label" 
-                for="collection-title"
-            >
-                collection name
-            </label>
-            <input 
-                class="text" 
-                type="text" 
-                name="collection-title" 
-                id="collection-title" 
-                bind:value={collectionTitle} 
-                required 
-            />
-            <fieldset>
-                <legend>Type of collection</legend>
-                <ul>
-                    <li>
-                        <input 
-                            class="radio" 
-                            type="radio" 
-                            name="collection-type" 
-                            id="artists" 
-                            value="artists" 
-                            bind:group={collectionType} 
-                        />
-                        <label for="artists">artists</label>
-                    </li>
-                    <li>
-                        <input 
-                            class="radio" 
-                            type="radio" 
-                            name="collection-type" id="albums" 
-                            value="release_groups" 
-                            bind:group={collectionType} 
-                        />
-                        <label for="albums">albums</label>
-                    </li>
-                    <li>
-                        <input 
-                            class="radio" 
-                            type="radio" 
-                            name="type" 
-                            id="tracks" 
-                            value="recordings" 
-                            bind:group={collectionType} 
-                        />
-                        <label for="tracks">tracks</label>
-                    </li>
-                </ul>
-            </fieldset>
-            <fieldset>
-                <legend>Status of collection</legend>
-                <ul>
-                    <li>
-                        <input 
-                            class="radio" 
-                            type="radio" 
-                            name="status" 
-                            id="open" 
-                            value="open" 
-                            bind:group={collectionStatus} 
-                        />
-                        <label for="open">open</label>
-                    </li>
-                    <li>
-                        <input 
-                            class="radio" 
-                            type="radio" 
-                            name="status" 
-                            id="public" 
-                            value="public" 
-                            bind:group={collectionStatus} 
-                        />
-                        <label for="public">public</label>
-                    </li>
-                    <li>
-                        <input 
-                            class="radio" 
-                            type="radio" 
-                            name="status" 
-                            id="private" 
-                            value="private" 
-                            bind:group={collectionStatus} 
-                        />
-                        <label for="private">private</label>
-                    </li>
-                </ul>
-            </fieldset>
-        </div>
-        <div class="form-column">
-            <label 
-                class="text-label" 
-                for="description"
-            >
-                Collection Description
-            </label>
-            <textarea
-                id="description"
-                name="description"
-                rows="10"
-                cols="1"
-                spellcheck=true 
-                required
-            ></textarea>
-            <button 
-                class="double-border-top" 
-                type="submit"
-                on:click|preventDefault={submitCollectionContents}
-                disabled={!(collectionStatus && collectionTitle)}
-            >
-                <div class="inner-border">
-                    submit
-                </div>
-            </button>
-        </div>
+        <input 
+            class="text" 
+            type="hidden" 
+            name="collection-title" 
+            id="collection-title" 
+            bind:value={collectionTitle}
+        />
+        <input 
+            class="text" 
+            type="hidden" 
+            name="collection-type" 
+            id="collection-type" 
+            bind:value={collectionType}
+        />
+        <input 
+            class="text" 
+            type="hidden" 
+            name="status" 
+            id="status" 
+            bind:value={collectionStatus}
+        />
+        <button 
+            class="double-border-top" 
+            type="submit"
+            on:click|preventDefault={submitCollectionContents}
+        >
+            <div class="inner-border">             
+                submit
+            </div>
+        </button>
     </form>
     <div class="search-bar">
 		<MusicBrainzSearch 
@@ -296,6 +224,7 @@
 			searchButtonText={`add ${buttonTextLookup[collectionType]}`}
 			searchPlaceholder={placeholderText}
             mode="collection"
+            limit={8}
 		></MusicBrainzSearch>
     </div>
     {#key collectionItems.length}

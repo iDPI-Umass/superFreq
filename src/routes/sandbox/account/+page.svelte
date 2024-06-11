@@ -1,7 +1,22 @@
 <script lang="ts">
+    import { goto } from '$app/navigation'
+    import { username } from '$lib/resources/localStorage'
     import Settings from 'lucide-svelte/icons/settings'
     // import repeatGrid from '../lib/assets/images/repeat-grid-2.svg'
+    import PanelHeader from '$lib/components/PanelHeader.svelte'
     import GridList from "$lib/components/GridList.svelte"
+
+    export let data
+    $: data
+
+    let topAlbums = data.collectionContents
+    let topAlbumsReturned: boolean
+    let topAlbumsExists = false
+    if ( topAlbums && topAlbums.length != 0 ) {
+        // topAlbumsReturned = true
+        topAlbumsExists = true
+    }
+    
 </script>
 
 <div class="profile-info">
@@ -88,10 +103,32 @@
 </div>
 <div class="border-full-vw"></div>
 
+<div class="panel">
+    <PanelHeader>
+        top albums
+    </PanelHeader>
+    <GridList
+        collectionContents={topAlbums}
+        collectionReturned={topAlbumsReturned}
+        collectionType="release_groups"
+        layout="grid"
+        mode="view"
+    >
+    </GridList>
+
+    {#if !topAlbumsExists}
+    <div class="placeholder">
+        <button class="double-border-top" on:click|preventDefault={() => goto(`./${username}/top-albums`)}>
+            <div class="inner-border">
+                choose your top albums
+            </div>
+        </button>
+    </div>
+    {/if}
+
+</div>
+
 <style>
-    .stats-box {
-        --grid: url('$lib/assets/images/repeat-grid-2.svg')
-    }
     .profile-info {
         display: flex;
         flex-direction: row;
@@ -159,7 +196,7 @@
         flex-direction: row;
         margin: var(--freq-spacing-x-large) var(--freq-spacing-large);
         padding: var(--freq-spacing-medium);
-        background: var(--grid) 0% 0% no-repeat padding-box;
+        background: var(--freq-grid-light-background);
         gap: var(--freq-spacer-gap);
         align-items: center;
     }
@@ -179,14 +216,15 @@
         background: var(--freq-color-panel-background); 
         padding: 0px 10px;
     }
-    .profile-module {
+    .placeholder {
         display: flex;
-        flex-direction: column;
-        border: var(--freq-border-panel);
+        background: var(--freq-grid-light-background);
+        align-items: center;
+        justify-content: center;
+        height: 100px;
     }
-    .profile-module-header {
-        margin-top: 3px;
-        border-top: var(--freq-border-panel);
-        border-bottom: var(--freq-border-panel);
+    .placeholder p {
+        background-color: var(--freq-color-panel-background);
+        padding: var(--freq-height-spacer-half) var(--freq-width-spacer-half);
     }
 </style>

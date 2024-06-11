@@ -155,6 +155,7 @@
 				value={form?.avatarMbid ?? (avatarItem?.releaseGroupMbid ?? avatarMbid)} 
 			/>
 		</div>
+	</form>
 		<div class="form-column">
 			<label 
 				class="text-label" 
@@ -181,7 +182,7 @@
 				<img src={avatarItem.imgUrl} alt="user avatar"/>
 			{/if}
 		</div>
-	</form>
+
 
 	{#if form?.success}
 		<p>update submitted</p>

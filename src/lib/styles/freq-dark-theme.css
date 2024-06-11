@@ -384,6 +384,7 @@
   --freq-font-serif: Georgia, 'Times New Roman', serif;
 
   /* Font sizes */
+  --freq-font-size-3x-small: 0.5rem; /* 8px */
   --freq-font-size-2x-small: 0.625rem; /* 10px */
   --freq-font-size-x-small: 0.75rem; /* 12px */
   --freq-font-size-small: 0.875rem; /* 14px */

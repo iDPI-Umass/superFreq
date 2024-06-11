@@ -223,6 +223,13 @@ form.horizontal {
 	margin: var(--freq-height-spacer) var(--freq-width-spacer);
 }
 
+form.search {
+	display: flex;
+	flex-direction: row;
+	margin: var(--freq-height-spacer) var(--freq-width-spacer);
+	align-items: center;
+}
+
 form.signout {
 	margin: var(--freq-height-spacer) var(--freq-width-spacer);
 }

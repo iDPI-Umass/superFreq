@@ -1,14 +1,17 @@
 <script lang="ts">
+	import { onMount } from 'svelte'
+	import ListModal from '$lib/components/ListModal.svelte'
     import { categoriesTable } from '$lib/resources/parse-data/categoriesTable.ts'
 
-	export let searchCategory: string //expects "albums", "release_groups", "recordings", or "labels"
+	export let searchCategory: string // "albums" | "release_groups" | "recordings" | "labels"
     export let searchButtonText: string
     export let searchPlaceholder: string
     export let addedItems: any
     export let newItemAdded: boolean
-	export let mode: string //expects "single" or "collection"
+	export let mode: string // "single" | "collection"
+	export let limit: number | null = null
 
-    let dialog: any
+	let showModal = false
 
     /*
 	Functions to call MusicBrainz database and parse relevant data.
@@ -40,6 +43,7 @@
 		mbData = searchResults[mbObjectKey]
 		
 		searchComplete =  true
+		showModal = true
 		return {
 			mbData, searchComplete
 		}
@@ -49,21 +53,22 @@
 	async function getLabel( item: any ) {
 		const releaseGroupMbid = item["mbid"];
 		const releaseDate = item["releaseDate"];
+		let labelName: string | null = null
+		let labelMbid: string | null = null
 		const endpoint = `https://musicbrainz.org/ws/2/release?release-group=${releaseGroupMbid}&inc=labels&fmt=json`;
 		const res = await fetch (endpoint);
 		let releases = await res.json();
 		releases = releases["releases"];
 
+		console.log(releases)
+
         for ( const release of releases ) {
 			if ( releaseDate == release["date"] ) {
-				const releaseMbid = release["id"];
-				const label = release["label-info"][0]["label"]["name"];
-				if (label == true && releaseMbid == true) {
-					return { releaseMbid, label };
+				if ( release["label-info"].length > 0 ) {
+					labelName = release["label-info"][0]["label"]["name"];
+					labelMbid = release["label-info"][0]["label"]["id"];
 				}
-				else {
-					return {releaseMbid: "", label: ""}
-				}
+				return { labelName, labelMbid }
 			}
 		}
 	}
@@ -81,6 +86,13 @@
 
     // adds item from MusicBrainz search results to collection editor
 	async function addCollectionItem( item: any ) {
+		if ( limit && addedItems.length === limit ) {
+			alert(`Only ${limit} items are allowed in this collection. Please delete an item before you add something new.`)
+			return addedItems
+		}
+
+		let labelName: string | null = null
+		let labelMbid: string | null = null
 		if ( searchCategory == "artists" ) {
 			addedItems = [...addedItems, {
 				"item_position": addedItems.length,
@@ -93,7 +105,8 @@
 				"recordingName": null,
 				"remixerMbid": null,
 				"imgUrl": null,
-				"label": null,
+				"labelName": null,
+				"labelMbid": null,
 				"notes": null,
 				"id": addedItems.length + 1
 			}];
@@ -103,7 +116,9 @@
 				mbid: item["id"],
 				releaseDate: item["first-release-date"] 
 			}
-			const { label } = await getLabel(releaseGroup);
+			const label = await getLabel(releaseGroup);
+			labelName = label?.labelName ?? null
+			labelMbid = label?.labelMbid ?? null
 			const coverArt = await getCoverArt( releaseGroup.mbid );
 			addedItems = [...addedItems, {
 				"item_position": addedItems.length,
@@ -116,16 +131,23 @@
 				"recordingName": null,
 				"remixerMbid": null,
 				"imgUrl": coverArt,
-				"label": label, 
+				"labelName": labelName, 
+				"labelMbid": labelMbid,
 				"notes": null,
 				"id": addedItems.length + 1
 			}];
 		}
 		else if ( searchCategory == "recordings" ) {
-			let remixerMbid = null;
+
+			let remixerMbid: string | null = null;
 			if ( item["relations"][0]["artist"]["type"] == "remixer" ) {
 				remixerMbid = item["relations"][0]["artist"]["id"];
 			}
+			const releaseGroup = item["release-group"]["id"];
+			const label = await getLabel(releaseGroup);
+			labelName = label?.labelName ?? null
+			labelMbid = label?.labelMbid ?? null
+			const coverArt = await getCoverArt( releaseGroup.mbid );
 			addedItems = [...addedItems, {
 				"item_position": addedItems.length,
 				"artistMbid": item["artist-credit"][0]["artist"]["id"],
@@ -136,17 +158,23 @@
 				"recordingName": item["name"],
 				"releaseDate": item["first-release-date"],
 				"remixerMbid": remixerMbid,
-				"imgUrl": null,
-				"label": null,
+				"imgUrl": coverArt,
+				"labelName": labelName, 
+				"labelMbid": labelMbid,
 				"notes": null,
 				"id": addedItems.length +1
 			}];
 		}
-		return newItemAdded = true
+		newItemAdded = true
+		query = ""
+		searchComplete = false
+		return {newItemAdded, showModal, query, searchComplete}
 	}
 
 	// adds single item from MusicBrainz search results to whatever needs it
 	async function addSingleItem( item: any ) {
+		let labelName: string | null = null
+		let labelMbid: string | null = null
 		if ( searchCategory == "artists" ) {
 			addedItems =  {
 				"artistMbid": item["id"],
@@ -167,7 +195,9 @@
 				mbid: item["id"],
 				releaseDate: item["first-release-date"] 
 			}
-			const { label } = await getLabel(releaseGroup);
+			const label = await getLabel(releaseGroup);
+			labelName = label?.labelName ?? null
+			labelMbid = label?.labelMbid ?? null
 			const coverArt = await getCoverArt( releaseGroup.mbid );
 			addedItems = {
 				"artistMbid": item["artist-credit"][0]["artist"]["id"],
@@ -179,15 +209,21 @@
 				"recordingName": null,
 				"remixerMbid": null,
 				"imgUrl": coverArt,
-				"label": label, 
+				"labelName": labelName, 
+				"labelMbid": labelMbid,
 				"notes": null,
 			};
 		}
 		else if ( searchCategory == "recordings" ) {
-			let remixerMbid = null;
+			let remixerMbid: string | null = null;
 			if ( item["relations"][0]["artist"]["type"] == "remixer" ) {
 				remixerMbid = item["relations"][0]["artist"]["id"];
 			}
+			const releaseGroup = item["release-group"]["id"];
+			const label = await getLabel(releaseGroup);
+			labelName = label?.labelName ?? null;
+			labelMbid = label?.labelMbid ?? null;
+			const coverArt = await getCoverArt( releaseGroup.mbid );
 			addedItems = {
 				"artistMbid": item["artist-credit"][0]["artist"]["id"],
 				"artistName": item["artist-credit"][0]["artist"]["name"],
@@ -197,89 +233,92 @@
 				"recordingName": item["name"],
 				"releaseDate": item["first-release-date"],
 				"remixerMbid": remixerMbid,
-				"imgUrl": null,
-				"label": null,
+				"imgUrl": coverArt,
+				"labelName": labelName, 
+				"labelMbid": labelMbid,
 				"notes": null,
 			};
 		}
-		return newItemAdded = true
+		newItemAdded = true
+		showModal = false
+		query = ""
+		searchComplete = false
+		return {newItemAdded, showModal, query, searchComplete}
 	}
-
 </script>
 
 <div class="search-bar">
-    <dialog
-		aria-label="search results dialog"
-		bind:this={dialog}
-	>
-		<div class="dialog-header">
-			<h1>Results for <span>{query}</span></h1>
-			<button aria-label="close dialog" on:click={() => dialog.close()}>x</button>
+	<ListModal bind:showModal>
+		<div slot="header-text">
+			Results for <span class="dialog-header">{query}</span>
 		</div>
-        {#if searchComplete}
-        <ul>
-            {#each mbData as item}
-            <li>
-				{#if mode === "collection"}
-					<button 
-						class="standard"
-						aria-label="add item"
-						on:click|preventDefault={() => addCollectionItem(item)}
-						on:click={() => dialog.close()}
-					>
-						+ add
-					</button>
-				{:else if mode === "single"}
-					<button 
-						class="standard"
-						aria-label="add item"
-						on:click|preventDefault={() => addSingleItem(item)}
-						on:click={() => dialog.close()}
-					>
-						+ add
-					</button>
-				{/if}
-				<p>
-					{#if searchCategory == "artists"}
-                    <span>{item["name"]}</span>
-                    ({item["area"]["name"]}, 
-                    {item["life-span"]["begin"]})
-                {:else if searchCategory == "release_groups"}
-                    <span >{item["title"]}</span>  by 
-                    {item["artist-credit"][0]["artist"]["name"]} 
-                    ({item["first-release-date"]})
-                {:else if searchCategory == "recordings"}
-                    <span>{item["name"]}</span> by 
-                    {item["artist-credit"][0]["artist"]["name"]} 
-                    ({item["first-release-date"]})
-                {/if}
-				</p>
-            </li>
-			<hr />
-            {/each}
-        </ul>
-        {/if}
-    </dialog>
-    <button 
-        class="double-border-top"
-        on:click={() => dialog.showModal()}
-        on:click|preventDefault={mbSearch} 
-        disabled={!(searchCategory)}
-    >
-        <div class="inner-border">
-            {searchButtonText}
-        </div>
-    </button>
-    <input
-        class="search" 
-        type="search" 
-        id="searchQuery" 
-        name="query" 
-        placeholder={searchPlaceholder}
-        aria-label={searchPlaceholder}
-        size="40" 
-        bind:value={query}
-    />
+		<div slot="list">
+			{#if searchComplete}
+				<ol>
+					{#each mbData as item}
+					<li>
+						{#if mode === "collection"}
+							<button 
+								class="standard"
+								aria-label="add item"
+								on:click|preventDefault={() => addCollectionItem(item)}
+								on:click={() => ( showModal = false )}
+							>
+								+ add
+							</button>
+						{:else if mode === "single"}
+							<button 
+								class="standard"
+								aria-label="add item"
+								on:click|preventDefault={() => addSingleItem(item)}
+								on:click={() => ( showModal = false )}
+							>
+								+ add
+							</button>
+						{/if}
+						<p>
+							{#if searchCategory == "artists"}
+							<span>{item["name"]}</span>
+							({item["area"]["name"]}, 
+							{item["life-span"]["begin"]})
+						{:else if searchCategory == "release_groups"}
+							<span >{item["title"]}</span>  by 
+							{item["artist-credit"][0]["artist"]["name"]} 
+							({item["first-release-date"]})
+						{:else if searchCategory == "recordings"}
+							<span>{item["name"]}</span> by 
+							{item["artist-credit"][0]["artist"]["name"]} 
+							({item["first-release-date"]})
+						{/if}
+						</p>
+					</li>
+					<hr />
+					{/each}
+				</ol>
+			{/if}
+		</div>
+	</ListModal>
+	<form class="search">
+		<button 
+			class="double-border-top"
+			on:click={mbSearch} 
+			disabled={!(searchCategory)}
+		>
+			<div class="inner-border">
+				{searchButtonText}
+			</div>
+		</button>
+		<input
+			class="search" 
+			type="search" 
+			id="searchQuery" 
+			name="query" 
+			placeholder={searchPlaceholder}
+			aria-label={searchPlaceholder}
+			size="40" 
+			bind:value={query}
+		/>
+	</form>
 </div>
 
 <style>
@@ -293,34 +332,15 @@
     .search-bar button{
         width: auto;
     }
-    dialog {
-        text-decoration: none;
-    }
-	.dialog-header {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: space-between;
-	}
-	.dialog-header h1 {
-		font-size: var(--freq-font-size-x-small);
-	}
-	.dialog-header h1 span {
+	span.dialog-header {
 		text-transform: uppercase;
-	}
-	.dialog-header button {
-		width: fit-content;
-		text-transform: uppercase;
-		padding: var(--freq-spacing-2x-small) var(--freq-spacing-x-small);
-		font-weight: var(--freq-font-weight-bold);
-		text-align: center;
 	}
 	button.standard {
 		width: 60px;
 		padding-left: 2px;
 		padding-right: 2px;
 	}
-    ul {
+    ol {
 		padding: 0;
         list-style: none;
 		font-size: var(--freq-font-size-small);

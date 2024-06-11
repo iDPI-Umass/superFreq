@@ -26,8 +26,8 @@
 
 	let displayName: string
 	let avatarUrl: string
-	$: displayName
-	$: avatarUrl
+	let username: string
+	$: displayName, avatarUrl, username
 
 	let profileUpdatedAt: Date
 
@@ -37,6 +37,7 @@
 
 		displayName = profileObject.displayName
 		avatarUrl = profileObject.avatarUrl
+		username = profileObject.username
 	}
 
 	onMount(() => {
@@ -70,6 +71,7 @@
 <PlainHeader
 	displayName={displayName}
 	avatarUrl={avatarUrl}
+	username={username}
 ></PlainHeader>
 
 <div class="double-border-full-vw"></div>

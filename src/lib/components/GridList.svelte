@@ -1,12 +1,5 @@
 <!-- 
     Component for switchable grid/list collection builder and view. Modes "new" and "edit" enable drag-and-drop functionality. The "svelte-dnd-action" package has keyboard interaction functionality and ARIA labels have been added to ensure clarity for screen reader users.
-
-    Expects props:
-    -- colllectionContents: array of objects
-    -- collectionReturned: boolean
-    -- collectionType ("arists", "release_groups", "recordings", or "labels")
-    -- layout ("grid" or "list")
-    -- mode ("view" or "edit")
 -->
 
 <script lang="ts">
@@ -19,10 +12,10 @@
 
     export let collectionContents: any
     export let collectionReturned: boolean
-    export let collectionType: string
-    export let layout: string
-    export let mode: string
-
+    export let collectionType: string // "artists" | "release_groups" | "recordings" | "labels"
+    export let layout: string // "grid" | "list"
+    export let mode: string //"view" | "edit"
+    
     const format: App.NestedObject = {
         "grid": ["media-grid", "media-grid-item"],
         "list": ["media-list", "media-list-item"]

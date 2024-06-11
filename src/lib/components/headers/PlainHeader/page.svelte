@@ -45,8 +45,7 @@
   
 <style>
   .grid-background {
-    --grid: url('$lib/assets/images/repeat-grid-9.svg');
-    background: var(--grid) 0% 0% repeat padding-box;
+    background: var(--freq-grid-dark-background);
   }
   header {
     display: flex;

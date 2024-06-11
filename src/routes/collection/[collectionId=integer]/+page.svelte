@@ -50,16 +50,11 @@
             let { id, user_id, collection_id, user_role, follows_now, updated_at, changelog } = socialData[0];
 
             //create entry in changelog archiving data selected
-            const changelogLength = Object.keys(changelog["changelog"]).length
-            const changelogEntryId = JSON.stringify(changelogLength + 1)
-
-            changelog["changelog"][changelogEntryId]
-             = {
-                "user_id": new String(user_id),
-                "collection_id": new String(collection_id),
-                "user_role": new String(user_role),
-                "follows_now": new Boolean(follows_now),
-                "updated_at": new Date(updated_at)
+            changelog[updated_at] = {
+                "user_id": user_id,
+                "collection_id": collection_id,
+                "user_role": user_role,
+                "follows_now": follows_now
             }
 
             //flip follows_now boolean
