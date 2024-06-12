@@ -1,25 +1,36 @@
 <script lang="ts">
-	import PencilLine from 'lucide-svelte/icons/pencil-line'
+    import '$lib/styles/posts.css'
+    import NowPlayingPost from '$lib/components/NowPlayingPost.svelte'
+
     import Heart from 'lucide-svelte/icons/heart'
     import Flag from 'lucide-svelte/icons/flag'
 
-    const postData = {
-        "postId": "123",
-        "userId": "userId",
-        "text": "this is a test post",
-        "mbid": "mbid",
-        "mbidType": "recording",
-        "status": "edited",
-        "createdAt": "June, 11 2024",
-        "updatedAt": "June 11, 2024",
-        "listenUrl": "url"
-    }
-
-    const userData = {
-        "userId": "userId",
-        "displayName": "sug",
-        "avatarUrl": "avatarUrl"
-    }
+    const replies = [
+        {
+            "userId": "123",
+            "displayName": "Cocteau Twin",
+            "avatarUrl": "https://ia800500.us.archive.org/0/items/mbid-103a0641-976c-4329-99c4-9ede6c5d2002/mbid-103a0641-976c-4329-99c4-9ede6c5d2002-11610509397.jpg",
+            "text": "oh wow I love this",
+            "createdAt": "June 11, 2024",
+            "status": "new"
+        },
+        {
+            "userId": "456",
+            "displayName": "Dr. Rock",
+            "avatarUrl": "https://ia800309.us.archive.org/25/items/mbid-78e29dd4-7648-45a7-a57b-608e22bf4645/mbid-78e29dd4-7648-45a7-a57b-608e22bf4645-5321084795.jpg",
+            "text": "do you know any other music like this?",
+            "createdAt": "June 11, 2024",
+            "status": "edited"
+        },
+        {
+            "userId": "789",
+            "displayName": "sug",
+            "avatarUrl": "https://ia801909.us.archive.org/7/items/mbid-39fe3778-362c-4762-89fc-c03235fd8117/mbid-39fe3778-362c-4762-89fc-c03235fd8117-4477004070.jpg",
+            "text": "check out her other stuff",
+            "createdAt": "June 11, 2024",
+            "status": "new"
+        }
+    ]
 
     const reactions = [
         {
@@ -29,82 +40,43 @@
     ]
 </script>
 
-<div class="panel">
-    <div class="post-metadata">
-        <div class="metadata-cluster">
-            <img src={userData.avatarUrl} alt={`${userData.displayName}'s avatar`} />
-            <span>
-                {userData.displayName}
-            </span>
-        </div>
-        <div class="metadata-cluster">
-            <span>
-                {postData.createdAt}
-            </span>
-            {#if postData.status === "edited"}
-                <span class="edited">
-                    edited
-                </span>
-            {/if}
-        </div>
-    </div>
-    <p>{postData.text}</p>
-    <div>
-        embed
-    </div>
-    <div class="reactions">
-        <div class="reaction-cluster">
-            {#each reactions as reaction}
-            <Heart size="20" color="var(--freq-color-text-muted)"></Heart>
-            <span>{reaction.count}</span>
-            {/each}
-        </div>
-        <Flag size="20" color="var(--freq-color-text-muted)"></Flag>
+<div class="post-panel">
+    <NowPlayingPost></NowPlayingPost>
+    <div class="comment-panel">    
+        {#each replies as reply}
+            <div class="comment">
+                <div class="comment-metadata">
+                    <div class="row-group-user-data">
+                        <img class="comment-avatar" src={reply.avatarUrl} alt={`${reply.displayName}'s avatar`} />
+                        <div class="row-group-column">
+                            <span class="comment-display-name">
+                                {reply.displayName}
+                            </span>
+                            <span class="comment-date">
+                                {reply.createdAt}
+                            </span>
+                        </div>
+
+                    </div>
+                    <div class="row-group">
+                        {#if reply.status === "edited"}
+                            <span class="status-badge">edited</span>
+                        {/if}
+                    </div>
+                </div>
+                <p class="comment-text">
+                    {reply.text}
+                </p>
+                <div class="comment-reaction-row">
+                    <div class="row-group">
+                        {#each reactions as reaction}
+                        <Heart size="16" color="var(--freq-color-text-muted)"></Heart>
+                        <span>{reaction.count}</span>
+                        {/each}
+                    </div>
+                    <Flag size="16" color="var(--freq-color-text-muted)"></Flag>
+                </div>
+            </div>
+        {/each}
     </div>
 </div>
-
-<style>
-    .panel {
-        max-width: calc( 0.5 * var(--freq-max-width-primary))
-    }
-    .post-metadata {
-        display: flex;
-        flex-direction: row;
-        border-bottom: var(--freq-border-panel);
-        padding: var(--freq-spacing-x-small);
-        justify-content: space-between;
-        align-items: center;
-    }
-    .metadata-cluster {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: var(--freq-inline-gap);
-        color: var(--freq-color-text-muted);
-        font-size: var(--freq-font-size-small);
-    }
-    .edited {
-        padding:  var(--freq-spacing-2x-small);
-        color: var(--freq-color-text-medium);
-        background-color: var(--freq-color-background-badge-alt);
-        font-size: var(--freq-font-size-x-small);
-        text-transform: lowercase;
-        letter-spacing: var(--freq-letter-spacing-loose);
-    }
-    .reactions {
-        display: flex;
-        flex-direction: row;
-        padding: var(--freq-spacing-x-small);
-        border-top: var(--freq-border-panel);
-        justify-content: space-between;
-        align-items: center;
-        color: var(--freq-color-text-muted);
-        font-size: var(--freq-font-size-small);
-    }
-    .reaction-cluster {
-        display: flex;
-        flex-direction: row;
-        gap: var(--freq-inline-gap);
-        align-items: center;
-    }
-</style>

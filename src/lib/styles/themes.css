@@ -13,10 +13,12 @@ html {
     --freq-color-text-muted: #9EACC8;
     --freq-color-text-menu: #7F90A2;
     --freq-color-text-medium: #b0c0e3;
+    --freq-color-text-medium-dark: #99a9ca;
     --freq-color-text-dark: #313751;
     --freq-color-link: #3C96FF;
     --freq-color-background-badge: #19191a;
-    --freq-color-background-badge-alt: #313751;
+    --freq-color-background-badge-medium: #28282a;
+    --freq-color-background-badge-light: #313751;
     --freq-color-badge: #313751;
     --freq-color-button-lens: #454C6C;
     --freq-color-button-lens-active: #7F90A2;
@@ -24,6 +26,8 @@ html {
     --freq-color-panel-background: #000000;
     --freq-color-grid-1: #313751;
     --freq-color-grid-2: #5a6490;
+    --freq-color-grid-3: #272b3f;
+    --freq-background-grid-fallback: #19191a;
 
     --freq-color-primary-text: #FFFFFF;
     --freq-color-active: #3C96FF;
@@ -102,6 +106,8 @@ html {
 
 /* Images */
 html {
+    --freq-image-thumbnail-3x-small: 30px;
+    --freq-image-thumbnail-2x-small: 35px;
     --freq-image-thumbnail-x-small: 50px;
     --freq-image-thumbnail-small: 75px;
     --freq-image-thumbnail-medium: 100px;
@@ -110,8 +116,10 @@ html {
 
 /* Background images */
 html {
-    --freq-grid-light: url('$lib/assets/images/repeat-grid-2.svg');
+    --freq-grid-light: url('$lib/assets/images/repeat-grid-light.svg');
     --freq-grid-light-background: var(--freq-grid-light) 0% 0% repeat;
-    --freq-grid-dark: url('$lib/assets/images/repeat-grid-9.svg');
+    --freq-grid-dark: url('$lib/assets/images/repeat-grid-dark.svg');
     --freq-grid-dark-background: var(--freq-grid-dark) 0% 0% repeat padding-box;
+    --freq-grid-extra-dark: url('$lib/assets/images/repeat-grid-extra-dark.svg');
+    --freq-grid-extra-dark-background: var(--freq-grid-extra-dark) 0% 0% repeat padding-box;
 }

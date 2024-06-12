@@ -19,12 +19,10 @@ body {
 	border: var(--freq-border-panel);
 }
 
-hr {
-	display: block;
-	height: 1px;
-	border: 100vw;
-	border-top: var(--freq-border-hr);
-	padding: 0;
+.panel-narrow {
+	width: calc( var(--freq-max-width-primary) * 0.5);
+	margin: 3vh 3vw;
+	border: var(--freq-border-panel);
 }
 
 .border-full-vw {
@@ -39,9 +37,16 @@ hr {
 	padding-top: 4px;
 }
 
+.double--border-panel {
+	width: 100vw;
+	border-top: var(--freq-border-panel);
+	border-bottom: var(--freq-border-panel);
+	padding-top: 4px;
+}
+
 /*
 //
-** Inline text styling
+** Text styling
 //	
 */
 

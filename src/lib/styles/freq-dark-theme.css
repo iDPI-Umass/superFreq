@@ -359,6 +359,7 @@
 
    --freq-grid-gap: 0.0625rem; /* 1px */
    --freq-inline-gap: 0.25rem; /* 4px */
+   --freq-inline-gap-double: calc( var(--freq-inline-gap) * 2 );
    --freq-spacer-gap: var(--freq-width-spacer);
    --freq-spacer-gap-half: calc( var(--freq-width-spacer) * 0.5 );
    --freq-spacer-gap-quarter: calc( var(--freq-width-spacer) * 0.25 );
