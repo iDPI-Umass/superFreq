@@ -4,6 +4,14 @@
     import Heart from 'lucide-svelte/icons/heart'
     import Flag from 'lucide-svelte/icons/flag'
     import Music from 'lucide-svelte/icons/music'
+    import Ellipsis from 'lucide-svelte/icons/ellipsis'
+    import PenLine from 'lucide-svelte/icons/pen-line'
+    import Trash2 from 'lucide-svelte/icons/trash-2'
+
+    import { Popover } from "bits-ui";
+    import { flyAndScale } from "$lib/utils/transitions.ts";
+
+    const sessionId = "userId"
 
     const postData = {
         "postId": "123",
@@ -21,7 +29,7 @@
 
     const userData = {
         "userId": "userId",
-        "displayName": "sug",
+        "displayName": "Sug",
         "avatarUrl": "https://ia801909.us.archive.org/7/items/mbid-39fe3778-362c-4762-89fc-c03235fd8117/mbid-39fe3778-362c-4762-89fc-c03235fd8117-4477004070.jpg"
     }
 
@@ -76,11 +84,30 @@
                     </span>
                 {/each}
             </div>
-            <div class="row-group-flag">
-                <Flag size="15" color="var(--freq-color-text-muted)"></Flag>
-                <span class="descriptor">
-                    report
-                </span>
+            <div class="row-group-icon-description">
+                {#if postData.userId == sessionId }
+                <Popover.Root>
+                    <Popover.Trigger>
+                        <Ellipsis size="16" color="var(--freq-color-text-muted)"></Ellipsis>
+                    </Popover.Trigger>
+                    <Popover.Content transition={flyAndScale}>
+                        <div class="row-group-icon-description">
+                            <PenLine size="16" color="var(--freq-color-text-muted)"></PenLine>
+                            <span class="descriptor">
+                                edit
+                            </span>
+                        </div>
+                        <div class="row-group-icon-description">
+                            <Trash2 size="16" color="var(--freq-color-text-muted)"></Trash2>
+                            <span class="descriptor">
+                                delete
+                            </span>
+                        </div>
+                    </Popover.Content>
+                </Popover.Root>
+                {:else}
+                    <Flag size="16" color="var(--freq-color-text-muted)"></Flag>
+                {/if}
             </div>
         </div>
     </div>
@@ -91,6 +118,7 @@
     .box {
         border: var(--freq-border-panel);
     }
+
     .double-border {
         border-top: var(--freq-border-panel);
         border-bottom: var(--freq-border-panel);

@@ -317,6 +317,11 @@ textarea {
 	font-family: var(--freq-font-family);
 }
 
+textarea:focus {
+	background: var(--freq-color-panel-light);
+	color: var(--freq-color-text-dark);
+}
+
 fieldset {
 	display: flex;
 	flex-direction: column;
@@ -328,7 +333,7 @@ fieldset {
 
 fieldset legend {
 	text-transform: uppercase;
-	color: var(--freq-color-text-muted);
+	color: var(--freq-color-panel-muted);
 	font-size: var(--freq-font-size-x-small);
 }
 
@@ -453,3 +458,78 @@ fieldset ul li label {
 [data-toolbar-item][data-state='on'] {
 	background: var(--freq-color-text);
 }
+
+/* Popover menu */
+
+[data-popover-trigger] {
+	display: flex;
+	align-items: center; 
+	padding: var(--freq-spacing-3x-small);
+	border: none;
+	background: transparent;
+}
+
+[data-popover-trigger]:hover, :focus {
+	background: var(--freq-color-button-lens);
+	color: var(--freq-color-text-dark);
+}
+
+[data-popover-trigger]:active {
+	scale: 98%;
+	background: var(--freq-color-button-lens-active);
+	color: var(--freq-color-text-dark);
+}
+
+[data-popover-content] {
+	display: flex;
+	flex-direction: column;
+	height: fit-content;
+	padding: var(--freq-spacing-small);
+	border: 1px solid var(--freq-color-border-panel);
+	border-radius: var(--freq-border-radius-small);
+	background: var(--freq-color-panel-background);
+	color: var( --freq-color-text-muted);
+	gap: var(--freq-height-spacer-gap-half);
+}
+
+[data-popover-content].reply {
+	width: 60%;
+}
+
+/* Collapsible  */
+
+[data-collapsible-trigger] {
+	display: flex;
+	align-items: center; 
+	padding: var(--freq-spacing-3x-small);
+	border: none;
+	background: transparent;
+}
+
+[data-collapsible-trigger]:hover, :focus {
+	background: var(--freq-color-button-lens);
+	color: var(--freq-color-text-dark);
+}
+
+[data-collapsible-trigger]:active {
+	scale: 98%;
+	background: var(--freq-color-button-lens-active);
+	color: var(--freq-color-text-dark);
+}
+
+[data-collapsible-content] {
+	display: flex;
+	flex-direction: column;
+	height: fit-content;
+	width: 100%;
+	padding: var(--freq-spacing-small);
+	border: 1px solid var(--freq-color-border-panel);
+	border-radius: var(--freq-border-radius-small);
+	background: var(--freq-color-panel-background);
+	color: var( --freq-color-text-muted);
+	gap: var(--freq-height-spacer-gap-half);
+}
+
+/* [data-collapsible-content] {
+	width: 60%;
+} */

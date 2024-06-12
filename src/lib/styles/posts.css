@@ -33,7 +33,7 @@
     display: flex;
     flex-direction: row;
     align-items: start;
-    gap: var(--freq-inline-gap);
+    gap: var(--freq-inline-gap-double);
     color: var(--freq-color-text-muted);
     font-size: var(--freq-font-size-small);
 }
@@ -47,7 +47,7 @@
     font-size: var(--freq-font-size-small);
 }
 
-.row-group-flag {
+.row-group-icon-description {
     display: flex;
     flex-direction: row;
     align-items: end;
@@ -81,7 +81,7 @@
 
 .comment-panel {
     margin-top: var(--freq-spacing-large);
-    margin-left: var(--freq-spacing-2x-large);
+    margin-left: var(--freq-spacing-x-large);
 }
 
 .comment {
@@ -121,6 +121,12 @@
     background: var(--freq-grid-extra-dark-background);
 }
 
+.reply-editor {
+    display: flex;
+    flex-direction: column;
+    border-top: none;
+}
+
 /* Inline styles */
 
 .post-text {
@@ -145,12 +151,12 @@
 .comment-display-name {
     font-size: var(--freq-font-size-small);
     color: var(--freq-color-text);
-    font-weight: var(--freq-font-weight-semi-bold);
+    font-weight: var(--freq-font-weight-regular);
 }
 
 .date {
     color: var(--freq-color-text-muted);
-    font-size: var(--freq-font-size-2x-small);
+    font-size: var(--freq-font-size-x-small);
     text-transform: uppercase;
     letter-spacing: var(--freq-letter-spacing-loose);
 }
@@ -164,7 +170,7 @@
 
 .descriptor {
     color: var(--freq-color-text-muted);
-    font-size: var(--freq-font-size-2x-small);
+    font-size: var(--freq-font-size-x-small);
     text-transform: capitalize;
 }
 

@@ -363,6 +363,9 @@
    --freq-spacer-gap: var(--freq-width-spacer);
    --freq-spacer-gap-half: calc( var(--freq-width-spacer) * 0.5 );
    --freq-spacer-gap-quarter: calc( var(--freq-width-spacer) * 0.25 );
+   --freq-height-spacer-gap: var(--freq-height-spacer);
+   --freq-height-spacer-gap-half: calc( var(--freq-height-spacer) * 0.5 );
+   --freq-height-spacer-gap-quarter: calc( var(--freq-height-spacer) * 0.25);
 
   /*
    * Transitions

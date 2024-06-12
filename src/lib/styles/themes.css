@@ -6,6 +6,7 @@ html {
     --freq-color-border-panel: #454C6C;
     --freq-color-panel-focus: #454C6C;
     --freq-border-panel: 1px solid #454C6C;
+    --freq-color-panel-light: #ebeef4;
     --freq-border-hr: 1px solid #9EACC8;
     --freq-color-border-hr: #9EACC8;
     --freq-color-primary: #9b40fc;
@@ -97,6 +98,8 @@ html {
     --freq-font-weight-bold: 700;
     --freq-font-weight-medium: 500;
     --freq-font-weight-regular: 400; 
+    --freq-font-weight-light: 300; 
+
 
     --freq-font-size-x-large: 1.25rem;
     --freq-font-size-large: 1rem;
@@ -106,7 +109,7 @@ html {
 
 /* Images */
 html {
-    --freq-image-thumbnail-3x-small: 30px;
+    --freq-image-thumbnail-3x-small: 32px;
     --freq-image-thumbnail-2x-small: 35px;
     --freq-image-thumbnail-x-small: 50px;
     --freq-image-thumbnail-small: 75px;

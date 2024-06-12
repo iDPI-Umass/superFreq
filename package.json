@@ -40,7 +40,7 @@
 		"@supabase/auth-ui-svelte": "^0.2.9",
 		"@supabase/ssr": "^0.3.0",
 		"@supabase/supabase-js": "^2.43.3",
-		"bits-ui": "^0.21.7",
+		"bits-ui": "^0.21.10",
 		"lucide-svelte": "^0.377.0",
 		"svelte-dnd-action": "^0.9.47"
 	}
