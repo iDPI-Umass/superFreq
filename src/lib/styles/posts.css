@@ -51,6 +51,7 @@
     display: flex;
     flex-direction: row;
     align-items: end;
+    margin: auto 0;
     gap: var(--freq-inline-gap);
     color: var(--freq-color-text-muted);
     font-size: var(--freq-font-size-small);
@@ -122,9 +123,17 @@
 }
 
 .reply-editor {
-    display: flex;
-    flex-direction: column;
+    /* display: flex;
+    flex-direction: column; */
+    border: var(--freq-border-panel);
     border-top: none;
+}
+
+
+form.reply {
+	display: flex;
+	flex-direction: column;
+	margin: var(--freq-height-spacer) var(--freq-width-spacer);
 }
 
 /* Inline styles */

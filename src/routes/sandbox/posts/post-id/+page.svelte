@@ -48,13 +48,13 @@
 
 <div class="post-panel">
     <NowPlayingPost></NowPlayingPost>
-    <div class="box">
-        <PostReplyEditor></PostReplyEditor>
-    </div>
-    <PostReply
-        replies={replies}
-        sessionId={sessionId}
-    ></PostReply>
+    <PostReplyEditor></PostReplyEditor>
+    {#each replies as reply}
+        <PostReply
+            reply={reply}
+            sessionId={sessionId}
+        ></PostReply>
+    {/each}
 </div>
 
 <style>

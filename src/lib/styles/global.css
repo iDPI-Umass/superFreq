@@ -156,6 +156,17 @@ button a {
 	color: var(--freq-color-text); 
 }
 
+button.popover-item {
+	display: flex;
+    flex-direction: row;
+	width: 100%;
+    align-items: end;
+    gap: var(--freq-inline-gap);
+	border: none;
+    color: var(--freq-color-text-muted);
+    font-size: var(--freq-font-size-small);
+}
+
 /* 
 Styles to create button with second top border, intended for tag format
 
@@ -315,6 +326,10 @@ textarea {
 	resize: none;
 	margin: var(--freq-height-spacer-quarter) 0 var(--freq-height-spacer) 0;
 	font-family: var(--freq-font-family);
+}
+
+textarea::placeholder {
+	color: var(--freq-color-text-muted);
 }
 
 textarea:focus {
@@ -499,9 +514,6 @@ fieldset ul li label {
 /* Collapsible  */
 
 [data-collapsible-trigger] {
-	display: flex;
-	align-items: center; 
-	padding: var(--freq-spacing-3x-small);
 	border: none;
 	background: transparent;
 }
@@ -521,10 +533,6 @@ fieldset ul li label {
 	display: flex;
 	flex-direction: column;
 	height: fit-content;
-	width: 100%;
-	padding: var(--freq-spacing-small);
-	border: 1px solid var(--freq-color-border-panel);
-	border-radius: var(--freq-border-radius-small);
 	background: var(--freq-color-panel-background);
 	color: var( --freq-color-text-muted);
 	gap: var(--freq-height-spacer-gap-half);

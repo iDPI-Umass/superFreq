@@ -1,9 +1,10 @@
 <div class="reply-editor">
-    <form class="vertical">
+    <form class="reply">
         <textarea
             rows="4"
             cols="1"
             spellcheck=true 
+            placeholder="Reply..."
             required
         ></textarea>
         <button class="standard">

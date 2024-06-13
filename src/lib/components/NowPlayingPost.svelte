@@ -1,5 +1,6 @@
 <script lang="ts">
     import '$lib/styles/posts.css'
+    import PostMenuSessionUser from '$lib/components/PostMenuSessionUser.svelte'
 
     import Heart from 'lucide-svelte/icons/heart'
     import Flag from 'lucide-svelte/icons/flag'
@@ -86,25 +87,7 @@
             </div>
             <div class="row-group-icon-description">
                 {#if postData.userId == sessionId }
-                <Popover.Root>
-                    <Popover.Trigger>
-                        <Ellipsis size="16" color="var(--freq-color-text-muted)"></Ellipsis>
-                    </Popover.Trigger>
-                    <Popover.Content transition={flyAndScale}>
-                        <div class="row-group-icon-description">
-                            <PenLine size="16" color="var(--freq-color-text-muted)"></PenLine>
-                            <span class="descriptor">
-                                edit
-                            </span>
-                        </div>
-                        <div class="row-group-icon-description">
-                            <Trash2 size="16" color="var(--freq-color-text-muted)"></Trash2>
-                            <span class="descriptor">
-                                delete
-                            </span>
-                        </div>
-                    </Popover.Content>
-                </Popover.Root>
+                <PostMenuSessionUser></PostMenuSessionUser>
                 {:else}
                     <Flag size="16" color="var(--freq-color-text-muted)"></Flag>
                 {/if}
