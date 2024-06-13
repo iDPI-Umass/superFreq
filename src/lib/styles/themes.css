@@ -33,6 +33,7 @@ html {
     --freq-color-primary-text: #FFFFFF;
     --freq-color-active: #3C96FF;
     --freq-color-active-text: #FFFFFF;
+    --freq-color-inactive: #2a2f43;
     --freq-color-cancel: var(--freq-color-panel);
     --freq-color-cancel-text: var(--freq-color-text);
     --freq-color-danger: #D52828;

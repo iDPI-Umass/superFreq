@@ -1,8 +1,8 @@
 <script lang="ts">
     import '$lib/styles/posts.css'
-    import NowPlayingPost from '$lib/components/NowPlayingPost.svelte'
-    import PostReply from '$lib/components/PostReply.svelte'
-    import PostReplyEditor from '$lib/components/PostReplyEditor.svelte'
+    import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
+    import PostReply from '$lib/components/Posts/PostReply.svelte'
+    import PostReplyEditor from '$lib/components/Posts/PostReplyEditor.svelte'
 
     const sessionId = "789"
 

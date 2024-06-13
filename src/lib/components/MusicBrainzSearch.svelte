@@ -1,9 +1,22 @@
+<!-- 
+ Example:
+
+	<MusicBrainzSearch 
+		searchCategory={collectionType}
+		bind:addedItems={collectionItems}
+		bind:newItemAdded={itemAdded}
+		searchButtonText={`add ${buttonTextLookup[collectionType]}`}
+		searchPlaceholder={placeholderText}
+		mode="collection"
+	></MusicBrainzSearch>
+-->
+
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import ListModal from '$lib/components/ListModal.svelte'
     import { categoriesTable } from '$lib/resources/parse-data/categoriesTable.ts'
 
-	export let searchCategory: string // "albums" | "release_groups" | "recordings" | "labels"
+	export let searchCategory: string // "artists" | "release_groups" | "releases" | "recordings" | "labels"
     export let searchButtonText: string
     export let searchPlaceholder: string
     export let addedItems: any
@@ -325,6 +338,7 @@
     .search-bar {
         display: flex;
         flex-direction: row;
+		height: fit-content;
         width: 100%;
         gap: 0;
         align-items: center;

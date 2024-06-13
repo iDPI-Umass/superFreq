@@ -442,6 +442,7 @@
   --freq-input-height-small: 1.875rem; /* 30px */
   --freq-input-height-medium: 2.5rem; /* 40px */
   --freq-input-height-large: 3.125rem; /* 50px */
+  --freq-input-height-search-bar: 2.01rem;
 
   --freq-input-background-color: var(--freq-color-neutral-0);
   --freq-input-background-color-hover: var(--freq-input-background-color);

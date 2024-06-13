@@ -2,8 +2,8 @@
     import { slide } from 'svelte/transition'
 
     import '$lib/styles/posts.css'
-    import PostReplyEditor from '$lib/components/PostReplyEditor.svelte'
-    import PostMenuSessionUser from '$lib/components/PostMenuSessionUser.svelte'
+    import PostReplyEditor from '$lib/components/Posts/PostReplyEditor.svelte'
+    import PostMenuSessionUser from '$lib/components/Posts/PostMenuSessionUser.svelte'
 
     import Reply from 'lucide-svelte/icons/reply'
     import Heart from 'lucide-svelte/icons/heart'

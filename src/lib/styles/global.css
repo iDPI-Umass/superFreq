@@ -254,10 +254,6 @@ label.text-label {
 	text-transform: uppercase;
 }
 
-input {
-	width: auto;
-}
-
 form.vertical input {
 	margin-bottom: var(--freq-height-spacer);
 }
@@ -280,6 +276,7 @@ label {
 }
 
 input {
+	width: auto;
 	margin: var(--freq-height-spacer-quarter) 0;
 }
 
@@ -307,7 +304,8 @@ input.radio:checked {
 
 input.search {
 	display: flex;
-	height: calc( var(--freq-input-height-small) + var(--freq-spacing-3x-small));
+	/* height: calc( var(--freq-input-height-small) + var(--freq-spacing-3x-small)); */
+	height: var(--freq-input-height-search-bar);
 	background: var(--freq-color-panel-background);
 	border: 1px solid var(--freq-color-border-panel);
 	border-left: none;
@@ -357,13 +355,14 @@ fieldset label {
 	color: var(--freq-color-text)
 }
 
-fieldset ul {
+fieldset ul, ol {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
 	text-transform: capitalize;
 }
-fieldset ul li {
+
+fieldset ul li, ol li {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -371,7 +370,7 @@ fieldset ul li {
 	font-size: var(--freq-font-size-medium);
 }
 
-fieldset ul li label {
+fieldset ul li label, ol li label {
 	margin-top: 2px;
 }
 
@@ -541,3 +540,36 @@ fieldset ul li label {
 /* [data-collapsible-content] {
 	width: 60%;
 } */
+
+/* Tabs */
+
+[data-tabs-list] {
+	display: flex;
+	margin-top: var(--freq-spacing-medium);
+	padding-left: var(--freq-spacing-x-large);
+	gap: var(--freq-spacer-gap);
+	border-bottom: var(--freq-border-panel);
+}
+
+[data-tabs-trigger] {
+	display: flex;
+	padding: var(--freq-spacing-small);
+	background: var(--freq-color-inactive);
+	margin-bottom: -1px;
+	text-transform: uppercase;
+}
+
+[data-tabs-trigger]:hover, :focus {
+	background: var(--freq-color-panel);
+	border-color: var(--freq-color-border-panel-light);
+	/* border-bottom: 1px solid var(--freq-color-panel-background); */
+	color: var(--freq-color-text);
+	text-decoration: underline;
+}
+
+[data-tabs-trigger][data-state="active"] {
+	background: var(--freq-color-panel-background);
+	border-bottom: 1px solid var(--freq-color-panel-background);
+	color: var(--freq-color-text);
+	text-decoration: underline;
+}
