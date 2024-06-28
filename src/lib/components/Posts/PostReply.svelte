@@ -4,6 +4,7 @@
     import '$lib/styles/posts.css'
     import PostReplyEditor from '$lib/components/Posts/PostReplyEditor.svelte'
     import PostMenuSessionUser from '$lib/components/Posts/PostMenuSessionUser.svelte'
+    import LikeReact from '$lib/components/Posts/LikeReact.svelte'
 
     import Reply from 'lucide-svelte/icons/reply'
     import Heart from 'lucide-svelte/icons/heart'
@@ -13,6 +14,7 @@
 
     export let reply: any
     export let sessionId: string
+    export let reactions: any
 
     let openState: boolean
 </script>
@@ -21,13 +23,13 @@
     <div class="comment">
         <div class="comment-metadata">
             <div class="row-group-user-data">
-                <img class="comment-avatar" src={reply.avatarUrl} alt={`${reply.displayName}'s avatar`} />
+                <img class="comment-avatar" src={reply.avatar_url} alt={`${reply.display_name}'s avatar`} />
                 <div class="row-group-column">
                     <span class="comment-display-name">
-                        {reply.displayName}
+                        {reply.display_name}
                     </span>
                     <span class="comment-date">
-                        {reply.createdAt}
+                        {reply.created_at}
                     </span>
                 </div>
 
@@ -55,10 +57,9 @@
                 </Collapsible.Root>
                 {#each reply.reactions as reaction}
                 <div class="row-group-icon-description">
-                    <Heart size="16" color="var(--freq-color-text-muted)"></Heart>
-                    <span class="descriptor">
-                        {reaction.count}
-                    </span>
+                    <LikeReact
+                    reactionData={reaction}
+                    ></LikeReact>
                 </div>
                 {/each}
             </div>

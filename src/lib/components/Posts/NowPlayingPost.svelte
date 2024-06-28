@@ -2,12 +2,18 @@
     import '$lib/styles/posts.css'
     import PostMenuSessionUser from '$lib/components/Posts/PostMenuSessionUser.svelte'
     import EditPostBody from '$lib/components/Posts/EditPostBody.svelte'
+    import LikeReact from '$lib/components/Posts/LikeReact.svelte'
+    import { displayDate } from '$lib/resources/parseData'
 
     import Heart from 'lucide-svelte/icons/heart'
     import Flag from 'lucide-svelte/icons/flag'
     import Music from 'lucide-svelte/icons/music'
 
-    const sessionId = "userId"
+    export let sessionId: string
+    export let postData: App.NestedObject
+    export let reactions: any = null
+
+
     let editState: boolean
     $: editState
 
@@ -15,45 +21,19 @@
         editState = !editState
     }
 
-    const postData = {
-        "postId": "123",
-        "userId": "userId",
-        "text": "this is a test post",
-        "mbid": "mbid",
-        "mbidType": "recording",
-        "status": "edited",
-        "createdAt": "June, 11 2024",
-        "updatedAt": "June 11, 2024",
-        "listenUrl": "url",
-        "artistName": "Carly Barton",
-        "recordingName": "Heart Scale"
-    }
-
-    const userData = {
-        "userId": "userId",
-        "displayName": "Sug",
-        "avatarUrl": "https://ia801909.us.archive.org/7/items/mbid-39fe3778-362c-4762-89fc-c03235fd8117/mbid-39fe3778-362c-4762-89fc-c03235fd8117-4477004070.jpg"
-    }
-
-    const reactions = [
-        {
-            "type": "like",
-            "count": 12
-        }
-    ]
 </script>
 
 <div class="box">
     <div class="double-border">
         <div class="post-row">
             <div class="row-group-user-data">
-                <img class="avatar" src={userData.avatarUrl} alt={`${userData.displayName}'s avatar`}/>
+                <img class="avatar" src={postData.avatar_url} alt={`${postData.display_name}'s avatar`}/>
                 <div class="row-group-column">
                     <span class="display-name">
-                        {userData.displayName}
+                        {postData.display_name}
                     </span>
                     <span class="date">
-                        {postData.createdAt}
+                        {displayDate(postData.created_at)}
                     </span>
                 </div>
             </div>
@@ -68,7 +48,7 @@
         <div class="post-body">
             <span class="now-playing-text">
                 <Music size="16" color="var(--freq-color-text-medium-dark)"></Music>
-                {postData.artistName} • {postData.recordingName}
+                {postData.artist_name} • {postData.recording_name ?? postData.release_group_name ?? postData.episode_title}
                 <Music size="16" color="var(--freq-color-text-medium-dark)"></Music>
             </span>
             {#if !editState}
@@ -84,14 +64,9 @@
             <iframe title="bandcamp-embed" style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=7134529/size=small/bgcol=333333/linkcol=ffffff/transparent=true/" seamless><a href="https://carlybarton.bandcamp.com/album/heart-scale">Heart Scale by Carly Barton</a></iframe>
         </div>
         <div class="post-row">
-            <div class="row-group">
-                {#each reactions as reaction}
-                    <Heart size="16" color="var(--freq-color-text-muted)"></Heart>
-                    <span>
-                        {reaction.count}
-                    </span>
-                {/each}
-            </div>
+            <LikeReact
+            reactionData={reactions}
+            ></LikeReact>
             <div class="row-group-icon-description">
                 {#if postData.userId == sessionId }
                 <PostMenuSessionUser

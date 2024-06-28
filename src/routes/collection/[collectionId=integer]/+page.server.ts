@@ -22,7 +22,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, safeGet
     const { verified, collectionInfo, responseError } = await permission;
 
     //refuse view access if not verified
-    if (verified != true || responseError == true) { 
+    if ( verified != true || responseError ) { 
         console.warn(` Can not return collection ${collectionId}. `)
         return {
             status: 401,

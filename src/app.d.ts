@@ -18,6 +18,18 @@ declare global {
     interface Lookup {
       [index: string]: string | string[] | number | number[]
     }
+    interface PostData {
+      [index: string]: string | Date | number | bigint | boolean | Changelog 
+    }
+    interface CollectionItem {
+      [index: string]: string | Date | number
+    }
+    interface UserData {
+      [index: string]: string | Date | number
+    }
+    interface Changelog {
+      [index: string]: PostData
+    }
   }
 }
 

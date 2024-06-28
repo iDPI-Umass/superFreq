@@ -36,51 +36,51 @@
                 bind:newItemAdded={newItemAdded}
                 mode="single"
             ></MusicBrainzSearch>
-            <form name="album" class="vertical">
+            <form method="POST" action="?/postAlbum" name="album" class="vertical">
                 <input
-                    id="type" 
-                    name="type" 
+                    id="mbidType" 
+                    name="mbidType" 
                     type="hidden" 
                     value={type} 
                 />
                 <label 
                     class="text-label" 
-                    for="embed"
+                    for="listenUrl"
                 >
                     listen link
                 </label>
                 <input 
                     class="text" 
-                    id="embed" 
-                    name="embed" 
+                    id="listenUrl" 
+                    name="listenUrl" 
                     type="text"
                     placeholder="paste link" 
                 />
                 <label 
                     class="text-label" 
-                    for="artist"
+                    for="artistName"
                 >
                     artist name
                 </label>
                 <input
                     class="text"  
-                    id="artist" 
-                    name="artist" 
+                    id="artistName" 
+                    name="artistName" 
                     type="text"
-                    placeholder="artist" 
+                    placeholder="artist name" 
                 />
                 <label 
                     class="text-label" 
-                    for="album"
+                    for="albumName"
                 >
                     album name
                 </label>
                 <input 
                     class="text" 
-                    id="album" 
-                    name="album" 
+                    id="albumName" 
+                    name="albumName" 
                     type="text"
-                    placeholder="album" 
+                    placeholder="album name" 
                 />
                 <label 
                     class="text-label" 
@@ -94,7 +94,7 @@
                     id="postText"
                     name="postText"
                 />
-                <button class="standard" type="submit">
+                <button class="standard" formaction="?/postAlbum" type="submit">
                     submit
                 </button>
             </form>
@@ -110,62 +110,62 @@
             ></MusicBrainzSearch>
             <form name="track" class="vertical">
                 <input
-                    id="type" 
-                    name="type" 
+                    id="mbidType" 
+                    name="mbidType" 
                     type="hidden" 
                     value={type} 
                 />
                 <label 
                     class="text-label" 
-                    for="embed"
+                    for="listenUrl"
                 >
                     listen link
                 </label>
                 <input 
                     class="text" 
-                    id="embed" 
-                    name="embed" 
+                    id="listenUrl" 
+                    name="listenUrl" 
                     type="text"
                     placeholder="paste link" 
                 />
                 <label 
                     class="text-label" 
-                    for="artist"
+                    for="artistName"
                 >
                     artist name
                 </label>
                 <input
                     class="text"  
-                    id="artist" 
-                    name="artist" 
+                    id="artistName" 
+                    name="artistName" 
                     type="text"
-                    placeholder="artist" 
+                    placeholder="artist name" 
                 />
                 <label 
                     class="text-label" 
-                    for="album"
+                    for="albumName"
                 >
                     album name
                 </label>
                 <input 
                     class="text" 
-                    id="album" 
-                    name="album" 
+                    id="albumName" 
+                    name="albumName" 
                     type="text"
-                    placeholder="album" 
+                    placeholder="album name" 
                 />
                 <label
                     class="text-label" 
-                    for="track"
+                    for="trackName"
                 >
                     track name
                 </label>
                 <input 
                     class="text"    
-                    id="track" 
-                    name="track" 
+                    id="trackName" 
+                    name="trackName" 
                     type="text"
-                    placeholder="track" 
+                    placeholder="track title" 
                 />
                 <label 
                     class="text-label" 
@@ -195,49 +195,49 @@
             ></MusicBrainzSearch>
             <form name="mix" class="vertical">
                 <input
-                    id="type" 
-                    name="type" 
+                    id="mbidType" 
+                    name="mbidType" 
                     type="hidden" 
                     value={type} 
                 />
                 <label 
                     class="text-label" 
-                    for="embed"
+                    for="listenUrl"
                 >
                     listen link
                 </label>
                 <input 
                     class="text" 
-                    id="embed" 
-                    name="embed" 
+                    id="listenUrl" 
+                    name="listenUrl" 
                     type="text"
                     placeholder="paste link" 
                 />
                 <label 
                     class="text-label" 
-                    for="artist"
+                    for="artistName"
                 >
                     host / dj
                 </label>
                 <input
                     class="text"  
-                    id="artist" 
-                    name="artist" 
+                    id="artistName" 
+                    name="artistName" 
                     type="text"
-                    placeholder="artist" 
+                    placeholder="artistName" 
                 />
                 <label
                     class="text-label" 
-                    for="mix"
+                    for="episode"
                 >
                     episode / mix title
                 </label>
                 <input 
                     class="text"    
-                    id="mix" 
-                    name="mix" 
+                    id="episode" 
+                    name="episode" 
                     type="text"
-                    placeholder="mix" 
+                    placeholder="episode" 
                 />
                 <label
                     class="text-label" 

@@ -1,6 +1,73 @@
-interface collectionItem {
-    [index: string]: string
+import { parseISO } from "date-fns"
+
+/*
+//
+** Time and date
+//
+*/
+
+/* Time now in ISO string */
+
+export const timestampISOString: string = new Date().toISOString()
+
+/* Time now in ISO Date */
+
+export const timestampISO: Date = parseISO(timestampISOString)
+
+/* Convert Date string into ISO format Date */
+
+export const dateToISODate = ( dateString: string ) => {
+    return new Date(parseInt(dateString.valueOf()))
 }
+
+/* Parse date as locale string for display */
+const options = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }
+
+export const displayDate = ( date: Date ) => {
+    return new Date(date).toLocaleDateString( undefined, options )
+}
+
+
+/*
+//
+** MBID associated parsing
+//
+*/
+
+/* Converts values to mbid categories */
+
+export const categoriesTable: App.Lookup = {
+    "artists": "artists",
+    "release-groups": "release-group",
+    "release_groups": "release-group",
+    "recordings": "recordings",
+    "albums": "release-group",
+    "tracks": "recordings",
+    "songs": "recordings"
+}
+
+/* Converts values to UI text */
+
+const categories: App.Lookup = {
+    "artists": "artists",
+    "release_groups": "albums",
+    "recording": "tracks"
+}
+
+export const categoryParser = ( category: string ) => {
+    return categories[category]
+}
+
+/*
+//
+** Prepare data for insert/update
+//
+*/
+
 
 /*
 Prepare data for table upsert in format expected by: artists, release_groups, and recordings.
@@ -13,7 +80,7 @@ export const prepareMusicDataUpsert = function ( collectionItems: object[], coll
     let upsertRecordings: object[] = []
 
     for (const item in collectionItems) {
-        const thisItem = collectionItems[item] as collectionItem
+        const thisItem = collectionItems[item] as App.CollectionItem
 
         if ( collectionType == "artists" ) {
             upsertArtists = [...upsertArtists, {
@@ -72,7 +139,7 @@ export const populateCollectionContents = function ( collectionItems: object[], 
     let collectionContents: object[] = [];
 
     for (const [index, item] of collectionItems.entries()) {
-        const thisItem = item as collectionItem
+        const thisItem = item as App.CollectionItem
 
         collectionContents = [...collectionContents, {
             "collection_id": collectionId,
