@@ -1,8 +1,6 @@
 <script lang="ts">
     import type { PageData } from './$types';
-    import { categoryParser } from '$lib/resources/parse-data/categoryParser.ts';
-    import { profileName } from '$lib/resources/parse-data/profileName';
-    import { formatDate } from '$lib/resources/parse-data/formatDate';
+    import { categoryParser, displayDate, profileName } from '$lib/resources/parseData.ts';
     import { insertUserFollow } from '$lib/resources/backend-calls/users/profile/insert/insertUserFollow';
     import { updateUserFollow } from '$lib/resources/backend-calls/users/profile/update/updateUserFollow';
 	
@@ -122,7 +120,7 @@
                     </a>
                 </h3>
                 <p>
-                    collection of {categoryParser(collection["type"])}, last updated {formatDate(collection["updated_at"])}
+                    collection of {categoryParser(collection["type"])}, last updated {displayDate(collection["updated_at"])}
                 </p>
             </div>
         {/each}

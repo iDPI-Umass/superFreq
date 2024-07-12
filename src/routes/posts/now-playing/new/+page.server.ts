@@ -11,9 +11,10 @@ import { insertPost } from '$lib/resources/backend-calls/posts'
 // };
 
 export const actions = {
-	postAlbum: async ({ request, params, locals: { session } }) => {
+	postAlbum: async ({ request, locals: { session } }) => {
         const userId = session?.user.id
         const data = await request.formData()
+        const username = data.get('username')
 		const listenUrl = data.get('listenUrl')
         const mbid = data.get('mbid')
         const mbidType = data.get('mbidType')
@@ -43,12 +44,13 @@ export const actions = {
             return { sucess: false }
         }
         else{
-            redirect(303, `/user/${params.username}/now-playing/${timestampSlug}`)
+            redirect(303, `/user/${username}/now-playing/${timestampSlug}`)
         }
 	},
-    postTrack: async ({ request, params, locals: { session } }) => {
+    postTrack: async ({ request, locals: { session } }) => {
         const userId = session?.user.id
 		const data = await request.formData()
+        const username = data.get('username')
         const listenUrl = data.get('listenUrl')
         const mbid = data.get('mbid')
         const mbidType = data.get('mbidType')
@@ -80,12 +82,13 @@ export const actions = {
             return { sucess: false }
         }
         else{
-            redirect(303, `/user/${params.username}/now-playing/${timestampSlug}`)
+            redirect(303, `/user/${username}/now-playing/${timestampSlug}`)
         }
 	},
-    postMix: async ({ request,, params, locals: { session } }) => {
+    postMix: async ({ request, locals: { session } }) => {
         const userId = session?.user.id
 		const data = await request.formData()
+        const username = data.get('username')
         const listenUrl = data.get('listenUrl')
         const mbid = data.get('mbid')
         const mbidType = data.get('mbidType')
@@ -117,7 +120,7 @@ export const actions = {
             return { sucess: false }
         }
         else{
-            redirect(303, `/user/${params.username}/now-playing/${timestampSlug}`)
+            redirect(303, `/user/${username}/now-playing/${timestampSlug}`)
         }
 	},
 } satisfies Actions;

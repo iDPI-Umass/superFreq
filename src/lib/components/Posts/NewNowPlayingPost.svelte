@@ -2,6 +2,7 @@
     import '$lib/styles/posts.css'
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
+    import { username } from '$lib/resources/localStorage.ts'
 
     import { Tabs } from "bits-ui";
 
@@ -29,7 +30,7 @@
         </Tabs.List>
         <Tabs.Content value="album">
             <MusicBrainzSearch
-                searchCategory={type}
+                searchCategory="release_groups"
                 searchButtonText="search"
                 searchPlaceholder="look it up"
                 bind:addedItems={addedItem}
@@ -38,10 +39,22 @@
             ></MusicBrainzSearch>
             <form method="POST" action="?/postAlbum" name="album" class="vertical">
                 <input
+                    id="username"
+                    name="username"
+                    type="hidden"
+                    value={username}
+                />
+                <input
                     id="mbidType" 
                     name="mbidType" 
                     type="hidden" 
-                    value={type} 
+                    value="release_group"
+                />
+                <input
+                    id="mbid" 
+                    name="mbid" 
+                    type="hidden" 
+                    value={addedItem?.releaseGroupMbid ?? null} 
                 />
                 <label 
                     class="text-label" 
@@ -62,12 +75,19 @@
                 >
                     artist name
                 </label>
+                <input  
+                    id="artistMbid" 
+                    name="artistMbid" 
+                    type="hidden"
+                    value={addedItem?.artistMbid ?? null}
+                />
                 <input
                     class="text"  
                     id="artistName" 
                     name="artistName" 
                     type="text"
                     placeholder="artist name" 
+                    value={addedItem?.artistName ?? null}
                 />
                 <label 
                     class="text-label" 
@@ -80,7 +100,14 @@
                     id="albumName" 
                     name="albumName" 
                     type="text"
-                    placeholder="album name" 
+                    placeholder="album name"
+                    value={addedItem?.releaseGroupName ?? null}
+                />
+                <input  
+                    id="releaseGroupMbid" 
+                    name="releaseGroupMbid" 
+                    type="hidden"
+                    value={addedItem?.releaseGroupMbid ?? null}
                 />
                 <label 
                     class="text-label" 
@@ -93,6 +120,7 @@
                     rows="5"
                     id="postText"
                     name="postText"
+                    spellcheck=true 
                 />
                 <button class="standard" formaction="?/postAlbum" type="submit">
                     submit
@@ -101,7 +129,7 @@
         </Tabs.Content>
         <Tabs.Content value="track">
             <MusicBrainzSearch
-                searchCategory={type}
+                searchCategory="recordings"
                 searchButtonText="search"
                 searchPlaceholder="look it up"
                 bind:addedItems={addedItem}
@@ -110,10 +138,22 @@
             ></MusicBrainzSearch>
             <form name="track" class="vertical">
                 <input
+                    id="username"
+                    name="username"
+                    type="hidden"
+                    value={username}
+                />
+                <input
                     id="mbidType" 
                     name="mbidType" 
                     type="hidden" 
-                    value={type} 
+                    value="recording"
+                />
+                <input
+                    id="mbid" 
+                    name="mbid" 
+                    type="hidden" 
+                    value={addedItem?.recordingMbid ?? null} 
                 />
                 <label 
                     class="text-label" 
@@ -140,6 +180,13 @@
                     name="artistName" 
                     type="text"
                     placeholder="artist name" 
+                    value={addedItem?.artistName ?? null}
+                />
+                <input  
+                    id="artistMbid" 
+                    name="artistMbid" 
+                    type="hidden"
+                    value={addedItem?.artistMbid ?? null}
                 />
                 <label 
                     class="text-label" 
@@ -153,6 +200,13 @@
                     name="albumName" 
                     type="text"
                     placeholder="album name" 
+                    value={addedItem?.releaseGroupName ?? null}
+                />
+                <input  
+                    id="releaseGroupMbid" 
+                    name="releaseGroupMbid" 
+                    type="hidden"
+                    value={addedItem?.releaseGroupMbid ?? null}
                 />
                 <label
                     class="text-label" 
@@ -166,6 +220,13 @@
                     name="trackName" 
                     type="text"
                     placeholder="track title" 
+                    value={addedItem?.recordingName ?? null}
+                />
+                <input  
+                    id="recordingMbid" 
+                    name="recordingMbid" 
+                    type="hidden"
+                    value={addedItem?.recordingMbid ?? null}
                 />
                 <label 
                     class="text-label" 
@@ -178,6 +239,7 @@
                     rows="5"
                     id="postText"
                     name="postText"
+                    spellcheck=true 
                 />
                 <button class="standard" type="submit">
                     submit
@@ -186,7 +248,7 @@
         </Tabs.Content>
         <Tabs.Content value="mix">
             <MusicBrainzSearch
-                searchCategory={type}
+                searchCategory="artists"
                 searchButtonText="search"
                 searchPlaceholder="look it up"
                 bind:addedItems={addedItem}
@@ -195,10 +257,22 @@
             ></MusicBrainzSearch>
             <form name="mix" class="vertical">
                 <input
+                    id="username"
+                    name="username"
+                    type="hidden"
+                    value={username}
+                />
+                <input
                     id="mbidType" 
                     name="mbidType" 
                     type="hidden" 
-                    value={type} 
+                    value="artist"
+                />
+                <input
+                    id="mbid" 
+                    name="mbid" 
+                    type="hidden" 
+                    value={addedItem?.artistMbid ?? null} 
                 />
                 <label 
                     class="text-label" 
@@ -225,6 +299,13 @@
                     name="artistName" 
                     type="text"
                     placeholder="artistName" 
+                    value={addedItem?.artistName ?? null}
+                />
+                <input  
+                    id="artistMbid" 
+                    name="artistMbid" 
+                    type="hidden"
+                    value={addedItem?.artistMbid ?? null}
                 />
                 <label
                     class="text-label" 
@@ -238,6 +319,7 @@
                     name="episode" 
                     type="text"
                     placeholder="episode" 
+                    value={addedItem?.episodeName ?? null}
                 />
                 <label
                     class="text-label" 
@@ -251,6 +333,7 @@
                     name="show" 
                     type="text"
                     placeholder="show" 
+                    value={addedItem?.showName ?? null}
                 />
                 <label 
                     class="text-label" 
@@ -263,6 +346,7 @@
                     rows="5"
                     id="postText"
                     name="postText"
+                    spellcheck=true 
                 />
                 <button class="standard" type="submit">
                     submit

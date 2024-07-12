@@ -1,12 +1,13 @@
 <script lang="ts">
     import { goto } from '$app/navigation'
-    import type { PageData } from './$types'
+    import type { PageData, ActionData } from './$types'
     import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
     import PostReply from '$lib/components/Posts/PostReply.svelte'
     import PostReplyEditor from '$lib/components/Posts/PostReplyEditor.svelte';
     let username = "sug_umass"
 
     export let data: PageData
+    export let form: ActionData;
     let { session, post, replies, reactions } = data
     $: ({ session, post, replies, reactions } = data)
 
@@ -19,6 +20,8 @@
     <NowPlayingPost
         sessionId={sessionId}
         postData={post}
+        formData={form}
+        editState={form?.editState ?? false}
         reactions={reactionCount} 
     ></NowPlayingPost>
     {#if session}

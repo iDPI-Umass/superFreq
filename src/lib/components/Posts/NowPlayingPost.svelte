@@ -11,10 +11,9 @@
 
     export let sessionId: string
     export let postData: App.NestedObject
+    export let formData
     export let reactions: any = null
-
-
-    let editState: boolean
+    export let editState: boolean
     $: editState
 
     function toggleEditState() {
@@ -56,10 +55,15 @@
                     {postData.text}
                 </p>
             {:else}
-            <EditPostBody
-                text={postData.text}
-                bind:editState={editState}
-            ></EditPostBody>
+                <EditPostBody
+                    postData={postData}
+                    bind:editState={editState}
+                ></EditPostBody>
+            {/if}
+            {#if formData?.success == true }
+                <p>edited!</p>
+            {:else if formData?.success == false}
+                <p>edit failed</p>
             {/if}
             <iframe title="bandcamp-embed" style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=7134529/size=small/bgcol=333333/linkcol=ffffff/transparent=true/" seamless><a href="https://carlybarton.bandcamp.com/album/heart-scale">Heart Scale by Carly Barton</a></iframe>
         </div>

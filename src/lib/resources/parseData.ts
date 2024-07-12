@@ -31,6 +31,20 @@ export const displayDate = ( date: Date ) => {
     return new Date(date).toLocaleDateString( undefined, options )
 }
 
+/*
+//
+** User data parsing
+//
+*/
+
+/*
+If user has chose a display_name, use that instead of username
+*/
+
+export const profileName = function (username: string, display_name: string) {
+    const profileName = ( display_name && ( username != display_name )) ? display_name : username
+    return profileName
+}
 
 /*
 //
@@ -52,7 +66,7 @@ export const categoriesTable: App.Lookup = {
 
 /* Converts values to UI text */
 
-const categories: App.Lookup = {
+export const categories: App.Lookup = {
     "artists": "artists",
     "release_groups": "albums",
     "recording": "tracks"

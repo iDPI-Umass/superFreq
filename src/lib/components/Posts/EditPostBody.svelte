@@ -1,5 +1,6 @@
 <script lang="ts">
-    export let text: string
+    import type { Posts } from './$types'
+    export let postData: Posts
     export let editState: boolean = false
 
     function toggleEditState() {
@@ -8,18 +9,25 @@
 </script>
 
 <form name="editPostText" class="vertical">
+    <input 
+        id="postData"
+        name="postData"
+        type="hidden"
+        value={postData}
+    />
     <textarea
-        rows="4"
         cols="1"
+        rows="4"
+        id = "editedText"
+        name="editedText"
         spellcheck=true 
-        placeholder="Reply..."
         required
-    >{text}</textarea>
+    >{postData.text}</textarea>
     <div class="edit-submit-options">
         <button class="standard" on:click|preventDefault={toggleEditState}>
             cancel
         </button>
-        <button class="standard">
+        <button class="standard" formaction="?/editPost">
             submit edit
         </button>
     </div>

@@ -1,11 +1,11 @@
 /*
-Parse date to locale string
+Search MusicBrainz db
 */
 
 import { categoriesTable } from "../parse-data/categoriesTable";
 
-export const mbSearch = async function ( query, collectionType ) {
-    const apiCategory = categoriesTable[collectionType];
+export const mbSearch = async function ( query: string, queryType: string ) {
+    const apiCategory = categoriesTable[queryType];
 
     let apiString = "https://musicbrainz.org/ws/2/";
     apiString = apiString.concat(apiCategory);
@@ -14,7 +14,7 @@ export const mbSearch = async function ( query, collectionType ) {
     endpoint.searchParams.set("fmt", "json");
     endpoint.searchParams.set("query", `${query}`);
 
-    if (collectionType == "recordings") {
+    if (queryType == "recordings") {
         endpoint.searchParams.set("inc", "releases+release-groups+artist-rels");
     }
 

@@ -21,7 +21,7 @@ export const insertPost = async function ( postData: Posts) {
 
 /* Update post */
 
-export const updatePost = async function ( postData: Posts) {
+export const updatePost = async function ( postData: Posts, editedText: string) {
 
     const changelog: App.Changelog = postData.changelog as App.Changelog
     const updatedAt: Date = postData.updated_at as Date
@@ -42,7 +42,7 @@ export const updatePost = async function ( postData: Posts) {
     const updatePost = await db
     .updateTable('posts')
     .set({
-        text: postData.text,
+        text: editedText,
         mbid: postData.mbid,
         mbid_type: postData.mbidType,
         artist_name: postData.artistName,

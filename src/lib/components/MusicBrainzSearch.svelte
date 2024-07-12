@@ -14,7 +14,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import ListModal from '$lib/components/ListModal.svelte'
-    import { categoriesTable } from '$lib/resources/parse-data/categoriesTable.ts'
+    import { categoriesTable } from '$lib/resources/parseData.ts'
 
 	export let searchCategory: string // "artists" | "release_groups" | "releases" | "recordings" | "labels"
     export let searchButtonText: string
