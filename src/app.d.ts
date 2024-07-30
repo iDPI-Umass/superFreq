@@ -15,6 +15,9 @@ declare global {
     interface NestedObject {
       [index: string]: any
     }
+    interface ProfileObject {
+      [index: string]: string 
+    }
     interface Lookup {
       [index: string]: string | string[] | number | number[]
     }

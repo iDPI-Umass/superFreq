@@ -207,7 +207,7 @@ export const updateReaction = async function ( reactionData: App.PostData ) {
 export const getReactionData = async function ( post_id: string, user_id: string ) {
 
     const getReactionData = await db
-    .with('reactions', (db) => db
+    .with('permissioned_collection', (db) => db
         .selectFrom('post_reactions')
         .selectAll()
         .where('post_id', '=', post_id)

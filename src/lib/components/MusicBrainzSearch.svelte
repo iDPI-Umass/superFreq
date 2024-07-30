@@ -109,17 +109,17 @@
 		if ( searchCategory == "artists" ) {
 			addedItems = [...addedItems, {
 				"item_position": addedItems.length,
-				"artistMbid": item["id"],
-				"artistName": item["name"],
-				"releaseGroupMbid": null,
-				"releaseGroupName": null,
-				"releaseDate": null,
-				"recordingMbid": null,
-				"recordingName": null,
-				"remixerMbid": null,
-				"imgUrl": null,
-				"labelName": null,
-				"labelMbid": null,
+				"artist_bbid": item["id"],
+				"artist_name": item["name"],
+				"release_group_mbid": null,
+				"release_group_name": null,
+				"release_date": null,
+				"recording_mbid": null,
+				"recording_name": null,
+				"remixer_mbid": null,
+				"img_url": null,
+				"label_name": null,
+				"label_mbid": null,
 				"notes": null,
 				"id": addedItems.length + 1
 			}];
@@ -135,17 +135,17 @@
 			const coverArt = await getCoverArt( releaseGroup.mbid );
 			addedItems = [...addedItems, {
 				"item_position": addedItems.length,
-				"artistMbid": item["artist-credit"][0]["artist"]["id"],
-				"artistName": item["artist-credit"][0]["artist"]["name"],
-				"releaseGroupMbid": item["id"],
-				"releaseGroupName": item["title"],
-				"releaseDate": item["first-release-date"],
-				"recordingMbid": null,
-				"recordingName": null,
-				"remixerMbid": null,
-				"imgUrl": coverArt,
-				"labelName": labelName, 
-				"labelMbid": labelMbid,
+				"artist_mbid": item["artist-credit"][0]["artist"]["id"],
+				"artist_name": item["artist-credit"][0]["artist"]["name"],
+				"release_group_mbid": item["id"],
+				"release_group_name": item["title"],
+				"release_date": item["first-release-date"],
+				"recording_mbid": null,
+				"recording_name": null,
+				"remixer_mbid": null,
+				"img_url": coverArt,
+				"label_name": labelName, 
+				"label_mbid": labelMbid,
 				"notes": null,
 				"id": addedItems.length + 1
 			}];
@@ -163,17 +163,17 @@
 			const coverArt = await getCoverArt( releaseGroup.mbid );
 			addedItems = [...addedItems, {
 				"item_position": addedItems.length,
-				"artistMbid": item["artist-credit"][0]["artist"]["id"],
-				"artistName": item["artist-credit"][0]["artist"]["name"],
-				"releaseGroupMbid": item["release-group"]["id"],
-				"releaseGroupName": item["release-group"]["title"],
-				"recordingMbid": item["id"],
-				"recordingName": item["name"],
-				"releaseDate": item["first-release-date"],
-				"remixerMbid": remixerMbid,
-				"imgUrl": coverArt,
-				"labelName": labelName, 
-				"labelMbid": labelMbid,
+				"artist_mbid": item["artist-credit"][0]["artist"]["id"],
+				"artist_name": item["artist-credit"][0]["artist"]["name"],
+				"release_group_mbid": item["release-group"]["id"],
+				"release_group_name": item["release-group"]["title"],
+				"recording_mbid": item["id"],
+				"recording_name": item["name"],
+				"release_date": item["first-release-date"],
+				"remixer_mbid": remixerMbid,
+				"img_url": coverArt,
+				"label_name": labelName, 
+				"label_mbid": labelMbid,
 				"notes": null,
 				"id": addedItems.length +1
 			}];
@@ -190,15 +190,15 @@
 		let labelMbid: string | null = null
 		if ( searchCategory == "artists" ) {
 			addedItems =  {
-				"artistMbid": item["id"],
-				"artistName": item["name"],
-				"releaseGroupMbid": null,
-				"releaseGroupName": null,
-				"releaseDate": null,
-				"recordingMbid": null,
-				"recordingName": null,
-				"remixerMbid": null,
-				"imgUrl": null,
+				"artist_mbid": item["id"],
+				"artist_name": item["name"],
+				"release_group_mbid": null,
+				"release_group_name": null,
+				"release_date": null,
+				"recording_mbid": null,
+				"recording_name": null,
+				"remixer_mbid": null,
+				"img_url": null,
 				"label": null,
 				"notes": null,
 			};
@@ -213,17 +213,17 @@
 			labelMbid = label?.labelMbid ?? null
 			const coverArt = await getCoverArt( releaseGroup.mbid );
 			addedItems = {
-				"artistMbid": item["artist-credit"][0]["artist"]["id"],
-				"artistName": item["artist-credit"][0]["artist"]["name"],
-				"releaseGroupMbid": item["id"],
-				"releaseGroupName": item["title"],
-				"releaseDate": item["first-release-date"],
-				"recordingMbid": null,
-				"recordingName": null,
-				"remixerMbid": null,
-				"imgUrl": coverArt,
-				"labelName": labelName, 
-				"labelMbid": labelMbid,
+				"artist_mbid": item["artist-credit"][0]["artist"]["id"],
+				"artist_name": item["artist-credit"][0]["artist"]["name"],
+				"release_group_mbid": item["id"],
+				"release_group_name": item["title"],
+				"release_date": item["first-release-date"],
+				"recording_mbid": null,
+				"recording_name": null,
+				"remixer_mbid": null,
+				"img_url": coverArt,
+				"label_name": labelName, 
+				"label_mbid": labelMbid,
 				"notes": null,
 			};
 		}
@@ -238,17 +238,17 @@
 			labelMbid = label?.labelMbid ?? null;
 			const coverArt = await getCoverArt( releaseGroup.mbid );
 			addedItems = {
-				"artistMbid": item["artist-credit"][0]["artist"]["id"],
-				"artistName": item["artist-credit"][0]["artist"]["name"],
-				"releaseGroupMbid": item["release-group"]["id"],
-				"releaseGroupName": item["release-group"]["title"],
-				"recordingMbid": item["id"],
-				"recordingName": item["name"],
-				"releaseDate": item["first-release-date"],
-				"remixerMbid": remixerMbid,
-				"imgUrl": coverArt,
-				"labelName": labelName, 
-				"labelMbid": labelMbid,
+				"artist_mbid": item["artist-credit"][0]["artist"]["id"],
+				"artist_name": item["artist-credit"][0]["artist"]["name"],
+				"release_group_mbid": item["release-group"]["id"],
+				"release_group_name": item["release-group"]["title"],
+				"recording_mbid": item["id"],
+				"recording_name": item["name"],
+				"release_date": item["first-release-date"],
+				"remixer_mbid": remixerMbid,
+				"img_url": coverArt,
+				"label_name": labelName, 
+				"label_mbid": labelMbid,
 				"notes": null,
 			};
 		}
@@ -256,7 +256,8 @@
 		showModal = false
 		query = ""
 		searchComplete = false
-		return {newItemAdded, showModal, query, searchComplete}
+		console.log(addedItems)
+		return {newItemAdded, showModal, addedItems, query, searchComplete}
 	}
 </script>
 

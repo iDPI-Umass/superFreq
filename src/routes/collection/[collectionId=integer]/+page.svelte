@@ -1,4 +1,7 @@
 <script lang="ts">
+    import { goto } from '$app/navigation'
+    import { page } from '$app/stores'
+    
     import { Toolbar } from "bits-ui"
     import LayoutGrid from 'lucide-svelte/icons/layout-grid'
     import AlignJustify from 'lucide-svelte/icons/align-justify'
@@ -8,16 +11,14 @@
     import GridList from "$lib/components/GridList.svelte";
 
 	import type { PageData } from './$types';
-    import { insertCollectionFollow, updateCollectionFollow } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions';
+    // import { insertCollectionFollow, updateCollectionFollow } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions';
 	
 	export let data: PageData;
-    let { supabase, collectionId, verified, collectionInfo, session, sessionUserId, collectionContents, collectionReturned, socialData, socialResponseStatus, isFollowing, followButtonStatus } = data;
-    $: ({ supabase, collectionId, verified, collectionInfo, session, sessionUserId, collectionContents, collectionReturned, socialData, socialResponseStatus, isFollowing, followButtonStatus } = data);
+    let { collectionId, verified, collectionInfo, sessionUserId, collectionContents, collectionReturned, socialResponseStatus, isFollowing, followButtonStatus } = data;
+    $: ({ collectionId, verified, collectionInfo, sessionUserId, collectionContents, collectionReturned, socialResponseStatus, isFollowing, followButtonStatus } = data);
 
     let gridListSelect = "grid"
     collectionReturned = ( collectionReturned === undefined) ? false : true
-
-    console.log(collectionContents )
 
     const { title, updated_at, type, username, display_name } = collectionInfo[0];
 
@@ -34,50 +35,49 @@
     */
 
     //insert row in social graph if no row exists for visitor following user
-    async function followButton() {
-        if ( socialData.length === 0 ) {
-            const insert =  await insertCollectionFollow({ collectionId, sessionUserId, locals: { supabase }});
-            let { insertedFollow, responseStatus } = insert;
-            if ( responseStatus == 200) {
-                followButtonStatus = true;
-                isFollowing = insertedFollow;  
-            }
-            else {
-                console.log(responseStatus);
-            }
-        }
-        else {
-            let { id, user_id, collection_id, user_role, follows_now, updated_at, changelog } = socialData[0];
+    // async function followButton() {
+    //     if ( socialData.length === 0 ) {
+    //         const insert =  await insertCollectionFollow({ collectionId, sessionUserId, locals: { supabase }});
+    //         let { insertedFollow, responseStatus } = insert;
+    //         if ( responseStatus == 200) {
+    //             followButtonStatus = true;
+    //             isFollowing = insertedFollow;  
+    //         }
+    //         else {
+    //             console.log(responseStatus);
+    //         }
+    //     }
+    //     else {
+    //         let { id, user_id, collection_id, user_role, follows_now, updated_at, changelog } = socialData[0];
 
-            //create entry in changelog archiving data selected
-            changelog[updated_at] = {
-                "user_id": user_id,
-                "collection_id": collection_id,
-                "user_role": user_role,
-                "follows_now": follows_now
-            }
+    //         //create entry in changelog archiving data selected
+    //         changelog[updated_at] = {
+    //             "user_id": user_id,
+    //             "collection_id": collection_id,
+    //             "user_role": user_role,
+    //             "follows_now": follows_now
+    //         }
 
-            //flip follows_now boolean
-            if ( follows_now == true ) {
-                followButtonStatus = false;
-            }
-            else {
-                followButtonStatus = true;
-            }
+    //         //flip follows_now boolean
+    //         if ( follows_now == true ) {
+    //             followButtonStatus = false;
+    //         }
+    //         else {
+    //             followButtonStatus = true;
+    //         }
 
-            //log new follow data and update row
-            const followData = {
-                "user_id": user_id,
-                "collection_id": collection_id,
-                "follows_now": followButtonStatus,
-                "user_role": user_role,
-                "updated_at": null,
-                "changelog": changelog
-            };
-            const update = await updateCollectionFollow({ id, followData, locals: { supabase }});
-        }
-    }
-    console.log(collectionContents)
+    //         //log new follow data and update row
+    //         const followData = {
+    //             "user_id": user_id,
+    //             "collection_id": collection_id,
+    //             "follows_now": followButtonStatus,
+    //             "user_role": user_role,
+    //             "updated_at": null,
+    //             "changelog": changelog
+    //         };
+    //         const update = await updateCollectionFollow({ id, followData, locals: { supabase }});
+    //     }
+    // }
 </script>
 
 <body>
@@ -86,7 +86,7 @@
             <div class="collection-metadata">
                 <div class="collection-title-follow-top-row">
                     <h1>{title}</h1>
-                    {#if session && (sessionUserId != collectionInfo["owner_id"])}
+                    <!-- {#if session && (sessionUserId != collectionInfo[0]["owner_id"])}
                         <button class="standard" on:click|preventDefault={followButton} disabled={!socialResponseStatus}>
                             {#if ( followButtonStatus == true )}
                                 unfollow
@@ -94,7 +94,14 @@
                                 + follow
                             {/if}
                         </button>
-                    {/if}
+                    {:else if session && (sessionUserId == collectionInfo[0]["owner_id"])}
+                        <button 
+                            class="standard"
+                            on:click|preventDefault={() => goto($page.url.pathname + '/edit')}
+                        >
+                        edit
+                        </button>
+                    {/if} -->
                 </div>
             </div>
             <div class="frontmatter blurb-formatting">

@@ -1,3 +1,5 @@
+import { db } from 'src/database.ts'
+
 /*
 Select all collections that are open or public
 */
@@ -151,4 +153,73 @@ export const selectProfileUsersCollections = async function ({ profileUserId, lo
         return null;
     }
     throw new Error( `Unexpected response ${ response.error }`);
+}
+
+/*
+Fetches collection for editing if session user is owner or collaborator
+*/
+
+export const selectEditableCollectionContents = async function ( collectionId: string, collectionType: string, sessionUserId: string ) {
+
+    const selectEditableCollection = await db
+    .with('info', (db) => db
+        .selectFrom('collections_info')
+        .where(({eb, and, exists, selectFrom, not}) => and([
+            eb('collections_info.collection_id', '=', collectionId),
+            exists(
+                selectFrom('collections_social')
+                .whereRef('collections_info.collection_id', '=', 'collections_social.collection_id')
+                .where(({eb, and}) => and([
+                    eb('collections_social.user_role', '=', 'owner')
+                    .or('collections_social.user_role', '=', 'collaborator'),
+                    eb('collections_social.user_id', '=', sessionUserId)
+                ]) 
+                )
+                .selectAll('collections_social')
+            ),
+            not(
+                eb('collections_info.status', '=', 'deleted')
+            )
+        ]))
+        .selectAll()
+    )
+    .with('contents', (db) => db
+        .selectFrom('collections_contents')
+        .where(({eb, selectFrom, and, exists}) => and([
+            eb('collection_id', '=', collectionId),
+            exists(
+                selectFrom('info')
+                .whereRef('info.collection_id', '=', 'collections_contents.collection_id')
+                .selectAll('info')
+            ),
+        ]))
+        .selectAll()
+        .innerJoin(
+            'artists',
+            (join) => join
+                .onRef('artists.artist_mbid', '=', 'collections_contents.artist_mbid')
+        )
+        .innerJoin(
+            'release_groups',
+            (join) => join
+                .onRef('release_groups.release_group_mbid', '=', 'collections_contents.release_group_mbid')
+                .on(({or, exists, selectFrom}) => or([
+                    exists(
+                        selectFrom('info')
+                        .where('type', '=', 'release_groups')
+                    ),
+                    exists(
+                        selectFrom('info')
+                        .where('type', '=', 'recordings')
+                    )
+                ]))
+        )
+    )
+    .selectFrom(['info', 'contents'])
+    .selectAll(['info', 'contents'])
+    .orderBy('item_position')
+    .execute()
+
+    const editableCollection =  await selectEditableCollection;
+    return editableCollection
 }

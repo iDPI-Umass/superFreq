@@ -1,49 +1,78 @@
-import { redirect } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
-import { checkCollectionEditPermissions } from '$lib/resources/backend-calls/checkSesssionUserPermissions';
-import { selectCollectionContents } from '$lib/resources/backend-calls/collectionSelectFunctions';
+import { redirect } from '@sveltejs/kit'
+import type { PageServerLoad, Actions } from './$types'
+import { timestampISO } from '$lib/resources/parseData'
+import { selectEditableCollectionContents } from '$lib/resources/backend-calls/collectionSelectFunctions'
+import { updateCollection } from 'src/lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions'
 
-export const load: PageServerLoad = async ({ params, locals: { safeGetSession, supabase } }) => {
+export const load: PageServerLoad = async ({ params, locals: { safeGetSession } }) => {
   const session = await safeGetSession()
 
   if (!session) {
     throw redirect(401, '/')
   }
 
-  //convert param into useable collectionId for supabase
-  const collectionId = parseInt(params.collectionId);
+  const collectionId = parseInt(params.collectionId).toString()
 
-  /*
-  Get session userId, verify edit access for this collection
-  */
-  const { user: { id } } = session
-  const sessionUserId = id
+  const sessionUserId = session.user?.id as string
 
-  const permission = await checkCollectionEditPermissions({collectionId, sessionUserId, locals: { supabase }});
+  const collection = await selectEditableCollectionContents(collectionId, 'release_groups', sessionUserId)
 
-  const { verified, collectionInfo, responseError } = await permission;
-
-  //refuse view access if not verified
-  if (verified != true || responseError == true) { 
-      console.warn(` Can not edit collection ${collectionId}. `)
-      return {
-          status: 401,
-          redirect: "/collections"
-      }
+  const changelog = collection[0]["changelog"] as any
+  const updatedAt = collection[0]["updated_at"].toISOString()
+  changelog[updatedAt] = {
+    'title': collection[0]["title"],
+    'status': collection[0]["status"],
+    'description_text': collection[0]["description_text"],
+    'updated_at': updatedAt,
+    'updated_by': sessionUserId
   }
 
-  //select collection contents if view access is verified
-  const selectCollectionContentsResponse: any = await selectCollectionContents({collectionId, locals: {supabase}});
-  const { collectionContents, collectionReturned }: { collectionContents: any, collectionReturned: boolean } =  
-  selectCollectionContentsResponse
-
-  if ( verified == true ) {
-      return { collectionId, verified, collectionInfo, session, sessionUserId, collectionContents, collectionReturned };
+  if ( collection.length > 0) {
+      return { collection, sessionUserId, collectionId, changelog };
   }
-  else if ( verified == false || responseError == true ) {
+  else {
       return {
           status: 403,
           redirect: "/collections"
       }
+  }
+}
+
+export const actions: Actions = {
+  updateCollection: async ({ request }) => {
+    const data = await request.formData()
+
+    const collectionTitle = data.get('collection-title')
+    const collectionId = data.get('collection-id')
+    const collectionType = data.get('collection-type')
+    const collectionStatus = data.get('status')
+    const collectionDescription = data.get('description')
+    let collectionItems = data.get('collection-contents')
+    const updatedBy = data.get('updated-by')
+    const changelog = data.get('changelog')
+
+    collectionItems = JSON.parse(collectionItems)
+
+    const collectionInfo = {
+      title: collectionTitle,
+      status: collectionStatus,
+      collection_id: collectionId,
+      type: collectionType,
+      description_text: collectionDescription,
+      updated_at: timestampISO,
+      updated_by: updatedBy,
+      changelog: changelog
+    }
+
+    const update = await updateCollection({collectionInfo, collectionItems})
+
+    console.log(update)
+
+    if ( !update ) {
+      alert('update not successful') 
+    }
+    else {
+      redirect(303, `/collection/${collectionId}`)
+    }
   }
 }

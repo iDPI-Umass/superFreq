@@ -5,7 +5,9 @@ let changelog: any
 let updatedAt = "";
 let userProfile;
 
-export const load: PageServerLoad = async ({ locals: { supabase, session } }) => {
+export const load: PageServerLoad = async ({ locals: { supabase, safeGetSession } }) => {
+
+  const session = await safeGetSession()
 
   if (!session) {
     throw redirect(303, '/')
@@ -35,7 +37,9 @@ export const load: PageServerLoad = async ({ locals: { supabase, session } }) =>
 }
 
 export const actions: Actions = {
-  update: async ({ request, locals: { supabase, session } }) => {
+  update: async ({ request, locals: { supabase, safeGetSession  } }) => {
+    const session = await safeGetSession()
+
     const formData = await request.formData()
     const displayName = formData.get('displayName') as string
     const username = formData.get('username') as string
@@ -47,7 +51,7 @@ export const actions: Actions = {
     console.log(formData)
 
     const { error, data } = await supabase.from('profiles').update({
-      id: session?.user.id,
+      id: session.user?.id,
       display_name: displayName,
       username: username,
       website: website,

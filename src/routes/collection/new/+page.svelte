@@ -24,8 +24,7 @@
 	export let data
 	$: data
 
-	const { session } = data
-	const { user: { id }} =  session
+	const { sessionUserId } = data
 
     const { supabase } = data
 
@@ -48,7 +47,9 @@
 	let collectionItems: object[] = []
 	$: collectionItems
 	let itemAdded = false
-	
+
+    console.log(collectionItems)
+
 	// UI
 	const buttonTextLookup: {[index: string]: string} = {
 		"": "...",
@@ -110,8 +111,8 @@
 
 		// formats data as expected by collections_info
 		const collectionInfo = {
-			"owner_id": id,
-			"created_by": id,
+			"owner_id": sessionUserId,
+			"created_by": sessionUserId,
 			"title": collectionTitle,
 			"type": collectionType,
 			"status": collectionStatus,
@@ -128,7 +129,7 @@
 		}
 
 		await insertCollectionSocial( { socialInfo, locals: {supabase} } );
-		await insertCollectionUpdateRecord({ id, collectionId, locals: { supabase }});
+		await insertCollectionUpdateRecord({ sessionUserId, collectionId, locals: { supabase }});
 
 	 }
 	

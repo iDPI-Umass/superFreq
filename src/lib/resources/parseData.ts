@@ -82,6 +82,74 @@ export const categoryParser = ( category: string ) => {
 //
 */
 
+/*
+Prepare data for table insert in format expected by: artists, release_groups, and recordings.
+*/
+
+export const prepareMusicMetadataInsert = function ( collectionItems: object[], collectionType: string ) {
+
+    let artistsMetadata: App.CollectionItem[] = [] as App.CollectionItem[]
+    let releaseGroupsMetadata: App.CollectionItem[] = [] as App.CollectionItem[]
+    let recordingsMetadata: App.CollectionItem[] = [] as App.CollectionItem[]
+
+    for (const item in collectionItems) {
+        const thisItem = collectionItems[item] as App.CollectionItem
+
+        if ( collectionType == "artists" ) {
+            artistsMetadata = [...artistsMetadata, {
+                "artist_mbid": thisItem["artist_mbid"],
+                "artist_name": thisItem["artist_name"],
+                "added_at": timestampISO
+            }];
+        }
+        else if	( collectionType == "release_groups" ) {
+            console.log(thisItem["artist_name"])
+            artistsMetadata = [...artistsMetadata, {
+                "artist_mbid": thisItem["artist_mbid"],
+                "artist_name": thisItem["artist_name"],
+                "added_at": timestampISO
+            }];
+
+            releaseGroupsMetadata = [...releaseGroupsMetadata, {
+                "artist_mbid": thisItem["artist_mbid"],
+                "release_group_mbid": thisItem["release_group_mbid"],
+                "release_group_name": thisItem["release_group_name"],
+                "release_date": thisItem["release_date"],
+                "label": thisItem["label_name"],
+                "img_url": thisItem["img_url"],
+                "added_at": timestampISO
+            }];
+            console.log(thisItem["release_group_name"])
+        }
+        else if ( collectionType == "recordings" ) {
+            artistsMetadata = [...artistsMetadata, {
+                "artist_mbid": thisItem["artist_mbid"],
+                "artist_name": thisItem["artist_name"],
+                "added_at": timestampISO
+            }];
+            releaseGroupsMetadata = [...releaseGroupsMetadata, {
+                "artist_mbid": thisItem["artist_mbid"],
+                "release_group_mbid": thisItem["release_group_mbid"],
+                "release_group_name": thisItem["release_group_name"],
+                "release_date": thisItem["release_fate"],
+                "label": thisItem["label"],
+                "img_url": thisItem["img_url"],
+                "added_at": timestampISO
+            }];
+
+            recordingsMetadata = [...recordingsMetadata, {
+                "artist_mbid": thisItem["artist_mbid"],
+                "recording_mbid": thisItem["recording_mbid"],
+                "recording_name": thisItem["recording_name"],
+                "remixer_mbid": thisItem["remixer_mbid"],
+                "release_date": thisItem["release_date"],
+                "added_at": timestampISO
+            }];
+        }
+    }
+
+    return { artistsMetadata, releaseGroupsMetadata, recordingsMetadata };
+}
 
 /*
 Prepare data for table upsert in format expected by: artists, release_groups, and recordings.
@@ -98,46 +166,46 @@ export const prepareMusicDataUpsert = function ( collectionItems: object[], coll
 
         if ( collectionType == "artists" ) {
             upsertArtists = [...upsertArtists, {
-                "artist_mbid": thisItem["artistMbid"],
-                "artist_name": thisItem["artistName"]
+                "artist_mbid": thisItem["artist_mbid"],
+                "artist_name": thisItem["artist_name"]
             }];
         }
         else if	( collectionType == "release_groups" ) {
             upsertArtists = [...upsertArtists, {
-                "artist_mbid": thisItem["artistMbid"],
-                "artist_name": thisItem["artistName"]
+                "artist_mbid": thisItem["artist_mbid"],
+                "artist_name": thisItem["artist_name"]
             }];
 
             upsertReleaseGroups = [...upsertReleaseGroups, {
-                "artist_mbid": thisItem["artistMbid"],
-                "release_group_mbid": thisItem["releaseGroupMbid"],
-                "release_group_name": thisItem["releaseGroupName"],
-                "release_date": thisItem["releaseDate"],
+                "artist_mbid": thisItem["artist_mbid"],
+                "release_group_mbid": thisItem["release_group_mbid"],
+                "release_group_name": thisItem["release_group_name"],
+                "release_date": thisItem["release_date"],
                 "label": thisItem["label"],
-                "img_url": thisItem["imgUrl"]
+                "img_url": thisItem["img_url"]
             }];
         }
         else if ( collectionType == "recordings" ) {
             upsertArtists = [...upsertArtists, {
-                "artist_mbid": thisItem["artistMbid"],
-                "artist_name": thisItem["artistName"]
+                "artist_mbid": thisItem["artist_mbid"],
+                "artist_name": thisItem["artist_name"]
             }];
 
             upsertReleaseGroups = [...upsertReleaseGroups, {
-                "artist_mbid": thisItem["artistMbid"],
-                "release_group_mbid": thisItem["releaseGroupMbid"],
-                "release_group_name": thisItem["releaseGroupName"],
-                "release_date": thisItem["releaseDate"],
+                "artist_mbid": thisItem["artist_mbid"],
+                "release_group_mbid": thisItem["release_group_mbid"],
+                "release_group_name": thisItem["release_group_name"],
+                "release_date": thisItem["release_fate"],
                 "label": thisItem["label"],
-                "img_url": thisItem["imgUrl"]
+                "img_url": thisItem["img_url"]
             }];
 
             upsertRecordings = [...upsertRecordings, {
-                "artist_mbid": thisItem["artistMbid"],
-                "recording_mbid": thisItem["recordingMbid"],
-                "recording_name": thisItem["recordingName"],
-                "remixer_mbid": thisItem["remixerMbid"],
-                "release_date": thisItem["releaseDate"]
+                "artist_mbid": thisItem["artist_mbid"],
+                "recording_mbid": thisItem["recording_mbid"],
+                "recording_name": thisItem["recording_name"],
+                "remixer_mbid": thisItem["remixer_mbid"],
+                "release_date": thisItem["release_date"]
             }];
         }
     }
@@ -156,15 +224,16 @@ export const populateCollectionContents = function ( collectionItems: object[], 
         const thisItem = item as App.CollectionItem
 
         collectionContents = [...collectionContents, {
+            "id": thisItem["id"],
             "collection_id": collectionId,
-            "artist_mbid": thisItem["artistMbid"],
-            "release_group_mbid": thisItem["releaseGroupMbid"],
-            "recording_mbid": thisItem["recordingMbid"],
+            "inserted_at": thisItem["inserted_at"],
+            "updated_at": timestampISO,
+            "artist_mbid": thisItem["artist_mbid"],
+            "release_group_mbid": thisItem["release_group_mbid"],
+            "recording_mbid": thisItem["recording_mbid"],
             "item_position": index,
-            "notes": thisItem["notes"],
+            "notes": thisItem["notes"]
         }];
-
-        console.log(collectionContents)
     }
     return collectionContents;
 }

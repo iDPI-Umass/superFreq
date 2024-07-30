@@ -2,6 +2,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
+	import { profileStoresObject } from 'src/lib/stores.ts';
 	import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte';
 	import PanelHeader from '$lib/components/PanelHeader.svelte';
 
@@ -25,8 +26,7 @@
 	let newItemAdded: boolean
 
 
-	// adds item from MusicBrainz search results to collection editor
-
+	// sets avatar to local storage
 	const handleSubmit: SubmitFunction = () => {
 		loading = true
 		console.log(avatarItem ? avatarItem : "no avatar")
@@ -34,10 +34,12 @@
 		const profileStorageItem = {
 			"displayName": displayName,
 			"username": username,
-			"avatarUrl": avatarUrl
+			"avatarUrl": avatarItem?.img_url
 		}
 
 		localStorage.setItem("profile", JSON.stringify(profileStorageItem))
+
+		profileStoresObject.set(profileStorageItem)
 
 		return async ({ result }) => {
 			loading = false
@@ -146,14 +148,14 @@
 				type="hidden" 
 				name="avatarUrl" 
 				id="avatarUrl" 
-				value={form?.avatarUrl ?? (avatarItem?.imgUrl ?? avatarUrl)} 
+				value={form?.avatarUrl ?? (avatarItem?.img_url ?? avatarUrl)} 
 			/>
-			<input 
+			<!-- <input 
 				type="hidden" 
 				name="avatarMbid" 
 				id="avatarMbid" 
 				value={form?.avatarMbid ?? (avatarItem?.releaseGroupMbid ?? avatarMbid)} 
-			/>
+			/> -->
 		</div>
 	</form>
 		<div class="form-column">
@@ -179,7 +181,7 @@
 			{#if avatarUrl && !newItemAdded}
 				<img src={avatarUrl} alt="user avatar"/>
 			{:else if avatarItem && newItemAdded}
-				<img src={avatarItem.imgUrl} alt="user avatar"/>
+				<img src={avatarItem.img_url} alt="user avatar"/>
 			{/if}
 		</div>
 

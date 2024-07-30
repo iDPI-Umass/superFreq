@@ -11,8 +11,9 @@ import { insertPost } from '$lib/resources/backend-calls/posts'
 // };
 
 export const actions = {
-	postAlbum: async ({ request, locals: { session } }) => {
-        const userId = session?.user.id
+	postAlbum: async ({ request, locals: { safeGetSession } }) => {
+        const session = await safeGetSession()
+        const userId = session.user?.id
         const data = await request.formData()
         const username = data.get('username')
 		const listenUrl = data.get('listenUrl')
@@ -43,7 +44,7 @@ export const actions = {
         if ( !timestampSlug ) {
             return { sucess: false }
         }
-        else{
+        else {
             redirect(303, `/user/${username}/now-playing/${timestampSlug}`)
         }
 	},

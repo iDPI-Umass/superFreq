@@ -15,6 +15,7 @@
 	import { setContext } from 'svelte';
 	import { writable } from 'svelte/store';
 
+	import { profileStoresObject } from '$lib/stores.ts'
 	import { Header } from '$lib/components/headers/Header';
 	import PlainHeader from "$lib/components/headers/PlainHeader/page.svelte";
 	import Footer from '$lib/components/headers/footer/index.svelte';
@@ -27,17 +28,18 @@
 	let displayName: string
 	let avatarUrl: string
 	let username: string
+	let profileObject: App.ProfileObject
 	$: displayName, avatarUrl, username
-
-	let profileUpdatedAt: Date
 
 	if (typeof window !== 'undefined') {   
 		const profileStorage = localStorage.getItem("profile") as string
-		const profileObject = JSON.parse(profileStorage)
+		profileObject = JSON.parse(profileStorage)
 
 		displayName = profileObject.displayName
 		avatarUrl = profileObject.avatarUrl
 		username = profileObject.username
+
+		profileStoresObject.set(profileObject)
 	}
 
 	onMount(() => {
@@ -56,11 +58,18 @@
 			}
 		});
 
-		displayName = profile?.display_name ?? ''
-		avatarUrl = profile?.avatar_url ?? ''
+		profileObject.displayName = profile?.display_name ?? ''
+		profileObject.avatarUrl = profile?.avatar_url ?? ''
+		profileObject.username = profile?.username ?? ''
+
+		profileStoresObject.set(profileObject)
 
 		return () => data.subscription.unsubscribe();
 	});
+
+	const unsubscribe = profileStoresObject.subscribe((value) => {
+		profileObject = value
+	})
 </script>
 
 <!-- <Header
@@ -69,13 +78,13 @@
 /> -->
 
 <PlainHeader
-	displayName={displayName}
-	avatarUrl={avatarUrl}
-	username={username}
+	displayName={profileObject.displayName}
+	avatarUrl={profileObject.avatarUrl}
+	username={profileObject.username}
 ></PlainHeader>
 
 <div class="double-border-full-vw"></div>
-<body >
+<body>
 		<slot />
 </body>
 <!-- <Footer /> -->

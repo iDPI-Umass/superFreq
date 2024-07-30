@@ -38,7 +38,6 @@
     function updateIds( collectionContents: any ) {
         for (const [index, item] of collectionContents.entries()) {
 			item.id = index + 1
-            console.log(item.id, item["release_groups"]["release_group_name"])
 		}
         console.log(collectionContents)
     }
@@ -53,7 +52,7 @@
 	}
 </script>
 
-{#if collectionReturned && mode == "edit"}
+{#if ( collectionReturned || collectionContents.length > 0 ) && mode == "edit"}
     <ul 
     aria-label="collection items" 
     class={format[layout][0]}
@@ -69,65 +68,65 @@
             >
             <div class="metadata-blurb">
                 <p>
-                    {contentItem["artistName"]}
+                    {contentItem["artist_name"]}
                 </p>
             </div>
                 <div class="editor-interactions">
                     <button class="standard" on:click|preventDefault={() => deleteItem(contentItem)}>
                         x remove
                     </button>
-                    <div use:dragHandle aria-label="drag-handle for {contentItem["artistName"]}" class="handle">
+                    <div use:dragHandle aria-label="drag-handle for {contentItem["artist_name"]}" class="handle">
                         <Grip size="20" color=var(--freq-color-text-muted)></Grip>
                     </div>
                 </div>
             </li>
             {/each}
-        {:else if collectionType == "release_groups"}
+        {:else if collectionType == "release_groups" || collectionContents.length > 0 }
             {#each items as contentItem, index(contentItem.id)}
             <li 
-                aria-label="{contentItem["releaseGroupName"]} by ${contentItem["artistName"]}" 
+                aria-label="{contentItem["release_group_name"]} by ${contentItem["artist_name"]}" 
                 animate:flip="{{duration: flipDurationMs}}" 
                 class={format[layout][1]} 
             >
                 <img 
-                    src={contentItem["imgUrl"]} 
-                    alt="{contentItem["releaseGroupName"]} cover art"
+                    src={contentItem["img_url"]} 
+                    alt="{contentItem["release_group_name"]} cover art"
                 />
                 <div class="metadata-blurb">
                     <h2>
-                        {contentItem["releaseGroupName"]}
+                        {contentItem["release_group_name"]}
                     </h2>
                     <p>
-                        {contentItem["artistName"]}
+                        {contentItem["artist_name"]}
                     </p>
                 </div>
                 <div class="editor-interactions">
                     <button class="standard" on:click|preventDefault={() => deleteItem(contentItem)}>
                         x remove
                     </button>
-                    <div use:dragHandle aria-label="drag-handle for {contentItem["releaseGroupName"]}" class="handle">
+                    <div use:dragHandle aria-label="drag-handle for {contentItem["release_group_name"]}" class="handle">
                         <Grip size="20" color=var(--freq-color-text-muted)></Grip>
                     </div>
                 </div>
             </li>
             {/each}
-        {:else if collectionType == "recordings"}
+        {:else if collectionType == "recordings" }
             {#each items as contentItem, index(contentItem.id)}
             <li 
-                aria-label="{contentItem["recordingName"]} by ${contentItem["artistName"]}" 
+                aria-label="{contentItem["recording_name"]} by ${contentItem["artist_name"]}" 
                 animate:flip="{{duration: flipDurationMs}}" 
                 class={format[layout][0]}
             >
-                <img src={contentItem["imgUrl"]}  alt={contentItem["recordingName"]} />
+                <img src={contentItem["imgUrl"]}  alt={contentItem["recording_name"]} />
                 <div class="metadata-blurb">
-                    <h2>{contentItem["recordingName"]}</h2>
-                    <p>{contentItem["artistName"]}</p>
+                    <h2>{contentItem["recording_name"]}</h2>
+                    <p>{contentItem["artist_name"]}</p>
                 </div>
                 <div class="editor-interactions">
                     <button class="standard" on:click|preventDefault={() => deleteItem(contentItem)}>
                         x remove
                     </button>
-                    <div use:dragHandle aria-label="drag-handle for {contentItem["recordingName"]}" class="handle">
+                    <div use:dragHandle aria-label="drag-handle for {contentItem["recording_name"]}" class="handle">
                         <Grip size="20" color=var(--freq-color-text-muted)></Grip>
                     </div>
                 </div>
@@ -135,13 +134,15 @@
             {/each}
         {/if}
     </ul>
-{:else if collectionReturned && mode == "view"}
+{:else if ( collectionReturned || collectionContents.length > 0 ) && mode == "view"}
     {#if collectionType == "artists"}
         <div class={format[layout][0]}>
             {#each collectionContents as contentItem}
-            <div class={format[layout][1]}>
-                <p>{contentItem["artists"]["artist_name"]}</p>
-            </div>
+            <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
+                <div class={format[layout][1]}>
+                    <p>{contentItem["artists"]["artist_name"]}</p>
+                </div>
+            </a>
             {/each}
         </div>
     {:else if collectionType == "release_groups"}
@@ -150,8 +151,12 @@
             <div class={format[layout][1]}>
                     <img src={contentItem["release_groups"]["img_url"]} alt={contentItem["release_groups"]["release_group_name"]} />
                     <div class="metadata-blurb">
-                        <h2>{contentItem["release_groups"]["release_group_name"]}</h2>
-                        <p>{contentItem["artists"]["artist_name"]}</p>
+                        <a href={`https://musicbrainz.org/release-group/${contentItem["release_group_mbid"]}`}>
+                            <h2>{contentItem["release_groups"]["release_group_name"]}</h2>
+                        </a>
+                        <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
+                            <p>{contentItem["artists"]["artist_name"]}</p>
+                        </a>
                     </div>
             </div>
             {/each}
@@ -162,8 +167,12 @@
             <div class={format[layout][1]}>
                     <img src={contentItem["release_groups"]["img_url"]}  alt={contentItem["recordings"]["recording_name"]} />
                     <div class="metata-blurb">
-                        <h2>{contentItem["recordings"]["recording_name"]}</h2>
-                        <p>{contentItem["artists"]["artist_name"]}</p>
+                        <a href={`https://musicbrainz.org/recording/${contentItem["recording_mbid"]}`}>
+                            <h2>{contentItem["recordings"]["recording_name"]}</h2>
+                        </a>
+                        <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
+                            <p>{contentItem["artists"]["artist_name"]}</p>
+                        </a>
                     </div>
             </div>
             {/each}

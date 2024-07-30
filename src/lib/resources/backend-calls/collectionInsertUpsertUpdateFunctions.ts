@@ -1,3 +1,6 @@
+import { db } from 'src/database.ts'
+import { prepareMusicMetadataInsert, populateCollectionContents } from '$lib/resources/parseData';
+
 /*
 Insert collection info when user first creates collection. Run this function before "insertCollectionContents" since it returns a collection_id.
 */
@@ -68,6 +71,139 @@ export const insertCollectionContents = async function ({ collectionContents, lo
         return await post;
     }
     throw new Error( `Unexpected response ${ post.error }`);
+}
+
+/*
+Update collection with transaciton that does the following:
+    - updates collection_info row
+    - inserts metadata for items in collection
+    - inserts new collections_contents rows and updates existing ones
+*/
+
+export const updateCollection = async function ({ collectionInfo, collectionItems }: { collectionInfo: any, collectionItems: any }) {
+
+    const collectionId = collectionInfo['collection_id']
+    const collectionType = collectionInfo['type']
+
+    const { artistsMetadata, releaseGroupsMetadata, recordingsMetadata } =  await prepareMusicMetadataInsert(collectionItems, collectionType)
+
+    const collectionContents = await populateCollectionContents(collectionItems, collectionId)
+
+    const update = await db.transaction().execute(async (trx) => {
+
+        await trx
+            .updateTable('collections_info')
+            .set({
+                updated_at: collectionInfo['updated_at'],
+                updated_by: collectionInfo['updated_by'],
+                status: collectionInfo['status'],
+                title: collectionInfo['title'],
+                description_text: collectionInfo['description_text']
+            })
+            .where('collection_id', '=', collectionInfo["collection_id"])
+            .returningAll()
+            .executeTakeFirstOrThrow()
+
+        if ( collectionInfo["type"] == 'artists') {
+            await trx
+                .insertInto('artists')
+                .values(artistsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .execute()
+        }
+        else if ( collectionInfo["type"] == 'release_groups' ) {
+            console.log('collection type: release_groups')
+            await trx
+                .insertInto('artists')
+                .values(artistsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .returningAll()
+                .execute()
+            await trx
+                .insertInto('release_groups')
+                .values(releaseGroupsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .returningAll()
+                .execute()
+        }
+        else if ( collectionInfo["type"] ==  'recordings' ) {
+            await trx
+                .insertInto('artists')
+                .values(artistsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .execute()
+            await trx
+                .insertInto('release_groups')
+                .values(releaseGroupsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .execute()
+            await trx
+                .insertInto('recordings')
+                .values(recordingsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .execute()
+        }
+        
+        return await trx
+            .insertInto( 'collections_contents' )
+            .values( collectionContents )
+            .onConflict((oc) => oc
+                .column( 'id' )
+                .doUpdateSet((eb) => ({
+                    updated_at: eb.ref('excluded.updated_at'),
+                    item_position: eb.ref('excluded.item_position'),
+                    notes: eb.ref('excluded.notes')
+                }))
+            )
+            .returningAll()
+            .execute()
+    })
+
+    // const update = await db
+    //     .with('updated_collection_info', (db) => db
+    //         .updateTable( 'collections_info' )
+    //         .set({
+    //             updated_at: collectionInfo['updated_at'],
+    //             updated_by: collectionInfo['updated_by'],
+    //             status: collectionInfo['status'],
+    //             title: collectionInfo['title'],
+    //             description_text: collectionInfo['description_text'],
+    //             changelog: collectionInfo['changelog']
+    //         })
+    //         .where('collection_id', '=', collectionInfo["collection_id"])
+    //         .returning('updated_by')
+    //     )
+    //     .with('updated_collection_contents', (db) => db
+    //         .insertInto( 'collections_contents' )
+    //         .values( collectionContents )
+    //         .onConflict((oc) => oc
+    //             .column( 'id' )
+    //             .doUpdateSet((eb) => ({
+    //                 updated_at: eb.ref('excluded.updated_at'),
+    //                 item_position: eb.ref('excluded.item_position'),
+    //                 notes: eb.ref('excluded.notes'),
+    //                 changelog: eb.ref('excluded.changelog')
+    //             }))
+    //         )
+    //     )
+    //     .selectFrom('updated_collection_info')
+    //     .select('updated_by')
+    //     .execute()
+
+        const collectionUpdate = await update
+        return collectionUpdate
 }
 
 /*

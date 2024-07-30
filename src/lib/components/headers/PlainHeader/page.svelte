@@ -5,7 +5,6 @@
 
   import hats from '$lib/assets/images/hats.jpg'
 
-
   export let displayName: string
   export let avatarUrl: string
   export let username: string
@@ -17,6 +16,11 @@
 	]
 
 </script>
+
+<svelte:head>
+  <title>Freq</title>
+</svelte:head>
+
 
 <div class="grid-background">
   <header>

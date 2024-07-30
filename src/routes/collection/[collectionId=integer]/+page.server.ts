@@ -41,7 +41,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, safeGet
         ({ socialData, socialResponseStatus } = sessionData)
     }
 
-    console.log(collectionReturned)
+    console.log(collectionReturned, collectionContents)
  
     //Get data for follow button funcitonality on client side
     let isFollowing = false;

@@ -1,32 +1,28 @@
 import { redirect } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 
-export const GET: RequestHandler = async ({ locals: { session, supabase }}) => {
-    const redirectTo = new URL('/')
+export const GET: RequestHandler = async ({ locals: { safeGetSession, supabase }}) => {
 
-    const { user: { id }} = session
-    const { count, data, status, error } = await supabase
+    const session = await safeGetSession()
+    console.log(session)
+
+    const sessionUserId = session.user?.id
+
+    const { data, status, error } = await supabase
     .from("profiles")
-    .select(`*`, { count: 'exact', head: false })
-    .eq("id", id)
-    .neq("username", null)
+    .select(`*`)
+    .eq("id", sessionUserId)
 
-    if ( status === 200 && count != 0 ) {
-        const profileStorageItem = {
-            "display_name": data[0]["display_name"],
-            "username": data[0]["username"],
-            "avatar_url": data[0]["avatar_url"]
-            }
+    const username = data[0]['username']
 
-        localStorage.setItem("profile", JSON.stringify(profileStorageItem))
-
-        redirectTo.pathname = '/feed'
+    if ( status === 200 && username ) {
+      return redirect(303, '/feed')
     }
-    else if ( status === 200 && count == 0 ) {
-      redirectTo.pathname = '/account'
+    else if ( status === 200 && !username ) {
+      return redirect(303, '/account')
     }
     else if ( error || status != 200 ) {
-      redirectTo.pathname = '/auth/error'
+      return redirect(303, '/auth/error')
     }
-    return redirect(303, redirectTo)
+    return redirect(303, '/')
 }
