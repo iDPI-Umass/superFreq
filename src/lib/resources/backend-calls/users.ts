@@ -1,6 +1,63 @@
 import { db } from 'src/database.ts'
 import { timestampISO, timestampISOString } from '$lib/resources/parseData'
 
+/* Select profile info for session user's account */
+
+export const selectSessionProfile = async function ( sessionUserId: string ) {
+    const selectProfile = await db
+    .selectFrom('profiles')
+    .selectAll()
+    .where('id', '=', sessionUserId)
+    .executeTakeFirst()
+
+    const profile = await selectProfile
+    return profile
+}
+
+/* Update profile for session user's account */
+
+export const updateSessionProfile = async function ( sessionUserId: string, profileData: App.RowData ) {
+    const update = await db.transaction().execute(async (trx) => {
+        const selectChangelog = await trx
+        .selectFrom('profiles')
+        .select('changelog')
+        .where('id', '=', sessionUserId)
+        .executeTakeFirst()
+
+        const changelog = selectChangelog as App.Changelog
+
+        changelog[timestampISOString] = {
+            display_name: profileData?.displayName,
+            username: profileData?.username,
+            website: profileData?.website,
+            avatar_mbid: profileData?.avatarMbid,
+            avatar_url: profileData?.avatarUrl,
+            updated_at: timestampISO,
+            about: profileData?.about,
+        }
+
+        const updateProfile = await trx
+        .updateTable('profiles')
+        .set({
+            display_name: profileData?.displayName,
+            username: profileData?.username,
+            website: profileData?.website,
+            avatar_mbid: profileData?.avatarMbid,
+            avatar_url: profileData?.avatarUrl,
+            updated_at: timestampISO,
+            about: profileData?.about,
+            changelog: changelog
+        })
+        .where('id', '=', sessionUserId)
+        .returning(['id', 'updated_at'])
+        .executeTakeFirst()
+
+        return updateProfile
+    })
+
+    return update
+}
+
 /* Block a user */
 
 export const insertUpdateBlock = async function ( blockInfo: App.RowData, profileUserId: string, sessionUserId: string ) {

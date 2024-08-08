@@ -223,8 +223,15 @@ export const populateCollectionContents = function ( collectionItems: object[], 
     for (const [index, item] of collectionItems.entries()) {
         const thisItem = item as App.CollectionItem
 
+        const changelog: App.Changelog = thisItem.changelog ?? {}
+
+        changelog[timestampISOString] = {
+            "updated_at": timestampISO,
+            "item_position": index,
+            "notes": thisItem["notes"]
+        }
+
         collectionContents = [...collectionContents, {
-            "id": thisItem["id"],
             "collection_id": collectionId,
             "inserted_at": thisItem["inserted_at"],
             "updated_at": timestampISO,
@@ -232,7 +239,8 @@ export const populateCollectionContents = function ( collectionItems: object[], 
             "release_group_mbid": thisItem["release_group_mbid"],
             "recording_mbid": thisItem["recording_mbid"],
             "item_position": index,
-            "notes": thisItem["notes"]
+            "notes": thisItem["notes"],
+            "changelog": changelog
         }];
     }
     return collectionContents;

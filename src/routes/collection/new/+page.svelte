@@ -14,7 +14,7 @@
 	Functions for interacting with Supabase API
 	*/
 	import { itemUpsert } from '$lib/resources/backend-calls/musicDataFunctions'
-	import { prepareMusicDataUpsert, populateCollectionContents } from '$lib/resources/parseData';
+	import { prepareMusicDataUpsert, populateCollectionContents, timestampISO, timestampISOString } from '$lib/resources/parseData';
 	import { insertCollectionInfo, insertCollectionSocial, insertCollectionContents, insertCollectionUpdateRecord } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions.js'
 	import { redirect } from '@sveltejs/kit';
 
@@ -109,23 +109,42 @@
 	// Insert row into table collections_info, returns collection_id to be used in subsequent REST requests
 	async function submitCollectionInfo() {
 
+        const infoChangelog: App.Changelog = {}
+        infoChangelog[timestampISOString] = {
+            "updated_at": timestampISO,
+            "updated_by": sessionUserId,
+			"title": collectionTitle,
+			"status": collectionStatus,
+			"description_text": descriptionText
+        }
 		// formats data as expected by collections_info
 		const collectionInfo = {
 			"owner_id": sessionUserId,
 			"created_by": sessionUserId,
+            "created_at": timestampISO,
+            "updated_at": timestampISO,
 			"title": collectionTitle,
 			"type": collectionType,
 			"status": collectionStatus,
-			"description_text": descriptionText
+			"description_text": descriptionText,
+            "changelog": infoChangelog
 		}
 
 		const collectionInfoResponse = await insertCollectionInfo( { collectionInfo, locals: { supabase }} );
 		collectionId = await collectionInfoResponse[0]["collection_id"];
 
+        const socialChangelog: App.Changelog = {}
+
+        socialChangelog[timestampISOString] = {
+            'follows_now': true,
+            'user_role': 'owner'
+        }
 		const socialInfo = {
 			"collection_id": collectionId,
 			"user_id": id,
 			"user_role": "owner",
+            "updated_at": timestampISO,
+            "changelog": socialChangelog
 		}
 
 		await insertCollectionSocial( { socialInfo, locals: {supabase} } );

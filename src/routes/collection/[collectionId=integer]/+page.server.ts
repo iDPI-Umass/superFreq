@@ -1,12 +1,10 @@
 import { redirect } from '@sveltejs/kit'
-import type { PageServerLoad, Actions } from './$types';
-import { db } from 'src/database.ts'
-import { selectViewableCollectionContents } from '$lib/resources/backend-calls/collectionSelectFunctions'
-import { insertUpdateCollectionFollow } from '$lib/resources/backend-calls/userActions'
+import type { PageServerLoad, Actions } from './$types'
+import { selectViewableCollectionContents, selectCollectionUserFollowData } from '$lib/resources/backend-calls/collectionSelectFunctions'
+import { insertUpdateCollectionFollow } from '$lib/resources/backend-calls/users'
 
 export const load: PageServerLoad = async ({ params, locals: { safeGetSession } }) => {
 
-    //convert param into useable collectionId 
     const collectionId = parseInt(params.collectionId).toString();
 
     const session = await safeGetSession()
@@ -18,27 +16,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession } 
         throw redirect(307, '/collections')
     }
 
-    const selectFollowData = await db.transaction().execute(async (trx) => {
-        let followInfo
-        try {
-            followInfo = await trx
-            .selectFrom('collections_social')
-            .selectAll()
-            .where(({and, eb}) => and([
-                eb('user_id', '=', sessionUserId),
-                eb('collection_id', '=', collectionId),
-                eb('follows_now', '=', true)
-            ]))
-            .executeTakeFirst()
-
-            return followInfo
-        }
-        catch( error ) {
-            return null
-        }
-    })
-
-    const followData = await selectFollowData
+    const followData = await selectCollectionUserFollowData(sessionUserId, collectionId)
 
     return { sessionUserId, collectionId, collectionInfo, collectionContents, collectionSocialGraph, permission, followData }
 }

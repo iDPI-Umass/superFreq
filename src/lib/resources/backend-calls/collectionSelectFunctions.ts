@@ -342,3 +342,28 @@ export const selectEditableCollectionContents = async function ( collectionId: s
     const editableCollection =  await selectEditableCollection;
     return editableCollection
 }
+
+export const selectCollectionUserFollowData = async function ( sessionUserId: string, collectionId: string ) {
+    const selectCollectionFollowData = await db.transaction().execute(async (trx) => {
+        let followData
+        try {
+            followData = await trx
+            .selectFrom('collections_social')
+            .selectAll()
+            .where(({and, eb}) => and([
+                eb('user_id', '=', sessionUserId),
+                eb('collection_id', '=', collectionId),
+                eb('follows_now', '=', true)
+            ]))
+            .executeTakeFirst()
+
+            return followData
+        }
+        catch( error ) {
+            return followData = null
+        }
+    })
+
+    const followData = await selectCollectionFollowData
+    return followData
+}
