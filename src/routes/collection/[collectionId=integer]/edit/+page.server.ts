@@ -47,7 +47,7 @@ export const actions: Actions = {
     const collectionType = data.get('collection-type')
     const collectionStatus = data.get('status')
     const collectionDescription = data.get('description')
-    let collectionItems = data.get('collection-contents')
+    let collectionItems = data.get('collection-contents') as string
     const updatedBy = data.get('updated-by')
     const changelog = data.get('changelog')
 

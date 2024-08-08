@@ -7,18 +7,21 @@
     import {dragHandleZone, dndzone, dragHandle} from "svelte-dnd-action";
     import Grip from 'lucide-svelte/icons/grip';
 
+    import logo from '$lib/assets/images/logo/freq-logo-dark.png'
+
     import "$lib/styles/media-grid-list.css"
     import "$lib/styles/metadata-formatting.css"
 
     export let collectionContents: any
     export let collectionReturned: boolean
     export let collectionType: string // "artists" | "release_groups" | "recordings" | "labels"
-    export let layout: string // "grid" | "list"
+    export let layout: string // "grid" | "condensed-grid" | "list"
     export let mode: string //"view" | "edit"
     
     const format: App.NestedObject = {
         "grid": ["media-grid", "media-grid-item"],
-        "list": ["media-list", "media-list-item"]
+        "list": ["media-list", "media-list-item"],
+        "condensed-grid": ["media-grid-condensed", "media-grid-item"],
     }
 
     let items = collectionContents
@@ -89,7 +92,7 @@
                 class={format[layout][1]} 
             >
                 <img 
-                    src={contentItem["img_url"]} 
+                    src={contentItem["img_url"] ?? ''} 
                     alt="{contentItem["release_group_name"]} cover art"
                 />
                 <div class="metadata-blurb">
@@ -134,7 +137,7 @@
             {/each}
         {/if}
     </ul>
-{:else if ( collectionReturned || collectionContents.length > 0 ) && mode == "view"}
+{:else if ( collectionReturned || collectionContents.length > 0 ) && mode == "view" }
     {#if collectionType == "artists"}
         <div class={format[layout][0]}>
             {#each collectionContents as contentItem}
@@ -149,13 +152,16 @@
         <div class={format[layout][0]}>
             {#each collectionContents as contentItem}
             <div class={format[layout][1]}>
-                    <img src={contentItem["release_groups"]["img_url"]} alt={contentItem["release_groups"]["release_group_name"]} />
+                    <img src={(
+                        contentItem['img_url'] && contentItem['img_url'] != '') ? contentItem['img_url'] : logo
+                        } 
+                        alt={contentItem['release_group_name']} />
                     <div class="metadata-blurb">
                         <a href={`https://musicbrainz.org/release-group/${contentItem["release_group_mbid"]}`}>
-                            <h2>{contentItem["release_groups"]["release_group_name"]}</h2>
+                            <h2>{contentItem["release_group_name"]}</h2>
                         </a>
                         <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
-                            <p>{contentItem["artists"]["artist_name"]}</p>
+                            <p>{contentItem["artist_name"]}</p>
                         </a>
                     </div>
             </div>

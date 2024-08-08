@@ -10,16 +10,16 @@
 
 <form name="editPostText" class="vertical">
     <input 
-        id="postData"
-        name="postData"
+        id="post-data"
+        name="post-data"
         type="hidden"
         value={postData}
     />
     <textarea
         cols="1"
         rows="4"
-        id = "editedText"
-        name="editedText"
+        id = "edited-text"
+        name="edited-text"
         spellcheck=true 
         required
     >{postData.text}</textarea>

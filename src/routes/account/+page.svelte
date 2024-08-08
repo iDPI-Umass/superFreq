@@ -60,22 +60,27 @@
 	<PanelHeader>
 		profile info
 	</PanelHeader>
-	<form
-		class="horizontal"
-		id="account-data"
-		method="post"
-		action="?/update"
-		use:enhance={handleSubmit}
-		bind:this={profileForm}
-	>
-		<div class="form-column">
-			<label 
-				class="text-label" 
-				for="email"
-				form="account-data"
-			>
-				Email
-			</label>
+	<div class="form-wrapper">
+		<form
+			id="account-data"
+			class="form-column"
+			method="post"
+			action="?/update"
+			use:enhance={handleSubmit}
+			bind:this={profileForm}
+		>
+			<div class="label-group">
+				<label 
+					class="text-label" 
+					for="email"
+					form="account-data"
+				>
+					Email
+				</label>
+				<a href="/account/update-email">
+					update email
+				</a>
+			</div>
 			<input
 				class="text" 
 				type="text" 
@@ -85,20 +90,26 @@
 				value={form?.email ?? session.user.email} 
 				disabled 
 			/>
-			<label 
-				class="text-label"  
-				for="username"
-				form="account-data"
-			>
-				Username
-			</label>
+			<div class="label-group">
+				<label 
+					class="text-label"  
+					for="username"
+					form="account-data"
+				>
+					Username
+				</label>
+				<a href="/account/update-username">
+					update username
+				</a>
+			</div>
 			<input
 				class="text"
 				type="text"
 				name="username"
 				id="username"
 				form="account-data"
-				value={form?.username ?? username} 
+				value={form?.username ?? username}
+				disabled 
 			/>
 			<label 
 				class="text-label"
@@ -156,8 +167,7 @@
 				id="avatarMbid" 
 				value={form?.avatarMbid ?? (avatarItem?.releaseGroupMbid ?? avatarMbid)} 
 			/> -->
-		</div>
-	</form>
+		</form>
 		<div class="form-column">
 			<label 
 				class="text-label" 
@@ -168,71 +178,91 @@
 			<!--
 				Form to search for avatar url
 			-->
-			<MusicBrainzSearch
-				searchCategory="release_groups"
-				searchButtonText="search"
-				searchPlaceholder="Search for an album"
-				bind:addedItems={avatarItem}
-				bind:newItemAdded={newItemAdded}
-				mode="single"
-			>
-			</MusicBrainzSearch>
+			<div class="mb-search">
+				<MusicBrainzSearch
+					searchCategory="release_groups"
+					searchButtonText="search"
+					searchPlaceholder="Search for an album"
+					bind:addedItems={avatarItem}
+					bind:newItemAdded={newItemAdded}
+					mode="single"
+				>
+				</MusicBrainzSearch>
+			</div>
 			<!-- add alt text and change column in postgres -->
 			{#if avatarUrl && !newItemAdded}
 				<img src={avatarUrl} alt="user avatar"/>
 			{:else if avatarItem && newItemAdded}
 				<img src={avatarItem.img_url} alt="user avatar"/>
 			{/if}
-		</div>
-
-
-	{#if form?.success}
-		<p>update submitted</p>
-	{/if}
-	<div class="actions">
-		<button
-			form="account-data"
-			class="double-border-top"
-			type="submit"
-			disabled={loading}
-			>
-			<div class="inner-border">
-				{loading ? 'Loading...' : 'Update profile'}
+			{#if form?.success}
+				<p>update submitted</p>
+			{/if}
+			<div class="actions">
+				<button
+					form="account-data"
+					class="double-border-top"
+					type="submit"
+					disabled={loading}
+					>
+					<div class="inner-border">
+						{loading ? 'Loading...' : 'Update profile'}
+					</div>
+				</button>
+				<form 
+					class="signout"
+					method="post" 
+					action="?/signout" 
+					use:enhance={handleSignOut}
+					>
+					<button 
+						class="double-border-top" 
+						type="submit" 
+						disabled={loading}
+					>
+						<div class="inner-border">
+							Sign Out
+						</div>
+					</button>
+				</form>
 			</div>
-		</button>
-		<form 
-			class="signout"
-			method="post" 
-			action="?/signout" 
-			use:enhance={handleSignOut}
-			>
-			<button 
-				class="double-border-top" 
-				type="submit" 
-				disabled={loading}
-			>
-				<div class="inner-border">
-					Sign Out
-				</div>
-			</button>
-		</form>
-
+		</div>
 	</div>
-
 </div>
 
 
 
 <style>
+	.form-wrapper {
+		display: flex;
+		flex-direction: row;
+		gap: var(--freq-width-spacer);
+		margin: var(--freq-height-spacer) var(--freq-width-spacer);
+	}
+	.mb-search {
+		margin: var(--freq-height-spacer-half) 0;
+	}
 	.actions {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		justify-content: space-between;
-		margin: var(--freq-height-spacer-quarter) var(--freq-width-spacer);
+		margin: var(--freq-height-spacer-quarter) 0;
 	}
 	img {
-		margin: var(--freq-height-spacer-half) 0 0 auto;
-		width: 100%;
+		margin: var(--freq-height-spacer-half) 0 0 0;
+		width: 90%;
+	}
+	@media screen and (max-width: 700px) {
+		.form-wrapper {
+			max-width: 700px;
+			display: flex;
+			flex-direction: column;
+			gap: var(--freq-width-spacer);
+			margin: var(--freq-height-spacer) var(--freq-width-spacer);
+		}
+		img {
+			width: 50%;
+		}
 	}
 </style>

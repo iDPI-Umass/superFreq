@@ -14,13 +14,19 @@ body {
 }
 
 .panel {
-	width: var(--freq-max-width-primary);
+	max-width: var(--freq-max-width-primary);
+	margin: 3vh 3vw;
+	border: var(--freq-border-panel);
+}
+
+.panel-medium {
+	max-width: calc( var(--freq-max-width-primary) * 0.75);
 	margin: 3vh 3vw;
 	border: var(--freq-border-panel);
 }
 
 .panel-narrow {
-	width: calc( var(--freq-max-width-primary) * 0.5);
+	max-width: calc( var(--freq-max-width-primary) * 0.5);
 	margin: 3vh 3vw;
 	border: var(--freq-border-panel);
 }
@@ -136,7 +142,6 @@ button.standard {
 	text-justify: center;
 }
 
-
 button:hover, :focus {
 	border-color: var(--freq-color-primary);
 	color: var(--freq-color-text);
@@ -150,6 +155,26 @@ button:active {
 	scale: 98%;
 	background: var(--freq-color-button-lens-active);
 	transition: all;
+}
+
+button:disabled {
+	border: none;
+	background: var(--freq-color-button-lens);
+}
+
+button:disabled:hover {
+	border: none;
+	color: var(--freq-color-text-muted);
+}
+
+button:disabled:focus {
+	border: none;
+	color: var(--freq-color-text-muted);
+}
+
+button:disabled:active {
+	background: var(--freq-color-button-lens);
+
 }
 
 button a {
@@ -208,6 +233,14 @@ button.double-border-top:focus > *   {
 	border-color: var(--freq-color-primary);
 }
 
+button.double-border-top:disabled:hover > * {
+	border: nonr;
+}
+
+button.double-border-top:disabled *:focus {
+	border:none;
+}
+
 button.double-border-top:active {
 	scale: 98%;
 	background: var(--freq-color-button-lens-active);
@@ -218,7 +251,6 @@ button.double-border-top:active {
 button.double-border-top:active > *   {
 	border-color: white;
 }
-
 
 /*
 //
@@ -242,16 +274,11 @@ form.horizontal {
 form.search {
 	display: flex;
 	flex-direction: row;
-	margin: var(--freq-height-spacer) var(--freq-width-spacer);
 	align-items: center;
 }
 
 form.signout {
 	margin: var(--freq-height-spacer) var(--freq-width-spacer);
-}
-
-label.text-label {
-	text-transform: uppercase;
 }
 
 form.vertical input {
@@ -273,6 +300,24 @@ form.vertical input {
 label {
 	font-size: var(--freq-font-size-x-small);
 	color: var(--freq-color-text-muted);
+}
+
+label.text-label {
+	text-transform: uppercase;
+}
+
+.label-group {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.label-group a {
+	font-size: var(--freq-font-size-x-small);
+	color: var(--freq-color-text-menu);
+	text-transform: lowercase;
+	font-style: italic;
 }
 
 input {

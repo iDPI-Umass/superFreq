@@ -97,3 +97,12 @@
     </dialog>
     {/if}
 </div>
+
+<style>
+    .panel {
+        max-width: 500px;
+    }
+    input {
+        max-width: 300px;
+    }
+</style>

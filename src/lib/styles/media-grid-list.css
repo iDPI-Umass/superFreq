@@ -36,7 +36,17 @@
 	--line-offset: calc(var(--freq-grid-gap)/2);
 }
 
-.media-grid img {
+.media-grid-condensed {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	grid-template-rows: minmax(min-content, max-content);
+	width: 100%;
+	gap: var(--freq-grid-gap);
+	overflow: hidden;
+	--line-offset: calc(var(--freq-grid-gap)/2);
+}
+
+.media-grid img, .media-grid-condensed img {
 	width: 80%;
 	margin: var(--freq-spacing-small) auto;
 }

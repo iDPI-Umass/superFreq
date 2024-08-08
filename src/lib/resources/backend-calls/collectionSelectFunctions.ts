@@ -156,6 +156,125 @@ export const selectProfileUsersCollections = async function ({ profileUserId, lo
 }
 
 /*
+Fetches collection for viewing if collection is open or public, or session user is an owner or collaborator
+*/
+
+export const selectViewableCollectionContents = async function ( collectionId: string, sessionUserId: string ) {
+
+    const selectCollection = await db.transaction().execute(async (trx) => {
+        const collectionInfo = await trx
+        .selectFrom('collections_info')
+        .where(({eb, and, or, exists, selectFrom, not}) => and([
+            eb('collections_info.collection_id', '=', collectionId),
+            or([
+                eb('status', '=', 'open'),
+                eb('status', '=', 'public'),
+                exists(
+                    selectFrom('collections_social')
+                    .whereRef('collections_info.collection_id', '=', 'collections_social.collection_id')
+                    .where(({eb, and}) => and([
+                        eb('collections_social.user_role', '=', 'owner')
+                        .or('collections_social.user_role', '=', 'collaborator'),
+                        eb('collections_social.user_id', '=', sessionUserId)
+                    ]) 
+                    )
+                    .selectAll('collections_social')
+                ),
+            ]),
+            not(
+                eb('collections_info.status', '=', 'deleted')
+            )
+        ]))
+        .selectAll()
+        .innerJoin(
+            'profiles',
+            (join) => join
+                .onRef('profiles.id', '=', 'collections_info.owner_id')
+        )
+        .executeTakeFirst()
+
+        const type = await collectionInfo?.type as string
+
+        if ( type == 'artists') {
+            const collectionContents = await trx
+            .selectFrom('collections_contents')
+            .where('collection_id', '=', collectionId)
+            .selectAll()
+            .innerJoin(
+                'artists',
+                (join) => join
+                    .onRef('artists.artist_mbid', '=', 'collections_contents.artist_mbid')
+            )
+            .selectAll()
+            .orderBy('item_position')
+            .execute()
+
+            return {collectionInfo, collectionContents, permission: true}
+        }
+        else if( type == 'release_groups') {
+            const collectionContents = await trx
+            .selectFrom('collections_contents')
+            .where('collection_id', '=', collectionId)
+            .selectAll()
+            .innerJoin(
+                'artists',
+                (join) => join
+                    .onRef('artists.artist_mbid', '=', 'collections_contents.artist_mbid')
+            )
+            .innerJoin(
+                'release_groups',
+                (join) => join
+                    .onRef('release_groups.release_group_mbid', '=', 'collections_contents.release_group_mbid')
+            )
+            .selectAll()
+            .orderBy('item_position')
+            .execute()
+
+            return {collectionInfo, collectionContents, permission: true}
+        }
+        else if (type == 'recordings') {
+            const collectionContents = await trx
+            .selectFrom('collections_contents')
+            .where('collection_id', '=', collectionId)
+            .selectAll()
+            .innerJoin(
+                'artists',
+                (join) => join
+                    .onRef('artists.artist_mbid', '=', 'collections_contents.artist_mbid')
+            )
+            .innerJoin(
+                'release_groups',
+                (join) => join
+                    .onRef('release_groups.release_group_mbid', '=', 'collections_contents.release_group_mbid')
+            )
+            .innerJoin(
+                'recordings',
+                (join) => join
+                    .onRef('recordings.recording_mbid', '=', 'collections_contents.recording_mbid')
+            )
+            .selectAll()
+            .orderBy('item_position')
+            .execute()
+
+            const collectionSocialGraph = await trx
+            .selectFrom('collections_social')
+            .where('collection_id', '=', collectionId)
+            .selectAll()
+            .execute()
+
+            return {collectionInfo, collectionContents, collectionSocialGraph, permission: true}
+        }
+    })
+
+    const collection =  await selectCollection
+    const collectionInfo = collection?.collectionInfo
+    const collectionContents = collection?.collectionContents
+    const collectionSocialGraph = collection?.collectionSocialGraph
+    const permission = collection?.permission ?? false
+    return {collectionInfo, collectionContents, collectionSocialGraph, permission}
+}
+
+/*
 Fetches collection for editing if session user is owner or collaborator
 */
 

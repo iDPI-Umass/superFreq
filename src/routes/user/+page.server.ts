@@ -8,9 +8,9 @@ import { selectUserCollectionFollows } from '$lib/resources/backend-calls/users/
 import { selectUserFollow } from '$lib/resources/backend-calls/users/profile/select/selectUserFollow'
 
 
-export const load: PageServerLoad = async ({ params, locals: { supabase, getSession } }) => {
+export const load: PageServerLoad = async ({ params, locals: { supabase, safeGetSession } }) => {
   //username for profile being viewed
-  let profileUsername = params.user;
+  let profileUsername = params.username;
   profileUsername = profileUsername.toString()
 
   //get profile data for that user
@@ -36,12 +36,8 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, getSess
   const profileCollections = await selectProfileUsersCollections({ profileUserId, locals: { supabase }})
 
   //get id for vistor from session to check permissions
-  const session  = await getSession()
-  let sessionUserId
-  if ( session ) {
-    const { user: {id}} = session
-    sessionUserId = id
-  }
+  const session = await safeGetSession()
+  const sessionUserId = session.user?.id
 
   //create seperate arrays of public/open collections and private collections
   let viewableCollections = [];

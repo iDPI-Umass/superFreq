@@ -1,6 +1,7 @@
 <script lang="ts">
     import '$lib/styles/posts.css'
-    import PostMenuSessionUser from '$lib/components/Posts/PostMenuSessionUser.svelte'
+    import PostMenuSessionUser from 'src/lib/components/menus/PostMenuSessionUser.svelte'
+    import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte'
     import EditPostBody from '$lib/components/Posts/EditPostBody.svelte'
     import LikeReact from '$lib/components/Posts/LikeReact.svelte'
     import { displayDate } from '$lib/resources/parseData'
@@ -9,7 +10,7 @@
     import Flag from 'lucide-svelte/icons/flag'
     import Music from 'lucide-svelte/icons/music'
 
-    export let sessionId: string
+    export let sessionUserId: string
     export let postData: App.NestedObject
     export let formData
     export let reactions: any = null
@@ -72,12 +73,15 @@
             reactionData={reactions}
             ></LikeReact>
             <div class="row-group-icon-description">
-                {#if postData.userId == sessionId }
-                <PostMenuSessionUser
-                    bind:editState={editState}
-                ></PostMenuSessionUser>
+                {#if postData.userId == sessionUserId }
+                    <UserActionsMenu
+                        mode='sessionUserPostMenu'
+                        bind:editState={editState}
+                    ></UserActionsMenu>
                 {:else}
-                    <Flag size="16" color="var(--freq-color-text-muted)"></Flag>
+                    <UserActionsMenu
+                        mode='postMenu'
+                    ></UserActionsMenu>
                 {/if}
             </div>
         </div>

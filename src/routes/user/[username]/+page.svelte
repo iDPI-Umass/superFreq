@@ -2,48 +2,89 @@
     import { goto } from '$app/navigation'
     import { username } from '$lib/resources/localStorage'
     import Settings from 'lucide-svelte/icons/settings'
+    import Ellipsis from 'lucide-svelte/icons/ellipsis'
+    import { Popover } from "bits-ui";
     // import repeatGrid from '../lib/assets/images/repeat-grid-2.svg'
+    import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte';
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import GridList from "$lib/components/GridList.svelte"
 
     export let data
     $: data
 
-    let topAlbums = data.collectionContents
+    let { profileUserData, blockInfo, permission, collectionCount, collectionFollowingCount, userFollowingCount, nowPlayingPostsCount, topAlbumsCollection,sessionUserId } = data
+    $: ({ profileUserData, blockInfo, permission, collectionCount, collectionFollowingCount, userFollowingCount, nowPlayingPostsCount,  topAlbumsCollection,sessionUserId  } = data)
+
     let topAlbumsReturned: boolean
-    let topAlbumsExists = false
-    if ( topAlbums && topAlbums.length != 0 ) {
-        // topAlbumsReturned = true
-        topAlbumsExists = true
+    if ( topAlbumsCollection ) {
+        topAlbumsReturned = true
     }
+    
+    const isBlocked = ( !blockInfo || blockInfo?.active == false ) ? false : true
+    
+    // let topAlbumsExists = false
+    // if ( topAlbums && topAlbums.length != 0 ) {
+    //     // topAlbumsReturned = true
+    //     topAlbumsExists = true
+    // }
     
 </script>
 
 <div class="profile-info">
+    <form
+        method="POST"
+        action="?/blockUser"
+    >
+        <input 
+            type="hidden"
+            name="block-info" 
+            id="block-info"
+            value={blockInfo}
+        />
+        <input 
+            type="hidden"
+            name="profile-user-id" 
+            id="profile-user-id"
+            value={profileUserData?.id}
+        />
+        <input 
+            type="hidden"
+            name="session-user-id" 
+            id="session-user-id"
+            value={sessionUserId}
+        />
+    </form>
     <div class="info-box-left">
-        <img src="https://ia800303.us.archive.org/30/items/mbid-5f077d5b-711e-37c7-93a4-c505e5b66f18/mbid-5f077d5b-711e-37c7-93a4-c505e5b66f18-18660912169.jpg" alt="avatar" />
+        <img src={profileUserData?.avatar_url} alt="${profileUserData?.display_name}'s avatar" />
         <div class="info-box-column">
             <div class="username-buttons-row">
                 <div class="displayname-username-column">
-                    <h1>Display Name</h1>
-                    <p class="data-muted">Username</p>
+                    <h1>{profileUserData?.display_name}</h1>
+                    <p class="data-muted">{profileUserData?.username}</p>
                 </div>
-                <div class="buttons-group">
-                    <button class="double-border-top">
-                        <div class="inner-border-condensed">
-                            edit profile
-                        </div>
-                    </button>
-                    <button class="double-border-top">
-                        <div class="inner-border-condensed">
-                            <div class="icon">
-                                <Settings size="16"></Settings>
+                {#if profileUserData?.id == sessionUserId }
+                    <div class="buttons-group">
+                        <button class="double-border-top">
+                            <div class="inner-border-condensed">
+                                edit profile
                             </div>
-                        </div>
-                    </button>
-                </div>
+                        </button>
+                        <button class="double-border-top">
+                            <div class="inner-border-condensed">
+                                <div class="icon">
+                                    <Settings size="16"></Settings>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                {:else}
+                    <UserActionsMenu
+                        mode='profileMenu'
+                        blocked={isBlocked}
+                    ></UserActionsMenu>
+                {/if}
             </div>
-            <p>profile text</p>
+            <p>{profileUserData?.about ?? ''}</p>
         </div>
     </div>
     <div class="info-box-right">
@@ -51,51 +92,41 @@
             <div class="metric" aria-label="metric">
                 <div class="numeral">
                     <p class="metric-numerals">
-                        400
+                        {collectionCount}
                     </p>
                 </div>
                 <p class="data-muted-uppercase">
-                    albums 
+                    collections 
                 </p>
             </div>
             <div class="metric" aria-label="metric">
                 <div class="numeral">
                     <p class="metric-numerals">
-                        400
+                        {nowPlayingPostsCount}
                     </p>
                 </div>
                 <p class="data-muted-uppercase">
-                    albums 
+                    now playing posts 
                 </p>
             </div>
             <div class="metric" aria-label="metric">
                 <div class="numeral">
                     <p class="metric-numerals">
-                        400
+                        {collectionFollowingCount}
                     </p>
                 </div>
                 <p class="data-muted-uppercase">
-                    albums 
+                    collections followed 
                 </p>
             </div>
             <div class="metric" aria-label="metric">
                 <div class="numeral">
                     <p class="metric-numerals">
-                        400
+                        {userFollowingCount}
                     </p>
                 </div>
                 <p class="data-muted-uppercase">
-                    albums 
-                </p>
-            </div>
-            <div class="metric" aria-label="metric">
-                <div class="numeral">
-                    <p class="metric-numerals">
-                        400
-                    </p>
-                </div>
-                <p class="data-muted-uppercase">
-                    albums 
+                    users followed
                 </p>
             </div>
         </div>
@@ -103,20 +134,20 @@
 </div>
 <div class="border-full-vw"></div>
 
-<div class="panel">
+<div class="panel-medium">
     <PanelHeader>
         top albums
     </PanelHeader>
     <GridList
-        collectionContents={topAlbums}
+        collectionContents={topAlbumsCollection}
         collectionReturned={topAlbumsReturned}
         collectionType="release_groups"
-        layout="grid"
+        layout="condensed-grid"
         mode="view"
     >
     </GridList>
 
-    {#if !topAlbumsExists}
+    {#if !topAlbumsReturned}
     <div class="placeholder">
         <button class="double-border-top" on:click|preventDefault={() => goto(`./${username}/top-albums`)}>
             <div class="inner-border">

@@ -3,8 +3,9 @@
 
     import '$lib/styles/posts.css'
     import PostReplyEditor from '$lib/components/Posts/PostReplyEditor.svelte'
-    import PostMenuSessionUser from '$lib/components/Posts/PostMenuSessionUser.svelte'
+    import PostMenuSessionUser from 'src/lib/components/menus/PostMenuSessionUser.svelte'
     import LikeReact from '$lib/components/Posts/LikeReact.svelte'
+    import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte'
 
     import Reply from 'lucide-svelte/icons/reply'
     import Heart from 'lucide-svelte/icons/heart'
@@ -13,8 +14,9 @@
     import { Collapsible } from "bits-ui";
 
     export let reply: any
-    export let sessionId: string
+    export let sessionUserId: string
     export let reactions: any
+    export let editState = false
 
     let openState: boolean
 </script>
@@ -64,13 +66,15 @@
                 {/each}
             </div>
             <div class="row-group-icon-description">
-                {#if reply.userId == sessionId }
-                <PostMenuSessionUser></PostMenuSessionUser>
+                {#if reply.userId == sessionUserId }
+                    <UserActionsMenu
+                        mode='sessionUserPostMenu'
+                        bind:editState={editState}
+                    ></UserActionsMenu>
                 {:else}
-                    <Flag size="16" color="var(--freq-color-text-muted)"></Flag>
-                    <span class="descriptor">
-                        report
-                    </span>
+                    <UserActionsMenu
+                        mode='postMenu'
+                    ></UserActionsMenu>
                 {/if}
             </div>
         </div>

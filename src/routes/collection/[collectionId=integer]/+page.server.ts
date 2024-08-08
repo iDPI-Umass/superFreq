@@ -1,67 +1,56 @@
-import type { PageServerLoad } from './$types';
-import { checkCollectionViewPermissions } from '$lib/resources/backend-calls/checkSesssionUserPermissions';
-import { selectCollectionContents, selectCollectionSocialsFollowsInfo } from '$lib/resources/backend-calls/collectionSelectFunctions';
+import { redirect } from '@sveltejs/kit'
+import type { PageServerLoad, Actions } from './$types';
+import { db } from 'src/database.ts'
+import { selectViewableCollectionContents } from '$lib/resources/backend-calls/collectionSelectFunctions'
+import { insertUpdateCollectionFollow } from '$lib/resources/backend-calls/userActions'
 
-export const load: PageServerLoad = async ({ params, locals: { supabase, safeGetSession } }) => {
-    //convert param into useable collectionId for supabase
-    const collectionId = parseInt(params.collectionId);
+export const load: PageServerLoad = async ({ params, locals: { safeGetSession } }) => {
 
-    /*
-    Get visitor's userId, verify view access for this collection
-    */
+    //convert param into useable collectionId 
+    const collectionId = parseInt(params.collectionId).toString();
+
     const session = await safeGetSession()
-    let sessionUserId
+    const sessionUserId = session.user?.id as string
 
-    if ( session ) {
-        const { user: { id } } = session
-        sessionUserId = id
+    const { collectionInfo, collectionContents, collectionSocialGraph, permission } =  await selectViewableCollectionContents(collectionId, sessionUserId)
+
+    if ( !permission ) {
+        throw redirect(307, '/collections')
     }
 
-    const permission = await checkCollectionViewPermissions({collectionId, sessionUserId, locals: { supabase }});
+    const selectFollowData = await db.transaction().execute(async (trx) => {
+        let followInfo
+        try {
+            followInfo = await trx
+            .selectFrom('collections_social')
+            .selectAll()
+            .where(({and, eb}) => and([
+                eb('user_id', '=', sessionUserId),
+                eb('collection_id', '=', collectionId),
+                eb('follows_now', '=', true)
+            ]))
+            .executeTakeFirst()
 
-    const { verified, collectionInfo, responseError } = await permission;
-
-    //refuse view access if not verified
-    if ( verified != true || responseError ) { 
-        console.warn(` Can not return collection ${collectionId}. `)
-        return {
-            status: 401,
-            redirect: "/collections"
+            return followInfo
         }
-    }
-
-    //select collection contents and get collection social graph if view access is verified
-    const selectCollectionContentsResponse: any = await selectCollectionContents({collectionId, locals: {supabase}});
-    const { collectionContents, collectionReturned }: { collectionContents: any, collectionReturned: boolean } =  
-    selectCollectionContentsResponse
-    let socialData: any
-    let socialResponseStatus: number
-    if ( session ){
-        const sessionData = await selectCollectionSocialsFollowsInfo({collectionId, sessionUserId, locals: {supabase}});
-        ({ socialData, socialResponseStatus } = sessionData)
-    }
-
-    console.log(collectionReturned, collectionContents)
- 
-    //Get data for follow button funcitonality on client side
-    let isFollowing = false;
-    let followButtonStatus = false;
-    for ( const socialItem in socialData ) {
-        const socialId = socialData[socialItem]["user_id"];
-        const followsNow = socialData[socialItem]["follows_now"];
-        if ( socialId == sessionUserId && followsNow == true) {
-            isFollowing = true;
-            followButtonStatus = true;
+        catch( error ) {
+            return null
         }
-    }
+    })
 
-    if ( verified == true ) {
-        return { collectionId, verified, collectionInfo, session, sessionUserId, collectionContents, collectionReturned, socialData, socialResponseStatus, isFollowing, followButtonStatus };
+    const followData = await selectFollowData
+
+    return { sessionUserId, collectionId, collectionInfo, collectionContents, collectionSocialGraph, permission, followData }
+}
+
+export const actions = {
+    followCollection: async ({ request }) => {
+        const data = await request.formData()
+        const collectionId = data.get('collection-id') as string
+        const sessionUserId = data.get('session-user-id') as string
+
+        const follow = await insertUpdateCollectionFollow(sessionUserId, collectionId)
+
+        return { follow, success: true }
     }
-    else if ( verified == false || responseError == true ) {
-        return {
-            status: 403,
-            redirect: "/collections"
-        }
-    }
-  }
+} satisfies Actions

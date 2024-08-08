@@ -11,14 +11,32 @@
     let { session, post, replies, reactions } = data
     $: ({ session, post, replies, reactions } = data)
 
-    const sessionId = session?.user.id as string
+    const sessionUserId = session?.user.id as string
+    const postId = post?.id as string
 
     const reactionCount = (reactions == null ) ? 0 : reactions[0]["total_reactions"]
 </script>
 
 <div class="post-panel">
+    <form
+        method="POST"
+        action="?/flagPost"
+    >
+        <input 
+            type="hidden"
+            name="session-user-id" 
+            id="session-user-id"
+            value={sessionUserId}
+        />
+        <input 
+            type="hidden"
+            name="post-id" 
+            id="post-id"
+            value={postId}
+        />
+    </form>
     <NowPlayingPost
-        sessionId={sessionId}
+        sessionUserId={sessionUserId}
         postData={post}
         formData={form}
         editState={form?.editState ?? false}
@@ -27,9 +45,26 @@
     {#if session}
         <PostReplyEditor></PostReplyEditor>
         {#each replies as reply}
+            <form
+                method="POST"
+                action="?/flagPost"
+            >
+                <input 
+                    type="hidden"
+                    name="session-user-id" 
+                    id="session-user-id"
+                    value={sessionUserId}
+                />
+                <input 
+                    type="hidden"
+                    name="post-id" 
+                    id="post-id"
+                    value={reply.id}
+                />
+            </form>
             <PostReply
                 reply={reply}
-                sessionId={sessionId}
+                sessionUserId={sessionUserId}
                 reactions={reactionCount}
             ></PostReply>
         {/each}

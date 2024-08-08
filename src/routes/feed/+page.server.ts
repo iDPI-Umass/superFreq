@@ -4,9 +4,9 @@ import { selectSocialFollows } from '$lib/resources/backend-calls/users/profile/
 import { selectSocialFollowsActivity } from '$lib/resources/backend-calls/users/selectSocialFollowsActivity';
 import { selectFollowedUsersCollectionsActivity } from '$lib/resources/backend-calls/users/feed/selectFollowedUsersCollectionsActivity';
 
-export const load: PageServerLoad = async ({ locals: { supabase, getSession } }) => {
+export const load: PageServerLoad = async ({ locals: { supabase, safeGetSession } }) => {
     // get userId from session
-    const data = await getSession();
+    const data = await safeGetSession();
     const user = data;
     const sessionId = user["id"];
 

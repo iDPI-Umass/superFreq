@@ -14,13 +14,13 @@
     // import { insertCollectionFollow, updateCollectionFollow } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions';
 	
 	export let data: PageData;
-    let { collectionId, verified, collectionInfo, sessionUserId, collectionContents, collectionReturned, socialResponseStatus, isFollowing, followButtonStatus } = data;
-    $: ({ collectionId, verified, collectionInfo, sessionUserId, collectionContents, collectionReturned, socialResponseStatus, isFollowing, followButtonStatus } = data);
+    let { sessionUserId, collectionId, collectionInfo, collectionContents, collectionSocialGraph, permission, followData } = data;
+    $: ({ sessionUserId, collectionId, collectionInfo, collectionContents, collectionSocialGraph, permission, followData } = data);
+
+    const collectionType = collectionInfo?.type as string
+    const collectionUpdatedAt = collectionInfo?.updated_at as Date
 
     let gridListSelect = "grid"
-    collectionReturned = ( collectionReturned === undefined) ? false : true
-
-    const { title, updated_at, type, username, display_name } = collectionInfo[0];
 
     const categories: App.Lookup = {
         "artists": "artists",
@@ -28,56 +28,22 @@
         "recording": "tracks"
     }
 
-    const updatedAt = new Date(updated_at).toLocaleDateString();
+    
+    const updatedAt = new Date(collectionUpdatedAt).toLocaleDateString()
 
-     /*
-    Follow button functionality
-    */
-
-    //insert row in social graph if no row exists for visitor following user
-    // async function followButton() {
-    //     if ( socialData.length === 0 ) {
-    //         const insert =  await insertCollectionFollow({ collectionId, sessionUserId, locals: { supabase }});
-    //         let { insertedFollow, responseStatus } = insert;
-    //         if ( responseStatus == 200) {
-    //             followButtonStatus = true;
-    //             isFollowing = insertedFollow;  
-    //         }
-    //         else {
-    //             console.log(responseStatus);
-    //         }
-    //     }
-    //     else {
-    //         let { id, user_id, collection_id, user_role, follows_now, updated_at, changelog } = socialData[0];
-
-    //         //create entry in changelog archiving data selected
-    //         changelog[updated_at] = {
-    //             "user_id": user_id,
-    //             "collection_id": collection_id,
-    //             "user_role": user_role,
-    //             "follows_now": follows_now
-    //         }
-
-    //         //flip follows_now boolean
-    //         if ( follows_now == true ) {
-    //             followButtonStatus = false;
-    //         }
-    //         else {
-    //             followButtonStatus = true;
-    //         }
-
-    //         //log new follow data and update row
-    //         const followData = {
-    //             "user_id": user_id,
-    //             "collection_id": collection_id,
-    //             "follows_now": followButtonStatus,
-    //             "user_role": user_role,
-    //             "updated_at": null,
-    //             "changelog": changelog
-    //         };
-    //         const update = await updateCollectionFollow({ id, followData, locals: { supabase }});
-    //     }
-    // }
+    function editPermission(sessionUserId: string, collectionInfo: any, collectionSocialGraph: any) {
+        if ( collectionInfo.owner_id == sessionUserId) {
+            return true
+        }
+        else {
+            for (const row of collectionSocialGraph) {
+                if ( row.user_id == sessionUserId ) {
+                    return true
+                }
+            }
+            return false
+        }
+    }
 </script>
 
 <body>
@@ -85,35 +51,62 @@
         <div class="collection-info">
             <div class="collection-metadata">
                 <div class="collection-title-follow-top-row">
-                    <h1>{title}</h1>
-                    <!-- {#if session && (sessionUserId != collectionInfo[0]["owner_id"])}
-                        <button class="standard" on:click|preventDefault={followButton} disabled={!socialResponseStatus}>
-                            {#if ( followButtonStatus == true )}
-                                unfollow
-                            {:else if ( followButtonStatus == false )}
-                                + follow
-                            {/if}
+                    <h1>{collectionInfo?.title}</h1>
+                    {#if 
+                        sessionUserId && !editPermission(sessionUserId, collectionInfo, collectionSocialGraph)}
+                    <form
+                        method="POST"
+                        action="?/followCollection"
+                    >
+                        <input 
+                            type="hidden"
+                            name="follow-info" 
+                            id="follow-info"
+                            value={followData}
+                        />
+                        <input 
+                            type="hidden"
+                            name="collection-id" 
+                            id="collection-id"
+                            value={collectionId}
+                        />
+                        <input 
+                            type="hidden"
+                            name="session-user-id" 
+                            id="session-user-id"
+                            value={sessionUserId}
+                        />
+                        <button 
+                            class="standard" 
+                            formaction="followCollection"
+                        >
+                        {#if followData && followData['follows_now'] == true}
+                            unfollow
+                        {:else}
+                            + follow
+                        {/if}
                         </button>
-                    {:else if session && (sessionUserId == collectionInfo[0]["owner_id"])}
+                    </form>
+                    {:else if sessionUserId && editPermission(sessionUserId, collectionInfo, collectionSocialGraph)}
                         <button 
                             class="standard"
                             on:click|preventDefault={() => goto($page.url.pathname + '/edit')}
                         >
                         edit
                         </button>
-                    {/if} -->
+                    {/if}
                 </div>
             </div>
             <div class="frontmatter blurb-formatting">
                 <p class="frontmatter-info-text">
-                    Collection of {categories[type]} by 
-                    <a href="/user/{username}">
-                        {display_name}
+                    Collection of {categories[collectionType]} by 
+                    <a href="/user/{collectionInfo?.username}">
+                        {collectionInfo?.display_name}
                     </a>
                 </p>
                 <p class="frontmatter-date-text">Last updated on {updatedAt}</p>
-                {#if collectionInfo["description_text"]}
-                    <p>{collectionInfo["description_text"]}</p>
+                {#if collectionInfo?.description_text}
+                    <p>{collectionInfo?.description_text}</p>
                 {/if}
             </div>
         </div>
@@ -145,8 +138,8 @@
         </div>
         <GridList
             collectionContents={collectionContents}
-            collectionReturned={collectionReturned}
-            collectionType={type}
+            collectionReturned={permission}
+            collectionType={collectionType}
             layout={gridListSelect}
             mode="view"
         >
