@@ -90,20 +90,9 @@ export const insertCollection = async function ({ collectionInfo, collectionItem
 
     const insert = await db.transaction().execute(async (trx) => {
 
-        const infoChangelog: App.Changelog = {}
-        infoChangelog[timestampISOString] = {
-            'owner_id': sessionUserId,
-            'updated_by': sessionUserId,
-            'updated_at': timestampISO,
-            'title': collectionInfo?.title,
-            'status': collectionInfo?.status,
-            'description_text': collectionInfo?.description_text
-        }
-
         const insertCollectionInfo = await trx
             .insertInto('collections_info')
             .values({
-                collection_id: sql`DEFAULT`,
                 owner_id: sessionUserId,
                 created_by: sessionUserId,
                 created_at: timestampISO,
@@ -113,7 +102,7 @@ export const insertCollection = async function ({ collectionInfo, collectionItem
                 status: collectionInfo?.status,
                 type: collectionInfo?. type,
                 description_text: collectionInfo?.description_text,
-                changelog: infoChangelog
+                changelog: collectionInfo?.changelog
             })
             .returning('collection_id')
             .executeTakeFirstOrThrow()
@@ -138,6 +127,7 @@ export const insertCollection = async function ({ collectionInfo, collectionItem
             user_role: 'owner',
             changelog: socialChangelog
         })
+        .executeTakeFirst()
 
         const collectionContents = await populateCollectionContents(collectionItems, collectionId) 
 
@@ -208,7 +198,8 @@ export const insertCollection = async function ({ collectionInfo, collectionItem
             .execute()
     })
         const collectionInsert = await insert
-        return collectionInsert
+        const { collection_id } = collectionInsert[0]
+        return collection_id
 }
 
 /*

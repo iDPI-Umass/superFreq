@@ -23,7 +23,6 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession } 
     'title': collection[0]["title"],
     'status': collection[0]["status"],
     'description_text': collection[0]["description_text"],
-    'updated_at': updatedAt,
     'updated_by': sessionUserId
   }
 

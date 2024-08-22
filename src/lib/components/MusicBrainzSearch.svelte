@@ -109,7 +109,7 @@
 		if ( searchCategory == "artists" ) {
 			addedItems = [...addedItems, {
 				"item_position": addedItems.length,
-				"artist_bbid": item["id"],
+				"artist_mbid": item["id"],
 				"artist_name": item["name"],
 				"release_group_mbid": null,
 				"release_group_name": null,
@@ -181,6 +181,7 @@
 		newItemAdded = true
 		query = ""
 		searchComplete = false
+		console.log(addedItems)
 		return {newItemAdded, showModal, query, searchComplete}
 	}
 
