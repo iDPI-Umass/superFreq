@@ -30,10 +30,19 @@
     </a>
     <nav>
       {#if sessionUserId}
+        <a href="/now-playing/new">
+          <button>
+            now playing
+          </button>
+        </a>
+        <a href="/feed">
+          <button>
+            feed
+          </button>
+        </a>
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
-            <img src={avatarUrl} alt="{displayName}'s avatar" />
-            {displayName} 
+            collections
             <ChevronDown></ChevronDown>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content>
@@ -42,6 +51,26 @@
                   {item.text}
                 </DropdownMenu.Item>
               {/each}
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
+        <a href="/about">
+          <button>
+            about
+          </button>
+        </a>
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger>
+            <img src={avatarUrl} alt="{displayName}'s avatar" />
+            {displayName} 
+            <ChevronDown></ChevronDown>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content>
+            <DropdownMenu.Item href={"/collection/new"}>
+              New Collection
+            </DropdownMenu.Item>
+            <DropdownMenu.Item href={"/collections"}>
+              All Collections
+            </DropdownMenu.Item>
           </DropdownMenu.Content>
         </DropdownMenu.Root>
       {:else}
