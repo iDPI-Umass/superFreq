@@ -7,11 +7,12 @@ import { db } from 'src/database.ts'
 export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 
     const session = await safeGetSession()
-    const sessionUserId = session.user?.id as string
 
-    if (!session) {
+    if (!session.session) {
         throw redirect(303, '/')
     }
+
+    const sessionUserId = session.user?.id as string
 
     const selectProfile = await db
     .selectFrom('profiles')

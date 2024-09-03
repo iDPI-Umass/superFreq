@@ -5,12 +5,13 @@ import { insertCollection } from 'src/lib/resources/backend-calls/collections'
 
 export const load: PageServerLoad = async ({ locals: {safeGetSession} }) => {
   const session = await safeGetSession()
+
+  if (!session.session) {
+    throw redirect(303, '/')
+}
+  
   const sessionUserId = session.user?.id
 
-  if (!session) {
-    throw redirect(303, '/login')
-  }
-  
   return { sessionUserId }
 }
 

@@ -3,6 +3,14 @@ import { parseISO } from "date-fns"
 import type { PageServerLoad, Actions, Posts } from './$types'
 import { insertPost } from '$lib/resources/backend-calls/posts'
 
+export const load: PageServerLoad = async ({ locals: { safeGetSession}}) => {
+    const session = await safeGetSession()
+
+    if (!session.session) {
+        throw redirect(303, '/')
+    }
+}
+
 export const actions = {
 	postAlbum: async ({ request, locals: { safeGetSession } }) => {
         const session = await safeGetSession()

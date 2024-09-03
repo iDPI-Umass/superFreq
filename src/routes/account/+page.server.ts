@@ -5,12 +5,12 @@ import { selectSessionProfile, updateSessionProfile } from '$lib/resources/backe
 export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 
   const session = await safeGetSession()
-  const sessionUserId = session.user?.id
 
-  if (!session) {
+  if (!session.session) {
     throw redirect(303, '/')
   }
 
+  const sessionUserId = session.user?.id
   const profile = await selectSessionProfile
 
   return { sessionUserId, profile }

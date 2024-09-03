@@ -5,6 +5,7 @@
 
   import hats from '$lib/assets/images/hats.jpg'
 
+  export let sessionUserId: string | null
   export let displayName: string
   export let avatarUrl: string
   export let username: string
@@ -28,20 +29,47 @@
       <img alt="Freq" src={logo} />
     </a>
     <nav>
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger>
-          <img src={avatarUrl} alt="{displayName}'s avatar" />
-          {displayName} 
-          <ChevronDown></ChevronDown>
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Content>
-            {#each accountMenuItems as item}
-              <DropdownMenu.Item href={item.url}>
-                {item.text}
-              </DropdownMenu.Item>
-            {/each}
-        </DropdownMenu.Content>
-    </DropdownMenu.Root>
+      {#if sessionUserId}
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger>
+            <img src={avatarUrl} alt="{displayName}'s avatar" />
+            {displayName} 
+            <ChevronDown></ChevronDown>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content>
+              {#each accountMenuItems as item}
+                <DropdownMenu.Item href={item.url}>
+                  {item.text}
+                </DropdownMenu.Item>
+              {/each}
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
+      {:else}
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger>
+            Explore
+            <ChevronDown></ChevronDown>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content>
+            <DropdownMenu.Item href={"/collections"}>
+              Collections
+            </DropdownMenu.Item>
+            <DropdownMenu.Item href={"/posts"}>
+              Posts
+            </DropdownMenu.Item>
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
+        <a href="/about">
+          <button>
+            about
+          </button>
+        </a>
+        <a href="/welcome">
+          <button>
+            log in/sign up
+          </button>
+        </a>
+      {/if}
     </nav>
   </header>
 </div>

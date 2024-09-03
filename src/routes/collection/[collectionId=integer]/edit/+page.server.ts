@@ -6,9 +6,9 @@ import { selectEditableCollectionContents, updateCollection } from '$lib/resourc
 export const load: PageServerLoad = async ({ params, locals: { safeGetSession } }) => {
   const session = await safeGetSession()
 
-  if (!session) {
-    throw redirect(401, '/')
-  }
+  if (!session.session) {
+    throw redirect(303, '/')
+}
 
   const collectionId = parseInt(params.collectionId).toString()
 

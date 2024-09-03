@@ -1,9 +1,15 @@
 import type { PageServerLoad, Actions } from './$types'
+import { redirect } from '@sveltejs/kit'
 import { selectFeedData, selectMoreFeedData } from '$lib/resources/backend-calls/feed'
 import { add, parseISO } from 'date-fns'
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
     const session = await safeGetSession()
+
+    if (!session.session) {
+        throw redirect(303, '/')
+    }
+    
     const sessionUserId = session.user?.id as string
     const batchSize = 50
     const timestampEnd = new Date()
