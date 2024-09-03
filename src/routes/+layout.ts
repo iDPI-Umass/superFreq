@@ -1,4 +1,5 @@
 import { createBrowserClient, createServerClient, isBrowser, parse } from '@supabase/ssr'
+// import { db } from 'src/database.ts'
 
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public'
 
@@ -47,15 +48,15 @@ export const load: LayoutLoad = async ({ data, depends, fetch }) => {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if ( user ) {
-    const { data: profile } = await supabase
-    .from('profiles')
-    .select(`username, display_name, website, avatar_url, changelog, updated_at`)
-    .eq('id', session.user.id)
-    .single()
+  // if ( user ) {
+  //   const profile = await db
+  //   .selectFrom('profiles')
+  //   .select(['username', 'display_name', 'website', 'avatar_url'])
+  //   .where('id', '=', session?.user.id as string)
+  //   .executeTakeFirst()
 
-    return { session, supabase, user, profile }
-  }
+  //   return { session, supabase, user, profile }
+  // }
 
   return { session, supabase, user }
 }

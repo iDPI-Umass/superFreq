@@ -86,11 +86,11 @@ export const categoryParser = ( category: string ) => {
 Prepare data for table insert in format expected by: artists, release_groups, and recordings.
 */
 
-export const prepareMusicMetadataInsert = function ( collectionItems: object[], collectionType: string ) {
+export const prepareMusicMetadataInsert = function ( collectionItems: App.RowData, collectionType: string ) {
 
-    let artistsMetadata: App.CollectionItem[] = [] as App.CollectionItem[]
-    let releaseGroupsMetadata: App.CollectionItem[] = [] as App.CollectionItem[]
-    let recordingsMetadata: App.CollectionItem[] = [] as App.CollectionItem[]
+    let artistsMetadata = [] as any
+    let releaseGroupsMetadata = [] as any
+    let recordingsMetadata = [] as any
 
     for (const item in collectionItems) {
         const thisItem = collectionItems[item] as App.CollectionItem
@@ -155,7 +155,7 @@ export const prepareMusicMetadataInsert = function ( collectionItems: object[], 
 Prepare data for table upsert in format expected by: artists, release_groups, and recordings.
 */
 
-export const prepareMusicDataUpsert = function ( collectionItems: object[], collectionType: string ) {
+export const prepareMusicDataUpsert = function ( collectionItems: App.RowData, collectionType: string ) {
 
     let upsertArtists: object[] = []
     let upsertReleaseGroups: object[] = []
@@ -217,11 +217,12 @@ export const prepareMusicDataUpsert = function ( collectionItems: object[], coll
 Parse data for table upsert in format expected by collections_contents.
 */
 
-export const populateCollectionContents = function ( collectionItems: object[], collectionId: string ) {
-    let collectionContents: object[] = [];
+export const populateCollectionContents = function ( collectionItems: App.RowData, collectionId: string ) {
+    
+    let collectionContents = [] as any
 
     for (const [index, item] of collectionItems.entries()) {
-        const thisItem = item as App.CollectionItem
+        const thisItem = item as App.RowData
 
         const changelog: App.Changelog = thisItem.changelog ?? {}
 

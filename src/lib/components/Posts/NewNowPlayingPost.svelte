@@ -45,8 +45,8 @@
                     value={username}
                 />
                 <input
-                    id="mbidType" 
-                    name="mbidType" 
+                    id="item-type" 
+                    name="item-type" 
                     type="hidden" 
                     value="release_group"
                 />
@@ -58,68 +58,68 @@
                 />
                 <label 
                     class="text-label" 
-                    for="listenUrl"
+                    for="listen-url"
                 >
                     listen link
                 </label>
                 <input 
                     class="text" 
-                    id="listenUrl" 
-                    name="listenUrl" 
+                    id="listen-url" 
+                    name="listen-url" 
                     type="text"
                     placeholder="paste link" 
                 />
                 <label 
                     class="text-label" 
-                    for="artistName"
+                    for="artist-name"
                 >
                     artist name
                 </label>
                 <input  
-                    id="artistMbid" 
-                    name="artistMbid" 
+                    id="artist-mbid" 
+                    name="artist-mbid" 
                     type="hidden"
                     value={addedItem?.artistMbid ?? null}
                 />
                 <input
                     class="text"  
-                    id="artistName" 
-                    name="artistName" 
+                    id="artist-name" 
+                    name="artist-name" 
                     type="text"
                     placeholder="artist name" 
                     value={addedItem?.artistName ?? null}
                 />
                 <label 
                     class="text-label" 
-                    for="albumName"
+                    for="album-name"
                 >
                     album name
                 </label>
                 <input 
                     class="text" 
-                    id="albumName" 
-                    name="albumName" 
+                    id="album-name" 
+                    name="album-name" 
                     type="text"
                     placeholder="album name"
                     value={addedItem?.releaseGroupName ?? null}
                 />
                 <input  
-                    id="releaseGroupMbid" 
-                    name="releaseGroupMbid" 
+                    id="release-group-mbid" 
+                    name="release-group-mbid" 
                     type="hidden"
                     value={addedItem?.releaseGroupMbid ?? null}
                 />
                 <label 
                     class="text-label" 
-                    for="postText"
+                    for="post-text"
                 >
                     write something
                 </label>
                 <textarea
                     cols="1"
                     rows="5"
-                    id="postText"
-                    name="postText"
+                    id="post-text"
+                    name="post-text"
                     spellcheck=true 
                 />
                 <button class="standard" formaction="?/postAlbum" type="submit">
@@ -144,8 +144,8 @@
                     value={username}
                 />
                 <input
-                    id="mbidType" 
-                    name="mbidType" 
+                    id="mbid-type" 
+                    name="mbid-type" 
                     type="hidden" 
                     value="recording"
                 />
@@ -157,74 +157,74 @@
                 />
                 <label 
                     class="text-label" 
-                    for="listenUrl"
+                    for="listen-url"
                 >
                     listen link
                 </label>
                 <input 
                     class="text" 
-                    id="listenUrl" 
-                    name="listenUrl" 
+                    id="listen-url" 
+                    name="listen-url" 
                     type="text"
                     placeholder="paste link" 
                 />
                 <label 
                     class="text-label" 
-                    for="artistName"
+                    for="artist-name"
                 >
                     artist name
                 </label>
                 <input
                     class="text"  
-                    id="artistName" 
-                    name="artistName" 
+                    id="artist-name" 
+                    name="artist-name" 
                     type="text"
                     placeholder="artist name" 
                     value={addedItem?.artistName ?? null}
                 />
                 <input  
-                    id="artistMbid" 
-                    name="artistMbid" 
+                    id="artist-mbid" 
+                    name="artist-mbid" 
                     type="hidden"
                     value={addedItem?.artistMbid ?? null}
                 />
                 <label 
                     class="text-label" 
-                    for="albumName"
+                    for="album-name"
                 >
                     album name
                 </label>
                 <input 
                     class="text" 
-                    id="albumName" 
-                    name="albumName" 
+                    id="album-name" 
+                    name="album-name" 
                     type="text"
                     placeholder="album name" 
                     value={addedItem?.releaseGroupName ?? null}
                 />
                 <input  
-                    id="releaseGroupMbid" 
-                    name="releaseGroupMbid" 
+                    id="release-group-mbid" 
+                    name="release-group-mbid" 
                     type="hidden"
                     value={addedItem?.releaseGroupMbid ?? null}
                 />
                 <label
                     class="text-label" 
-                    for="trackName"
+                    for="track-name"
                 >
                     track name
                 </label>
                 <input 
                     class="text"    
-                    id="trackName" 
-                    name="trackName" 
+                    id="track-name" 
+                    name="track-name" 
                     type="text"
                     placeholder="track title" 
                     value={addedItem?.recordingName ?? null}
                 />
                 <input  
-                    id="recordingMbid" 
-                    name="recordingMbid" 
+                    id="recording-mbid" 
+                    name="recording-mbid" 
                     type="hidden"
                     value={addedItem?.recordingMbid ?? null}
                 />
@@ -263,8 +263,8 @@
                     value={username}
                 />
                 <input
-                    id="mbidType" 
-                    name="mbidType" 
+                    id="item-type" 
+                    name="item-type" 
                     type="hidden" 
                     value="artist"
                 />
@@ -276,34 +276,34 @@
                 />
                 <label 
                     class="text-label" 
-                    for="listenUrl"
+                    for="listen-url"
                 >
                     listen link
                 </label>
                 <input 
                     class="text" 
-                    id="listenUrl" 
-                    name="listenUrl" 
+                    id="listen-url" 
+                    name="listen-url" 
                     type="text"
                     placeholder="paste link" 
                 />
                 <label 
                     class="text-label" 
-                    for="artistName"
+                    for="artist-name"
                 >
                     host / dj
                 </label>
                 <input
                     class="text"  
-                    id="artistName" 
-                    name="artistName" 
+                    id="artist-name" 
+                    name="artist-name" 
                     type="text"
-                    placeholder="artistName" 
+                    placeholder="artist name" 
                     value={addedItem?.artistName ?? null}
                 />
                 <input  
-                    id="artistMbid" 
-                    name="artistMbid" 
+                    id="artist-mbid" 
+                    name="artist-mbid" 
                     type="hidden"
                     value={addedItem?.artistMbid ?? null}
                 />
@@ -337,15 +337,15 @@
                 />
                 <label 
                     class="text-label" 
-                    for="postText"
+                    for="post-text"
                 >
                     write something
                 </label>
                 <textarea
                     cols="1"
                     rows="5"
-                    id="postText"
-                    name="postText"
+                    id="post-text"
+                    name="post-text"
                     spellcheck=true 
                 />
                 <button class="standard" type="submit">

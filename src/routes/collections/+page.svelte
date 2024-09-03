@@ -1,30 +1,52 @@
 <script lang="ts">
-    import { profileName } from '$lib/resources/parse-data/profileName';
-    import { formatDate } from '$lib/resources/parse-data/formatDate';
+    import type { PageData, ActionData } from './$types'
+    import { enhance } from '$app/forms'
+    export let form: ActionData
+    export let data: PageData
 
-    export let data;
-    let { allCollections } =  data;
-    $: ({ allCollections } =  data);
-    
+    let { collections, remaining, totalCollections, batchSize, batchIterator } = data
+    $: ({ collections, remaining, totalCollections, batchSize, batchIterator } = data )
 </script>
 
-<ul>
-    {#each allCollections as collection}
-    <li>
-       <a href="/collection/{collection["collection_id"]}">{collection["title"]}</a> 
-       by <a href="/user/{collection["profiles"]["username"]}"> {profileName(collection["profiles"]["username"], collection["profiles"]["display_name"])}</a>,
-       last updated {formatDate(collection["updated_at"])}
-    </li>
-{/each}
-</ul>
+<ol>
+    {#each (form?.collections ?? collections) as collection}
+        <li>
+            <a href='/collection/${collection.collection_id}'>
+                {collection.title} by {collection.username} ({new Date(collection.created_at).toLocaleDateString()})
+            </a>
+        </li>
+    {/each}
+</ol>
+
+<form 
+    method="POST" 
+    action="?/loadMore"
+    use:enhance
+>
+    <input
+        type="hidden"
+        name="batch-iterator"
+        value={form?.batchIterator ?? batchIterator}
+    />
+    <input
+        type="hidden"
+        name="batch-size"
+        value={batchSize}
+    />
+    <input
+        type="hidden"
+        name="collections"
+        value={JSON.stringify(form?.collections ?? collections)}
+    />
+    {#if (form?.remaining ?? remaining) > 0}
+        <button class="standard" formaction="?/loadMore">
+            load more
+        </button>
+    {/if}
+</form>
 
 <style>
-    ul {
-        margin: 3vh 3vw;
-    }
-    li {
-        font-family: sans-serif;
-        font-size: large;
-        margin: 1vh auto;
+    ol {
+        list-style-type: none;
     }
 </style>

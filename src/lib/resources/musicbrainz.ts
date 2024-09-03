@@ -2,10 +2,10 @@
 Search MusicBrainz db
 */
 
-import { categoriesTable } from "../parse-data/categoriesTable";
+import { categoriesTable } from "$lib/resources/parseData"
 
 export const mbSearch = async function ( query: string, queryType: string ) {
-    const apiCategory = categoriesTable[queryType];
+    const apiCategory = categoriesTable[queryType] as string
 
     let apiString = "https://musicbrainz.org/ws/2/";
     apiString = apiString.concat(apiCategory);
@@ -25,8 +25,6 @@ export const mbSearch = async function ( query: string, queryType: string ) {
     const mbData = searchResults[mbObjectKey];
     
     const searchComplete =  true;
-
-    //const thisSession = await session;
 
     return {
         mbData, searchComplete

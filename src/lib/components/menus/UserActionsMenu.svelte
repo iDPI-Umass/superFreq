@@ -41,6 +41,13 @@
         reportUser: 'flag',
         unblockUser: 'unblock'
     }
+    const formIDs: App.StringLookupObject = {
+        blockUser: 'block',
+        deletePost: 'delete',
+        flagPost: 'flagPost',
+        reportUser: 'flag',
+        unblockUser: 'unblock'
+    }
     const formActions: App.StringLookupObject = {
         blockUser: '?/blockUser',
         deletePost: '?/deletePost',
@@ -105,7 +112,7 @@
     </Popover.Trigger>
     <Popover.Content transition={flyAndScale}>
         {#if mode == 'profileMenu'}
-            {#if blocked = false}
+            {#if blocked}
                 <button 
                     class="popover-item" 
                     on:click|preventDefault={() => openDialog('blockUser')}
@@ -118,7 +125,7 @@
                         block user
                     </span>
                 </button>
-            {:else if blocked =  true}
+            {:else}
                 <button 
                     class="popover-item" 
                     on:click|preventDefault={() => openDialog('unblockUser')}
@@ -201,14 +208,16 @@
         >
             cancel
         </button>
-        <button 
-            aria-label="close modal" 
-            formmethod="dialog" 
-            formaction={formActions[dialogMode]}
-            on:click={closeDialog}
-        >
-            {dialogConfirmButtonOptions[dialogMode]}
-        </button>
+        <form class="POST" id={formIDs[dialogMode]} action={formActions[dialogMode]}>
+            <button 
+                aria-label="close modal" 
+                formmethod="dialog" 
+                formaction={formActions[dialogMode]}
+                on:click={closeDialog}
+            >
+                {dialogConfirmButtonOptions[dialogMode]}
+            </button>
+        </form>
     </div>
 </dialog>
 

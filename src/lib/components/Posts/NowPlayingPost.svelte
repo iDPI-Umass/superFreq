@@ -10,11 +10,11 @@
     import Flag from 'lucide-svelte/icons/flag'
     import Music from 'lucide-svelte/icons/music'
 
-    export let sessionUserId: string
-    export let postData: App.NestedObject
-    export let formData
-    export let reactions: any = null
-    export let editState: boolean
+    export let sessionUserId: string | null = null
+    export let post: any
+    export let formData: boolean | null = null
+    export let reactionActive: boolean | null =  null
+    export let editState: boolean | null = null
     $: editState
 
     function toggleEditState() {
@@ -27,18 +27,18 @@
     <div class="double-border">
         <div class="post-row">
             <div class="row-group-user-data">
-                <img class="avatar" src={postData.avatar_url} alt={`${postData.display_name}'s avatar`}/>
+                <img class="avatar" src={post.avatar_url} alt={`${post.display_name}'s avatar`}/>
                 <div class="row-group-column">
                     <span class="display-name">
-                        {postData.display_name}
+                        {post.display_name}
                     </span>
                     <span class="date">
-                        {displayDate(postData.created_at)}
+                        {displayDate(post.created_at)}
                     </span>
                 </div>
             </div>
             <div class="row-group">
-                {#if postData.status === "edited"}
+                {#if post.status === "edited"}
                     <span class="status-badge">
                         edited
                     </span>
@@ -48,16 +48,16 @@
         <div class="post-body">
             <span class="now-playing-text">
                 <Music size="16" color="var(--freq-color-text-medium-dark)"></Music>
-                {postData.artist_name} • {postData.recording_name ?? postData.release_group_name ?? postData.episode_title}
+                {post.artist_name} • {post.recording_name ?? post.release_group_name ?? post.episode_title}
                 <Music size="16" color="var(--freq-color-text-medium-dark)"></Music>
             </span>
             {#if !editState}
                 <p class="post-text">
-                    {postData.text}
+                    {post.text}
                 </p>
             {:else}
                 <EditPostBody
-                    postData={postData}
+                    postData={post}
                     bind:editState={editState}
                 ></EditPostBody>
             {/if}
@@ -70,15 +70,17 @@
         </div>
         <div class="post-row">
             <LikeReact
-            reactionData={reactions}
+            postId={post.id}
+            reactionCount={post.reaction_count}
+            reactionActive={reactionActive}
             ></LikeReact>
             <div class="row-group-icon-description">
-                {#if postData.userId == sessionUserId }
+                {#if post.user_id == sessionUserId }
                     <UserActionsMenu
                         mode='sessionUserPostMenu'
                         bind:editState={editState}
                     ></UserActionsMenu>
-                {:else}
+                {:else if sessionUserId}
                     <UserActionsMenu
                         mode='postMenu'
                     ></UserActionsMenu>

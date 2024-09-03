@@ -7,39 +7,14 @@
     import GridList from '$lib/components/GridList.svelte'
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
 
-	/* 
-	Functions for interacting with Supabase API
-	*/
-	// import { itemUpsert } from '$lib/resources/backend-calls/musicDataFunctions'
-	// import { prepareMusicDataUpsert, populateCollectionContents, timestampISO, timestampISOString } from '$lib/resources/parseData';
-	// import { insertCollectionInfo, insertCollectionSocial, insertCollectionContents, insertCollectionUpdateRecord } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions.js'
-	// import { redirect } from '@sveltejs/kit';
-
-	/* 
-	Get user session
-	*/
 	export let data
-	$: data
+    let { sessionUserId } = data
+	$: ({ sessionUserId } = data)
 
-	const { sessionUserId } = data
 
-    // const { supabase } = data
-
-	/* 
-	Let's declare some variables for...
-	*/
-
-	// collections_info
-	let collectionId = ""
-	let collectionTitle = ""
-	let collectionType = ""
-	let collectionStatus = ""
-	let descriptionText = ""
-
-	// collections_contents
-	interface collectionObject {
-		[index: string]: string
-	}
+	let collectionTitle: string
+	let collectionType: string
+	let collectionStatus: string
 
 	let collectionItems: object[] = []
 	$: collectionItems
@@ -56,130 +31,6 @@
 	}
 
 	let placeholderText = "Search for items to add to your collection"
-
-	/*
-	Functions for submitting new collection to database
-	*/
-
-	// Insert row into tables: artists, release_groups, recordings
-	// async function upsertMusicData() {
-	// 	const { upsertArtists, upsertReleaseGroups, upsertRecordings } = await prepareMusicDataUpsert( collectionItems, collectionType )
-
-	// 	let item = {
-	// 		tableName: "artists",
-	// 		itemData: upsertArtists
-	// 	}
-
-	// 	const artistRes = await itemUpsert({item, locals: { supabase }})
-	// 	const artistStatus = artistRes.statusText
-
-	// 	if (collectionType == "release_groups") {
-	// 		item = {
-	// 			tableName: "release_groups",
-	// 			itemData: upsertReleaseGroups
-	// 		}
-	// 		const rgRes = await itemUpsert({item, locals: { supabase }})
-	// 		const rgStatus = rgRes.statusText
-	// 		return { artistStatus, rgStatus }
-	// 	}
-
-	// 	if (collectionType == "recordings") {
-	// 		item = {
-	// 			tableName: "release_groups",
-	// 			itemData: upsertReleaseGroups
-	// 		}
-	// 		const rgRes = await itemUpsert({item, locals: { supabase }});
-	// 		item = {
-	// 			tableName: "recordings",
-	// 			itemData: upsertRecordings
-	// 		}
-	// 		const recRes = await itemUpsert({item, locals: { supabase }});
-	// 		const rgStatus = rgRes.statusText
-	// 		const recStatus = recRes.statusText
-	// 		return { artistStatus, rgStatus, recStatus }
-	// 	}
-
-	// 	return artistStatus
-
-	// }
-
-	// Insert row into table collections_info, returns collection_id to be used in subsequent REST requests
-	// async function submitCollectionInfo() {
-
-    //     const infoChangelog: App.Changelog = {}
-    //     infoChangelog[timestampISOString] = {
-    //         "updated_at": timestampISO,
-    //         "updated_by": sessionUserId,
-	// 		"title": collectionTitle,
-	// 		"status": collectionStatus,
-	// 		"description_text": descriptionText
-    //     }
-	// 	// formats data as expected by collections_info
-	// 	const collectionInfo = {
-	// 		"owner_id": sessionUserId,
-	// 		"created_by": sessionUserId,
-    //         "created_at": timestampISO,
-    //         "updated_at": timestampISO,
-	// 		"title": collectionTitle,
-	// 		"type": collectionType,
-	// 		"status": collectionStatus,
-	// 		"description_text": descriptionText,
-    //         "changelog": infoChangelog
-	// 	}
-
-	// 	const collectionInfoResponse = await insertCollectionInfo( { collectionInfo, locals: { supabase }} );
-	// 	collectionId = await collectionInfoResponse[0]["collection_id"];
-
-    //     const socialChangelog: App.Changelog = {}
-
-    //     socialChangelog[timestampISOString] = {
-    //         'follows_now': true,
-    //         'user_role': 'owner'
-    //     }
-	// 	const socialInfo = {
-	// 		"collection_id": collectionId,
-	// 		"user_id": id,
-	// 		"user_role": "owner",
-    //         "updated_at": timestampISO,
-    //         "changelog": socialChangelog
-	// 	}
-
-	// 	await insertCollectionSocial( { socialInfo, locals: {supabase} } );
-	// 	await insertCollectionUpdateRecord({ sessionUserId, collectionId, locals: { supabase }});
-
-	//  }
-	
-	// Inserts rows into table collections_contents using collection_id returned after "submitCollectionContents" runs, and only once relevant mbids have been added to their respective music data tables (artists, release_groups, and/or recordings)
-	// async function submitCollectionContents() {
-    //     console.log("button clicked")
-
-	// 	for ( const collectionItem of collectionItems ) {
-	// 		const thisItem = collectionItem as collectionObject
-	// 		thisItem["item_position"] = thisItem["id"];
-	// 		delete thisItem["id"];
-	// 	}
-		
-    //     console.log("IDs updated")
-
-	// 	await submitCollectionInfo();
-    //     console.log("collection info submitted")
-
-	// 	await upsertMusicData();
-    //     console.log("music data upserted")
-
-	// 	const collectionContents = await populateCollectionContents( collectionItems, collectionId );
-    //     console.log("collection contents populated")
-
-	// 	const res = await insertCollectionContents( { collectionContents, locals: { supabase }});
-
-    //     if ( res.status === 201 ) {
-    //         goto(`/collection/${collectionId}`)
-    //     }
-    //     else {
-    //         goto(`/collections`)
-    //     }
-
-	// }
 </script>
 
 <div class="panel">
@@ -192,12 +43,6 @@
         action="?/insertCollection"
     >
         <div class="form-column">
-            <input
-                type="hidden"
-                name="session-user-id"
-                id="session-user-id"
-                value={sessionUserId}
-            />
             <input 
                 type="hidden"
                 name="collection-contents"

@@ -8,65 +8,57 @@
 
     export let data: PageData
     export let form: ActionData;
-    let { session, post, replies, reactions } = data
-    $: ({ session, post, replies, reactions } = data)
+    let { sessionUserId, post, postReactionActive, replies, permission } = data
+    $: ({ sessionUserId, post, postReactionActive, replies, permission } = data)
 
-    const sessionUserId = session?.user.id as string
     const postId = post?.id as string
-
-    const reactionCount = (reactions == null ) ? 0 : reactions[0]["total_reactions"]
 </script>
 
 <div class="post-panel">
-    <form
-        method="POST"
-        action="?/flagPost"
-    >
-        <input 
-            type="hidden"
-            name="session-user-id" 
-            id="session-user-id"
-            value={sessionUserId}
-        />
-        <input 
-            type="hidden"
-            name="post-id" 
-            id="post-id"
-            value={postId}
-        />
-    </form>
+    {#if sessionUserId}
+    <input 
+        type="hidden"
+        name="post-id" 
+        id="post-id"
+        form="deletePost"
+        value={postId}
+    />
+    <input 
+        type="hidden"
+        name="post-id" 
+        id="post-id"
+        form="flagPost"
+        value={postId}
+    />
     <NowPlayingPost
         sessionUserId={sessionUserId}
-        postData={post}
+        post={post}
         formData={form}
         editState={form?.editState ?? false}
-        reactions={reactionCount} 
+        reactionActive={postReactionActive.active} 
     ></NowPlayingPost>
-    {#if session}
         <PostReplyEditor></PostReplyEditor>
         {#each replies as reply}
-            <form
-                method="POST"
-                action="?/flagPost"
-            >
-                <input 
-                    type="hidden"
-                    name="session-user-id" 
-                    id="session-user-id"
-                    value={sessionUserId}
-                />
-                <input 
-                    type="hidden"
-                    name="post-id" 
-                    id="post-id"
-                    value={reply.id}
-                />
-            </form>
-            <PostReply
-                reply={reply}
-                sessionUserId={sessionUserId}
-                reactions={reactionCount}
-            ></PostReply>
+            <input 
+                type="hidden"
+                name="post-id" 
+                id="post-id"
+                form="deletePost"
+                value={reply.id}
+            />
+            <input 
+                type="hidden"
+                name="post-id" 
+                id="post-id"
+                form="flagPost"
+                value={reply.id}
+            />
+            <div id={reply.username?.concat(reply.created_at.valueOf().toString())}>
+                <PostReply
+                    reply={reply}
+                    sessionUserId={sessionUserId}
+                ></PostReply>
+            </div>
         {/each}
     {/if}
 </div>

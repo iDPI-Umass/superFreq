@@ -5,9 +5,10 @@ Verifies that session user matches param, then determines if user has created a 
 import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler = async ( { url, params, locals: { session, supabase } }) => {
+export const GET: RequestHandler = async ( { url, params, locals: { safeGetSession, supabase } }) => {
     const username = params.username
-    const sessionUserId = session?.user.id
+    const session = await safeGetSession()
+    const sessionUserId = session.user?.id
     console.log(url)
 
     const { data } = await supabase

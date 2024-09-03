@@ -1,25 +1,28 @@
 import { redirect } from '@sveltejs/kit'
+import { parseISO } from "date-fns"
 import type { PageServerLoad, Actions } from './$types'
-import { insertCollection } from 'src/lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions'
-import { timestampISO, timestampISOString } from '$lib/resources/parseData'
+import { insertCollection } from 'src/lib/resources/backend-calls/collections'
 
 export const load: PageServerLoad = async ({ locals: {safeGetSession} }) => {
   const session = await safeGetSession()
   const sessionUserId = session.user?.id
 
   if (!session) {
-    throw redirect(303, '/')
+    throw redirect(303, '/login')
   }
   
   return { sessionUserId }
 }
 
 export const actions = {
-  insertCollection: async ({ request }) => {
-    const data = await request.formData()
-    console.log(data)
+  insertCollection: async ({ request, locals: { safeGetSession } }) => {
+    const session = await safeGetSession()
+    const sessionUserId =  session.user?.id as string
 
-    const sessionUserId = data.get('session-user-id') as string
+    const timestampISOString: string = new Date().toISOString()
+    const timestampISO: Date = parseISO(timestampISOString)
+
+    const data = await request.formData()
     const collectionTitle = data.get('collection-title')
     const collectionType = data.get('collection-type')
     const collectionStatus = data.get('status')
@@ -27,9 +30,7 @@ export const actions = {
     const collectionItemsString = data.get('collection-contents') as string
     const changelog: App.Changelog = {}
 
-    // const collectionItems=[...collectionItemString]
-    // console.log(collectionItems)
-    const collectionItems: App.NestedObject = JSON.parse(collectionItemsString)
+    const collectionItems = JSON.parse(collectionItemsString) as App.RowData
 
     changelog[timestampISOString] = {
       'title': collectionTitle,
@@ -37,15 +38,6 @@ export const actions = {
       'description_text': collectionDescription,
       'updated_by': sessionUserId
     }
-
-    // const collectionItems = []
-    // for (const item of collectionContents) {
-    //   console.log(item[0])
-    //   console.log(JSON.parse(item[0]))
-    //   collectionItems.push(JSON.parse(item))
-    // }
-
-    // console.log(collectionItems)
 
     const collectionInfo = {
       title: collectionTitle,
@@ -57,10 +49,10 @@ export const actions = {
       owner_id: sessionUserId,
       updated_by: sessionUserId,
       changelog: changelog
-    }
+    } as App.RowData
 
-    const collectionId = await insertCollection({collectionInfo, collectionItems, sessionUserId})
-
+    const collectionId = await insertCollection(sessionUserId, collectionInfo, collectionItems)
+ 
     console.log(collectionId)
     if ( !collectionId ) {
       alert('update not successful') 

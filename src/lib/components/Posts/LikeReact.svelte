@@ -8,20 +8,32 @@
     import '$lib/styles/posts.css'
     import Heart from 'lucide-svelte/icons/heart'
 
-    export let reactionData: any
-
-    let reactionStatus: boolean | null = reactionData?.active
+    export let postId: string
+    export let reactionCount: number
+    export let reactionActive: boolean
 </script>
 
-<form method="POST" name="like-reaction" action="?/submitReaction">
-    <button class="like">
-        {#if !reactionStatus}
+<form method="POST" action="?/submitReaction">
+    <button class="like" formaction="?/submitReaction">
+        <input
+            type="hidden"
+            name="post-id"
+            id="post-id"
+            value={postId}
+        />
+        <input
+            type="hidden"
+            name="reaction-type"
+            id="reaction-type"
+            value="like"
+        />
+        {#if !reactionActive}
             <Heart class="icon" size="16" color="var(--freq-color-text-muted)"></Heart>
         {:else}
             <Heart class="icon" size="16" color="var(--freq-color-text-muted)" fill="var(--freq-color-text-muted)"></Heart>
         {/if}
         <span>
-            {reactionData.count ?? 0}
+            {reactionCount ?? 0}
         </span>
     </button>
 </form>

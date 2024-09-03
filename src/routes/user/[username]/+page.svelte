@@ -2,9 +2,6 @@
     import { goto } from '$app/navigation'
     import { username } from '$lib/resources/localStorage'
     import Settings from 'lucide-svelte/icons/settings'
-    import Ellipsis from 'lucide-svelte/icons/ellipsis'
-    import { Popover } from "bits-ui";
-    // import repeatGrid from '../lib/assets/images/repeat-grid-2.svg'
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte';
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import GridList from "$lib/components/GridList.svelte"
@@ -12,35 +9,39 @@
     export let data
     $: data
 
-    let { profileUserData, blockInfo, permission, collectionCount, collectionFollowingCount, userFollowingCount, nowPlayingPostsCount, topAlbumsCollection,sessionUserId } = data
-    $: ({ profileUserData, blockInfo, permission, collectionCount, collectionFollowingCount, userFollowingCount, nowPlayingPostsCount,  topAlbumsCollection,sessionUserId  } = data)
+    let { sessionUserId, profileData } = data
+    $: ({ sessionUserId, profileData } = data) 
+
+    const { profileUserData, followInfo, permission } = profileData
+
+    let collectionCount: number | null = null
+    let collectionFollowingCount: number | null = null
+    let userFollowingCount: number | null = null
+    let nowPlayingPostsCount: number | null = null
+    let topAlbumsCollection: App.RowData | null = null
+
+    if ( permission ) {
+        collectionCount = profileData['collectionCount'][0].count as number
+        collectionFollowingCount = profileData['collectionFollowingCount'][0].count as number
+        userFollowingCount = profileData['userFollowingCount'][0].count as number
+        nowPlayingPostsCount = profileData['nowPlayingPostsCount'][0].count as number
+        topAlbumsCollection = profileData.topAlbumsCollection as App.RowData
+    }
 
     let topAlbumsReturned: boolean
     if ( topAlbumsCollection ) {
         topAlbumsReturned = true
     }
     
-    const isBlocked = ( !blockInfo || blockInfo?.active == false ) ? false : true
-    
-    // let topAlbumsExists = false
-    // if ( topAlbums && topAlbums.length != 0 ) {
-    //     // topAlbumsReturned = true
-    //     topAlbumsExists = true
-    // }
+    const isBlocked = permission ? false : true
     
 </script>
 
 <div class="profile-info">
     <form
         method="POST"
-        action="?/blockUser"
+        action="?/followUser"
     >
-        <input 
-            type="hidden"
-            name="block-info" 
-            id="block-info"
-            value={blockInfo}
-        />
         <input 
             type="hidden"
             name="profile-user-id" 
@@ -78,6 +79,25 @@
                         </button>
                     </div>
                 {:else}
+                    <form method='POST' action='?/followUser'>
+                        <input 
+                            type="hidden"
+                            name="profile-user-id" 
+                            id="profile-user-id"
+                            value={profileUserData?.id}
+                        />
+                        <button 
+                            class="standard" 
+                            formaction="?/followUser"
+                        >
+                        {#if followInfo?.follows_now == true}
+                            unfollow
+                        {:else}
+                            + follow
+                        {/if}
+                        </button>  
+                    </form>
+                        
                     <UserActionsMenu
                         mode='profileMenu'
                         blocked={isBlocked}

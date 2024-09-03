@@ -1,63 +1,34 @@
-import type { PageServerLoad } from './$types'
-import { db } from 'src/database.ts'
-import { selectCollectionFollowsFeed } from '$lib/resources/backend-calls/users/feed/selectCollectionFollowsFeed';
-import { selectSocialFollows } from '$lib/resources/backend-calls/users/profile/select/selectSocialFollows';
-import { selectSocialFollowsActivity } from '$lib/resources/backend-calls/users/selectSocialFollowsActivity';
-import { selectFollowedUsersCollectionsActivity } from '$lib/resources/backend-calls/users/feed/selectFollowedUsersCollectionsActivity';
+import type { PageServerLoad, Actions } from './$types'
+import { selectFeedData, selectMoreFeedData } from '$lib/resources/backend-calls/feed'
+import { add, parseISO } from 'date-fns'
 
-export const load: PageServerLoad = async ({ locals: { supabase, safeGetSession } }) => {
-    // get userId from session
+export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
     const session = await safeGetSession()
     const sessionUserId = session.user?.id as string
+    const batchSize = 50
+    const timestampEnd = new Date()
+    const timestampStart = add(timestampEnd, {days: -300})
+    const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
 
-    // set time frame for fetching updates
-    const daysToFetch = 7;
-    const to = new Date();
-    const sevenDaysAgo = to.getTime() - daysToFetch*24*60*60*1000;
-    const from = new Date(sevenDaysAgo)
-    
+    const firstBatch = await selectFeedData( sessionUserId, batchSize, timestampStart, timestampEnd, options )
 
-    // const feedData = await db.transaction().execute(async (trx) => {
-    //     const userFollows = await trx
-    //     .selectFrom('social_graph')
-    //     .select('target_user_id')
-    //     .where(({eb, and, not, exists}) => and([
-    //         eb('user_id', '=', sessionUserId),
-    //         eb('follows_now', '=', true),
-
-    //     ]))
-    // })
-    /*
-    Get collections user follows, exclude ones that have become private.
-    */
-    
-    const collectionsFollowing = await selectCollectionFollowsFeed({ sessionId, locals: { supabase }});
-
-    /* 
-    Get activity for users that user follows
-    */
-
-    // Get graph of users that user follows
-    const id = sessionId;
-    const { socialGraph } = await selectSocialFollows({ id, locals: { supabase }});
-
-    // Create array of ids for users that user follows
-    let targetUserIdArray = [];
-    for ( const user in socialGraph ) {
-        targetUserIdArray = [...targetUserIdArray, 
-            socialGraph[user]["user_id"]
-        ];
-    }
-
-    // Get social activity of users that user follows
-    const socialFollowsActivity = await selectSocialFollowsActivity({ targetUserIdArray, locals: { supabase }});
-
-    /*
-    Get collections of users that user follows.
-    */
-    
-    const followedCollectionsActivity = await selectFollowedUsersCollectionsActivity({ targetUserIdArray, sessionId, locals: { supabase }});
-
-
-    return { collectionsFollowing, socialGraph, socialFollowsActivity, followedCollectionsActivity };
+    return { sessionUserId, firstBatch, timestampStart, timestampEnd, batchSize, options }
 }
+
+export const actions = {
+    fetchMoreData: async({ request }) => {
+        const data = await request.formData()
+        const sessionUserId = data.get('session-user-id') as string
+        const batchSize = parseInt(data.get('batch-size') as string)
+        let batchIterator = parseInt(data.get('batch-iterator') as string)
+        const timestampStart = parseISO(data.get('timestamp-start') as string)
+        const timestampEnd = parseISO(data.get('timestamp-end') as string)
+        const options = JSON.parse(data.get('options') as string) as App.Lookup
+
+        batchIterator = batchIterator + 1
+
+        const nextBatch = await selectMoreFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
+
+        return { nextBatch, batchSize, batchIterator }
+    }
+} satisfies Actions

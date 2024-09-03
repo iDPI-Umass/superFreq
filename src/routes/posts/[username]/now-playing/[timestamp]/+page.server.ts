@@ -1,53 +1,110 @@
-import type { PageServerLoad, Actions, Posts } from './$types'
-import { selectPost, updatePost, selectPostReplies, getReactionData } from '$lib/resources/backend-calls/posts'
-import { insertPostFlag } from '$lib/resources/backend-calls/userActions'
-import { timestampISO } from '$lib/resources/parseData'
+import { redirect } from '@sveltejs/kit'
+import { parseISO } from "date-fns"
+import type { PageServerLoad, Actions } from './$types'
+import { selectPostAndReplies, insertPost, updatePost, deletePost, insertUpdateReaction } from '$lib/resources/backend-calls/posts'
+import { insertPostFlag } from '$lib/resources/backend-calls/users'
 
-export const load: PageServerLoad = async ({ params, locals: { session } }) => {
+export const load: PageServerLoad = async ({ params, locals: { safeGetSession } }) => {
+    const session = await safeGetSession()
+    const sessionUserId = session.user?.id as string
+
     const username = params.username
     const timestampString = params.timestamp
     const postType = "now_playing"
 
-    const post = await selectPost({ username, timestampString, postType })
-    console.log(post)
+    const { post, postReactionActive, replies, permission } = await selectPostAndReplies( sessionUserId, username, timestampString, postType )
 
-    const postId = post.id
-    const replies = await selectPostReplies( postId )
+    if ( !permission ) {
+        return permission
+    }
 
-    // const reactions = await getReactionData( postId, userId )
-    const reactions = [{
-        'total_reactions': 4
-    }]
-
-    return { session, post, replies, reactions }
+    return { sessionUserId, post, postReactionActive, replies, permission }
 }
 
 export const actions = {
-    editPost: async ({ request }) => {
+    submitReply: async ({ request, locals: { safeGetSession }})=> {
+        const session = await safeGetSession()
+        const sessionUserId = session.user?.id as string
+
+        const timestampISOString: string = new Date().toISOString()
+        const timestampISO: Date = parseISO(timestampISOString)
+
         const data = await request.formData()
-        const editedText = data.get('edited-text') as string
-        const postData = data.get('post-data')
+        const replyText = data.get('reply-text') as string
 
-        const update = await updatePost( postData, editedText )
-
-        if ( update ) {
-            const success = true
-            const editState = false
-            return { success, editState }
+        const postData = {
+            user_id: sessionUserId,
+            type: "reply",
+            status: "new",
+            text: replyText,
+            created_at: timestampISO,
+            updated_at: timestampISO,
         }
-        else {
-            const success = false
-            const editState = true
-            return { success, editState }
+
+        const insertReply = await insertPost( postData )
+
+        if (insertReply) {
+            return { success: true }
+        }
+        else { 
+            return { success: false }
         }
     },
-    flagPost: async ({ request }) => {
+    editPost: async ({ request, locals: { safeGetSession } }) => {
+
+        const session = await safeGetSession()
+        const sessionUserId = session.user?.id as string
+
         const data = await request.formData()
-        const sessionUserId = data.get('session-user-id') as string
+        const editedText = data.get('edited-text') as string
+        const postData = data.get('post-data') as App.RowData
+
+        const submitEdit = await updatePost( sessionUserId, postData, editedText )
+
+        if ( submitEdit ) {
+            return { success: true, editState: false }
+        }
+        else {
+            return { success: false, editState: true }
+        }
+    },
+    deletePost: async ({ request, locals: { safeGetSession } }) => {
+        const session = await safeGetSession()
+        const sessionUserId = session.user?.id as string
+
+        const data = await request.formData()
         const postId = data.get('post-id') as string
 
-        const flag = await insertPostFlag(sessionUserId, postId)
+        const submitDelete = await deletePost( sessionUserId, postId )
+
+        if ( submitDelete ) {
+            throw redirect(303, '/feed')
+        }
+        else { 
+            return { falied: true }
+        }
+
+    },
+    flagPost: async ({ request, locals: { safeGetSession }}) => {
+        const session = await safeGetSession()
+        const sessionUserId = session.user?.id as string
+
+        const data = await request.formData()
+        const postId = data.get('post-id') as string
+
+        const flag = await insertPostFlag( sessionUserId, postId )
 
         return flag
+    },
+    insertReaction: async ({ request, locals: { safeGetSession }}) => {
+        const session = await safeGetSession()
+        const sessionUserId = session.user?.id as string
+        const data = await request.formData()
+        const postId = data.get('post-id') as string
+        const reactionType = data.get('reaction-type') as string
+
+        const reaction = await insertUpdateReaction( sessionUserId, postId, reactionType )
+
+        return reaction
     }
 } satisfies Actions

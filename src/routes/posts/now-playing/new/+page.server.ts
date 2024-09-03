@@ -1,34 +1,31 @@
 import { redirect } from '@sveltejs/kit';
 import { parseISO } from "date-fns"
 import type { PageServerLoad, Actions, Posts } from './$types'
-import { sql } from 'kysely'
-import { timestampISO } from '$lib/resources/parseData'
 import { insertPost } from '$lib/resources/backend-calls/posts'
-
-// export const load: PageServerLoad = async ({ locals: { session } }) => {
-// 	const user = await db.getUserFromSession(cookies.get('sessionid'));
-// 	return { user };
-// };
 
 export const actions = {
 	postAlbum: async ({ request, locals: { safeGetSession } }) => {
         const session = await safeGetSession()
-        const userId = session.user?.id
+        const sessionUserId = session.user?.id
+
+        const timestampISOString: string = new Date().toISOString()
+        const timestampISO: Date = parseISO(timestampISOString)
+
         const data = await request.formData()
         const username = data.get('username')
-		const listenUrl = data.get('listenUrl')
+		const listenUrl = data.get('listen-url')
         const mbid = data.get('mbid')
-        const mbidType = data.get('mbidType')
-        const artistName = data.get('artistName')
-        const albumName = data.get('albumName')
-        const postText = data.get('postText')
+        const mbidType = data.get('item-type')
+        const artistName = data.get('artist-name')
+        const albumName = data.get('album-name')
+        const postText = data.get('post-text')
 
         const postData: Posts = {
-            user_id: userId,
+            user_id: sessionUserId,
             type: "now_playing",
             status: "new",
             listen_url: listenUrl,
-            mbid_type: mbidType,
+            item_type: mbidType,
             mbid: mbid,
             artist_name: artistName,
             release_group_name: albumName,
@@ -48,24 +45,29 @@ export const actions = {
             redirect(303, `/user/${username}/now-playing/${timestampSlug}`)
         }
 	},
-    postTrack: async ({ request, locals: { session } }) => {
-        const userId = session?.user.id
+    postTrack: async ({ request, locals: { safeGetSession } }) => {
+        const session = await safeGetSession()
+        const sessionUserId = session.user?.id
+
+        const timestampISOString: string = new Date().toISOString()
+        const timestampISO: Date = parseISO(timestampISOString)
+
 		const data = await request.formData()
         const username = data.get('username')
-        const listenUrl = data.get('listenUrl')
+        const listenUrl = data.get('listen-url')
         const mbid = data.get('mbid')
-        const mbidType = data.get('mbidType')
-        const artistName = data.get('artistName')
-        const albumName = data.get('albumName')
-        const recordingName = data.get('trackName')
-        const postText = data.get('postText')
+        const itemType = data.get('item-type')
+        const artistName = data.get('artist-name')
+        const albumName = data.get('album-name')
+        const recordingName = data.get('track-name')
+        const postText = data.get('post-text')
 
         const postData: Posts = {
-            user_id: userId,
+            user_id: sessionUserId,
             type: "now_playing",
             status: "new",
             listen_url: listenUrl,
-            mbid_type: mbidType,
+            item_type: itemType,
             mbid: mbid,
             artist_name: artistName,
             release_group_name: albumName,
@@ -86,24 +88,29 @@ export const actions = {
             redirect(303, `/user/${username}/now-playing/${timestampSlug}`)
         }
 	},
-    postMix: async ({ request, locals: { session } }) => {
-        const userId = session?.user.id
+    postMix: async ({ request, locals: { safeGetSession } }) => {
+        const session = await safeGetSession()
+        const sessionUserId = session.user?.id
+
+        const timestampISOString: string = new Date().toISOString()
+        const timestampISO: Date = parseISO(timestampISOString)
+
 		const data = await request.formData()
         const username = data.get('username')
-        const listenUrl = data.get('listenUrl')
+        const listenUrl = data.get('listen-url')
         const mbid = data.get('mbid')
-        const mbidType = data.get('mbidType')
-        const artistName = data.get('artistName')
+        const itemType = data.get('item-type')
+        const artistName = data.get('artist-name')
         const episode = data.get('episode')
         const show = data.get('show')
-        const postText = data.get('postText')
+        const postText = data.get('post-text')
 
         const postData: Posts = {
-            user_id: userId,
+            user_id: sessionUserId,
             type: "now_playing",
             status: "new",
             listen_url: listenUrl,
-            mbid_type: mbidType,
+            item_type: itemType,
             mbid: mbid,
             artist_name: artistName,
             episode_title: episode,
@@ -124,4 +131,4 @@ export const actions = {
             redirect(303, `/user/${username}/now-playing/${timestampSlug}`)
         }
 	},
-} satisfies Actions;
+} satisfies Actions

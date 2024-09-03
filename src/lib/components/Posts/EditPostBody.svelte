@@ -8,7 +8,7 @@
     }
 </script>
 
-<form name="editPostText" class="vertical">
+<form name="editPostText" class="vertical" action="?/editPost">
     <input 
         id="post-data"
         name="post-data"

@@ -1,0 +1,622 @@
+import { db } from 'src/database.ts'
+import { parseISO } from "date-fns"
+import { prepareMusicMetadataInsert, populateCollectionContents } from '$lib/resources/parseData'
+
+export const selectAllOpenPublicCollections = async function ( batchSize: number, batchIterator: number ) {
+
+    let offset = batchSize * batchIterator
+
+    const selectCollections = await db.transaction().execute(async (trx) => {
+
+        const collectionsCount = await trx
+        .selectFrom('collections_info')
+        .select((eb) => eb.fn.count<number>('collection_id').as('count'))
+        .where(({eb, or}) => or([
+            eb('status', '=', 'open'),
+            eb('status', '=', 'public')
+        ]))
+        .execute()
+
+        const collections = await trx
+        .selectFrom('collections_info')
+        .innerJoin('profiles as profile', 'profile.id', 'owner_id')
+        .select([
+            'collections_info.collection_id as collection_id', 
+            'collections_info.created_at as collection_id', 
+            'collections_info.updated_at as updated_at',
+            'collections_info.created_at as created_at',
+            'collections_info.owner_id as owner_id', 
+            'collections_info.title as title', 
+            'collections_info.type as type',
+            'profile.username as username', 
+            'profile.display_name as display_name',
+            'profile.avatar_url as avatar_url'
+        ])
+        .where(({eb, or}) => or([
+                eb('status', '=', 'open'),
+                eb('status', '=', 'public')
+            ]))
+        .orderBy('collections_info.updated_at desc')
+        .limit(batchSize)
+        .offset(offset)
+        .execute()
+
+        return { collectionsCount, collections }
+    })
+    
+    const batch = await selectCollections
+    const count = batch.collectionsCount[0].count
+    batchIterator ++
+    offset = batchSize * batchIterator
+    const remainingCount = count - offset
+
+    return { batch, remainingCount }
+}
+
+export const selectSpotlightCollections = async function ( batchSize: number, batchIterator: number ) {
+
+    const offset = batchSize * batchIterator
+
+    const selectCollections = await db.transaction().execute(async (trx) => {
+
+        const collectionsCount = await trx
+        .selectFrom('collections_info')
+        .select((eb) => eb.fn.count<number>('collection_id').as('count'))
+        .where(({eb, or}) => or([
+            eb('status', '=', 'open'),
+            eb('status', '=', 'public')
+        ]))
+        .execute()
+
+        const collections = await trx
+        .selectFrom('collections_info')
+        .innerJoin('profiles as profile', 'profile.id', 'owner_id')
+        .select([
+            'collections_info.collection_id as collection_id', 
+            'collections_info.created_at as created_at', 
+            'collections_info.updated_at as updated_at', 
+            'collections_info.owner_id as owner_id', 
+            'collections_info.title as title', 
+            'collections_info.type as type',
+            'profile.username as username', 
+            'profile.display_name as display_name',
+            'profile.avatar_url as avatar_url'
+        ])
+        .where(({eb, and, or}) => and([
+            or([
+                eb('status', '=', 'open'),
+                eb('status', '=', 'public')
+            ]),
+            eb('spotlight', '=', true)
+        ]))
+        .orderBy('collections_info.collection_id desc')
+        .limit(batchSize)
+        .offset(offset)
+        .execute()
+
+        return { collectionsCount, collections }
+    })
+
+    const collections = await selectCollections
+    const count = collections.collectionsCount[0].count
+    const remainingCount = count - offset
+    return { collections, remainingCount }
+}
+
+/*
+Fetches collection for viewing if collection is open or public, or session user is an owner or collaborator
+*/
+
+export const selectViewableCollectionContents = async function ( collectionId: string, sessionUserId: string ) {
+
+    const selectCollection = await db.transaction().execute(async (trx) => {
+        const collectionInfo = await trx
+        .selectFrom('collections_info')
+        .where(({eb, and, or, exists, selectFrom, not}) => and([
+            eb('collections_info.collection_id', '=', collectionId),
+            or([
+                eb('status', '=', 'open'),
+                eb('status', '=', 'public'),
+                exists(
+                    selectFrom('collections_social')
+                    .whereRef('collections_info.collection_id', '=', 'collections_social.collection_id')
+                    .where(({eb, and}) => and([
+                        eb('collections_social.user_role', '=', 'owner')
+                        .or('collections_social.user_role', '=', 'collaborator'),
+                        eb('collections_social.user_id', '=', sessionUserId)
+                    ]) 
+                    )
+                    .selectAll('collections_social')
+                ),
+            ]),
+            not(
+                eb('collections_info.status', '=', 'deleted')
+            )
+        ]))
+        .select([
+            'collection_id', 
+            'created_at', 
+            'updated_at', 
+            'owner_id', 
+            'status', 
+            'created_by', 
+            'title', 
+            'type', 
+            'description_text'
+        ])
+        .innerJoin(
+            'profiles',
+            (join) => join
+                .onRef('profiles.id', '=', 'collections_info.owner_id')
+        )
+        .executeTakeFirst()
+
+        const type = await collectionInfo?.type as string
+
+        if ( type == 'artists') {
+            const collectionContents = await trx
+            .selectFrom('collections_contents')
+            .where('collection_id', '=', collectionId)
+            .selectAll()
+            .innerJoin(
+                'artists',
+                (join) => join
+                    .onRef('artists.artist_mbid', '=', 'collections_contents.artist_mbid')
+            )
+            .selectAll()
+            .orderBy('item_position')
+            .execute()
+
+            return {collectionInfo, collectionContents, permission: true}
+        }
+        else if( type == 'release_groups') {
+            const collectionContents = await trx
+            .selectFrom('collections_contents')
+            .where('collection_id', '=', collectionId)
+            .selectAll()
+            .innerJoin(
+                'artists',
+                (join) => join
+                    .onRef('artists.artist_mbid', '=', 'collections_contents.artist_mbid')
+            )
+            .innerJoin(
+                'release_groups',
+                (join) => join
+                    .onRef('release_groups.release_group_mbid', '=', 'collections_contents.release_group_mbid')
+            )
+            .selectAll()
+            .orderBy('item_position')
+            .execute()
+
+            return {collectionInfo, collectionContents, permission: true}
+        }
+        else if (type == 'recordings') {
+            const collectionContents = await trx
+            .selectFrom('collections_contents')
+            .where('collection_id', '=', collectionId)
+            .selectAll()
+            .innerJoin(
+                'artists',
+                (join) => join
+                    .onRef('artists.artist_mbid', '=', 'collections_contents.artist_mbid')
+            )
+            .innerJoin(
+                'release_groups',
+                (join) => join
+                    .onRef('release_groups.release_group_mbid', '=', 'collections_contents.release_group_mbid')
+            )
+            .innerJoin(
+                'recordings',
+                (join) => join
+                    .onRef('recordings.recording_mbid', '=', 'collections_contents.recording_mbid')
+            )
+            .selectAll()
+            .orderBy('item_position')
+            .execute()
+
+            const collectionSocialGraph = await trx
+            .selectFrom('collections_social')
+            .where('collection_id', '=', collectionId)
+            .selectAll()
+            .execute()
+
+            return {collectionInfo, collectionContents, collectionSocialGraph, permission: true}
+        }
+    })
+
+    const collection =  await selectCollection
+    const collectionInfo = collection?.collectionInfo
+    const collectionContents = collection?.collectionContents
+    const collectionSocialGraph = collection?.collectionSocialGraph
+    const permission = collection?.permission ?? false
+    return {collectionInfo, collectionContents, collectionSocialGraph, permission}
+}
+
+/*
+Fetches collection for editing if session user is owner or collaborator
+*/
+
+export const selectEditableCollectionContents = async function ( collectionId: string, collectionType: string, sessionUserId: string ) {
+
+    const selectEditableCollection = await db
+    .with('info', (db) => db
+        .selectFrom('collections_info')
+        .where(({eb, and, exists, selectFrom, not}) => and([
+            eb('collections_info.collection_id', '=', collectionId),
+            exists(
+                selectFrom('collections_social')
+                .whereRef('collections_info.collection_id', '=', 'collections_social.collection_id')
+                .where(({eb, and}) => and([
+                    eb('collections_social.user_role', '=', 'owner')
+                    .or('collections_social.user_role', '=', 'collaborator'),
+                    eb('collections_social.user_id', '=', sessionUserId)
+                ]) 
+                )
+                .selectAll('collections_social')
+            ),
+            not(
+                eb('collections_info.status', '=', 'deleted')
+            )
+        ]))
+        .select([
+            'collection_id',
+            'created_at', 
+            'updated_at',
+            'owner_id', 
+            'status', 
+            'created_by', 
+            'updated_by', 
+            'title', 
+            'type', 
+            'description_text'
+        ])
+    )
+    .with('contents', (db) => db
+        .selectFrom('collections_contents')
+        .where(({eb, selectFrom, and, exists}) => and([
+            eb('collection_id', '=', collectionId),
+            exists(
+                selectFrom('info')
+                .whereRef('info.collection_id', '=', 'collections_contents.collection_id')
+                .selectAll('info')
+            ),
+        ]))
+        .select([
+            'id', 
+            'collection_id', 
+            'artist_mbid', 
+            'release_group_mbid', 
+            'recording_mbid', 'label_mbid', 
+            'item_position', 
+            'notes', 
+            'changelog'
+        ])
+        .innerJoin(
+            'artists',
+            (join) => join
+                .onRef('artists.artist_mbid', '=', 'collections_contents.artist_mbid')
+        )
+        .innerJoin(
+            'release_groups',
+            (join) => join
+                .onRef('release_groups.release_group_mbid', '=', 'collections_contents.release_group_mbid')
+                .on(({or, exists, selectFrom}) => or([
+                    exists(
+                        selectFrom('info')
+                        .where('type', '=', 'release_groups')
+                    ),
+                    exists(
+                        selectFrom('info')
+                        .where('type', '=', 'recordings')
+                    )
+                ]))
+        )
+    )
+    .selectFrom(['info', 'contents'])
+    .selectAll(['info', 'contents'])
+    .orderBy('contents.item_position asc')
+    .execute()
+
+    const editableCollection =  await selectEditableCollection;
+    return editableCollection
+}
+
+/*
+Insert collection with transaciton that does the following:
+    - inserts and returns  collections_info row 
+    - inserts metadata for items in collection
+    - inserts new collections_contents rows and updates existing ones
+*/
+
+export const insertCollection = async function ( sessionUserId: string, collectionInfo: App.RowData, collectionItems: App.RowData ) {
+
+    const timestampISOString: string = new Date().toISOString()
+    const timestampISO: Date = parseISO(timestampISOString)
+
+    const collectionType = collectionInfo['type']
+
+    const { artistsMetadata, releaseGroupsMetadata, recordingsMetadata } =  await prepareMusicMetadataInsert(collectionItems, collectionType)
+
+    const insert = await db.transaction().execute(async (trx) => {
+
+        const insertCollectionInfo = await trx
+            .insertInto('collections_info')
+            .values({
+                owner_id: sessionUserId,
+                created_by: sessionUserId,
+                created_at: timestampISO,
+                updated_at: timestampISO,
+                updated_by: sessionUserId,
+                title: collectionInfo?.title,
+                status: collectionInfo?.status,
+                type: collectionInfo?. type,
+                description_text: collectionInfo?.description_text,
+                changelog: collectionInfo?.changelog
+            })
+            .returning('collection_id')
+            .executeTakeFirstOrThrow()
+
+        const newCollectionInfo = await insertCollectionInfo
+
+        const collectionId = newCollectionInfo?.collection_id as string
+
+        const socialChangelog: App.Changelog = {}
+        socialChangelog[timestampISOString] = {
+            'follows_now': true,
+            'user_role': 'owner'
+        }
+        
+        await trx
+        .insertInto('collections_social')
+        .values({
+            collection_id: collectionId,
+            user_id: sessionUserId,
+            follows_now: true,
+            updated_at: timestampISO,
+            user_role: 'owner',
+            changelog: socialChangelog
+        })
+        .executeTakeFirst()
+
+        await trx
+        .insertInto('collections_updates')
+        .values({
+            collection_id: collectionId,
+            updated_at: timestampISO,
+            updated_by: sessionUserId
+        })
+        .executeTakeFirst()
+
+        const collectionContents = await populateCollectionContents(collectionItems, collectionId) 
+
+        if ( collectionInfo["type"] == 'artists') {
+            await trx
+                .insertInto('artists')
+                .values(artistsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .execute()
+        }
+        else if ( collectionInfo["type"] == 'release_groups' ) {
+            console.log('collection type: release_groups')
+            await trx
+                .insertInto('artists')
+                .values(artistsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .returningAll()
+                .execute()
+            await trx
+                .insertInto('release_groups')
+                .values(releaseGroupsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .returningAll()
+                .execute()
+        }
+        else if ( collectionInfo["type"] ==  'recordings' ) {
+            await trx
+                .insertInto('artists')
+                .values(artistsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .execute()
+            await trx
+                .insertInto('release_groups')
+                .values(releaseGroupsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .execute()
+            await trx
+                .insertInto('recordings')
+                .values(recordingsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .execute()
+        }
+        
+        return await trx
+            .insertInto( 'collections_contents' )
+            .values( collectionContents )
+            .onConflict((oc) => oc
+                .column( 'id' )
+                .doUpdateSet((eb) => ({
+                    updated_at: eb.ref('excluded.updated_at'),
+                    item_position: eb.ref('excluded.item_position'),
+                    notes: eb.ref('excluded.notes')
+                }))
+            )
+            .returningAll()
+            .execute()
+    })
+        const collectionInsert = await insert
+        const { collection_id } = collectionInsert[0]
+        return collection_id
+}
+
+/*
+Update collection with transaciton that does the following:
+    - updates collection_info row
+    - inserts metadata for items in collection
+    - inserts new collections_contents rows and updates existing ones
+*/
+
+export const updateCollection = async function ( collectionInfo: App.RowData, collectionItems: App.RowData ) {
+
+    const timestampISOString: string = new Date().toISOString()
+    const timestampISO: Date = parseISO(timestampISOString)
+
+    const collectionId = collectionInfo['collection_id']
+    const collectionType = collectionInfo['type']
+
+    const { artistsMetadata, releaseGroupsMetadata, recordingsMetadata } =  await prepareMusicMetadataInsert(collectionItems, collectionType)
+
+    const collectionContents = await populateCollectionContents(collectionItems, collectionId) 
+
+    const update = await db.transaction().execute(async (trx) => {
+
+        const selectInfoChangelog = await trx
+        .selectFrom('collections_info')
+        .select('changelog')
+        .where('collection_id', '=', collectionId)
+        .executeTakeFirst()
+
+        const infoChangelog = await selectInfoChangelog as App.Changelog
+
+        infoChangelog[timestampISOString] = {
+            updated_by: collectionInfo['updated_by'],
+            status: collectionInfo['status'],
+            title: collectionInfo['title'],
+            description_text: collectionInfo['description_text']
+        }
+
+        await trx
+            .updateTable('collections_info')
+            .set({
+                updated_at: timestampISO,
+                updated_by: collectionInfo['updated_by'],
+                status: collectionInfo['status'],
+                title: collectionInfo['title'],
+                description_text: collectionInfo['description_text'],
+                changelog: infoChangelog
+            })
+            .where('collection_id', '=', collectionInfo["collection_id"])
+            .returningAll()
+            .executeTakeFirstOrThrow()
+            
+        await trx
+            .insertInto('collections_updates')
+            .values({
+                collection_id: collectionInfo['collection_id'],
+                updated_at: collectionInfo['updated_at'],
+                updated_by: collectionInfo['updated_by']
+            })
+            .executeTakeFirst()
+
+        if ( collectionInfo["type"] == 'artists') {
+            await trx
+                .insertInto('artists')
+                .values(artistsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .execute()
+        }
+        else if ( collectionInfo["type"] == 'release_groups' ) {
+            console.log('collection type: release_groups')
+            await trx
+                .insertInto('artists')
+                .values(artistsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .returningAll()
+                .execute()
+            await trx
+                .insertInto('release_groups')
+                .values(releaseGroupsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .returningAll()
+                .execute()
+        }
+        else if ( collectionInfo["type"] ==  'recordings' ) {
+            await trx
+                .insertInto('artists')
+                .values(artistsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .execute()
+            await trx
+                .insertInto('release_groups')
+                .values(releaseGroupsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .execute()
+            await trx
+                .insertInto('recordings')
+                .values(recordingsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .execute()
+        }
+        
+        return await trx
+            .insertInto( 'collections_contents' )
+            .values( collectionContents )
+            .onConflict((oc) => oc
+                .column( 'id' )
+                .doUpdateSet((eb) => ({
+                    updated_at: eb.ref('excluded.updated_at'),
+                    item_position: eb.ref('excluded.item_position'),
+                    notes: eb.ref('excluded.notes')
+                }))
+            )
+            .returningAll()
+            .execute()
+    })
+        const collectionUpdate = await update
+        return collectionUpdate
+}
+
+export const selectCollectionUserFollowData = async function ( sessionUserId: string, collectionId: string ) {
+    const selectCollectionFollowData = await db.transaction().execute(async (trx) => {
+        let followData
+        try {
+            followData = await trx
+            .selectFrom('collections_social')
+            .select([
+                'id', 
+                'collection_id', 
+                'user_id', 
+                'follows_now', 
+                'user_role', 
+                'updated_at'
+            ])
+            .where(({and, eb}) => and([
+                eb('user_id', '=', sessionUserId),
+                eb('collection_id', '=', collectionId),
+                eb('follows_now', '=', true)
+            ]))
+            .executeTakeFirst()
+
+            return followData
+        }
+        catch( error ) {
+            return followData = null
+        }
+    })
+
+    const followData = await selectCollectionFollowData
+    return followData
+}

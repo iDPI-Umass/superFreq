@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
-import { selectViewableCollectionContents, selectCollectionUserFollowData } from '$lib/resources/backend-calls/collectionSelectFunctions'
+import { selectViewableCollectionContents, selectCollectionUserFollowData } from '$lib/resources/backend-calls/collections'
 import { insertUpdateCollectionFollow } from '$lib/resources/backend-calls/users'
 
 export const load: PageServerLoad = async ({ params, locals: { safeGetSession } }) => {

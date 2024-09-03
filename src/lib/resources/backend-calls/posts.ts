@@ -1,14 +1,41 @@
+import { sql } from 'kysely'
 import { db } from 'src/database.ts'
-import type { Posts, Expression, Changelog } from './$types'
-import { dateToISODate, timestampISO } from '$lib/resources/parseData'
+import { parseISO } from 'date-fns'
+import { dateToISODate } from '$lib/resources/parseData'
 
-import { expressionBuilder } from 'kysely'
-import type { JsonObject } from 'kysely-codegen'
+/* Insert a new post. 
 
-/* Insert a new post */
+postData template for new Now Playing posts:  
+    {
+        user_id: sessionUserId,
+        type: "now_playing",
+        status: "new",
+        listen_url: listenUrl,
+        item_type: mbidType,
+        mbid: mbid,
+        artist_name: artistName,
+        release_group_name: albumName,
+        recording_name: recordingName,
+        episode_title: episode,
+        show_title: show,
+        text: postText,
+        created_at: timestampISO,
+        updated_at: timestampISO,
+    }
 
-export const insertPost = async function ( postData: Posts) {
-    
+postData template for new comments:  
+    {
+        user_id: sessionUserId,
+        type: "reply",
+        status: "new",
+        text: replyText,
+        created_at: timestampISO,
+        updated_at: timestampISO,
+    }
+*/
+
+export const insertPost = async function ( postData: any ) {
+
     const insertPost = await db
     .insertInto('posts')
     .values(postData)
@@ -21,185 +48,462 @@ export const insertPost = async function ( postData: Posts) {
 
 /* Update post */
 
-export const updatePost = async function ( postData: Posts, editedText: string) {
+export const updatePost = async function ( sessionUserId: string, postData: App.RowData, editedText: string) {
 
-    const changelog: App.Changelog = postData.changelog as App.Changelog
-    const updatedAt: Date = postData.updated_at as Date
-    const updatedAtString: string = updatedAt.toString()
-    changelog[updatedAtString] = {
-        text: postData.text,
-        mbid: postData.mbid,
-        mbid_type: postData.mbidType,
-        artist_name: postData.artistName,
-        release_group_name: postData.releaseGroupName,
-        status: postData.status,
-        recording_name: postData.recordingName,
-        listen_url: postData.listenUrl,
-        episode_title: postData.episodeTitle,
-        show_title: postData.showTitle,
-    }
+    const timestampISOString: string = new Date().toISOString()
+    const timestampISO: Date = parseISO(timestampISOString)
     
-    const updatePost = await db
-    .updateTable('posts')
-    .set({
-        text: editedText,
-        mbid: postData.mbid,
-        mbid_type: postData.mbidType,
-        artist_name: postData.artistName,
-        release_group_name: postData.releaseGroupName,
-        recording_name: postData.recordingName,
-        status: "edited",
-        updated_at: timestampISO,
-        listen_url: postData.listenUrl,
-        episode_title: postData.episodeTitle,
-        show_title: postData.showTitle,
-        changelog: changelog,
-    })
-    .where('id','=', postData.id)
-    .returningAll()
-    .executeTakeFirst()
+    const updatePost = await db.transaction().execute(async(trx) => {
+        
+        //validates that post belongs to session user and returns changelog
+        const selectPostData = await trx
+        .selectFrom('posts')
+        .select(['user_id', 'changelog'])
+        .where('id', '=', postData.id)
+        .where('user_id', '=', sessionUserId)
+        .executeTakeFirstOrThrow()
 
-    const post = await updatePost
-    return post
+        const changelog = selectPostData?.changelog as App.Changelog
+        changelog[timestampISOString] = {
+            text: editedText,
+            mbid: postData.mbid,
+            artist_name: postData.artistName,
+            release_group_name: postData.releaseGroupName,
+            recording_name: postData.recordingName,
+            status: "edited",
+            listen_url: postData.listenUrl,
+            episode_title: postData.episodeTitle,
+            show_title: postData.showTitle,
+        }
+
+        //submit update
+        const update = await trx
+        .updateTable('posts')
+        .set({
+            text: editedText,
+            mbid: postData.mbid,
+            artist_name: postData.artistName,
+            release_group_name: postData.releaseGroupName,
+            recording_name: postData.recordingName,
+            status: "edited",
+            updated_at: timestampISO,
+            listen_url: postData.listenUrl,
+            episode_title: postData.episodeTitle,
+            show_title: postData.showTitle,
+            changelog: changelog,
+        })
+        .where('id','=', postData.id)
+        .returning([
+            'text', 
+            'mbid', 
+            'artist_name', 
+            'release_group_name', 
+            'recording_name', 
+            'episode_title', 
+            'show_title', 
+            'listen_url'
+        ])
+        .executeTakeFirstOrThrow()
+
+        const post = await update
+        return post
+    })
+    return updatePost
 }
 
 /* Delete a post */
 
-export const deletePost = async function ( postData: Posts) {
+export const deletePost = async function ( sessionUserId: string, postId: string) {
     
-    const changelog: App.Changelog = postData.changelog as App.Changelog
-    const updatedAt: Date = postData.updated_at as Date
-    const updatedAtString: string = updatedAt.toString()
-    changelog[updatedAtString] = {
-        text: postData.text,
-        mbid: postData.mbid,
-        mbid_type: postData.mbidType,
-        artist_name: postData.artistName,
-        release_group_name: postData.releaseGroupName,
-        recording_name: postData.recordingName,
-        status: postData.status,
-        listen_url: postData.listenUrl,
-        episode_title: postData.episodeTitle,
-        show_title: postData.showTitle,
-    }
+    const timestampISOString: string = new Date().toISOString()
+    const timestampISO: Date = parseISO(timestampISOString)
 
-    const deletePost = await db
-    .updateTable('posts')
-    .set({
-        status: "deleted",
-        updated_at: timestampISO,
+    const deletePost = await db.transaction().execute(async(trx) => {
+        
+        //validates that post belongs to session user and returns post id
+        const post = await trx
+        .selectFrom('posts')
+        .selectAll()
+        .where('id', '=', postId)
+        .where('user_id', '=', sessionUserId)
+        .executeTakeFirstOrThrow()
+
+        const changelog = post?.changelog as App.Changelog
+
+        changelog[timestampISOString] = {
+            text: post?.text,
+            mbid: post?.mbid,
+            item_type: post?.item_type,
+            artist_name: post?.artist_name,
+            release_group_name: post?.release_group_name,
+            recording_name: post?.recording_name,
+            status: 'deleted',
+            listen_url: post?.listen_url,
+            episode_title: post?.episode_title,
+            show_title: post?.show_title,
+        }
+
+        const updatePost = await trx
+        .updateTable('posts')
+        .set({
+            status: 'deleted',
+            updated_at: timestampISO,
+            changelog: changelog
+        })
+        .where('id','=', postId)
+        .returning(['id', 'status'])
+        .executeTakeFirst()
+
+        const update = await updatePost
+        return update
     })
-    .where('id','=', postData.id)
-    .returning(['id', 'status'])
-    .executeTakeFirst()
+    return deletePost
+}
 
-    const post = await deletePost
+/* Select a post */
+
+export const selectPost = async function ( sessionUserId: string, username: string, timestampString: string, postType: string ) {
+
+    const select = await db.transaction().execute(async(trx) => {
+        try {
+            const selectPostUserId = await trx
+            .selectFrom('profiles')
+            .select('id')
+            .where('username', '=', username)
+            .executeTakeFirst()
+
+            const postUserId = selectPostUserId?.id as string
+
+            await trx
+            .selectFrom('user_moderation_actions')
+            .selectAll()
+            .where(({eb}) => eb.and({
+                user_id: postUserId,
+                target_user_id: sessionUserId
+            }))
+            .executeTakeFirstOrThrow
+
+            return { permission: false }
+        }
+        catch ( error ) {
+            const post = await trx
+            .selectFrom('posts')
+            .innerJoin('profiles as profile', 'profile.id', 'posts.user_id')
+            .innerJoin((eb) =>  eb
+                .selectFrom('post_reactions')
+                .select(['post_id', (eb) => eb.fn.count<number>('id').as('reaction_count')])
+                .whereRef('post_id', '=', 'posts.id')
+                .as('reactions'),
+                (join) => join
+                .onRef('reactions.post_id', '=', 'posts.id')
+            )
+            .select([
+                'posts.id as id', 
+                'posts.text as text', 
+                'posts.user_id as user_id', 
+                'posts.type as type', 
+                'posts.mbid as mbid', 
+                'posts.artist_name as artist_name', 
+                'posts.release_group_name as release_group_name', 
+                'posts.recording_name as recording_name', 
+                'posts.episode_title as episode_title', 
+                'posts.show_title as show_title', 
+                'posts.item_type as item_type', 
+                'posts.status as status', 
+                'posts.created_at as created_at', 
+                'posts.updated_at as updated_at', 
+                'posts.listen_url as listen_url', 
+                'profile.username as username', 
+                'profile.display_name as display_name', 
+                'profile.avatar_url as avatar_url', 
+                'reactions.reaction_count as reaction_count'
+            ])
+            .where(({ eb }) => eb.and({
+                user_id: eb.selectFrom('profiles')
+                    .select('id')
+                    .where('username', '=', username)
+                    .limit(1),
+                type: postType,
+                created_at: dateToISODate(timestampString),
+            }))
+            .executeTakeFirst()
+
+            return { post, permission: true}
+        }
+    })
+
+    const post = await select
     return post
 }
 
-/* Get a post */
+/* Select all replies to a post from users that don't block sesssion user */
 
-export const selectPost = async function ( { username, timestampString, postType }: { username: string, timestampString: string, postType: string} ) {
-
-    const getPost = await db
-    .selectFrom('posts')
-    .selectAll()
-    .where(({ eb }) => eb.and({
-        user_id: eb.selectFrom('profiles')
-            .select('id')
-            .where('username', '=', username)
-            .limit(1),
-        type: postType,
-        created_at: dateToISODate(timestampString),
-    }))
-    .innerJoin(
-        eb => eb
-            .selectFrom('profiles')
-            .select(['id as userId', 'display_name', 'avatar_url'])
-            .where('username', '=', username)
-            .as('userData'),
-        (join) => join
-        .onRef('userData.userId', '=', 'posts.user_id')
-    )
-    .execute()
-
-    const post = await getPost
-    return post[0]
-}
-
-/* Get replies to a post */
-
-export const selectPostReplies = async function ( postId: string ) {
+export const selectPostReplies = async function ( sessionUserId: string, postId: string ) {
 
     const getReplies = await db
-    .selectFrom('posts')
-    .selectAll()
-    .where( 'parent_post_id', '=', postId )
-    .where('status', '!=', 'deleted')
-    .orderBy('id', 'asc')
+    .selectFrom('posts as comments')
+    .innerJoin('profiles as commenter', 'commenter.id', 'user_id')
+    .innerJoin('posts as parent_post', 'parent_post.id', 'parent_post_id')
+    .innerJoin((eb) => eb
+        .selectFrom('profiles as original_poster')
+        .select(['id', 'username'])
+        .where('id', '=', 'parent_post.user_id')
+        .as('original_poster'),
+        (join) => join
+        .onRef('parent_post.user_id', '=', 'original_poster.id')
+    )
+    .innerJoin((eb) =>  eb
+        .selectFrom('post_reactions')
+        .select(['post_id', (eb) => eb.fn.count<number>('id').as('reaction_count')])
+        .whereRef('post_id', '=', 'comments.id')
+        .as('reactions'),
+        (join) => join
+        .onRef('reactions.post_id', '=', 'comments.id')
+    )
+    .select([
+        'comments.id as id', 
+        'comments.text as text', 
+        'comments.user_id as user_id', 
+        'comments.status as status', 
+        'comments.created_at as created_at', 
+        'comments.parent_post_id as parent_post_id', 
+        'commenter.username as username', 
+        'commenter.display_name as display_name', 
+        'commenter.avatar_url as avatar_url', 
+        'parent_post.created_at as parent_post_date', 
+        'parent_post.user_id as parent_post_user_id', 
+        'original_poster.username as parent_post_username', 
+        'reactions.reaction_count as reaction_count'
+    ])
+    .where(({eb, and, not, exists, selectFrom}) => and([
+        eb( 'parent_post_id', '=', postId ),
+        eb( 'status', '!=', 'deleted' ),
+        not(
+            exists(
+                selectFrom('user_moderation_actions')
+                .select('id')
+                .whereRef('user_id', '=', 'parent_post.user_id')
+                .where('target_user_id', '=', sessionUserId)
+            )
+        )
+    ]))
+    .orderBy('comments.id asc')
     .execute()
 
     const replies = await getReplies
     return replies
 }
 
-/* Insert reaction to a post */
+/* Select post and replies session user has permission to see */
 
-export const insertReaction = async function ( reactionData: App.PostData ) {
+export const selectPostAndReplies = async function( sessionUserId: string, username: string, timestampString: string, postType: string ) {
 
-    const postId = reactionData.postId as string
-    const userId = reactionData.userId as string
-    const reaction = reactionData.reaction as string
+    const select = await db.transaction().execute(async(trx) => {
+        try {
+            const selectPostUserId = await trx
+            .selectFrom('profiles')
+            .select('id')
+            .where('username', '=', username)
+            .executeTakeFirst()
 
-    const insertReaction = await db
-    .insertInto('post_reactions')
-    .values({
-        post_id: postId,
-        user_id: userId,
-        reaction: reaction,
-        updated_at: timestampISO,
+            const postUserId = selectPostUserId?.id as string
+
+            await trx
+            .selectFrom('user_moderation_actions')
+            .selectAll()
+            .where(({eb}) => eb.and({
+                user_id: postUserId,
+                target_user_id: sessionUserId
+            }))
+            .executeTakeFirstOrThrow
+
+            return { post: null, replies: null, permission: false }
+        }
+        catch ( error ) {
+            const post = await trx
+            .selectFrom('posts')
+            .innerJoin('profiles as profile', 'profile.id', 'posts.user_id')
+            .innerJoin((eb) =>  eb
+                .selectFrom('post_reactions')
+                .select(['post_id', (eb) => eb.fn.count<number>('id').as('reaction_count')])
+                .whereRef('post_id', '=', 'posts.id')
+                .as('reactions'),
+                (join) => join
+                .onRef('reactions.post_id', '=', 'posts.id')
+            )
+            .select([
+                'posts.id as id', 
+                'posts.text as text', 
+                'posts.user_id as user_id', 
+                'posts.type as type', 
+                'posts.mbid as mbid', 
+                'posts.artist_name as artist_name', 
+                'posts.release_group_name as release_group_name', 
+                'posts.recording_name as recording_name', 
+                'posts.episode_title as episode_title', 
+                'posts.show_title as show_title', 
+                'posts.item_type as item_type', 
+                'posts.status as status', 
+                'posts.created_at as created_at', 
+                'posts.updated_at as updated_at', 
+                'posts.listen_url as listen_url', 
+                'profile.username as username', 
+                'profile.display_name as display_name', 
+                'profile.avatar_url as avatar_url', 
+                'reactions.reaction_count as reaction_count'
+            ])
+            .where(({ eb }) => eb.and({
+                user_id: eb.selectFrom('profiles')
+                    .select('id')
+                    .where('username', '=', username)
+                    .limit(1),
+                type: postType,
+                created_at: dateToISODate(timestampString),
+            }))
+            .executeTakeFirst()
+
+            const postId = post?.id as string
+
+            const postReactionActive = await trx
+            .selectFrom('post_reactions')
+            .select('active')
+            .where('post_id', '=', postId)
+            .where('user_id', '=', sessionUserId)
+            .executeTakeFirst()
+
+            const replies = await trx
+            .selectFrom('posts as comments')
+            .innerJoin('profiles as profile', 'profile.id', 'user_id')
+            .innerJoin('posts as parent_post', 'parent_post.id', 'parent_post_id')
+            .innerJoin((eb) => eb
+                .selectFrom('profiles as original_poster')
+                .select(['id', 'username'])
+                .where('id', '=', 'parent_post.user_id')
+                .as('original_poster'),
+                (join) => join
+                .onRef('parent_post.user_id', '=', 'original_poster.id')
+            )
+            .innerJoin((eb) =>  eb
+                .selectFrom('post_reactions')
+                .select(['post_id', (eb) => eb.fn.count<number>('id').as('reaction_count')])
+                .whereRef('post_id', '=', 'comments.id')
+                .as('reactions'),
+                (join) => join
+                .onRef('reactions.post_id', '=', 'comments.id')
+            )
+            .select([
+                'comments.id as id', 
+                'comments.text as text', 
+                'comments.user_id as user_id', 
+                'comments.status as status', 
+                'comments.created_at as created_at', 
+                'comments.parent_post_id as parent_post_id', 
+                'profile.username as username', 
+                'profile.display_name as display_name', 
+                'profile.avatar_url as avatar_url', 
+                'parent_post.created_at as parent_post_date', 
+                'parent_post.user_id as parent_post_user_id', 
+                'original_poster.username as parent_post_username', 
+                'reactions.reaction_count as reaction_count'
+            ])
+            .where(({eb, and, not, exists, selectFrom}) => and([
+                eb( 'parent_post_id', '=', postId ),
+                eb( 'status', '!=', 'deleted' ),
+                not(
+                    exists(
+                        selectFrom('user_moderation_actions')
+                        .select('id')
+                        .whereRef('user_id', '=', 'comments.user_id')
+                        .where('target_user_id', '=', sessionUserId)
+                    )
+                )
+            ]))
+            .orderBy('id', 'asc')
+            .execute()
+
+            return { post, postReactionActive, replies, permission: true}
+        }
     })
-    .returning(['id', 'reaction', 'active'])
-    .executeTakeFirst()
 
-    const inserted = await insertReaction
-    return inserted
+    const post = await select
+    return post
 }
 
-/* Update reaction to a post */
+/* Select random posts without user data */
 
-export const updateReaction = async function ( reactionData: App.PostData ) {
+export const selectRandomPosts = async function ( postCount: number ) {
 
-    const postId = reactionData.postId as string
-    const userId = reactionData.userId as string
-    const reaction = reactionData.reaction as string
-    const active = reactionData.active as boolean
-    
-    const changelog: App.Changelog = reactionData.changelog as App.Changelog
-    const updatedAt: Date = reactionData.updated_at as Date
-    const updatedAtString: string = updatedAt.toString()
-    changelog[updatedAtString] = {
-        post_id: reactionData.postId,
-        user_id: reactionData.userId,
-        reaction: reactionData.reaction,
-        active: reactionData.active,
-    }
+    const selectPosts = await db
+    .selectFrom('posts')
+    .select(['text', 'artist_name', 'release_group_name', 'recording_name', 'item_type', 'created_at'])
+    .where('status', '!=', 'deleted')
+    .where('parent_post_id', 'is', null)
+    .orderBy(sql`random()`)
+    .limit(postCount)
+    .execute()
 
-    const updateReaction = await db
-    .insertInto('post_reactions')
-    .values({
-        post_id: postId,
-        user_id: userId,
-        reaction: reaction,
-        active: !active,
-        updated_at: timestampISO,
-        changelog: changelog,
+    return selectPosts
+}
+
+/* Inserts a reaction to a post, or updates reaction row if sesssion user has already submitted that reaction */
+
+export const insertUpdateReaction = async function ( sessionUserId: string, postId: string, reactionType: string ) {
+
+    const timestampISOString: string = new Date().toISOString()
+    const timestampISO: Date = parseISO(timestampISOString)
+
+    const insertUpdateReaction = await db.transaction().execute(async (trx) => {
+        try {
+            const selectReaction = await trx
+            .selectFrom('post_reactions')
+            .select(['id', 'active', 'changelog'])
+            .where(({eb}) => eb.and({
+                post_id: postId,
+                user_id: sessionUserId,
+                reaction: reactionType
+            }))
+            .executeTakeFirstOrThrow()
+
+            const changelog = selectReaction?.changelog as App.Changelog
+            const active = selectReaction?.active as boolean
+            changelog[timestampISOString] = {
+                active: !active
+            }
+
+            return await trx
+            .updateTable('post_reactions')
+            .set({
+                active: !active,
+                updated_at: timestampISO,
+                changelog: changelog
+            })
+            .where('id', '=', postId)
+            .returning(['id', 'reaction', 'active'])
+            .executeTakeFirst()
+        }
+        catch (error) {
+            const changelog: App.Changelog = {}
+            changelog[timestampISOString] = {
+                active: true
+            }
+        
+            return await trx
+            .insertInto('post_reactions')
+            .values({
+                post_id: postId,
+                user_id: sessionUserId,
+                reaction: reactionType,
+                updated_at: timestampISO,
+                active: true,
+                changelog: changelog
+            })
+            .returning(['id', 'reaction', 'active'])
+            .executeTakeFirst()
+        }
     })
-    .returning(['reaction', 'active'])
-    .executeTakeFirst()
 
-    const updated = await updateReaction
-    return updated
+    const reaction =  await insertUpdateReaction
+    return reaction 
 }
 
 /* Get reaction count session user's reaction data for a post */
@@ -213,7 +517,7 @@ export const getReactionData = async function ( post_id: string, user_id: string
         .where('post_id', '=', post_id)
         .where('active', '=', true)
     )
-    .selectFrom('reactions')
+    .selectFrom('post_reactions as reactions')
     .select(({fn, eb}) => [
         fn.count<number>('reactions.id').as('reactions_count'),
         eb.selectFrom('reactions')

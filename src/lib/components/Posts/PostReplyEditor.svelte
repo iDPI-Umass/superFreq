@@ -1,13 +1,15 @@
 <div class="reply-editor">
-    <form class="reply">
+    <form class="reply" method="post" action="?/submitReply">
         <textarea
             rows="4"
             cols="1"
+            id="reply-text"
+            name="reply-text"
             spellcheck=true 
             placeholder="Reply..."
             required
         ></textarea>
-        <button class="standard">
+        <button class="standard" formaction="?/submitReply">
             submit
         </button>
     </form>
@@ -18,4 +20,4 @@
         margin-left: auto;
         margin-right: 0;
     }
-</style>
+</style>w

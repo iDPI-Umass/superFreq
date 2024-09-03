@@ -15,7 +15,6 @@
 
     export let reply: any
     export let sessionUserId: string
-    export let reactions: any
     export let editState = false
 
     let openState: boolean
@@ -31,7 +30,9 @@
                         {reply.display_name}
                     </span>
                     <span class="comment-date">
-                        {reply.created_at}
+                        <a href={`/${reply.parent_post_username}/now-playing/${reply.parent_post_date}#${reply.username?.concat(reply.created_at.valueOf().toString())}`}>
+                            {reply.created_at}
+                        </a>
                     </span>
                 </div>
 
@@ -60,6 +61,7 @@
                 {#each reply.reactions as reaction}
                 <div class="row-group-icon-description">
                     <LikeReact
+                    postId={reply.id}
                     reactionData={reaction}
                     ></LikeReact>
                 </div>

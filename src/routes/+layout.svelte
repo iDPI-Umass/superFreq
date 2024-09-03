@@ -22,7 +22,7 @@
 	
 
 	export let data;
-	$: ({ supabase, session, profile } = data)
+	$: ({ supabase, session } = data)
 
 
 	let displayName: string
@@ -58,11 +58,11 @@
 			}
 		});
 
-		profileObject.displayName = profile?.display_name ?? ''
-		profileObject.avatarUrl = profile?.avatar_url ?? ''
-		profileObject.username = profile?.username ?? ''
+		// profileObject.displayName = profile?.display_name ?? ''
+		// profileObject.avatarUrl = profile?.avatar_url ?? ''
+		// profileObject.username = profile?.username ?? ''
 
-		profileStoresObject.set(profileObject)
+		// profileStoresObject.set(profileObject)
 
 		return () => data.subscription.unsubscribe();
 	});

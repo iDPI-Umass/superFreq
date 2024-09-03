@@ -1,36 +1,86 @@
-<!--
-    TO DO:
-        - display collections and social activity of users that user is following
--->
-
 <script lang="ts">
-    import { formatDate } from '$lib/resources/parse-data/formatDate';
-    import { profileName } from '$lib/resources/parse-data/profileName';
-    
-    export let data;
-    let { supabase, session, collectionsFollowing, socialGraph, socialFollowsActivity, followedCollectionsActivity } = data;
-    $: ({ supabase, session, collectionsFollowing, socialGraph, socialFollowsActivity, followedCollectionsActivity } = data);
+    import type { PageData, ActionData } from './$types'
 
+    export let data: PageData
+    let { sessionUserId, firstBatch, timestampStart, timestampEnd, batchSize, options } = data
+    $: ({ sessionUserId, firstBatch, timestampStart, timestampEnd, batchSize, options } = data)
+
+    export let form: ActionData
+
+    const { feedData, totalRowCount } =  firstBatch
+    const feedItems: any = []
+    feedItems.concat(feedData)
+
+    console.log(feedItems)
 </script>
 
-<title>feed</title>
-<h1>feed</h1>
-
-<!--
-    User follows block tk
-{#each socialFollowsActivity as socialItem}
-    {#if socialItem["follows_now"] == true }
-    <p>
-        {user_a} followed {user_b}
-    </p>
+{#each feedItems as item}
+    {#if Object.keys(item).includes( 'now_playing_post_id' )}
+        <a href={`/posts/${item.username}/now-playing/${item.feed_item_timestamp}`}>
+            <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} />
+            <p>{item.display_name} is now playing {item.release_group_name ?? item.recording_name ?? item.episode_title} by {item.artist_name}</p>
+            <p>{item.text}</p>
+        </a>
+    {:else if Object.keys(item).includes( 'comment_id' )}
+        <a href={`/posts/${item.profile_b_username}/now-playing/${item.feed_item_timestamp}`}>
+            <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} />
+            <p>{item.display_name} commented on {item.parent_post_display_name}'s post</p>
+        </a>
+    {:else if Object.keys(item).includes( 'reaction_id' )}
+        <a href={`/posts/${item.profile_b_username}/now-playing/${item.feed_item_timestamp}`}>
+            <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} />
+            <p>{item.display_name} liked {item.parent_post_display_name}'s post</p>
+        </a>
+    {:else if Object.keys(item).includes( 'collection_follow_id' )}
+        <a href={`/collection/${item.collection_id}`}>
+            <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} />
+            <p>{item.display_name} followed the collection {item.title}'s post</p>
+        </a>
+    {:else if Object.keys(item).includes( 'collection_edit_id' )}
+        <a href={`/collection/${item.collection_id}`}>
+            <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} />
+            <p>{item.display_name} edited the collection {item.title}'s post</p>
+        </a>
     {/if}
 {/each}
--->
 
-{#each collectionsFollowing as collection}
-    <p>
-       <a href="/collection/{collection["collection_id"]}">{collection["collections_info"]["title"]}</a> updated
-       <!--by {collection["collections_updates"]["updated_by"]}-->
-       on {formatDate(collection["collections_info"]["updated_at"])}
-    </p>
-{/each}
+{#if feedItems.length < totalRowCount}
+    <form method="POST" action="?/fetchMoreData">
+        <input
+            type="hidden"
+            name="session-user-id"
+            id="session-user-id"
+            value={sessionUserId}
+        />
+        <input
+            type="hidden"
+            name="batch-size"
+            id="batch-size"
+            value={batchSize}
+        />
+        <input
+            type="hidden"
+            name="batch-iterator"
+            id="batch-iterator"
+            value={form?.batchIterator ?? 0}
+        />
+        <input
+            type="hidden"
+            name="timestamp-start"
+            id="timestamp-start"
+            value={timestampStart}
+        />
+        <input
+            type="hidden"
+            name="timestamp-end"
+            id="timestamp-end"
+            value={timestampEnd}
+        />
+        <input
+            type="hidden"
+            name="timestamp-start"
+            id="timestamp-start"
+            value={options.toString()}
+        />
+    </form>
+{/if}
