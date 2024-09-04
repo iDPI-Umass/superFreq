@@ -104,26 +104,18 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
 
             const selectFollowingComments = await trx
             .selectFrom('posts as comments')
-            .innerJoin('posts as original_post', 'comments.parent_post_id', 'original_post.id')
             .innerJoin('profiles as commenter', 'commenter.id', 'comments.user_id')
-            // .innerJoin(
-            //     (eb) => eb
-            //         .selectFrom('profiles as original_poster_profile')
-            //         .select(['id', 'display_name', 'username'])
-            //         .whereRef('original_poster_profile.id', '=', 'original_post.user_id')
-            //         .as('original_poster'),
-            //     (join) => join
-            //         .onRef('original_poster.id', '=', 'original_post.user_id')
-            // )
+            .innerJoin('posts as original_post', 'comments.parent_post_id', 'original_post.id')
+            .innerJoin('profiles as original_poster', 'original_post.user_id', 'original_poster.id')
             .select([
                 'comments.id as comment_id', 
-                'comments.user_id', 
+                'comments.user_id as user_id', 
                 'commenter.display_name as display_name', 
                 'commenter.avatar_url as avatar_url', 
                 'comments.text as comment_text', 'comments.parent_post_id', 
                 'original_post.user_id as original_poster_user_id', 
-                // 'original_poster.display_name as original_poster_display_name', 
-                // 'original_poster.username as original_poster_username', 
+                'original_poster.display_name as original_poster_display_name', 
+                'original_poster.username as original_poster_username', 
                 'comments.created_at as feed_item_timestamp'
             ])
             .where('comments.user_id', 'in', followingUserIds)
@@ -163,7 +155,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'reaction.id as reaction_id', 
                 'reaction.user_id as react_user_id', 
                 'reaction.post_id as post_id', 
-                'reacton.reaction as reaction', 
+                'reaction.reaction as reaction', 
                 'reaction.updated_at as feed_item_timestamp', 
                 'react_user.display_name as display_name', 
                 'react_user.avatar_url as avatar_url', 
@@ -235,7 +227,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             
 
             const countFollowingCollectionsEdits = await trx
-            .selectFrom('collections_info')
+            .selectFrom('collections_updates')
             .select((eb) => eb.fn.count<number>('collection_id').as('collection_edits_count'))
             .where('updated_by', 'in', followingUserIds)
             .where((eb) => eb.between('updated_at', timestampStart, timestampEnd))
@@ -265,7 +257,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             collectionEdits = selectFollowingCollectionsEdits
         }
 
-        const totalRowCount = postsTotal + commentsTotal + reactionsTotal + collectionsSocialTotal + collectionEditsTotal
+        const totalRowCount = Number(postsTotal) + Number(commentsTotal) + Number(reactionsTotal) + Number(collectionsSocialTotal) + Number(collectionEditsTotal)
 
         return ({posts, comments, reactions, collectionFollows, collectionEdits, totalRowCount})
     })
@@ -406,7 +398,7 @@ export const selectMoreFeedData = async function ( sessionUserId: string, batchS
                 'post_reactions.user_id as user_id', 
                 'post_reactions.post_id as post_id', 
                 'post_reactions.reaction as reaction', 
-                'updated_at as feed_item_timestamp',
+                'post_reactions.updated_at as feed_item_timestamp',
                 'react_user.id as react_user_id', 
                 'react_user.display_name as react_user_display_name', 
                 'react_user.avatar_url as react_user_avatar_url', 

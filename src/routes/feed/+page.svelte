@@ -8,40 +8,39 @@
     export let form: ActionData
 
     const { feedData, totalRowCount } =  firstBatch
-    const feedItems: any = []
-    feedItems.concat(feedData)
-
-    console.log(feedItems)
+    const feedItems = feedData
 </script>
 
 {#each feedItems as item}
-    {#if Object.keys(item).includes( 'now_playing_post_id' )}
-        <a href={`/posts/${item.username}/now-playing/${item.feed_item_timestamp}`}>
-            <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} />
-            <p>{item.display_name} is now playing {item.release_group_name ?? item.recording_name ?? item.episode_title} by {item.artist_name}</p>
-            <p>{item.text}</p>
-        </a>
-    {:else if Object.keys(item).includes( 'comment_id' )}
-        <a href={`/posts/${item.profile_b_username}/now-playing/${item.feed_item_timestamp}`}>
-            <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} />
-            <p>{item.display_name} commented on {item.parent_post_display_name}'s post</p>
-        </a>
-    {:else if Object.keys(item).includes( 'reaction_id' )}
-        <a href={`/posts/${item.profile_b_username}/now-playing/${item.feed_item_timestamp}`}>
-            <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} />
-            <p>{item.display_name} liked {item.parent_post_display_name}'s post</p>
-        </a>
-    {:else if Object.keys(item).includes( 'collection_follow_id' )}
-        <a href={`/collection/${item.collection_id}`}>
-            <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} />
-            <p>{item.display_name} followed the collection {item.title}'s post</p>
-        </a>
-    {:else if Object.keys(item).includes( 'collection_edit_id' )}
-        <a href={`/collection/${item.collection_id}`}>
-            <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} />
-            <p>{item.display_name} edited the collection {item.title}'s post</p>
-        </a>
-    {/if}
+    <div class="feed-item">
+        {#if Object.keys(item).includes( 'now_playing_post_id' )}
+            <a href={`/posts/${item.username}/now-playing/${item.feed_item_timestamp}`}>
+                <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} />
+                <p>{item.display_name} is now playing {item.release_group_name ?? item.recording_name ?? item.episode_title} by {item.artist_name}</p>
+                <p>{item.text}</p>
+            </a>
+        {:else if Object.keys(item).includes( 'comment_id' )}
+            <a href={`/posts/${item.original_poster_username}/now-playing/${item.feed_item_timestamp}`}>
+                <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} />
+                <p>{item.display_name} commented on {item.original_poster_display_name}'s post</p>
+            </a>
+        {:else if Object.keys(item).includes( 'reaction_id' )}
+            <a href={`/posts/${item.original_poster_username}/now-playing/${item.feed_item_timestamp}`}>
+                <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} />
+                <p>{item.display_name} liked {item.original_poster_display_name}'s post</p>
+            </a>
+        {:else if Object.keys(item).includes( 'collection_follow_id' )}
+            <a href={`/collection/${item.collection_id}`}>
+                <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} />
+                <p>{item.display_name} followed the collection {item.title}'s post</p>
+            </a>
+        {:else if Object.keys(item).includes( 'collection_edit_id' )}
+            <a href={`/collection/${item.collection_id}`}>
+                <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} />
+                <p>{item.display_name} edited the collection {item.title}'s post</p>
+            </a>
+        {/if}
+    </div>
 {/each}
 
 {#if feedItems.length < totalRowCount}
@@ -84,3 +83,13 @@
         />
     </form>
 {/if}
+
+<style>
+    .feed-item {
+        display: flex;
+        flex-direction: row;
+    }
+    img {
+        width: 50px;
+    }
+</style>
