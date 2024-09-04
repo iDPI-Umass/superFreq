@@ -1,28 +1,29 @@
 import { redirect } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
+import { db } from 'src/database.ts'
 
-export const GET: RequestHandler = async ({ locals: { safeGetSession, supabase }}) => {
+export const GET: RequestHandler = async ({ locals: { safeGetSession }}) => {
 
     const session = await safeGetSession()
     console.log(session)
 
-    const sessionUserId = session.user?.id
+    const sessionUserId = session.user?.id as string
 
-    const { data, status, error } = await supabase
-    .from("profiles")
-    .select(`*`)
-    .eq("id", sessionUserId)
+    const select = await db
+    .selectFrom("profiles")
+    .select('username')
+    .where("id", '=', sessionUserId)
+    .executeTakeFirstOrThrow()
 
-    const username = data[0]['username']
+    const profile = await select
+    const username = profile?.username
 
-    if ( status === 200 && username ) {
+    if ( profile && username ) {
       return redirect(303, '/feed')
     }
-    else if ( status === 200 && !username ) {
+    else if ( profile && !username ) {
       return redirect(303, '/account')
     }
-    else if ( error || status != 200 ) {
-      return redirect(303, '/auth/error')
-    }
-    return redirect(303, '/')
+
+    return redirect(303, '/auth/error')
 }

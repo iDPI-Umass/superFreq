@@ -5,46 +5,48 @@
 	import { profileStoresObject } from 'src/lib/stores.ts';
 	import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte';
 	import PanelHeader from '$lib/components/PanelHeader.svelte';
+	import type { ActionData, PageData } from '../$types';
+	import { Footprints } from 'lucide-svelte';
 
-	export let data;
-	export let form;
+	export let data: PageData;
+	export let form: ActionData;
 
-	let { session, supabase, profile } = data;
-	$: ({ session, supabase, profile } = data);
+	let { user, sessionUserId, profile } = data
+	$: ({ user, sessionUserId, profile } = data)
 
+	let avatarItem: any
+	let newItemAdded: boolean
 	let profileForm: HTMLFormElement
 	let loading = false
 	let complete = false
 	let displayName: string = profile?.display_name ?? ''
 	let username: string = profile?.username ?? ''
 	let website: string = profile?.website ?? ''
-	let avatarMbid: string = profile?.avatar_mbid ?? ''
-	let avatarUrl: string = profile?.avatar_url ?? ''
+	$: avatarMbid = avatarItem?.release_group_mbid ??profile?.avatar_mbid ?? ''
+	let avatarUrl: string = avatarItem?.avatar_url ?? profile?.avatar_url ?? ''
 	let about: string = profile?.about ?? ''
-
-	let avatarItem: any
-	let newItemAdded: boolean
+	let email: string = user?.email as string
 
 
 	// sets avatar to local storage
-	const handleSubmit: SubmitFunction = () => {
-		loading = true
-		console.log(avatarItem ? avatarItem : "no avatar")
+	// const handleSubmit: SubmitFunction = () => {
+	// 	loading = true
+	// 	console.log(avatarItem ? avatarItem : "no avatar")
 
-		const profileStorageItem = {
-			"displayName": displayName,
-			"username": username,
-			"avatarUrl": avatarItem?.img_url
-		}
+	// 	const profileStorageItem = {
+	// 		"displayName": displayName,
+	// 		"username": username,
+	// 		"avatarUrl": avatarItem?.img_url
+	// 	}
 
-		localStorage.setItem("profile", JSON.stringify(profileStorageItem))
+	// 	localStorage.setItem("profile", JSON.stringify(profileStorageItem))
 
-		profileStoresObject.set(profileStorageItem)
+	// 	profileStoresObject.set(profileStorageItem)
 
-		return async ({ result }) => {
-			loading = false
-		}
-	}
+	// 	return async ({ result }) => {
+	// 		loading = false
+	// 	}
+	// }
 
 	const handleSignOut: SubmitFunction = () => {
 		loading = true
@@ -66,7 +68,7 @@
 			class="form-column"
 			method="post"
 			action="?/update"
-			use:enhance={handleSubmit}
+			use:enhance
 			bind:this={profileForm}
 		>
 			<div class="label-group">
@@ -87,7 +89,7 @@
 				name="email" 
 				id="email"
 				form="account-data"
-				value={form?.email ?? session.user.email} 
+				value={email} 
 				disabled 
 			/>
 			<div class="label-group">
@@ -108,7 +110,7 @@
 				name="username"
 				id="username"
 				form="account-data"
-				value={form?.username ?? username}
+				value={username}
 				disabled 
 			/>
 			<label 
@@ -122,7 +124,7 @@
 				type="text" 
 				name="displayName" 
 				id="displayName" 
-				value={form?.displayName ?? displayName} 
+				value={displayName} 
 			/>
 
 			
@@ -139,7 +141,7 @@
 				cols="1"
 				maxlength="140"
 				spellcheck=true 
-				value={form?.about ?? about}
+				value={about}
 			></textarea>
 
 			<label 
@@ -153,20 +155,29 @@
 				type="url" 
 				name="website" 
 				id="website" 
-				value={form?.website ?? website} 
+				value={website} 
 			/>
+			{#key avatarItem}
 			<input 
-				type="hidden" 
+				type="text" 
 				name="avatarUrl" 
 				id="avatarUrl" 
-				value={form?.avatarUrl ?? (avatarItem?.img_url ?? avatarUrl)} 
+				value={avatarUrl} 
 			/>
-			<!-- <input 
-				type="hidden" 
+			<input 
+				type="text" 
 				name="avatarMbid" 
 				id="avatarMbid" 
-				value={form?.avatarMbid ?? (avatarItem?.releaseGroupMbid ?? avatarMbid)} 
-			/> -->
+				value={avatarMbid} 
+			/>
+			<input 
+				type="text" 
+				name="avatarName" 
+				id="avatarName" 
+				value={avatarItem?.release_group_name} 
+				disabled
+			/>
+			{/key}
 		</form>
 		<div class="form-column">
 			<label 

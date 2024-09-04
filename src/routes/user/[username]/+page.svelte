@@ -1,18 +1,24 @@
 <script lang="ts">
+    import type { ActionData, PageData } from './$types.js'
     import { goto } from '$app/navigation'
+    import { enhance } from '$app/forms'
     import { username } from '$lib/resources/localStorage'
     import Settings from 'lucide-svelte/icons/settings'
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte';
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import GridList from "$lib/components/GridList.svelte"
+	import { Info } from 'lucide-svelte';
 
-    export let data
+    export let data: PageData
+    export let form: ActionData
     $: data
 
     let { sessionUserId, profileData } = data
     $: ({ sessionUserId, profileData } = data) 
 
-    const { profileUserData, followInfo, permission } = profileData
+    const { profileUserData, followInfo, permission, profileUserBlockInfo, profileUserFlagInfo } = profileData
+
+    const profileUserId = profileUserData?.id as string
 
     let collectionCount: number | null = null
     let collectionFollowingCount: number | null = null
@@ -33,28 +39,13 @@
         topAlbumsReturned = true
     }
     
-    const isBlocked = permission ? false : true
-    
+    const sessionUserBlocked = permission ? false : true
+    $: followingNow = form?.followStatus ?? followInfo?.follows_now ?? false
+    $: profileUserBlocked = form?.blockStatus ?? profileUserBlockInfo?.active ?? false
+    $: profileUserFlagged = form?.flagStatus ?? profileUserFlagInfo?.active ?? false
 </script>
 
 <div class="profile-info">
-    <form
-        method="POST"
-        action="?/followUser"
-    >
-        <input 
-            type="hidden"
-            name="profile-user-id" 
-            id="profile-user-id"
-            value={profileUserData?.id}
-        />
-        <input 
-            type="hidden"
-            name="session-user-id" 
-            id="session-user-id"
-            value={sessionUserId}
-        />
-    </form>
     <div class="info-box-left">
         <img src={profileUserData?.avatar_url} alt="${profileUserData?.display_name}'s avatar" />
         <div class="info-box-column">
@@ -79,28 +70,35 @@
                         </button>
                     </div>
                 {:else}
-                    <form method='POST' action='?/followUser'>
+                    <form
+                        method="POST"
+                        action="?/followUser"
+                        use:enhance
+                    >
                         <input 
                             type="hidden"
                             name="profile-user-id" 
                             id="profile-user-id"
-                            value={profileUserData?.id}
+                            value={profileUserId}
                         />
                         <button 
                             class="standard" 
+                            type="submit"
                             formaction="?/followUser"
                         >
-                        {#if followInfo?.follows_now == true}
+                        {#if followingNow == true}
                             unfollow
                         {:else}
                             + follow
                         {/if}
                         </button>  
                     </form>
-                        
                     <UserActionsMenu
                         mode='profileMenu'
-                        blocked={isBlocked}
+                        blocked={profileUserBlocked}
+                        flagged={profileUserFlagged}
+                        profileUserId={profileUserId}
+                        success={form?.success}
                     ></UserActionsMenu>
                 {/if}
             </div>

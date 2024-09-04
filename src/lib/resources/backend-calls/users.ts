@@ -20,8 +20,8 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
         .where('username', '=', profileUsername)
         .executeTakeFirst()
 
-        // return limited data if profile user actively blocks sessino user
-        const blockInfo = await trx
+        // return limited data if profile user actively blocks session user
+        const sessionUserBlockInfo = await trx
             .selectFrom('user_moderation_actions')
             .select(['id'])
             .where(({ eb }) => eb.and({
@@ -32,7 +32,7 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
             }))
             .executeTakeFirst()
 
-        if ( blockInfo ) {
+        if ( sessionUserBlockInfo ) {
             return { profileUserData, permission: false }
         }
 
@@ -47,6 +47,28 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
                 target_user_id: profileUserData?.id as string,
             }))
             .executeTakeFirst()
+
+        // figure out if sessionUser actively blocks profileUser
+        const profileUserBlockInfo = await trx
+        .selectFrom('user_moderation_actions')
+        .select(['id', 'type', 'active'])
+        .where(({ eb }) => eb.and({
+            user_id: sessionUserId,
+            target_user_id: profileUserData?.id as string,
+            type: 'block'
+        }))
+        .executeTakeFirst()
+
+        // figure out if sessionUser has flagged profileUser
+        const profileUserFlagInfo = await trx
+        .selectFrom('user_moderation_actions')
+        .select(['id', 'type', 'active'])
+        .where(({ eb }) => eb.and({
+            user_id: sessionUserId,
+            target_user_id: profileUserData?.id as string,
+            type: 'flag'
+        }))
+        .executeTakeFirst()
 
         // get metrics
         const collectionCount = await trx
@@ -115,7 +137,7 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
             .where('collection_id', '=', profileUserData?.top_albums_collection_id as string)
             .execute()
 
-        return { profileUserData, collectionCount, collectionFollowingCount, userFollowingCount, nowPlayingPostsCount, topAlbumsCollection, followInfo, permission: true }
+        return { profileUserData, profileUserBlockInfo, profileUserFlagInfo, collectionCount, collectionFollowingCount, userFollowingCount, nowPlayingPostsCount, topAlbumsCollection, followInfo, permission: true }
     })
     
     const profile = await selectProfileData
@@ -173,7 +195,16 @@ export const updateSessionProfile = async function ( sessionUserId: string, prof
             changelog: changelog
         })
         .where('id', '=', sessionUserId)
-        .returning(['id', 'updated_at'])
+        .returning([
+            'id',
+            'username', 
+            'display_name', 
+            'website', 
+            'avatar_mbid', 
+            'avatar_url', 
+            'about', 
+            'updated_at'
+        ])
         .executeTakeFirst()
 
         return updateProfile
@@ -246,7 +277,7 @@ export const updateUsername = async function ( sessionUserId: string, newUsernam
 
 /* Block or unblock a user */
 
-export const insertUpdateBlock = async function ( profileUserId: string, sessionUserId: string ) {
+export const insertUpdateBlock = async function ( sessionUserId: string, profileUserId: string ) {
 
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
@@ -349,6 +380,8 @@ export const insertPostFlag = async function ( sessionUserId: string, postId: st
 
 export const insertUserFlag = async function ( sessionUserId: string, profileUserId: string ) {
 
+    console.log( sessionUserId, profileUserId)
+
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
 
@@ -380,12 +413,13 @@ export const insertUserFlag = async function ( sessionUserId: string, profileUse
     .executeTakeFirst()
 
     const flag = await insertFlag
+    console.log(flag)
     return flag
 } 
 
 /* Follow or unfollow a user */
 
-export const insertUpdateUserFollow = async function ( profileUserId: string, sessionUserId: string ) {
+export const insertUpdateUserFollow = async function ( sessionUserId: string, profileUserId: string ) {
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
 
@@ -410,9 +444,7 @@ export const insertUpdateUserFollow = async function ( profileUserId: string, se
             changelog[timestampISOString] = {
                 'follows_now': !followsNow
             }
-
-            console.log(changelog)
-
+            
             const updateCollectionFollow = await trx
             .updateTable('social_graph')
             .set({

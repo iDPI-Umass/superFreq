@@ -2,13 +2,17 @@
   import { DropdownMenu } from "bits-ui";
   import ChevronDown from 'lucide-svelte/icons/chevron-down';
   import logo from "$lib/assets/images/logo/freq-logo-dark.svg";
+  import { profileStoresObject } from "src/lib/stores";
 
-  import hats from '$lib/assets/images/hats.jpg'
+  let profileObject: App.ProfileObject
+  $: profileObject
+
+  profileObject = $profileStoresObject
 
   export let sessionUserId: string | null
-  export let displayName: string
-  export let avatarUrl: string
-  export let username: string
+  export let username: string = profileObject?.username as string
+  export let displayName: string = profileObject?.display_name as string
+  export let avatarUrl: string = profileObject?.avatarUrl as string
 
   let accountMenuItems = [
     { url: `/${username}`, text: 'profile' },

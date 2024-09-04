@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount, createEventDispatcher } from 'svelte'
+    import { enhance } from '$app/forms'
 
     import { Popover } from "bits-ui";
     import { flyAndScale } from "$lib/utils/transitions.ts"
@@ -12,10 +13,12 @@
     import Trash2 from 'lucide-svelte/icons/trash-2'
 
     export let editState = false
-    export let mode: string
-    export let blocked = false
-    
-    //modes: profileMenu, postMenu, sessionUserPostMenu
+    export let mode: 'profileMenu' | 'postMenu' | 'sessionUserPostMenu'
+    export let profileUserId: string | null =  null
+    export let blocked: boolean = false
+    export let flagged: boolean = false
+    export let postId: string | null =  null
+    export let success: boolean | null | undefined = null
 
     let popOverOpenState: boolean
     let showModal: boolean = false
@@ -24,7 +27,7 @@
         blockUser: 'Block uesr?',
         deletePost: 'Delete post?',
         flagPost: 'Flag post?',
-        reportUser: 'Flag user?',
+        reportUser: 'Report user?',
         unblockUser: 'Unblock user?'
     }
     const dialogTextOptions: App.Lookup = {
@@ -38,7 +41,7 @@
         blockUser: 'block',
         deletePost: 'delete',
         flagPost: 'flag',
-        reportUser: 'flag',
+        reportUser: 'report',
         unblockUser: 'unblock'
     }
     const formIDs: App.StringLookupObject = {
@@ -112,7 +115,7 @@
     </Popover.Trigger>
     <Popover.Content transition={flyAndScale}>
         {#if mode == 'profileMenu'}
-            {#if blocked}
+            {#if !blocked}
                 <button 
                     class="popover-item" 
                     on:click|preventDefault={() => openDialog('blockUser')}
@@ -125,7 +128,7 @@
                         block user
                     </span>
                 </button>
-            {:else}
+            {:else if blocked}
                 <button 
                     class="popover-item" 
                     on:click|preventDefault={() => openDialog('unblockUser')}
@@ -139,18 +142,34 @@
                     </span>
                 </button>
             {/if}
+            {#if !flagged}
+                <button
+                    class="popover-item" 
+                    on:click|preventDefault={() => openDialog('reportUser')} 
+                >
+                    <Flag 
+                        size="16" 
+                        color="var(--freq-color-text-muted)"
+                    ></Flag>
+                    <span class="descriptor">
+                        report user
+                    </span>
+                </button>
+            {:else if flagged}
             <button
                 class="popover-item" 
                 on:click|preventDefault={() => openDialog('reportUser')} 
+                disabled
             >
                 <Flag 
                     size="16" 
                     color="var(--freq-color-text-muted)"
                 ></Flag>
                 <span class="descriptor">
-                    report user
+                    user reported
                 </span>
             </button>
+            {/if}
         {:else if mode = 'postMenu'}
             <button
                 class="popover-item" 
@@ -198,27 +217,67 @@
     bind:this={dialog}
 	on:close={() => (showModal = false)}
 >
-<h2>{diaglogTitleOptions[dialogMode]}</h2>
-    {dialogTextOptions[dialogMode]}
-    <div class="dialog-options">
-        <button 
-            aria-label="close modal" 
-            formmethod="dialog" 
-            on:click={closeDialog}
-        >
-            cancel
-        </button>
-        <form class="POST" id={formIDs[dialogMode]} action={formActions[dialogMode]}>
+    <form 
+        method="POST" 
+        id={formIDs[dialogMode]} 
+        action={formActions[dialogMode]}
+        use:enhance
+    >
+    <input
+        type="hidden"
+        id="profile-user-id"
+        name="profile-user-id"
+        value={profileUserId}
+    />
+    <input
+        type="hidden"
+        id="post-id"
+        name="post-id"
+        value={postId}
+    />
+    {#if success == null}
+        <h2>{diaglogTitleOptions[dialogMode]}</h2>
+        {dialogTextOptions[dialogMode]}
+        <div class="dialog-options">
             <button 
                 aria-label="close modal" 
                 formmethod="dialog" 
-                formaction={formActions[dialogMode]}
                 on:click={closeDialog}
+            >
+                cancel
+            </button>
+            <button 
+                aria-label="submit" 
+                type="submit"
+                formaction={formActions[dialogMode]}
             >
                 {dialogConfirmButtonOptions[dialogMode]}
             </button>
-        </form>
-    </div>
+        </div>
+    {:else if success == true}
+        Successful submission
+        <div class="dialog-options">
+            <button 
+                aria-label="close modal" 
+                formmethod="dialog" 
+                on:click={closeDialog}
+            >
+                close
+            </button>
+        </div>
+    {:else if success == false}
+        Something went wrong
+        <div class="dialog-options">
+            <button 
+                aria-label="close modal" 
+                formmethod="dialog" 
+                on:click={closeDialog}
+            >
+                close
+            </button>
+        </div>
+    {/if}
+    </form>
 </dialog>
 
 <style>

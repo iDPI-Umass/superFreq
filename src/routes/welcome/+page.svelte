@@ -1,10 +1,11 @@
 <script lang="ts">
     import type { ActionData } from './$types'
+    import { enhance } from '$app/forms'
     import '$lib/styles/posts.css'
 	import PanelHeader from "$lib/components/PanelHeader.svelte"
     import NotificationModal from "$lib/components/NotificationModal.svelte"
 
-    let form: ActionData
+    export let form: ActionData
 </script>
 
 <div class="panel-medium">
@@ -18,7 +19,7 @@
             <br />
             Just enter your email address for a one-time link to log in or sign up.
         </p>
-        <form class="vertical" method="POST" action="?/sendMagicLink">
+        <form class="vertical" method="POST" action="?/sendMagicLink" use:enhance>
             <label 
                 class="text-label" 
                 for="email"
@@ -45,7 +46,7 @@
     showModal={form?.showModal ?? false}
 >
     <span slot="message">
-        {#if form?.success}
+        {#if form?.success == true}
         <p>check your inbox!</p>
         {:else}
         <p>Something went wrong. Please try again.</p>

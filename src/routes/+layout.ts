@@ -1,9 +1,10 @@
 import { createBrowserClient, createServerClient, isBrowser, parse } from '@supabase/ssr'
-// import { db } from 'src/database.ts'
 
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public'
 
 import type { LayoutLoad } from './$types'
+
+import { profileStoresObject } from '$lib/stores'
 
 export const load: LayoutLoad = async ({ data, depends, fetch }) => {
   /**
@@ -48,15 +49,9 @@ export const load: LayoutLoad = async ({ data, depends, fetch }) => {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // if ( user ) {
-  //   const profile = await db
-  //   .selectFrom('profiles')
-  //   .select(['username', 'display_name', 'website', 'avatar_url'])
-  //   .where('id', '=', session?.user.id as string)
-  //   .executeTakeFirst()
+  const { profile } = data
 
-  //   return { session, supabase, user, profile }
-  // }
+  profileStoresObject.set(profile)
 
-  return { session, supabase, user }
+  return { session, user, profile, supabase }
 }

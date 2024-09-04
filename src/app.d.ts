@@ -16,7 +16,7 @@ declare global {
       [index: string]: any
     }
     interface ProfileObject {
-      [index: string]: string 
+      [index: string]: string | null
     }
     interface Lookup {
       [index: string]: string | string[] | number | number[]

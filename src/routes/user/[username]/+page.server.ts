@@ -27,9 +27,14 @@ export const actions = {
         const data = await request.formData()
         const profileUserId = data.get('profile-user-id') as string
 
-        const block = await insertUpdateBlock( profileUserId, sessionUserId )
-        
-        return block
+        const block = await insertUpdateBlock( sessionUserId, profileUserId )
+
+        const blockStatus = block?.active
+
+        if ( block ) {
+            return { block, blockStatus, success: true}
+        }
+        return { block, blockStatus, success: false }
     },
     reportUser: async({ request, locals: { safeGetSession }}) => {
         const session = await safeGetSession()
@@ -38,19 +43,27 @@ export const actions = {
         const data = await request.formData()
         const profileUserId = data.get('profile-user-id') as string
 
-        const flag = await insertUserFlag( profileUserId, sessionUserId )
+        const flag = await insertUserFlag( sessionUserId, profileUserId )
 
-        return flag
+        const flagStatus = flag?.active
+
+        if ( flag ) {
+            return { flag, flagStatus, success: true }
+        }
+
+        return { flag, flagStatus, success: false }
     },
     followUser: async({ request, locals: { safeGetSession }}) => {
         const session = await safeGetSession()
         const sessionUserId = session?.user?.id as string
 
+        console.log(sessionUserId)
         const data = await request.formData()
         const profileUserId = data.get('profile-user-id') as string
 
-        const follow = await insertUpdateUserFollow( profileUserId, sessionUserId )
+        const follow = await insertUpdateUserFollow( sessionUserId, profileUserId )
 
-        return follow
+        const followStatus = follow?.follows_now
+        return { follow, followStatus }
     }
 } satisfies Actions

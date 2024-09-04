@@ -1,22 +1,24 @@
 import { fail, redirect } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
 import { selectSessionProfile, updateSessionProfile } from '$lib/resources/backend-calls/users'
+import { profileStoresObject } from '$lib/stores'
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 
-  const session = await safeGetSession()
+  const { session, user } = await safeGetSession()
 
-  if (!session.session) {
+  if (!session) {
     throw redirect(303, '/')
   }
 
-  const sessionUserId = session.user?.id
-  const profile = await selectSessionProfile
+  const sessionUserId = user?.id as string
+  const profile = await selectSessionProfile( sessionUserId )
 
-  return { sessionUserId, profile }
+  console.log(profile?.avatar_url)
+  return { user, sessionUserId, profile }
 }
 
-export const actions: Actions = {
+export const actions = {
   update: async ({ request, locals: { safeGetSession  } }) => {
     const session = await safeGetSession()
     const sessionUserId = session.user?.id as string
@@ -29,7 +31,14 @@ export const actions: Actions = {
     const avatarUrl = formData.get('avatarUrl') as string
     const about = formData.get('about') as string
 
-    console.log(formData)
+    console.log(avatarUrl)
+
+    profileStoresObject.set({
+      'username': username,
+      'display_name': displayName,
+      'avatar_url': avatarUrl,
+      'website': website
+    })
 
     const profileData = {
       id: session.user?.id,
@@ -40,15 +49,15 @@ export const actions: Actions = {
       avatar_url: avatarUrl,
       updated_at: new Date(),
       about: about,
-    }
+    } as App.RowData
 
-    const update = await updateSessionProfile(sessionUserId, profileData)
+    const submitUpdate = await updateSessionProfile(sessionUserId, profileData)
 
-    if ( update ) {
-      return {update, success: true}
+    if ( submitUpdate ) {
+      return { success: true}
     }
     else {
-      return {success: false}
+      return { success: false }
     }
 
   },
@@ -59,4 +68,4 @@ export const actions: Actions = {
       throw redirect(303, '/')
     }
   },
-} satisfies Actions;
+} satisfies Actions
