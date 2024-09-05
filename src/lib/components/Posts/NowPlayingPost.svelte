@@ -14,7 +14,7 @@
     export let post: any
     export let formData: boolean | null = null
     export let reactionActive: boolean | null =  null
-    export let editState: boolean | null = null
+    export let editState: boolean | null | undefined = null
     $: editState
 
     function toggleEditState() {
@@ -61,9 +61,9 @@
                     bind:editState={editState}
                 ></EditPostBody>
             {/if}
-            {#if formData?.success == true }
+            {#if formData == true }
                 <p>edited!</p>
-            {:else if formData?.success == false}
+            {:else if formData == false}
                 <p>edit failed</p>
             {/if}
             <iframe title="bandcamp-embed" style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=7134529/size=small/bgcol=333333/linkcol=ffffff/transparent=true/" seamless><a href="https://carlybarton.bandcamp.com/album/heart-scale">Heart Scale by Carly Barton</a></iframe>
@@ -71,8 +71,8 @@
         <div class="post-row">
             <LikeReact
             postId={post.id}
-            reactionCount={post.reaction_count}
-            reactionActive={reactionActive}
+            reactionCount={post.reactionCount}
+            reactionActive={reactionActive ?? false}
             ></LikeReact>
             <div class="row-group-icon-description">
                 {#if post.user_id == sessionUserId }

@@ -62,7 +62,7 @@
                 <div class="row-group-icon-description">
                     <LikeReact
                     postId={reply.id}
-                    reactionData={reaction}
+                    reactionActive={reply.reactionActive}
                     ></LikeReact>
                 </div>
                 {/each}

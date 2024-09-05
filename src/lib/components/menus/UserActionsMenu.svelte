@@ -12,7 +12,7 @@
     import PenLine from 'lucide-svelte/icons/pen-line'
     import Trash2 from 'lucide-svelte/icons/trash-2'
 
-    export let editState = false
+    export let editState: boolean | null | undefined = false
     export let mode: 'profileMenu' | 'postMenu' | 'sessionUserPostMenu'
     export let profileUserId: string | null =  null
     export let blocked: boolean = false

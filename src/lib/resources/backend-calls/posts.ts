@@ -242,7 +242,7 @@ export const selectPostReplies = async function ( sessionUserId: string, postId:
 
     const getReplies = await db
     .selectFrom('posts as comments')
-    .innerJoin('profiles as commenter', 'commenter.id', 'user_id')
+    .innerJoin('profiles as commenter', 'commenter.id', 'comments.user_id')
     .innerJoin('posts as parent_post', 'parent_post.id', 'parent_post_id')
     .innerJoin((eb) => eb
         .selectFrom('profiles as original_poster')
@@ -282,8 +282,8 @@ export const selectPostReplies = async function ( sessionUserId: string, postId:
             exists(
                 selectFrom('user_moderation_actions')
                 .select('id')
-                .whereRef('user_id', '=', 'parent_post.user_id')
-                .where('target_user_id', '=', sessionUserId)
+                .whereRef('user_moderation_actions.user_id', '=', 'parent_post.user_id')
+                .where('user_moderation_actions.target_user_id', '=', sessionUserId)
             )
         )
     ]))
@@ -310,12 +310,15 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
 
             await trx
             .selectFrom('user_moderation_actions')
-            .selectAll()
+            .select(['id'])
             .where(({eb}) => eb.and({
                 user_id: postUserId,
-                target_user_id: sessionUserId
+                target_user_id: sessionUserId,
+                type: 'block',
+                active: true
             }))
-            .executeTakeFirstOrThrow
+            .executeTakeFirstOrThrow()
+
 
             return { post: null, replies: null, permission: false }
         }
@@ -323,14 +326,6 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
             const post = await trx
             .selectFrom('posts')
             .innerJoin('profiles as profile', 'profile.id', 'posts.user_id')
-            .innerJoin((eb) =>  eb
-                .selectFrom('post_reactions')
-                .select(['post_id', (eb) => eb.fn.count<number>('id').as('reaction_count')])
-                .whereRef('post_id', '=', 'posts.id')
-                .as('reactions'),
-                (join) => join
-                .onRef('reactions.post_id', '=', 'posts.id')
-            )
             .select([
                 'posts.id as id', 
                 'posts.text as text', 
@@ -350,19 +345,21 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                 'profile.username as username', 
                 'profile.display_name as display_name', 
                 'profile.avatar_url as avatar_url', 
-                'reactions.reaction_count as reaction_count'
             ])
-            .where(({ eb }) => eb.and({
-                user_id: eb.selectFrom('profiles')
+            .where(({ eb, and }) => and([
+                eb('posts.user_id', '=', eb
+                    .selectFrom('profiles')
                     .select('id')
                     .where('username', '=', username)
                     .limit(1),
-                type: postType,
-                created_at: dateToISODate(timestampString),
-            }))
+                ),
+                eb('posts.type', '=', postType),
+                eb('posts.created_at', '=', parseISO(timestampString))
+            ]))
             .executeTakeFirst()
 
             const postId = post?.id as string
+            console.log(postId)
 
             const postReactionActive = await trx
             .selectFrom('post_reactions')
@@ -371,26 +368,29 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
             .where('user_id', '=', sessionUserId)
             .executeTakeFirst()
 
+            const postReactionsCount = await trx
+                .selectFrom('post_reactions')
+                .select((eb) => eb.fn.count<number>('id').as('reaction_count'))
+                .where(({ eb }) => eb.and({
+                    post_id: postId,
+                    active: true
+                }))
+                .execute()
+
             const replies = await trx
             .selectFrom('posts as comments')
-            .innerJoin('profiles as profile', 'profile.id', 'user_id')
-            .innerJoin('posts as parent_post', 'parent_post.id', 'parent_post_id')
-            .innerJoin((eb) => eb
-                .selectFrom('profiles as original_poster')
-                .select(['id', 'username'])
-                .where('id', '=', 'parent_post.user_id')
-                .as('original_poster'),
-                (join) => join
-                .onRef('parent_post.user_id', '=', 'original_poster.id')
-            )
-            .innerJoin((eb) =>  eb
-                .selectFrom('post_reactions')
-                .select(['post_id', (eb) => eb.fn.count<number>('id').as('reaction_count')])
-                .whereRef('post_id', '=', 'comments.id')
-                .as('reactions'),
-                (join) => join
-                .onRef('reactions.post_id', '=', 'comments.id')
-            )
+            .innerJoin('profiles as commenter', 'commenter.id', 'comments.user_id')
+            .innerJoin('posts as original_post', 'comments.parent_post_id', 'original_post.id')
+            .innerJoin('profiles as original_poster', 'original_post.user_id', 'original_poster.id')
+            // .innerJoin(
+            //     (eb) => eb
+            //         .selectFrom('post_reactions')
+            //         .select(['post_id', (eb) => eb.fn.count<number>('id').as('reaction_count')])
+            //         .groupBy('post_reactions.post_id')
+            //         .as('reactions'),
+            //     (join) => join
+            //         .onRef('reactions.post_id', '=', 'comments.id')
+            // )
             .select([
                 'comments.id as id', 
                 'comments.text as text', 
@@ -398,30 +398,32 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                 'comments.status as status', 
                 'comments.created_at as created_at', 
                 'comments.parent_post_id as parent_post_id', 
-                'profile.username as username', 
-                'profile.display_name as display_name', 
-                'profile.avatar_url as avatar_url', 
-                'parent_post.created_at as parent_post_date', 
-                'parent_post.user_id as parent_post_user_id', 
-                'original_poster.username as parent_post_username', 
-                'reactions.reaction_count as reaction_count'
+                'commenter.username as username', 
+                'commenter.display_name as display_name', 
+                'commenter.avatar_url as avatar_url', 
+                'original_post.created_at as origina_post_date', 
+                'original_post.user_id as origina_poster_user_id', 
+                'original_poster.username as original_poster_username', 
+                // 'reactions.reaction_count as reaction_count'
             ])
             .where(({eb, and, not, exists, selectFrom}) => and([
-                eb( 'parent_post_id', '=', postId ),
-                eb( 'status', '!=', 'deleted' ),
+                eb( 'comments.parent_post_id', '=', postId ),
+                eb( 'comments.status', '!=', 'deleted' ),
                 not(
                     exists(
                         selectFrom('user_moderation_actions')
                         .select('id')
-                        .whereRef('user_id', '=', 'comments.user_id')
-                        .where('target_user_id', '=', sessionUserId)
+                        .whereRef('user_moderation_actions.user_id', '=', 'comments.user_id')
+                        .where('user_moderation_actions.target_user_id', '=', sessionUserId)
                     )
                 )
             ]))
             .orderBy('id', 'asc')
             .execute()
 
-            return { post, postReactionActive, replies, permission: true}
+            const reactionCount = postReactionsCount[0].reaction_count
+
+            return { post, postReactionActive, reactionCount, replies, permission: true}
         }
     })
 

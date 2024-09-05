@@ -16,7 +16,7 @@
 {#each (form?.feedItems ?? feedItems) as item}
     <div class="post-panel">
         {#if Object.keys(item).includes( 'now_playing_post_id' )}
-            <a href={`/posts/${item.username}/now-playing/${item.feed_item_timestamp}`}>
+            <a href={`/posts/${item.username}/now-playing/${item.feed_item_timestamp.toISOString()}`}>
                 <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="avatar" />
                 <p><span class="display-name">{item.display_name}</span> is now playing {item.release_group_name ?? item.recording_name ?? item.episode_title} by {item.artist_name}</p>
                 <div class="post-body">
@@ -24,12 +24,12 @@
                 </div>
             </a>
         {:else if Object.keys(item).includes( 'comment_id' )}
-            <a href={`/posts/${item.original_poster_username}/now-playing/${item.feed_item_timestamp}`}>
+            <a href={`/posts/${item.original_poster_username}/now-playing/${item.feed_item_timestamp.toISOString()}`}>
                 <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="avatar"  />
                 <p><span class="display-name">{item.display_name}</span> commented on {item.original_poster_display_name}'s post</p>
             </a>
         {:else if Object.keys(item).includes( 'reaction_id' )}
-            <a href={`/posts/${item.original_poster_username}/now-playing/${item.feed_item_timestamp}`}>
+            <a href={`/posts/${item.original_poster_username}/now-playing/${item.feed_item_timestamp.toISOString()}`}>
                 <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="avatar"  />
                 <p><span class="display-name">{item.display_name}</span> liked {item.original_poster_display_name}'s post</p>
             </a>

@@ -8,45 +8,54 @@
     $: ({ collections, remaining, totalCollections, batchSize, batchIterator } = data )
 </script>
 
-<ol>
-    {#each (form?.collections ?? collections) as collection}
-        <li>
-            <a href='/collection/{collection.collection_id}'>
-                {collection.title} by {collection.username} ({new Date(collection.created_at).toLocaleDateString()})
-            </a>
-        </li>
-    {/each}
-</ol>
+<div class="wrapper">
+    <h1>collections</h1>
+    <ul>
+        {#each (form?.collections ?? collections) as collection}
+            <li>
+                <a href='/collection/{collection.collection_id}'>
+                    {collection.title} by {collection.username} ({new Date(collection.created_at).toLocaleDateString()})
+                </a>
+            </li>
+        {/each}
+    </ul>
 
-<form 
-    method="POST" 
-    action="?/loadMore"
-    use:enhance
->
-    <input
-        type="hidden"
-        name="batch-iterator"
-        value={form?.batchIterator ?? batchIterator}
-    />
-    <input
-        type="hidden"
-        name="batch-size"
-        value={batchSize}
-    />
-    <input
-        type="hidden"
-        name="collections"
-        value={JSON.stringify(form?.collections ?? collections)}
-    />
-    {#if (form?.remaining ?? remaining) > 0}
-        <button class="standard" formaction="?/loadMore">
-            load more
-        </button>
-    {/if}
-</form>
+    <form 
+        method="POST" 
+        action="?/loadMore"
+        use:enhance
+    >
+        <input
+            type="hidden"
+            name="batch-iterator"
+            value={form?.batchIterator ?? batchIterator}
+        />
+        <input
+            type="hidden"
+            name="batch-size"
+            value={batchSize}
+        />
+        <input
+            type="hidden"
+            name="collections"
+            value={JSON.stringify(form?.collections ?? collections)}
+        />
+        {#if (form?.remaining ?? remaining) > 0}
+            <button class="standard" formaction="?/loadMore">
+                load more
+            </button>
+        {/if}
+    </form>
+</div>
 
 <style>
-    ol {
-        list-style-type: none;
+    .wrapper {
+        margin: 3vh 3vw;
+    }
+    a {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 1rem;
     }
 </style>

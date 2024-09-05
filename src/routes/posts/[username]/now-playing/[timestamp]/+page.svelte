@@ -7,11 +7,13 @@
     let username = "sug_umass"
 
     export let data: PageData
-    export let form: ActionData;
-    let { sessionUserId, post, postReactionActive, replies, permission } = data
-    $: ({ sessionUserId, post, postReactionActive, replies, permission } = data)
+    export let form: ActionData
+    let { sessionUserId, post, postReactionActive, replies } = data
+    $: ({ sessionUserId, post, postReactionActive, replies } = data)
 
     const postId = post?.id as string
+
+    console.log(post)
 </script>
 
 <div class="post-panel">
@@ -33,9 +35,9 @@
     <NowPlayingPost
         sessionUserId={sessionUserId}
         post={post}
-        formData={form}
+        formData={form?.success ?? null}
         editState={form?.editState ?? false}
-        reactionActive={postReactionActive.active} 
+        reactionActive={postReactionActive?.active ?? false} 
     ></NowPlayingPost>
         <PostReplyEditor></PostReplyEditor>
         {#each replies as reply}

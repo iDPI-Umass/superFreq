@@ -17,13 +17,15 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession } 
     const timestampString = params.timestamp
     const postType = "now_playing"
 
+    console.log(parseISO(timestampString))
+
     const { post, postReactionActive, replies, permission } = await selectPostAndReplies( sessionUserId, username, timestampString, postType )
 
     if ( !permission ) {
-        return permission
+        return { sessionUserId: null, post: null, postReactionActive: null, replies: null }
     }
 
-    return { sessionUserId, post, postReactionActive, replies, permission }
+    return { sessionUserId, post, postReactionActive, replies }
 }
 
 export const actions = {
