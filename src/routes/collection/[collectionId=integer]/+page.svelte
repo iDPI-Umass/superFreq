@@ -14,8 +14,8 @@
     // import { insertCollectionFollow, updateCollectionFollow } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions';
 	
 	export let data: PageData;
-    let { sessionUserId, collectionId, collectionInfo, collectionContents, collectionSocialGraph, permission, followData } = data;
-    $: ({ sessionUserId, collectionId, collectionInfo, collectionContents, collectionSocialGraph, permission, followData } = data);
+    let { sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData } = data;
+    $: ({ sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData } = data);
 
     const collectionType = collectionInfo?.type as string
     const collectionUpdatedAt = collectionInfo?.updated_at as Date
@@ -31,19 +31,6 @@
     
     const updatedAt = new Date(collectionUpdatedAt).toLocaleDateString()
 
-    function editPermission(sessionUserId: string, collectionInfo: any, collectionSocialGraph: any) {
-        if ( collectionInfo.owner_id == sessionUserId) {
-            return true
-        }
-        else {
-            for (const row of collectionSocialGraph) {
-                if ( row.user_id == sessionUserId ) {
-                    return true
-                }
-            }
-            return false
-        }
-    }
 </script>
 
 <body>
@@ -53,32 +40,20 @@
                 <div class="collection-title-follow-top-row">
                     <h1>{collectionInfo?.title}</h1>
                     {#if 
-                        sessionUserId && !editPermission(sessionUserId, collectionInfo, collectionSocialGraph)}
+                        sessionUserId && !editPermission}
                     <form
                         method="POST"
                         action="?/followCollection"
                     >
                         <input 
                             type="hidden"
-                            name="follow-info" 
-                            id="follow-info"
-                            value={followData}
-                        />
-                        <input 
-                            type="hidden"
                             name="collection-id" 
                             id="collection-id"
                             value={collectionId}
                         />
-                        <input 
-                            type="hidden"
-                            name="session-user-id" 
-                            id="session-user-id"
-                            value={sessionUserId}
-                        />
                         <button 
                             class="standard" 
-                            formaction="followCollection"
+                            formaction="?/followCollection"
                         >
                         {#if followData && followData['follows_now'] == true}
                             unfollow
@@ -87,7 +62,7 @@
                         {/if}
                         </button>
                     </form>
-                    {:else if sessionUserId && editPermission(sessionUserId, collectionInfo, collectionSocialGraph)}
+                    {:else if sessionUserId && editPermission}
                         <button 
                             class="standard"
                             on:click|preventDefault={() => goto($page.url.pathname + '/edit')}
@@ -138,7 +113,7 @@
         </div>
         <GridList
             collectionContents={collectionContents}
-            collectionReturned={permission}
+            collectionReturned={viewPermission}
             collectionType={collectionType}
             layout={gridListSelect}
             mode="view"

@@ -22,7 +22,7 @@ export const selectAllOpenPublicCollections = async function ( batchSize: number
         .innerJoin('profiles as profile', 'profile.id', 'owner_id')
         .select([
             'collections_info.collection_id as collection_id', 
-            'collections_info.created_at as collection_id', 
+            'collections_info.created_at as created_at', 
             'collections_info.updated_at as updated_at',
             'collections_info.created_at as created_at',
             'collections_info.owner_id as owner_id', 
@@ -112,6 +112,21 @@ export const selectViewableCollectionContents = async function ( collectionId: s
     const selectCollection = await db.transaction().execute(async (trx) => {
         const collectionInfo = await trx
         .selectFrom('collections_info')
+        .innerJoin('profiles as profile', 'profile.id', 'collections_info.owner_id')
+        .select([
+            'collections_info.collection_id as collection_id', 
+            'collections_info.created_at as created_at', 
+            'collections_info.updated_at as updated_at', 
+            'collections_info.owner_id as owner_id', 
+            'collections_info.status as status', 
+            'collections_info.created_by as created_by', 
+            'collections_info.title as title', 
+            'collections_info.type as type', 
+            'collections_info.description_text as description_text',
+            'profile.username as username',
+            'profile.display_name as display_name',
+            'profile.avatar_url as avatar_url'
+        ])
         .where(({eb, and, or, exists, selectFrom, not}) => and([
             eb('collections_info.collection_id', '=', collectionId),
             or([
@@ -133,103 +148,117 @@ export const selectViewableCollectionContents = async function ( collectionId: s
                 eb('collections_info.status', '=', 'deleted')
             )
         ]))
-        .select([
-            'collection_id', 
-            'created_at', 
-            'updated_at', 
-            'owner_id', 
-            'status', 
-            'created_by', 
-            'title', 
-            'type', 
-            'description_text'
-        ])
-        .innerJoin(
-            'profiles',
-            (join) => join
-                .onRef('profiles.id', '=', 'collections_info.owner_id')
-        )
         .executeTakeFirst()
 
-        const type = await collectionInfo?.type as string
+        const type = collectionInfo?.type ?? null
+
+        const editPermission = await trx
+            .selectFrom('collections_social')
+            .innerJoin('collections_info as info', 'info.collection_id', 'collections_social.collection_id')
+            .where(({eb, and, or}) => and([
+                eb('collections_social.collection_id', '=', collectionId),
+                eb('collections_social.user_id', '=', sessionUserId),
+                or([
+                    eb('collections_social.user_role', '=', 'owner'),
+                    eb('collections_social.user_role', '=', 'collaborator'),
+                    eb('info.status', '=', 'open')
+                ])
+            ]))
+            .select([
+                'collections_social.user_id as user_id', 
+                'collections_social.collection_id as collection_id', 
+                'collections_social.user_role as user_role'
+            ])
+            .executeTakeFirst()
+
+        const followData = await trx
+            .selectFrom('collections_social')
+            .select([
+                'id', 
+                'collection_id', 
+                'user_id', 
+                'follows_now', 
+                'user_role', 
+                'updated_at'
+            ])
+            .where(({and, eb}) => and([
+                eb('user_id', '=', sessionUserId),
+                eb('collection_id', '=', collectionId),
+                eb('follows_now', '=', true)
+            ]))
+            .executeTakeFirst()
 
         if ( type == 'artists') {
             const collectionContents = await trx
-            .selectFrom('collections_contents')
-            .where('collection_id', '=', collectionId)
-            .selectAll()
-            .innerJoin(
-                'artists',
-                (join) => join
-                    .onRef('artists.artist_mbid', '=', 'collections_contents.artist_mbid')
-            )
-            .selectAll()
+            .selectFrom('collections_contents as contents')
+            .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
+            .select([
+                'contents.id as id',
+                'contents.collection_id as collection_id',
+                'contents.item_position as item_position',
+                'contents.artist_mbid as artist_mbid',
+                'artists.artist_name as artist_name'
+            ])
+            .where('contents.collection_id', '=', collectionId)
             .orderBy('item_position')
             .execute()
 
-            return {collectionInfo, collectionContents, permission: true}
+            return {collectionInfo, collectionContents, viewPermission: true, editPermission, followData}
         }
         else if( type == 'release_groups') {
             const collectionContents = await trx
-            .selectFrom('collections_contents')
-            .where('collection_id', '=', collectionId)
-            .selectAll()
-            .innerJoin(
-                'artists',
-                (join) => join
-                    .onRef('artists.artist_mbid', '=', 'collections_contents.artist_mbid')
-            )
-            .innerJoin(
-                'release_groups',
-                (join) => join
-                    .onRef('release_groups.release_group_mbid', '=', 'collections_contents.release_group_mbid')
-            )
-            .selectAll()
+            .selectFrom('collections_contents as contents')
+            .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
+            .innerJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
+            .select([
+                'contents.id as id',
+                'contents.collection_id as collection_id',
+                'contents.item_position as item_position',
+                'contents.artist_mbid as artist_mbid',
+                'artists.artist_name as artist_name',
+                'release_groups.release_group_name as release_group_name',
+                'release_groups.img_url as img_url'
+            ])
+            .where('contents.collection_id', '=', collectionId)
             .orderBy('item_position')
             .execute()
 
-            return {collectionInfo, collectionContents, permission: true}
+            return {collectionInfo, collectionContents, viewPermission: true, editPermission, followData}
         }
         else if (type == 'recordings') {
             const collectionContents = await trx
-            .selectFrom('collections_contents')
-            .where('collection_id', '=', collectionId)
-            .selectAll()
-            .innerJoin(
-                'artists',
-                (join) => join
-                    .onRef('artists.artist_mbid', '=', 'collections_contents.artist_mbid')
-            )
-            .innerJoin(
-                'release_groups',
-                (join) => join
-                    .onRef('release_groups.release_group_mbid', '=', 'collections_contents.release_group_mbid')
-            )
-            .innerJoin(
-                'recordings',
-                (join) => join
-                    .onRef('recordings.recording_mbid', '=', 'collections_contents.recording_mbid')
-            )
-            .selectAll()
+            .selectFrom('collections_contents as contents')
+            .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
+            .innerJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
+            .innerJoin('recordings', 'recordings.recording_mbid', 'contents.recording_mbid')
+            .select([
+                'contents.id as id',
+                'contents.collection_id as collection_id',
+                'contents.item_position as item_position',
+                'contents.artist_mbid as artist_mbid',
+                'artists.artist_name as artist_name',
+                'release_groups.release_group_name as release_group_name',
+                'release_groups.img_url as img_url',
+                'recordings.recording_name as recording_name'
+            ])
+            .where('contents.collection_id', '=', collectionId)
             .orderBy('item_position')
             .execute()
 
-            const collectionSocialGraph = await trx
-            .selectFrom('collections_social')
-            .where('collection_id', '=', collectionId)
-            .selectAll()
-            .execute()
-
-            return {collectionInfo, collectionContents, collectionSocialGraph, permission: true}
+            return {collectionInfo, collectionContents, viewPermission: true, editPermission, followData}
+        }
+        else if ( !type ) {
+            return { collectionInfo: null, collectionContents: null, viewPermission: false, editPermission: false, followData: null}
         }
     })
 
     const collection =  await selectCollection
     const collectionInfo = collection?.collectionInfo
     const collectionContents = collection?.collectionContents
-    const collectionSocialGraph = collection?.collectionSocialGraph
-    const permission = collection?.permission ?? false
-    return {collectionInfo, collectionContents, collectionSocialGraph, permission}
+    const viewPermission = collection?.viewPermission ?? false
+    const editPermission = collection?.editPermission ?? false
+    const followData = collection?.followData ?? null
+    return {collectionInfo, collectionContents, viewPermission, editPermission, followData}
 }
 
 /*

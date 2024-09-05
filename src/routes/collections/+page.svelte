@@ -11,7 +11,7 @@
 <ol>
     {#each (form?.collections ?? collections) as collection}
         <li>
-            <a href='/collection/${collection.collection_id}'>
+            <a href='/collection/{collection.collection_id}'>
                 {collection.title} by {collection.username} ({new Date(collection.created_at).toLocaleDateString()})
             </a>
         </li>
