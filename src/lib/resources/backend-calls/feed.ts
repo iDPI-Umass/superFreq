@@ -7,7 +7,9 @@ Selects first batch of data to populate session user's feed in batches within a 
 'options' specifices what type of data shows up in feed, expects an object formatted as {'options': [values]} containing any of the following values: ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits'] 
 */
 
-export const selectFeedData = async function ( sessionUserId: string, batchSize: number,  timestampStart: Date, timestampEnd: Date, options: App.Lookup) {
+export const selectFeedData = async function ( sessionUserId: string, batchSize: number, batchIterator: number,  timestampStart: Date, timestampEnd: Date, options: App.Lookup) {
+
+    let offset = batchSize * batchIterator
 
     const feedOptions = options.options as string[]
 
@@ -78,6 +80,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             .where('parent_post_id', 'is', null)
             .where((eb) => eb.between('post.created_at', timestampStart, timestampEnd))
             .limit(batchSize)
+            .offset(offset)
             .orderBy('feed_item_timestamp', 'desc')
             .execute()
 
@@ -123,6 +126,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             .where('comments.parent_post_id', 'is not', null)
             .where((eb) => eb.between('comments.created_at', timestampStart, timestampEnd))
             .limit(batchSize)
+            .offset(offset)
             .orderBy('feed_item_timestamp', 'desc')
             .execute()
 
@@ -168,6 +172,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             .where('parent_post_id', 'is', null)
             .where((eb) => eb.between('reaction.updated_at', timestampStart, timestampEnd))
             .limit(batchSize)
+            .offset(offset)
             .orderBy('feed_item_timestamp', 'desc')
             .execute()
 
@@ -213,6 +218,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             ]))
             .where((eb) => eb.between('collections_social.updated_at', timestampStart, timestampEnd))
             .limit(batchSize)
+            .offset(offset)
             .orderBy('feed_item_timestamp', 'desc')
             .execute()
 
@@ -251,6 +257,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             .where('collections_updates.updated_by', 'in', followingUserIds)
             .where((eb) => eb.between('collections_updates.updated_at', timestampStart, timestampEnd))
             .limit(batchSize)
+            .offset(offset)
             .orderBy('feed_item_timestamp desc')
             .execute()
 
@@ -269,7 +276,10 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
 
     feedData.sort(( a: App.RowData, b: App.RowData ) => b.feed_item_timestamp - a.feed_item_timestamp)
     const { totalRowCount } = data
-    return { feedData, totalRowCount, batchSize }
+    batchIterator ++
+    offset = batchSize * batchIterator
+    const remainingCount = totalRowCount - offset
+    return { feedData, totalRowCount, remainingCount }
 }
 
 /* 

@@ -1,7 +1,7 @@
 import type { PageServerLoad, Actions } from './$types'
 import { redirect } from '@sveltejs/kit'
 import { selectFeedData, selectMoreFeedData } from '$lib/resources/backend-calls/feed'
-import { add, parseISO } from 'date-fns'
+import { add, parseISO, parseJSON } from 'date-fns'
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
     const session = await safeGetSession()
@@ -11,30 +11,37 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
     }
     
     const sessionUserId = session.user?.id as string
-    const batchSize = 50
+    const batchSize = 5
+    const batchIterator = 0
     const timestampEnd = new Date()
     const timestampStart = add(timestampEnd, {days: -300})
     const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
 
-    const firstBatch = await selectFeedData( sessionUserId, batchSize, timestampStart, timestampEnd, options )
+    const { feedData, totalRowCount, remainingCount } = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options )
 
-    return { sessionUserId, firstBatch, timestampStart, timestampEnd, batchSize, options }
+    const remaining = remainingCount as number
+
+    return { feedData, totalRowCount, remaining, timestampStart, timestampEnd, batchSize, options }
 }
 
 export const actions = {
-    fetchMoreData: async({ request }) => {
+    loadMore: async({ request, locals: { safeGetSession } }) => {
+        const session = await safeGetSession()
+        const sessionUserId = session.user?.id as string
         const data = await request.formData()
-        const sessionUserId = data.get('session-user-id') as string
+        const feedItems = JSON.parse(data.get('feed-items') as string)
         const batchSize = parseInt(data.get('batch-size') as string)
         let batchIterator = parseInt(data.get('batch-iterator') as string)
+        batchIterator ++
         const timestampStart = parseISO(data.get('timestamp-start') as string)
         const timestampEnd = parseISO(data.get('timestamp-end') as string)
         const options = JSON.parse(data.get('options') as string) as App.Lookup
 
-        batchIterator = batchIterator + 1
+        const { feedData, remainingCount } = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
 
-        const nextBatch = await selectMoreFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
+        feedItems.push(...feedData)
+        const remaining = remainingCount as number
 
-        return { nextBatch, batchSize, batchIterator }
+        return { feedItems, remaining, batchIterator }
     }
 } satisfies Actions

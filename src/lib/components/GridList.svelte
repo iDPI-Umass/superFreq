@@ -53,6 +53,8 @@
 		}
         collectionContents = items
 	}
+
+    console.log(collectionContents)
 </script>
 
 {#if ( collectionReturned || collectionContents.length > 0 ) && mode == "edit"}

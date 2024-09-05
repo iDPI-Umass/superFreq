@@ -3,6 +3,9 @@
 	import "$lib/styles/themes.css";
 	import "$lib/styles/freq-dark-theme.css";
 	import "$lib/styles/fonts.css";
+	import "$lib/styles/media-grid-list.css";
+	import "$lib/styles/metadata-formatting.css";
+	import "$lib/styles/posts.css";
 
 	import { goto, invalidate } from '$app/navigation';
 	import { onMount, onDestroy } from 'svelte';

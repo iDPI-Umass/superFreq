@@ -217,6 +217,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
                 'contents.artist_mbid as artist_mbid',
                 'artists.artist_name as artist_name',
                 'release_groups.release_group_name as release_group_name',
+                'release_groups.release_group_mbid as release_group_mbid',
                 'release_groups.img_url as img_url'
             ])
             .where('contents.collection_id', '=', collectionId)
@@ -238,8 +239,10 @@ export const selectViewableCollectionContents = async function ( collectionId: s
                 'contents.artist_mbid as artist_mbid',
                 'artists.artist_name as artist_name',
                 'release_groups.release_group_name as release_group_name',
+                'release_groups.release_group_mbid as release_group_mbid',
                 'release_groups.img_url as img_url',
-                'recordings.recording_name as recording_name'
+                'recordings.recording_name as recording_name',
+                'recordings.recording_mbid as recording_mbid'
             ])
             .where('contents.collection_id', '=', collectionId)
             .orderBy('item_position')

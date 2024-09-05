@@ -1,95 +1,95 @@
 <script lang="ts">
     import type { PageData, ActionData } from './$types'
+    import { enhance } from '$app/forms'
 
     export let data: PageData
-    let { sessionUserId, firstBatch, timestampStart, timestampEnd, batchSize, options } = data
-    $: ({ sessionUserId, firstBatch, timestampStart, timestampEnd, batchSize, options } = data)
-
     export let form: ActionData
+    let { feedData, remaining, totalRowCount, timestampStart, timestampEnd, batchSize, options } = data
+    $: ({ feedData, remaining, totalRowCount, timestampStart, timestampEnd, batchSize, options } = data)
 
-    const { feedData, totalRowCount } =  firstBatch
     const feedItems = feedData
+
+    console.log(remaining, totalRowCount)
+    console.log(options)
 </script>
 
-{#each feedItems as item}
-    <div class="feed-item">
+{#each (form?.feedItems ?? feedItems) as item}
+    <div class="post-panel">
         {#if Object.keys(item).includes( 'now_playing_post_id' )}
             <a href={`/posts/${item.username}/now-playing/${item.feed_item_timestamp}`}>
-                <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} />
-                <p>{item.display_name} is now playing {item.release_group_name ?? item.recording_name ?? item.episode_title} by {item.artist_name}</p>
-                <p>{item.text}</p>
+                <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="avatar" />
+                <p><span class="display-name">{item.display_name}</span> is now playing {item.release_group_name ?? item.recording_name ?? item.episode_title} by {item.artist_name}</p>
+                <div class="post-body">
+                    <p>{item.text}</p>
+                </div>
             </a>
         {:else if Object.keys(item).includes( 'comment_id' )}
             <a href={`/posts/${item.original_poster_username}/now-playing/${item.feed_item_timestamp}`}>
-                <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} />
-                <p>{item.display_name} commented on {item.original_poster_display_name}'s post</p>
+                <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="avatar"  />
+                <p><span class="display-name">{item.display_name}</span> commented on {item.original_poster_display_name}'s post</p>
             </a>
         {:else if Object.keys(item).includes( 'reaction_id' )}
             <a href={`/posts/${item.original_poster_username}/now-playing/${item.feed_item_timestamp}`}>
-                <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} />
-                <p>{item.display_name} liked {item.original_poster_display_name}'s post</p>
+                <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="avatar"  />
+                <p><span class="display-name">{item.display_name}</span> liked {item.original_poster_display_name}'s post</p>
             </a>
         {:else if Object.keys(item).includes( 'collection_follow_id' )}
             <a href={`/collection/${item.collection_id}`}>
-                <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} />
-                <p>{item.display_name} followed the collection {item.title}'s post</p>
+                <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="avatar"  />
+                <p><span class="display-name">{item.display_name}</span> followed the collection "{item.title}""</p>
             </a>
         {:else if Object.keys(item).includes( 'collection_edit_id' )}
             <a href={`/collection/${item.collection_id}`}>
-                <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} />
-                <p>{item.display_name} edited the collection {item.title}'s post</p>
+                <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="avatar"  />
+                <p><span class="display-name">{item.display_name}</span> edited the collection "{item.title}"</p>
             </a>
         {/if}
     </div>
 {/each}
 
-{#if feedItems.length < totalRowCount}
-    <form method="POST" action="?/fetchMoreData">
-        <input
-            type="hidden"
-            name="session-user-id"
-            id="session-user-id"
-            value={sessionUserId}
-        />
-        <input
-            type="hidden"
-            name="batch-size"
-            id="batch-size"
-            value={batchSize}
-        />
-        <input
-            type="hidden"
-            name="batch-iterator"
-            id="batch-iterator"
-            value={form?.batchIterator ?? 0}
-        />
-        <input
-            type="hidden"
-            name="timestamp-start"
-            id="timestamp-start"
-            value={timestampStart}
-        />
-        <input
-            type="hidden"
-            name="timestamp-end"
-            id="timestamp-end"
-            value={timestampEnd}
-        />
-        <input
-            type="hidden"
-            name="timestamp-start"
-            id="timestamp-start"
-            value={options.toString()}
-        />
-    </form>
-{/if}
-
-<style>
-    .feed-item {
-        display: flex;
-        flex-direction: row;
-    }
-    img {
-        width: 50px;
-    }
-</style>
+<form method="POST" action="?/loadMore" use:enhance>
+    <input
+        type="hidden"
+        name="feed-items"
+        id="feed-items"
+        value={JSON.stringify(form?.feedItems ?? feedItems)}
+    />
+    <input
+        type="hidden"
+        name="batch-size"
+        id="batch-size"
+        value={batchSize}
+    />
+    <input
+        type="hidden"
+        name="batch-iterator"
+        id="batch-iterator"
+        value={form?.batchIterator ?? 0}
+    />
+    <input
+        type="hidden"
+        name="timestamp-start"
+        id="timestamp-start"
+        value={timestampStart.toISOString()}
+    />
+    <input
+        type="hidden"
+        name="timestamp-end"
+        id="timestamp-end"
+        value={timestampEnd.toISOString()}
+    />
+    <input
+        type="hidden"
+        name="options"
+        id="options"
+        value={JSON.stringify(options)}
+    />
+    {#if (form?.remaining ?? remaining) > 0}
+        <button
+            class="standard"
+            formaction="?/loadMore"
+        >
+        load more
+    </button>
+    {/if}
+</form>
