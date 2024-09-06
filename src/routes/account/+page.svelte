@@ -43,15 +43,6 @@
 	// 		loading = false
 	// 	}
 	// }
-
-	const handleSignOut: SubmitFunction = () => {
-		loading = true
-		localStorage.removeItem("profile")
-		return async ({ update }) => {
-			loading = false
-			update()
-		}
-	}
 </script>
 
 <div class="panel" id="profile-info">
@@ -153,12 +144,11 @@
 				id="website" 
 				value={website} 
 			/>
-			{#key avatarItem}
 			<input 
 				type="text" 
 				name="avatarUrl" 
 				id="avatarUrl" 
-				value={avatarUrl} 
+				value={avatarItem?.img_url ?? avatarUrl} 
 			/>
 			<input 
 				type="text" 
@@ -173,7 +163,6 @@
 				value={avatarItem?.release_group_name} 
 				disabled
 			/>
-			{/key}
 		</form>
 		<div class="form-column">
 			<label 
@@ -220,7 +209,6 @@
 					class="signout"
 					method="post" 
 					action="?/signout" 
-					use:enhance={handleSignOut}
 					>
 					<button 
 						class="double-border-top" 

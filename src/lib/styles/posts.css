@@ -136,6 +136,25 @@ form.reply {
 	margin: var(--freq-height-spacer) var(--freq-width-spacer);
 }
 
+.about-text {
+    padding: var(--freq-spacing-small);
+}
+
+.about-text p {
+    font-size: var(--freq-font-size-medium);
+}
+
+.info-box {
+    width: 50%;
+    margin: var(--freq-spacing-2x-large) auto;
+    padding: var(--freq-spacing-large) var(--freq-spacing-x-large);
+    background-color: var(--freq-color-info-box-background);
+    border: var(--freq-color-background-badge);
+    gap: 0;
+    text-align: center;
+    font-size: var(--freq-font-size-large)
+}
+
 /* Inline styles */
 
 .post-text {

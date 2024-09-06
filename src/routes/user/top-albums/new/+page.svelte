@@ -14,10 +14,10 @@
 	/* 
 	Functions for interacting with Supabase API
 	*/
-	import { itemUpsert } from '$lib/resources/backend-calls/musicDataFunctions'
-	import { prepareMusicDataUpsert, populateCollectionContents } from '$lib/resources/parseData';
-	import { insertCollectionInfo, insertCollectionSocial, insertCollectionContents, insertCollectionUpdateRecord } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions.js'
-	import { redirect } from '@sveltejs/kit';
+	// import { itemUpsert } from '$lib/resources/backend-calls/musicDataFunctions'
+	// import { prepareMusicDataUpsert, populateCollectionContents } from '$lib/resources/parseData';
+	// import { insertCollectionInfo, insertCollectionSocial, insertCollectionContents, insertCollectionUpdateRecord } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions.js'
+	// import { redirect } from '@sveltejs/kit';
 
 	/* 
 	Get user session

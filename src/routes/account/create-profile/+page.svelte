@@ -212,13 +212,13 @@
 
 <RedirectModal
     showModal={ form?.success ? form?.success : false }
-    redirectPath={'/about/rules'}
+    redirectPath={'/about/guidelines'}
 >
     <span slot="header-text">
         Profiled created!
     </span>
     <span slot="message">
-        Automatically redirecting to the site rules in 5 seconds.
+        Automatically redirecting to our Community Guidelines in 5 seconds.
     </span>
 </RedirectModal>
 

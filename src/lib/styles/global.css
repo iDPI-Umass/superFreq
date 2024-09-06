@@ -110,11 +110,11 @@ h1 {
 }
 
 h2 {
-	font-size: 4vw;
+	font-size: var(--freq-font-size-x-large);
 }
 
 h3 {
-	font-size: 3vw;
+	font-size: var(--freq-font-size-large);
 }
 
 /*
