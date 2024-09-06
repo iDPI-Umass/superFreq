@@ -35,6 +35,13 @@
 	}
 </script>
 
+<svelte:head>
+	<title>
+		Update Username
+	</title>
+</svelte:head>
+
+
 <div class="panel" id="profile-info">
     <PanelHeader>
 		update username

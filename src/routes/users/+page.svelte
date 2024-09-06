@@ -6,6 +6,13 @@
     $: ({ users } = data)
 </script>
 
+<svelte:head>
+	<title>
+		Explore Users
+	</title>
+</svelte:head>
+
+
 <h1>users</h1>
 {#each users as user}
 <ul>

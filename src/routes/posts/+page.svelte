@@ -11,6 +11,13 @@
     let displayPosts = [...posts]
 </script>
 
+<svelte:head>
+	<title>
+		Anonymous Posts
+	</title>
+</svelte:head>
+
+
 {#each displayPosts as post}
     <NowPlayingPost post={post}></NowPlayingPost>
 {/each}

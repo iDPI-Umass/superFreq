@@ -30,15 +30,14 @@
 
 	console.log(form?.success)
 
-    // beforeUpdate ( async () => {
-    //     const success = form?.success
-    //     await tick
-    //     if ( success == true ) {
-    //         setTimeout(() => goto('/about/rules'), 5000)
-    //     }
-    // })
-
 </script>
+
+<svelte:head>
+	<title>
+		Create Profile
+	</title>
+</svelte:head>
+
 
 <div class="panel" id="profile-info">
 	<PanelHeader>

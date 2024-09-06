@@ -13,6 +13,13 @@
     console.log(options)
 </script>
 
+<svelte:head>
+	<title>
+		Feed
+	</title>
+</svelte:head>
+
+
 {#each (form?.feedItems ?? feedItems) as item}
     <div class="post-panel">
         {#if Object.keys(item).includes( 'now_playing_post_id' )}

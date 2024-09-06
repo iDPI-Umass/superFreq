@@ -33,6 +33,13 @@
 
 </script>
 
+<svelte:head>
+	<title>
+		{collectionInfo.title}
+	</title>
+</svelte:head>
+
+
 <body>
     <div class="collection-container">
         <div class="collection-info">

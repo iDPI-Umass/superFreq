@@ -180,6 +180,13 @@
 	}
 </script>
 
+<svelte:head>
+	<title>
+		Choose Top Albums
+	</title>
+</svelte:head>
+
+
 <div class="panel">
     <PanelHeader>
         {username}'s top albums

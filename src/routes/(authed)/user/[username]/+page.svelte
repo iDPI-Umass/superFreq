@@ -45,6 +45,13 @@
     $: profileUserFlagged = form?.flagStatus ?? profileUserFlagInfo?.active ?? false
 </script>
 
+<svelte:head>
+	<title>
+		{username}'s Profile
+	</title>
+</svelte:head>
+
+
 <div class="profile-info">
     <div class="info-box-left">
         <img src={profileUserData?.avatar_url} alt="${profileUserData?.display_name}'s avatar" />

@@ -8,6 +8,13 @@
     export let form: ActionData
 </script>
 
+<svelte:head>
+	<title>
+		Welcome to Freq
+	</title>
+</svelte:head>
+
+
 <div class="panel-medium">
     <PanelHeader>
         welcome

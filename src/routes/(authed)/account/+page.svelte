@@ -24,6 +24,12 @@
 	let email: string = user?.email as string
 </script>
 
+<svelte:head>
+	<title>
+		Account
+	</title>
+</svelte:head>
+
 <div class="panel" id="profile-info">
 	<PanelHeader>
 		profile info

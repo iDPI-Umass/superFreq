@@ -51,6 +51,13 @@
 	let placeholderText = "Search for items to add to your collection"
 </script>
 
+<svelte:head>
+	<title>
+		Edit {collectionInfo.title}
+	</title>
+</svelte:head>
+
+
 <div class="collection-builder">
     <div class="builder-header">
         <h1>

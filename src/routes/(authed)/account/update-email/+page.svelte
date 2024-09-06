@@ -15,6 +15,13 @@
 
 </script>
 
+<svelte:head>
+	<title>
+		Update Email
+	</title>
+</svelte:head>
+
+
 <div class="panel" id="profile-info">
     <PanelHeader>
 		update email address

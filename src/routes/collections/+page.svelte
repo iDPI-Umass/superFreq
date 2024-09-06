@@ -48,6 +48,13 @@
     </form>
 </div>
 
+<svelte:head>
+	<title>
+		Explore Collections
+	</title>
+</svelte:head>
+
+
 <style>
     .wrapper {
         margin: 3vh 3vw;

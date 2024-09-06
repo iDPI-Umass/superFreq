@@ -16,6 +16,13 @@
     console.log(post)
 </script>
 
+<svelte:head>
+	<title>
+		{post.display_name}'s Now Playing Post
+	</title>
+</svelte:head>
+
+
 <div class="post-panel">
     {#if sessionUserId}
     <input 

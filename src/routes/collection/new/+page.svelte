@@ -33,6 +33,13 @@
 	let placeholderText = "Search for items to add to your collection"
 </script>
 
+<svelte:head>
+	<title>
+		New Collection
+	</title>
+</svelte:head>
+
+
 <div class="panel">
     <PanelHeader>
         new collection
