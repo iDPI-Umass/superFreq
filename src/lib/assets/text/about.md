@@ -122,7 +122,7 @@ The following features are intended for this software. Some will come after the 
 - A spotlight page for high quality Collections
 - Search
 - Granular filtering for the Feed and Collections
-- [GOBO integration](https://gobo.social/)
+- [GOBO](https://gobo.social/) compatibility
 - Groups and relevant moderation tools
 - Local scene pages that will display flyers for upcoming events
 - Various fun [ListenBrainz](https://listenbrainz.org/) integrations
