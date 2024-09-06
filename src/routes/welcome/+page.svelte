@@ -21,7 +21,10 @@
     </PanelHeader>
     <div class="post-body">
         <p class="post-text">
-            Welcome to Freq, a place for community-driven music discovery.
+            Welcome to Freq, a place for community-driven music discovery. 
+            <br />
+            <br />
+            <span>Freq</span> (sounds like <em>freak</em>) is short for <em>frequency</em>: the rate a sound wave vibrates at, determining its pitch.
             <br />
             <br />
             Just enter your email address for a one-time link to log in or sign up.
@@ -64,15 +67,19 @@
 <div class="panel-medium">
     <div class="post-body">
         <p class="post-text">
-            Want to explore the site? You can use "Explore" menu above to check out anonymized posts and public collections of music created by users.
-        </p>
-        <p class="post-text">
-            To learn more about Freq, check out the About page linked above.
+            Want to explore the site before you create an account? You can use the "Explore" menu above to check out anonymized posts and public collections of music created by users and read the "About" page to learn more about the project.
         </p>
     </div>
 </div>
 
 <style>
+    .panel-medium p {
+        color: var(--freq-color-reading-text);
+        font-size: var(--freq-font-size-medium);
+    }
+    span {
+        color: var(--freq-color-primary);
+    }
     input {
         width: 50%;
     }
