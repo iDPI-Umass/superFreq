@@ -110,7 +110,7 @@ And while it’s wonderful that there are many social spaces online that cater t
 Our team
 </h1>
 
-Freq is being developed as an open source project at the [Initiative for Digital Public Infrastructure](https://publicinfrastructure.org) at UMass Amherst. The main person behind it is Michael Sugarman. Lucas Ruud wrote this documentation. [Bocoup](https://bocoup.com) provided visual design for the site. The development has been guided by ethnographic research such as historical interviews and user testing with the student DJs from the UMass Amherst student-run radio station, WMUA. Gil Cuevas and Noah Pring have worked as research assistants on this project.
+Freq is being developed as an open source project at the [Initiative for Digital Public Infrastructure](https://publicinfrastructure.org) at UMass Amherst. Michael Sugarman designed the site based on ongoing ethographic and historical research and is developing the software. Lucas Ruud wrote this documentation. [Bocoup](https://bocoup.com) provided visual design for the site. The development has been guided by ethnographic research such as historical interviews and user testing with the student DJs from the UMass Amherst student-run radio station, WMUA. Gil Cuevas and Noah Pring have worked as research assistants on this project.
 
 <hr />
 <h1 id="roadmap">
@@ -118,6 +118,7 @@ Roadmap
 </h1>
 
 The following features are intended for this software. Some will come after the release of the 1.0. These are listed in rough order of priority:
+
 - Improved metadata mapping for Now Playing posts, including richer interaction with radio show archives and DJ mixes
 - A spotlight page for high quality Collections
 - Search
@@ -126,6 +127,8 @@ The following features are intended for this software. Some will come after the 
 - Groups and relevant moderation tools
 - Local scene pages that will display flyers for upcoming events
 - Various fun [ListenBrainz](https://listenbrainz.org/) integrations
+
+Since the point of this software is music community, we will be working in the coming months to conduct experiments with offline music communuities, such as college and community radio stations. The goal of these experiments is to co-design features that are relevant them and the communities they serve.
 
 Should Freq prove relevant to enough users, and should the project continue past the summer of 2025, we will be implementing a responsible, transparent revenue model intended to pay fairly for the labor it takes to build and operate this website and improve the user experience.
 
