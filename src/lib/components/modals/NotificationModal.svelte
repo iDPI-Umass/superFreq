@@ -24,13 +24,13 @@
 	const dispatch = createEventDispatcher();
 </script>
 
-<dialog
-    aria-label="modal"
+<dialog class="notification"
+    aria-label="notification modal"
     bind:this={dialog}
 	on:close={() => (showModal = false)}
 >
 	<div class="dialog-header">
-		<h1>
+		<h1 class="notification">
 			<slot name="header-text" />
 		</h1>
 		<button 
@@ -51,25 +51,3 @@
 		}
 	}}
 />
-
-<style>
-	dialog {
-        text-decoration: none;
-    }
-	.dialog-header {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: space-between;
-	}
-	h1 {
-		font-size: var(--freq-font-size-x-small);
-	}
-	.dialog-header button {
-		width: fit-content;
-		text-transform: uppercase;
-		padding: var(--freq-spacing-2x-small) var(--freq-spacing-x-small);
-		font-weight: var(--freq-font-weight-bold);
-		text-align: center;
-	}
-</style>

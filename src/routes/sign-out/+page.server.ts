@@ -9,5 +9,5 @@ export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) 
     throw redirect(303, '/welcome')
   }
 
-  throw redirect(303, '/api/auth/signout')
+  throw redirect(303, '/auth/signout')
 }

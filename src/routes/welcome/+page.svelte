@@ -3,7 +3,7 @@
     import { enhance } from '$app/forms'
     import '$lib/styles/posts.css'
 	import PanelHeader from "$lib/components/PanelHeader.svelte"
-    import NotificationModal from "$lib/components/NotificationModal.svelte"
+    import NotificationModal from "src/lib/components/modals/NotificationModal.svelte"
 
     export let form: ActionData
 </script>

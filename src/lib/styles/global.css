@@ -339,6 +339,13 @@ label.text-label {
 	text-transform: uppercase;
 }
 
+.label-explainer {
+	font-size: var(--freq-font-size-small);
+	color: var(--freq-color-text-muted);
+	text-transform: lowercase;
+	font-style: italic;
+}
+
 .label-group {
 	display: flex;
 	flex-direction: row;
@@ -450,6 +457,46 @@ fieldset ul li, ol li {
 
 fieldset ul li label, ol li label {
 	margin-top: 2px;
+}
+
+/*
+//
+** Dialog styling
+//
+*/
+
+dialog {
+	max-height: 70%;
+	width: 50%;
+	text-decoration: none;
+}
+.dialog-header {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+}
+
+dialog h1 {
+	color: var(--freq-color-primary);
+	font-size: var(--freq-font-size-medium);
+	text-transform: uppercase;
+}
+
+dialog h1.notification {
+	margin: 0 auto;
+}
+
+dialog.notification {
+	margin-top: 20vh;
+}
+
+.dialog-header button {
+	width: fit-content;
+	text-transform: uppercase;
+	padding: var(--freq-spacing-2x-small) var(--freq-spacing-x-small);
+	font-weight: var(--freq-font-weight-bold);
+	text-align: center;
 }
 
 /* 

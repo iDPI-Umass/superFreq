@@ -170,6 +170,74 @@ export const selectSessionProfile = async function ( sessionUserId: string ) {
     return profile
 }
 
+/* New profile for session user updating row generated during account confirmation. Checks if username is already taken. */
+
+export const newSessionProfile = async function ( sessionUserId: string, profileData: App.RowData ) {
+    const timestampISOString: string = new Date().toISOString()
+    const timestampISO: Date = parseISO(timestampISOString)
+
+    const update = await db.transaction().execute(async (trx) => {
+
+        try {
+            const username = profileData?.username
+
+            await trx
+            .selectFrom('profiles')
+            .select(['username', 'id'])
+            .where('username', '=', username)
+            .where('id', '!=', sessionUserId)
+            .executeTakeFirstOrThrow()
+
+            return { success: false }
+        }
+        catch ( error ) {
+            const selectChangelog = await trx
+            .selectFrom('profiles')
+            .select('changelog')
+            .where('id', '=', sessionUserId)
+            .executeTakeFirst()
+    
+            const changelog = selectChangelog as App.Changelog
+    
+            changelog[timestampISOString] = {
+                'username': profileData?.username,
+                'display_name': profileData?.displayName,
+                'website': profileData?.website,
+                'avatar_mbid': profileData?.avatarMbid,
+                'avatar_url': profileData?.avatarUrl,
+                'about': profileData?.about,
+            }
+    
+            await trx
+            .updateTable('profiles')
+            .set({
+                display_name: profileData?.displayName,
+                website: profileData?.website,
+                avatar_mbid: profileData?.avatarMbid,
+                avatar_url: profileData?.avatarUrl,
+                updated_at: timestampISO,
+                about: profileData?.about,
+                changelog: changelog
+            })
+            .where('id', '=', sessionUserId)
+            .returning([
+                'id',
+                'username', 
+                'display_name', 
+                'website', 
+                'avatar_mbid', 
+                'avatar_url', 
+                'about', 
+                'updated_at'
+            ])
+            .executeTakeFirst()
+
+            return { success: true }
+        }
+    })
+    return update
+}
+
 /* Update profile for session user's account */
 
 export const updateSessionProfile = async function ( sessionUserId: string, profileData: App.RowData ) {
@@ -187,13 +255,12 @@ export const updateSessionProfile = async function ( sessionUserId: string, prof
         const changelog = selectChangelog as App.Changelog
 
         changelog[timestampISOString] = {
-            display_name: profileData?.displayName,
-            username: profileData?.username,
-            website: profileData?.website,
-            avatar_mbid: profileData?.avatarMbid,
-            avatar_url: profileData?.avatarUrl,
-            updated_at: timestampISO,
-            about: profileData?.about,
+            'username': profileData?.username,
+            'display_name': profileData?.displayName,
+            'website': profileData?.website,
+            'avatar_mbid': profileData?.avatarMbid,
+            'avatar_url': profileData?.avatarUrl,
+            'about': profileData?.about,
         }
 
         const updateProfile = await trx
@@ -263,7 +330,6 @@ export const updateUsername = async function ( sessionUserId: string, newUsernam
                 website: profileData?.website,
                 avatar_mbid: profileData?.avatar_mbid,
                 avatar_url: profileData?.avatar_url,
-                updated_at: timestampISO,
                 about: profileData?.about,
             }
 

@@ -22,7 +22,7 @@ export const GET: RequestHandler = async ({ locals: { safeGetSession }}) => {
       return redirect(303, '/feed')
     }
     else if ( profile && !username ) {
-      return redirect(303, '/account')
+      return redirect(303, '/account/create-profile')
     }
 
     return redirect(303, '/auth/error')

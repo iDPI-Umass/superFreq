@@ -13,7 +13,7 @@
 
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import ListModal from '$lib/components/ListModal.svelte'
+	import ListModal from 'src/lib/components/modals/ListModal.svelte'
     import { categoriesTable } from '$lib/resources/parseData.ts'
 
 	export let searchCategory: string // "artists" | "release_groups" | "releases" | "recordings" | "labels"
@@ -264,9 +264,9 @@
 
 <div class="search-bar">
 	<ListModal bind:showModal>
-		<div slot="header-text">
+		<h1 slot="header-text">
 			Results for <span class="dialog-header">{query}</span>
-		</div>
+		</h1>
 		<div slot="list">
 			{#if searchComplete}
 				<ol>

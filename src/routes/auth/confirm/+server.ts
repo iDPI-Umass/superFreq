@@ -6,7 +6,7 @@ import type { RequestHandler } from './$types'
 export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
   const token_hash = url.searchParams.get('token_hash')
   const type = url.searchParams.get('type') as EmailOtpType | null
-  const next = url.searchParams.get('next') ?? '/api/auth/check'
+  const next = url.searchParams.get('next') ?? '/auth/check'
 
   /**
    * Clean up the redirect URL by deleting the Auth flow parameters.

@@ -34,49 +34,62 @@
     </a>
     <nav>
       {#if sessionUserId}
-        <a href="/now-playing/new">
-          <button>
-            now playing
-          </button>
-        </a>
-        <a href="/feed">
-          <button>
-            feed
-          </button>
-        </a>
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger>
-            collections
-            <ChevronDown></ChevronDown>
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content>
-              {#each accountMenuItems as item}
-                <DropdownMenu.Item href={item.url}>
-                  {item.text}
-                </DropdownMenu.Item>
-              {/each}
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
-        <a href="/about">
-          <button>
-            about
-          </button>
-        </a>
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger>
-            <img src={avatarUrl} alt="{displayName}'s avatar" />
-            {displayName} 
-            <ChevronDown></ChevronDown>
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content>
+      <a href="/feed">
+        <button>
+          feed
+        </button>
+      </a>
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger>
+          create
+          <ChevronDown></ChevronDown>
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Content>
+            <DropdownMenu.Item href={"/posts/now-playing/new"}>
+              new post
+            </DropdownMenu.Item>
             <DropdownMenu.Item href={"/collection/new"}>
-              New Collection
+              new collection
             </DropdownMenu.Item>
+        </DropdownMenu.Content>
+      </DropdownMenu.Root>
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger>
+          discover
+          <ChevronDown></ChevronDown>
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Content>
             <DropdownMenu.Item href={"/collections"}>
-              All Collections
+              collections
             </DropdownMenu.Item>
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
+            <DropdownMenu.Item href={"/users"}>
+              users
+            </DropdownMenu.Item>
+        </DropdownMenu.Content>
+      </DropdownMenu.Root>
+      <a href="/about">
+        <button>
+          about
+        </button>
+      </a>
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger>
+          <img src={avatarUrl} alt="{displayName}'s avatar" />
+          {displayName} 
+          <ChevronDown></ChevronDown>
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Content>
+          <DropdownMenu.Item href={"/user/{username}"}>
+            profile
+          </DropdownMenu.Item>
+          <DropdownMenu.Item href={"/account"}>
+            account
+          </DropdownMenu.Item>
+          <DropdownMenu.Item href={"/sign-out"}>
+            sign out
+          </DropdownMenu.Item>
+        </DropdownMenu.Content>
+      </DropdownMenu.Root>
       {:else}
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>

@@ -1,84 +1,65 @@
 <script lang="ts">
-	import { enhance } from '$app/forms'
-	import type { SubmitFunction } from '@sveltejs/kit'
-	import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
-	import PanelHeader from '$lib/components/PanelHeader.svelte';
-	import type { ActionData, PageData } from './$types'
-	export let data: PageData;
-	export let form: ActionData;
+    import type { PageData, ActionData } from "../$types"
+    import { beforeUpdate, tick } from "svelte"
+    import { enhance } from "$app/forms"
+    import { goto } from "$app/navigation"
 
-	let { user, sessionUserId, profile } = data
-	$: ({ user, sessionUserId, profile } = data)
+    import PanelHeader from "$lib/components/PanelHeader.svelte"
+    import MusicBrainzSearch from "$lib/components/MusicBrainzSearch.svelte"
+    import NotificationModal from "src/lib/components/modals/NotificationModal.svelte"
+    import RedirectModal from "$lib/components/modals/RedirectModal.svelte"
 
-	let avatarItem: any
-	let newItemAdded: boolean
-	let profileForm: HTMLFormElement
-	let loading = false
-	let complete = false
-	let displayName: string = profile?.display_name ?? ''
-	let username: string = profile?.username ?? ''
-	let website: string = profile?.website ?? ''
-	$: avatarMbid = avatarItem?.release_group_mbid ??profile?.avatar_mbid ?? ''
-	let avatarUrl: string = avatarItem?.avatar_url ?? profile?.avatar_url ?? ''
-	let about: string = profile?.about ?? ''
-	let email: string = user?.email as string
+    export let data: PageData
+    export let form: ActionData
 
+    let { email } = data
+    $: ({ email } =  data)
+    $: form
 
-	// sets avatar to local storage
-	// const handleSubmit: SubmitFunction = () => {
-	// 	loading = true
-	// 	console.log(avatarItem ? avatarItem : "no avatar")
+    let username = ''
+    let displayName = ''
+    let about = ''
+    let website = ''
+    let newItemAdded = false
+    let avatarItem = {
+        'img_url': '',
+        'release_group_mbid': '',
+        'release_group_name': ''
+    }
+    let profileForm: any
 
-	// 	const profileStorageItem = {
-	// 		"displayName": displayName,
-	// 		"username": username,
-	// 		"avatarUrl": avatarItem?.img_url
-	// 	}
+	console.log(form?.success)
 
-	// 	localStorage.setItem("profile", JSON.stringify(profileStorageItem))
+    // beforeUpdate ( async () => {
+    //     const success = form?.success
+    //     await tick
+    //     if ( success == true ) {
+    //         setTimeout(() => goto('/about/rules'), 5000)
+    //     }
+    // })
 
-	// 	profileStoresObject.set(profileStorageItem)
-
-	// 	return async ({ result }) => {
-	// 		loading = false
-	// 	}
-	// }
-
-	const handleSignOut: SubmitFunction = () => {
-		loading = true
-		localStorage.removeItem("profile")
-		return async ({ update }) => {
-			loading = false
-			update()
-		}
-	}
 </script>
 
 <div class="panel" id="profile-info">
 	<PanelHeader>
-		profile info
+		create profile
 	</PanelHeader>
 	<div class="form-wrapper">
 		<form
 			id="account-data"
 			class="form-column"
-			method="post"
-			action="?/update"
+			method="POST"
+			action="?/create"
 			use:enhance
 			bind:this={profileForm}
 		>
-			<div class="label-group">
-				<label 
-					class="text-label" 
-					for="email"
-					form="account-data"
-				>
-					Email
-				</label>
-				<a href="/account/update-email">
-					update email
-				</a>
-			</div>
+            <label 
+                class="text-label" 
+                for="email"
+                form="account-data"
+            >
+                Email
+            </label>
 			<input
 				class="text" 
 				type="text" 
@@ -86,7 +67,7 @@
 				id="email"
 				form="account-data"
 				value={email} 
-				disabled 
+                disabled
 			/>
 			<div class="label-group">
 				<label 
@@ -96,9 +77,9 @@
 				>
 					Username
 				</label>
-				<a href="/account/update-username">
-					update username
-				</a>
+                <span class="label-explainer">
+                    * required
+                </span>
 			</div>
 			<input
 				class="text"
@@ -107,20 +88,26 @@
 				id="username"
 				form="account-data"
 				value={username}
-				disabled 
+                required
 			/>
-			<label 
-				class="text-label"
-				for="displayName"
-			>
-				Display name
-			</label>
+            <div class="label-group">
+                <label 
+                    class="text-label"
+                    for="displayName"
+                >
+                    Display name
+                </label>
+                <span class="label-explainer">
+                    * required
+                </span>
+            </div>
 			<input 
 				class="text" 
 				type="text" 
 				name="displayName" 
 				id="displayName" 
 				value={displayName} 
+                required
 			/>
 
 			
@@ -153,27 +140,18 @@
 				id="website" 
 				value={website} 
 			/>
-			{#key avatarItem}
 			<input 
-				type="text" 
+				type="hidden" 
 				name="avatarUrl" 
 				id="avatarUrl" 
-				value={avatarUrl} 
+				value={avatarItem.img_url} 
 			/>
 			<input 
-				type="text" 
+				type="hidden" 
 				name="avatarMbid" 
 				id="avatarMbid" 
-				value={avatarMbid} 
+				value={avatarItem.release_group_mbid} 
 			/>
-			<input 
-				type="text" 
-				name="avatarName" 
-				id="avatarName" 
-				value={avatarItem?.release_group_name} 
-				disabled
-			/>
-			{/key}
 		</form>
 		<div class="form-column">
 			<label 
@@ -197,9 +175,7 @@
 				</MusicBrainzSearch>
 			</div>
 			<!-- add alt text and change column in postgres -->
-			{#if avatarUrl && !newItemAdded}
-				<img src={avatarUrl} alt="user avatar"/>
-			{:else if avatarItem && newItemAdded}
+			{#if avatarItem.img_url.length > 0}
 				<img src={avatarItem.img_url} alt="user avatar"/>
 			{/if}
 			{#if form?.success}
@@ -207,37 +183,53 @@
 			{/if}
 			<div class="actions">
 				<button
-					form="account-data"
 					class="double-border-top"
 					type="submit"
-					disabled={loading}
+					disabled={!( username && displayName )}
 					>
 					<div class="inner-border">
-						{loading ? 'Loading...' : 'Update profile'}
+						submit 
 					</div>
 				</button>
-				<form 
-					class="signout"
-					method="post" 
-					action="?/signout" 
-					use:enhance={handleSignOut}
-					>
-					<button 
-						class="double-border-top" 
-						type="submit" 
-						disabled={loading}
-					>
-						<div class="inner-border">
-							Sign Out
-						</div>
-					</button>
-				</form>
 			</div>
 		</div>
 	</div>
 </div>
 
+<NotificationModal
+    showModal = {( form?.success ? !form?.success : false )}
+>
+<span slot="header-text">
+    Try Another Username
+</span>
+<span slot="message">
+    That Username is already taken, but you can use it for your Display Name.
+    <br />
+    <br />
+    Your Display Name is what other people on the site will actually see.
+</span>
+</NotificationModal>
 
+<RedirectModal
+    showModal={ form?.success ? form?.success : false }
+    redirectPath={'/about/rules'}
+>
+    <span slot="header-text">
+        Profiled created!
+    </span>
+    <span slot="message">
+        Automatically redirecting to the site rules in 5 seconds.
+    </span>
+</RedirectModal>
+
+<form
+    method="POST"
+    action="?/test"
+>
+    <button class="standard">
+        test redirect
+    </button>
+</form>
 
 <style>
 	.form-wrapper {
