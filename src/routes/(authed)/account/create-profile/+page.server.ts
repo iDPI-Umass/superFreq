@@ -1,4 +1,5 @@
 import type { PageServerLoad, Actions } from "../$types"
+import { profileStoresObject } from "$lib/stores"
 import { newSessionProfile } from "$lib/resources/backend-calls/users"
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
@@ -30,14 +31,19 @@ export const actions = {
             'about': about,
         }
 
+        
         const update = await newSessionProfile( sessionUserId, profileData )
+
+        profileStoresObject.set({
+            'username': username,
+            'display_name': displayName,
+            'avatar_url': avatarUrl,
+            'website': website
+          })
+
 
         const success = update.success as boolean
 
         return { success }
-    },
-    test: async () => {
-        console.log('testing')
-        return { success: true }
     }
 } satisfies Actions

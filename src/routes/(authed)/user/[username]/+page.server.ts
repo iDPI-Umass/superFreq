@@ -1,15 +1,9 @@
 import type { PageServerLoad, Actions } from './$types'
-import { redirect } from '@sveltejs/kit'
 import { selectProfilePageData, insertUpdateBlock, insertUserFlag, insertUpdateUserFollow } from '$lib/resources/backend-calls/users'
 
 export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}) => {
 
     const session = await safeGetSession()
-
-    if (!session.session) {
-        throw redirect(303, '/')
-    }
-
     const sessionUserId = session?.user?.id as string
 
     const profileUsername = params.username

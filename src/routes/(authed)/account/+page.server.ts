@@ -1,15 +1,11 @@
-import { fail, redirect } from '@sveltejs/kit'
+import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
 import { selectSessionProfile, updateSessionProfile } from '$lib/resources/backend-calls/users'
 import { profileStoresObject } from '$lib/stores'
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 
-  const { session, user } = await safeGetSession()
-
-  if (!session) {
-    throw redirect(303, '/')
-  }
+  const { user } = await safeGetSession()
 
   const sessionUserId = user?.id as string
   const profile = await selectSessionProfile( sessionUserId )

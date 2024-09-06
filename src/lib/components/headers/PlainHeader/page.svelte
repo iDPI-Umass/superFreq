@@ -79,7 +79,7 @@
           <ChevronDown></ChevronDown>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
-          <DropdownMenu.Item href={"/user/{username}"}>
+          <DropdownMenu.Item href={`/user/${username}`}>
             profile
           </DropdownMenu.Item>
           <DropdownMenu.Item href={"/account"}>

@@ -1,65 +1,54 @@
 <script lang="ts">
-    import type { PageData, ActionData } from "../$types"
-    import { beforeUpdate, tick } from "svelte"
-    import { enhance } from "$app/forms"
-    import { goto } from "$app/navigation"
+	import { enhance } from '$app/forms'
+	import type { SubmitFunction } from '@sveltejs/kit'
+	import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
+	import PanelHeader from '$lib/components/PanelHeader.svelte';
+	import type { ActionData, PageData } from './$types'
+	export let data: PageData;
+	export let form: ActionData;
 
-    import PanelHeader from "$lib/components/PanelHeader.svelte"
-    import MusicBrainzSearch from "$lib/components/MusicBrainzSearch.svelte"
-    import NotificationModal from "src/lib/components/modals/NotificationModal.svelte"
-    import RedirectModal from "$lib/components/modals/RedirectModal.svelte"
+	let { user, sessionUserId, profile } = data
+	$: ({ user, sessionUserId, profile } = data)
 
-    export let data: PageData
-    export let form: ActionData
-
-    let { email } = data
-    $: ({ email } =  data)
-    $: form
-
-    let username = ''
-    let displayName = ''
-    let about = ''
-    let website = ''
-    let newItemAdded = false
-    let avatarItem = {
-        'img_url': '',
-        'release_group_mbid': '',
-        'release_group_name': ''
-    }
-    let profileForm: any
-
-	console.log(form?.success)
-
-    // beforeUpdate ( async () => {
-    //     const success = form?.success
-    //     await tick
-    //     if ( success == true ) {
-    //         setTimeout(() => goto('/about/rules'), 5000)
-    //     }
-    // })
-
+	let avatarItem: any
+	let newItemAdded: boolean
+	let profileForm: HTMLFormElement
+	let loading = false
+	let complete = false
+	let displayName: string = profile?.display_name ?? ''
+	let username: string = profile?.username ?? ''
+	let website: string = profile?.website ?? ''
+	$: avatarMbid = avatarItem?.release_group_mbid ??profile?.avatar_mbid ?? ''
+	let avatarUrl: string = avatarItem?.avatar_url ?? profile?.avatar_url ?? ''
+	let about: string = profile?.about ?? ''
+	let email: string = user?.email as string
 </script>
 
 <div class="panel" id="profile-info">
 	<PanelHeader>
-		create profile
+		profile info
 	</PanelHeader>
 	<div class="form-wrapper">
 		<form
 			id="account-data"
 			class="form-column"
-			method="POST"
-			action="?/create"
+			method="post"
+			action="?/update"
 			use:enhance
 			bind:this={profileForm}
 		>
-            <label 
-                class="text-label" 
-                for="email"
-                form="account-data"
-            >
-                Email
-            </label>
+			<div class="label-group">
+				<label 
+					class="text-label" 
+					for="email"
+					form="account-data"
+				>
+					Email
+				</label>
+				<a href="/account/update-email">
+					update email
+				</a>
+			</div>
 			<input
 				class="text" 
 				type="text" 
@@ -67,7 +56,7 @@
 				id="email"
 				form="account-data"
 				value={email} 
-                disabled
+				disabled 
 			/>
 			<div class="label-group">
 				<label 
@@ -77,9 +66,9 @@
 				>
 					Username
 				</label>
-                <span class="label-explainer">
-                    * required
-                </span>
+				<a href="/account/update-username">
+					update username
+				</a>
 			</div>
 			<input
 				class="text"
@@ -88,26 +77,20 @@
 				id="username"
 				form="account-data"
 				value={username}
-                required
+				disabled 
 			/>
-            <div class="label-group">
-                <label 
-                    class="text-label"
-                    for="displayName"
-                >
-                    Display name
-                </label>
-                <span class="label-explainer">
-                    * required
-                </span>
-            </div>
+			<label 
+				class="text-label"
+				for="displayName"
+			>
+				Display name
+			</label>
 			<input 
 				class="text" 
 				type="text" 
 				name="displayName" 
 				id="displayName" 
 				value={displayName} 
-                required
 			/>
 
 			
@@ -141,16 +124,23 @@
 				value={website} 
 			/>
 			<input 
-				type="hidden" 
+				type="text" 
 				name="avatarUrl" 
 				id="avatarUrl" 
-				value={avatarItem.img_url} 
+				value={avatarItem?.img_url ?? avatarUrl} 
 			/>
 			<input 
-				type="hidden" 
+				type="text" 
 				name="avatarMbid" 
 				id="avatarMbid" 
-				value={avatarItem.release_group_mbid} 
+				value={avatarMbid} 
+			/>
+			<input 
+				type="text" 
+				name="avatarName" 
+				id="avatarName" 
+				value={avatarItem?.release_group_name} 
+				disabled
 			/>
 		</form>
 		<div class="form-column">
@@ -175,7 +165,9 @@
 				</MusicBrainzSearch>
 			</div>
 			<!-- add alt text and change column in postgres -->
-			{#if avatarItem.img_url.length > 0}
+			{#if avatarUrl && !newItemAdded}
+				<img src={avatarUrl} alt="user avatar"/>
+			{:else if avatarItem && newItemAdded}
 				<img src={avatarItem.img_url} alt="user avatar"/>
 			{/if}
 			{#if form?.success}
@@ -183,53 +175,36 @@
 			{/if}
 			<div class="actions">
 				<button
+					form="account-data"
 					class="double-border-top"
 					type="submit"
-					disabled={!( username && displayName )}
+					disabled={loading}
 					>
 					<div class="inner-border">
-						submit 
+						{loading ? 'Loading...' : 'Update profile'}
 					</div>
 				</button>
+				<form 
+					class="signout"
+					method="post" 
+					action="?/signout" 
+					>
+					<button 
+						class="double-border-top" 
+						type="submit" 
+						disabled={loading}
+					>
+						<div class="inner-border">
+							Sign Out
+						</div>
+					</button>
+				</form>
 			</div>
 		</div>
 	</div>
 </div>
 
-<NotificationModal
-    showModal = {( form?.success ? !form?.success : false )}
->
-<span slot="header-text">
-    Try Another Username
-</span>
-<span slot="message">
-    That Username is already taken, but you can use it for your Display Name.
-    <br />
-    <br />
-    Your Display Name is what other people on the site will actually see.
-</span>
-</NotificationModal>
 
-<RedirectModal
-    showModal={ form?.success ? form?.success : false }
-    redirectPath={'/about/guidelines'}
->
-    <span slot="header-text">
-        Profiled created!
-    </span>
-    <span slot="message">
-        Automatically redirecting to our Community Guidelines in 5 seconds.
-    </span>
-</RedirectModal>
-
-<form
-    method="POST"
-    action="?/test"
->
-    <button class="standard">
-        test redirect
-    </button>
-</form>
 
 <style>
 	.form-wrapper {

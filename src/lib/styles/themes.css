@@ -8,6 +8,7 @@ html {
     --freq-border-panel: 1px solid #454C6C;
     --freq-color-panel-light: #ebeef4;
     --freq-border-hr: 1px solid #9EACC8;
+    --freq-border-mellow: 1px solid #5e6678;
     --freq-color-border-hr: #9EACC8;
     --freq-color-primary: #9b40fc;
     --freq-color-text: #FFFFFF;
@@ -32,6 +33,7 @@ html {
     --freq-background-grid-fallback: #19191a;
 
     --freq-color-primary-text: #FFFFFF;
+    --freq-color-reading-text: #dddddd;
     --freq-color-active: #3C96FF;
     --freq-color-active-text: #FFFFFF;
     --freq-color-inactive: #2a2f43;

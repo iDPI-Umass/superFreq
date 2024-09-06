@@ -182,7 +182,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             .select(['posts.user_id', (eb) => eb.fn.count<number>('post_reactions.id').as('reactions_count')])
             .where('posts.user_id', '=', sessionUserId)
             .where('post_reactions.active', '=', true)
-            .where((eb) => eb.between('updated_at', timestampStart, timestampEnd))
+            .where((eb) => eb.between('post_reactions.updated_at', timestampStart, timestampEnd))
             .execute()
 
             sessionUserPostsReactionsTotal = countSessionUserPostsReactions[0]['reactions_count']
