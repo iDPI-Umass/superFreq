@@ -15,7 +15,7 @@
 
 <div class="border">
     <PanelHeader>
-        now playing
+        what are you listening to?
     </PanelHeader>
     <Tabs.Root>
         <Tabs.List>

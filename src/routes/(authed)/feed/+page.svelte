@@ -2,7 +2,7 @@
     import type { PageData, ActionData } from './$types'
     import { enhance } from '$app/forms'
     import decoration from "$lib/assets/images/feed-item-decoration.svg";
-	import PanelHeader from 'src/lib/components/PanelHeader.svelte';
+	import PanelHeader from '$lib/components/PanelHeader.svelte';
 
     export let data: PageData
     export let form: ActionData
@@ -21,51 +21,45 @@
 	</title>
 </svelte:head>
 
-{#if totalRowCount == 0}
-<p>Nothing in your feed? Try following some more <a href="/users">users</a> and <a href="/collections" >collections</a>.</p>
-{/if}
-
-
-
 <div class="panel">
     <PanelHeader>
         feed
     </PanelHeader>
-{#each (form?.feedItems ?? feedItems) as item}
+    {#if totalRowCount == 0}
+        <p>Nothing in your feed? Try following some more <a href="/users">users</a> and <a href="/collections" >collections</a>.</p>
+    {/if}
+    {#each (form?.feedItems ?? feedItems) as item}
         {#if Object.keys(item).includes( 'now_playing_post_id' )}
-        <div class="feed-item">        
-            <a href={`/posts/${item.username}/now-playing/${item.feed_item_timestamp.toISOString()}`}>
-                <div class="feed-item-user-data">
-                    <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
-                    {item.display_name}
-                    is Now Playing: 
-                </div>
-                <div class="feed-item-row">
-                    <img class="decoration" src={decoration} alt="decoration" />
-                    <div class="feed-item-now-playing">
-    
-                        <div class="feed-item-metadata">
-                            <span class="feed-item-music-info">
-                                {item.release_group_name ?? item.recording_name ?? item.episode_title} by {item.artist_name}
-                            </span>
-                        </div>
-                        <p class="feed-item-text">
-    
-                            {item.text}
-                        </p>
+            <div class="feed-item">        
+                <a href={`/posts/${item.username}/now-playing/${item.feed_item_timestamp.toISOString()}`}>
+                    <div class="feed-item-user-data">
+                        <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
+                        {item.display_name}
+                        is Now Playing: 
                     </div>
-                </div>
+                    <div class="feed-item-row">
+                        <img class="decoration" src={decoration} alt="decoration" />
+                        <div class="feed-item-now-playing">
+        
+                            <div class="feed-item-metadata">
+                                <span class="feed-item-music-info">
+                                    {item.release_group_name ?? item.recording_name ?? item.episode_title} by {item.artist_name}
+                                </span>
+                            </div>
+                            <p class="feed-item-text">
+        
+                                {item.text}
+                            </p>
+                        </div>
+                    </div>
 
-            </a>
-        </div>
+                </a>
+            </div>
         {:else if Object.keys(item).includes( 'comment_id' )}
             <a href={`/posts/${item.original_poster_username}/now-playing/${item.feed_item_timestamp.toISOString()}`}>
                 <div class="feed-item-one-liner">
                     <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
                     {item.display_name} commented on {item.original_poster_display_name}'s post
-                    <span class="feed-item-subject">
-                        {item.title}
-                    </span>
                 </div>
             </a>
         {:else if Object.keys(item).includes( 'reaction_id' )}
@@ -73,9 +67,6 @@
                 <div class="feed-item-one-liner">
                     <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
                     {item.display_name} liked {item.original_poster_display_name}'s post
-                    <span class="feed-item-subject">
-                        {item.title}
-                    </span>
                 </div>
             </a>
         {:else if Object.keys(item).includes( 'collection_follow_id' )}
@@ -103,8 +94,7 @@
                 </a>
             </div>
         {/if}
-
-{/each}
+    {/each}
 </div>
 
 <div class="feed-panel">

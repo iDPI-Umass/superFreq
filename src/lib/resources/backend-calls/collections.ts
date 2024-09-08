@@ -103,6 +103,131 @@ export const selectSpotlightCollections = async function ( batchSize: number, ba
     return { collections, remainingCount }
 }
 
+export const selectListViewableCollections = async function ( username: string ) {
+    const selectCollections = await db.transaction().execute(async (trx) => {
+
+        const selectProfile = await trx
+        .selectFrom('profiles')
+        .select(['id', 'username'])
+        .where('username', '=', username)
+        .executeTakeFirst()
+
+        const profileUserId = selectProfile?.id as string
+
+        const selectInfo = await trx
+        .selectFrom('collections_info as info')
+        .innerJoin('collections_social as social', 'social.collection_id', 'info.collection_id')
+        .innerJoin('profiles', 'profiles.id', 'social.user_id')
+        .select([
+            'info.collection_id as id',
+            'info.title as title',
+            'info.updated_at as updated_at',
+            'profiles.display_name as display_name'
+        ])
+        .where(({eb, and, or}) => and([
+            eb('social.user_id', '=', profileUserId),
+            or([
+                eb('info.status', '=', 'public'),
+                eb('info.status', '=', 'open')
+            ]),
+            or([
+                eb('social.user_role', '=', 'owner'),
+                eb('social.user_role', '=', 'collaborator')
+            ])
+        ]))
+        .execute()
+
+        const info = selectInfo
+        return info
+    })
+
+    const collections = await selectCollections
+    return collections
+}
+
+
+export const selectListProfileUserViewableCollections = async function ( username: string ) {
+    const selectCollections = await db.transaction().execute(async (trx) => {
+
+        const selectProfile = await trx
+        .selectFrom('profiles')
+        .select(['id', 'username'])
+        .where('username', '=', username)
+        .executeTakeFirst()
+
+        const profileUserId = selectProfile?.id as string
+
+        const selectInfo = await trx
+        .selectFrom('collections_info as info')
+        .innerJoin('collections_social as social', 'social.collection_id', 'info.collection_id')
+        .innerJoin('profiles', 'profiles.id', 'social.user_id')
+        .select([
+            'info.collection_id as id',
+            'info.title as title',
+            'info.updated_at as updated_at',
+            'profiles.display_name as display_name'
+        ])
+        .where(({eb, and, or}) => and([
+            eb('social.user_id', '=', profileUserId),
+            or([
+                eb('info.status', '=', 'public'),
+                eb('info.status', '=', 'open')
+            ]),
+            or([
+                eb('social.user_role', '=', 'owner'),
+                eb('social.user_role', '=', 'collaborator')
+            ])
+        ]))
+        .execute()
+
+        const info = selectInfo
+        return info
+    })
+
+    const collections = await selectCollections
+    return collections
+}
+
+export const selectListProfileUserFollowingCollections = async function ( sessionUserId: string, username: string ) {
+    const selectCollections = await db.transaction().execute(async (trx) => {
+
+        const selectProfile = await trx
+        .selectFrom('profiles')
+        .select(['id', 'username'])
+        .where('username', '=', username)
+        .executeTakeFirst()
+
+        const profileUserId = selectProfile?.id as string
+
+        const selectInfo = await trx
+        .selectFrom('collections_info as info')
+        .innerJoin('collections_social as social', 'social.collection_id', 'info.collection_id')
+        .innerJoin('profiles', 'profiles.id', 'social.user_id')
+        .select([
+            'info.collection_id as id',
+            'info.title as title',
+            'info.updated_at as updated_at',
+            'profiles.display_name as display_name'
+        ])
+        .where(({eb, and, or}) => and([
+            eb('social.user_id', '=', profileUserId),
+            or([
+                eb('info.status', '=', 'public'),
+                eb('info.status', '=', 'open')
+            ]),
+            eb('user_role', '=', 'follower'),
+            eb('follows_now', '=', true)
+        ]))
+        .execute()
+
+        const info = selectInfo
+        return info
+    })
+
+    const collections = await selectCollections
+    return collections
+}
+
 /*
 Fetches collection for viewing if collection is open or public, or session user is an owner or collaborator
 */

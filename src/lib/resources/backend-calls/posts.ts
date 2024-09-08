@@ -299,6 +299,7 @@ export const selectPostReplies = async function ( sessionUserId: string, postId:
 export const selectPostAndReplies = async function( sessionUserId: string, username: string, timestampString: string, postType: string ) {
 
     const select = await db.transaction().execute(async(trx) => {
+        console.log(username)
         try {
             const selectPostUserId = await trx
             .selectFrom('profiles')
@@ -307,6 +308,8 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
             .executeTakeFirst()
 
             const postUserId = selectPostUserId?.id as string
+
+            console.log(postUserId)
 
             await trx
             .selectFrom('user_moderation_actions')
@@ -446,6 +449,38 @@ export const selectRandomPosts = async function ( postCount: number ) {
 
     return selectPosts
 }
+
+/* Select a user's posts */
+
+// export const selectUserPosts = async function ( sessionUserId: string, userId: string ) {
+//     const selectPosts = await db.transaction().execute(async(trx) => {
+
+//         try {
+//             const permission =  await trx
+//             .selectFrom('user_moderation_actions')
+//             .select(['id','type', 'active'])
+//             .where(({and}) => and({
+//                 user_id: userId,
+//                 target_user_id: sessionUserId,
+//                 type: 'block',
+//                 active: true
+//             }))
+//             .executeTakeFirstOrThrow()
+
+//             return { permisison: false, posts: null }
+//         }
+//         catch ( error ) {
+//             const selectPosts = await trx
+//             .selectFrom('posts')
+//             .innerJoin('profiles', 'profiles.id', 'posts.user_id')
+//             .select([
+//                 'posts.id as id',
+//                 'posts.'
+//             ])
+//         }
+
+//     })
+// }
 
 /* Inserts a reaction to a post, or updates reaction row if sesssion user has already submitted that reaction */
 

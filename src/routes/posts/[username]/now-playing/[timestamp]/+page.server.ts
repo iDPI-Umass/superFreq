@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession } 
     const timestampString = params.timestamp
     const postType = "now_playing"
 
-    console.log(parseISO(timestampString))
+    console.log(params)
 
     const { post, postReactionActive, replies, permission } = await selectPostAndReplies( sessionUserId, username, timestampString, postType )
 

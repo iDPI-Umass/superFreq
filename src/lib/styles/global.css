@@ -91,6 +91,15 @@ a:hover,
 	text-decoration: underline;
 }
 
+a.panel-header-link {
+	color: var(--freq-color-primary);
+	text-decoration: underline;
+}
+
+a.panel-header-link:hover, :focus {
+	color: var(--freq-color-text);
+}
+
 h1,
 h2,
 h3,

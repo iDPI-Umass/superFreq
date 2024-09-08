@@ -12,13 +12,11 @@
     $: ({ sessionUserId, post, postReactionActive, replies } = data)
 
     const postId = post?.id as string
-
-    console.log(post)
 </script>
 
 <svelte:head>
 	<title>
-		{post.display_name}'s Now Playing Post
+		{post?.display_name}'s Now Playing Post
 	</title>
 </svelte:head>
 

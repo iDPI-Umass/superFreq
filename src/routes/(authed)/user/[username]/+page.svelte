@@ -8,13 +8,15 @@
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import GridList from "$lib/components/GridList.svelte"
 	import { Info } from 'lucide-svelte';
+	import NewNowPlayingPost from '$lib/components/Posts/NewNowPlayingPost.svelte';
+    import MiniFeed from '$lib/components/MiniFeed.svelte'
 
     export let data: PageData
     export let form: ActionData
     $: data
 
-    let { sessionUserId, profileData } = data
-    $: ({ sessionUserId, profileData } = data) 
+    let { sessionUserId, profileData, feedItems } = data
+    $: ({ sessionUserId, profileData, feedItems } = data) 
 
     const { profileUserData, followInfo, permission, profileUserBlockInfo, profileUserFlagInfo } = profileData
 
@@ -186,8 +188,14 @@
         </button>
     </div>
     {/if}
-
 </div>
+
+{#if profileUserData?.id == sessionUserId}
+    <NewNowPlayingPost></NewNowPlayingPost>
+    <MiniFeed
+        feedItems={feedItems?.feedData}
+    ></MiniFeed>
+{/if}
 
 <style>
     .profile-info {
