@@ -10,7 +10,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
 
     const profileUsername = params.username
 
-    const batchSize = 25
+    const batchSize = 10
     const batchIterator = 0
     const timestampEnd = new Date()
     const timestampStart = add(timestampEnd, {days: -300})
