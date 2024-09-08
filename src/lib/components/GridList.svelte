@@ -13,6 +13,7 @@
     import "$lib/styles/metadata-formatting.css"
 
     export let collectionContents: any
+    export let deletedItems: any = []
     export let collectionReturned: boolean
     export let collectionType: string // "artists" | "release_groups" | "recordings" | "labels"
     export let layout: string // "grid" | "condensed-grid" | "list"
@@ -26,6 +27,7 @@
 
     let items = collectionContents
 
+    console.log(items)
     const flipDurationMs = 300;
 
     function handleSort( e: any ) {
@@ -45,7 +47,6 @@
         console.log(collectionContents)
     }
 
-    const deletedItems = []
     // delete item from collection editor
 	function deleteItem( item: any ) {
 		items = items.filter(i => i != item);
@@ -53,7 +54,11 @@
 			i["id"] = items.indexOf(i) + 1;
 		}
         collectionContents = items
-        deletedItems.push(item)
+
+        if ( item.inserted_at ){
+            item.item_position = null
+            deletedItems.push(item)
+        }
 	}
 
     console.log(collectionContents)

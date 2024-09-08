@@ -214,7 +214,7 @@ export const prepareMusicDataUpsert = function ( collectionItems: App.RowData, c
 }
 
 /*
-Parse data for table upsert in format expected by collections_contents.
+Parse data for table upsert in format expected by collections_contents. null item_position means item is deleted from collection.
 */
 
 export const populateCollectionContents = function ( collectionItems: App.RowData, collectionId: string ) {
@@ -226,20 +226,22 @@ export const populateCollectionContents = function ( collectionItems: App.RowDat
 
         const changelog: App.Changelog = thisItem.changelog ?? {}
 
+        const itemPosition = ( thisItem.item_position == null ) ? null : index
+
         changelog[timestampISOString] = {
             "updated_at": timestampISO,
-            "item_position": index,
+            "item_position": itemPosition,
             "notes": thisItem["notes"]
         }
 
         collectionContents = [...collectionContents, {
             "collection_id": collectionId,
-            "inserted_at": thisItem["inserted_at"],
+            "inserted_at": thisItem["inserted_at"] ?? timestampISO,
             "updated_at": timestampISO,
             "artist_mbid": thisItem["artist_mbid"],
             "release_group_mbid": thisItem["release_group_mbid"],
             "recording_mbid": thisItem["recording_mbid"],
-            "item_position": index,
+            "item_position": itemPosition,
             "notes": thisItem["notes"],
             "changelog": changelog
         }];

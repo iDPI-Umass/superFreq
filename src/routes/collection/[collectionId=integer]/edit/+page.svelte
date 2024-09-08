@@ -23,7 +23,7 @@
 	Let's declare some variables for...
 	*/
 
-    const collectionInfo = collection[0] as any
+    const collectionInfo = collection?.info as App.RowData
 
 	// collections_info
 	let collectionTitle = collectionInfo["title"] 
@@ -36,10 +36,13 @@
 		[index: string]: string
 	}
 
-	let collectionItems = collection
+	let collectionItems = collection?.collectionContents as App.RowData
 	$: collectionItems
 	let itemAdded = false
 	
+    let deletedItems = collection?.deletedCollectionContents as App.RowData
+    $: deletedItems
+
 	// UI
 	const buttonTextLookup: {[index: string]: string} = {
 		"": "...",
@@ -80,6 +83,13 @@
                 type="hidden"
                 name="collection-contents"
                 value={JSON.stringify(collectionItems)}
+            />
+            {/key}
+            {#key deletedItems?.length}
+            <input 
+                type="hidden"
+                name="deleted-items"
+                value={JSON.stringify(deletedItems)}
             />
             {/key}
             <input 
@@ -141,6 +151,7 @@
     {#key collectionItems?.length}
         <GridList 
             bind:collectionContents={collectionItems}
+            bind:deletedItems={deletedtems}
             collectionReturned={itemAdded}
             collectionType={collectionType}
             layout="list"

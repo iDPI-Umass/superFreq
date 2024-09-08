@@ -270,87 +270,117 @@ Fetches collection for editing if session user is owner or collaborator
 
 export const selectEditableCollectionContents = async function ( collectionId: string, collectionType: string, sessionUserId: string ) {
 
-    const selectEditableCollection = await db
-    .with('info', (db) => db
-        .selectFrom('collections_info')
-        .where(({eb, and, exists, selectFrom, not}) => and([
-            eb('collections_info.collection_id', '=', collectionId),
-            exists(
-                selectFrom('collections_social')
-                .whereRef('collections_info.collection_id', '=', 'collections_social.collection_id')
-                .where(({eb, and}) => and([
-                    eb('collections_social.user_role', '=', 'owner')
-                    .or('collections_social.user_role', '=', 'collaborator'),
-                    eb('collections_social.user_id', '=', sessionUserId)
-                ]) 
-                )
-                .selectAll('collections_social')
-            ),
-            not(
-                eb('collections_info.status', '=', 'deleted')
-            )
-        ]))
+    const selectCollection = await db.transaction().execute(async (trx) => {
+        
+        const selectCollectionInfo = await trx
+        .selectFrom('collections_info as info')
+        .innerJoin('collections_social as social', 'social.collection_id', 'info.collection_id')
         .select([
-            'collection_id',
-            'created_at', 
-            'updated_at',
-            'owner_id', 
-            'status', 
-            'created_by', 
-            'updated_by', 
-            'title', 
-            'type', 
-            'description_text'
+            'info.collection_id as collection_id',
+            'info.title as title',
+            'info.type as type',
+            'info.status as status',
+            'info.owner_id as owner_id',
+            'info.created_at as created_at',
+            'info.created_by as created_by',
+            'info.updated_at as updated_at',
+            'info.description_text as description_text'
         ])
-    )
-    .with('contents', (db) => db
-        .selectFrom('collections_contents')
-        .where(({eb, selectFrom, and, exists}) => and([
-            eb('collection_id', '=', collectionId),
-            exists(
-                selectFrom('info')
-                .whereRef('info.collection_id', '=', 'collections_contents.collection_id')
-                .selectAll('info')
-            ),
+        .where(({eb, and, or}) => and([
+            eb('info.collection_id', '=', collectionId),
+            eb('info.status', '!=', 'deleted'),
+            and([
+                eb('social.user_id', '=', sessionUserId),
+                or([
+                    eb('social.user_role', '=', 'owner'),
+                    eb('social.user_role', '=', 'collaborator')
+                ])
+            ])
         ]))
-        .select([
-            'id', 
-            'collection_id', 
-            'artist_mbid', 
-            'release_group_mbid', 
-            'recording_mbid', 'label_mbid', 
-            'item_position', 
-            'notes', 
-            'changelog'
-        ])
-        .innerJoin(
-            'artists',
-            (join) => join
-                .onRef('artists.artist_mbid', '=', 'collections_contents.artist_mbid')
-        )
-        .innerJoin(
-            'release_groups',
-            (join) => join
-                .onRef('release_groups.release_group_mbid', '=', 'collections_contents.release_group_mbid')
-                .on(({or, exists, selectFrom}) => or([
-                    exists(
-                        selectFrom('info')
-                        .where('type', '=', 'release_groups')
-                    ),
-                    exists(
-                        selectFrom('info')
-                        .where('type', '=', 'recordings')
-                    )
-                ]))
-        )
-    )
-    .selectFrom(['info', 'contents'])
-    .selectAll(['info', 'contents'])
-    .orderBy('contents.item_position asc')
-    .execute()
+        .executeTakeFirst()
 
-    const editableCollection =  await selectEditableCollection;
-    return editableCollection
+        let selectCollectionContents
+        if ( collectionType == 'artists' ) {
+            selectCollectionContents = await trx
+            .selectFrom('collections_contents as contents')
+            .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
+            .select([
+                'contents.collection_id as collection_id',
+                'contents.inserted_at as inserted_at',
+                'contents.artist_mbid as artist_mbid',
+                'contents.release_group_mbid as release_group_mbid',
+                'contents.recording_mbid as recordings_mbid',
+                'contents.item_position as item_position',
+                'artists.artist_name as artist_name',
+            ])
+            .where('contents.collection_id', '=', collectionId)
+            .where('contents.item_position', 'is not', null)
+            .execute()
+        }
+        else if ( collectionType == 'release_groups' ) {
+            selectCollectionContents = await trx
+            .selectFrom('collections_contents as contents')
+            .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
+            .innerJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
+            .select([
+                'contents.collection_id as collection_id',
+                'contents.inserted_at as inserted_at',
+                'contents.artist_mbid as artist_mbid',
+                'contents.release_group_mbid as release_group_mbid',
+                'contents.recording_mbid as recordings_mbid',
+                'contents.item_position as item_position',
+                'artists.artist_name as artist_name',
+                'release_groups.release_group_name as release_group_name',
+                'release_groups.img_url as img_url',
+            ])
+            .where('contents.collection_id', '=', collectionId)
+            .where('contents.item_position', 'is not', null)
+            .execute()
+        }
+        else if ( collectionType == 'recordings' ) {
+            selectCollectionContents = await trx
+            .selectFrom('collections_contents as contents')
+            .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
+            .innerJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
+            .innerJoin('recordings', 'recordings.recording_mbid', 'contents.recording_mbid')
+            .select([
+                'contents.collection_id as collection_id',
+                'contents.inserted_at as inserted_at',
+                'contents.artist_mbid as artist_mbid',
+                'contents.release_group_mbid as release_group_mbid',
+                'contents.recording_mbid as recordings_mbid',
+                'contents.item_position as item_position',
+                'artists.artist_name as artist_name',
+                'release_groups.release_group_name as release_group_name',
+                'release_groups.img_url as img_url',
+                'recordings.recording_name as recording_name',
+            ])
+            .where('contents.collection_id', '=', collectionId)
+            .where('contents.item_position', 'is not', null)
+            .execute()
+        }
+
+
+        const selectDeletedCollectionContents = await trx
+        .selectFrom('collections_contents as contents')
+        .select([
+            'contents.collection_id as collection_id',
+            'contents.inserted_at as inserted_at',
+            'contents.item_position as item_position',
+        ])
+        .where('contents.collection_id', '=', collectionId)
+        .where('contents.item_position', 'is', null)
+        .execute()
+
+        const info = selectCollectionInfo
+        const collectionContents = selectCollectionContents
+        const deletedCollectionContents = selectDeletedCollectionContents
+
+        return { info, collectionContents, deletedCollectionContents }
+    })
+
+    const collection =  await selectCollection
+    return collection
 }
 
 /* Select top albums collection for session user editing */

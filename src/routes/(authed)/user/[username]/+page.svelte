@@ -181,10 +181,8 @@
         top albums
     </PanelHeader>
     <div class="placeholder">
-        <button class="double-border-top" on:click|preventDefault={() => goto(`./${username}/top-albums`)}>
-            <div class="inner-border">
-                choose your top albums
-            </div>
+        <button class="standard" on:click={() => goto(`./${username}/top-albums`)}>
+            choose your top albums
         </button>
     </div>
     {/if}

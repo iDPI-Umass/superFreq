@@ -16,14 +16,11 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession } 
 
   const collection = await selectEditableCollectionContents(collectionId, 'release_groups', sessionUserId)
 
-  if ( collection.length > 0) {
+  if ( collection ) {
       return { collection, sessionUserId, collectionId };
   }
   else {
-      return {
-          status: 403,
-          redirect: "/collections"
-      }
+    throw redirect(303, '/collections')
   }
 }
 
@@ -36,9 +33,13 @@ export const actions: Actions = {
     const collectionStatus = data.get('status')
     const collectionDescription = data.get('description')
     const items = data.get('collection-contents') as string
+    const deletedItems = data.get('deleted-items') as string
     const updatedBy = data.get('updated-by')
 
     const collectionItems = JSON.parse(items) as App.RowData
+    const deletedCollectionItems = JSON.parse(deletedItems) as App.RowData
+
+    const activeAndDeletedCollectionItems = collectionItems.concat(deletedCollectionItems)
 
     const collectionInfo = {
       title: collectionTitle,
@@ -49,13 +50,13 @@ export const actions: Actions = {
       updated_by: updatedBy
     }
 
-    const update = await updateCollection( collectionInfo, collectionItems )
+    const update = await updateCollection( collectionInfo, activeAndDeletedCollectionItems )
 
     if ( !update ) {
       alert('update not successful') 
     }
     else {
-      redirect(303, `/collection/${collectionId}`)
+      throw redirect(303, `/collection/${collectionId}`)
     }
   }
 }
