@@ -4,6 +4,8 @@
     import type { PageData, ActionData } from './$types';
     import PanelHeader from "$lib/components/PanelHeader.svelte"
     import { profileStoresObject } from 'src/lib/stores.ts';
+    import NotificationModal from '$lib/components/modals/NotificationModal.svelte';
+	import RedirectModal from '$lib/components/modals/RedirectModal.svelte';
 
     export let data: PageData
 	export let form: ActionData
@@ -95,15 +97,20 @@
 
 
     </form>
-    {#if form?.failed }
-    <dialog open>
-        <form method="dialog">
-            <button class="standard">x</button>
-            <p>That username is not available. Please try another.</p>
-        </form>
-    </dialog>
-    {/if}
+    <NotificationModal
+        showModal={(form?.success ? !form?.success : false)}
+    >
+        <span slot="header-text">Username taken</span>
+        <span slot="message">Please try another username.</span>
+    </NotificationModal>
 </div>
+
+<RedirectModal
+    showModal={form?.success ?? false}
+    redirectPath='/account'
+>
+Username updated successfully. Redirecting to your account page in 5 seconds.
+</RedirectModal>
 
 <style>
     .panel {

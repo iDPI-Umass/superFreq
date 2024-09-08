@@ -160,8 +160,12 @@
 <div class="border-full-vw"></div>
 
 <div class="panel-medium">
+    {#if topAlbumsCollection?.length > 0}
     <PanelHeader>
         top albums
+        {#if profileUserData?.id == sessionUserId}
+        <button class="standard" on:click={() => goto(`./${username}/top-albums`)}>edit</button>
+        {/if}
     </PanelHeader>
     <GridList
         collectionContents={topAlbumsCollection}
@@ -172,7 +176,10 @@
     >
     </GridList>
 
-    {#if !topAlbumsReturned}
+    {:else if topAlbumsCollection?.length == 0 && profileUserData?.id == sessionUserId}
+    <PanelHeader>
+        top albums
+    </PanelHeader>
     <div class="placeholder">
         <button class="double-border-top" on:click|preventDefault={() => goto(`./${username}/top-albums`)}>
             <div class="inner-border">
@@ -274,7 +281,7 @@
     }
     .placeholder {
         display: flex;
-        background: var(--freq-grid-light-background);
+        background-color: var(--freq-background-grid-fallback);
         align-items: center;
         justify-content: center;
         height: 100px;

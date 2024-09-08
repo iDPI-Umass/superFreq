@@ -2,6 +2,7 @@
     import '$lib/styles/posts.css'
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
+    import Tooltip from '$lib/components/Tooltip.svelte'
     import { username } from '$lib/resources/localStorage.ts'
 
     import { Tabs } from "bits-ui";
@@ -29,14 +30,19 @@
             </Tabs.Trigger>
         </Tabs.List>
         <Tabs.Content value="album">
-            <MusicBrainzSearch
-                searchCategory="release_groups"
-                searchButtonText="search"
-                searchPlaceholder="look it up"
-                bind:addedItems={addedItem}
-                bind:newItemAdded={newItemAdded}
-                mode="single"
-            ></MusicBrainzSearch>
+            <div class="search">
+                <MusicBrainzSearch
+                    searchCategory="release_groups"
+                    searchButtonText="search"
+                    searchPlaceholder="look up an album"
+                    bind:addedItems={addedItem}
+                    bind:newItemAdded={newItemAdded}
+                    mode="single"
+                ></MusicBrainzSearch>
+                <Tooltip>
+                    Search for an album to autofill this form.
+                </Tooltip>
+            </div>
             <form method="POST" action="?/postAlbum" name="album" class="vertical">
                 <input
                     id="username"
@@ -56,12 +62,17 @@
                     type="hidden" 
                     value={addedItem?.releaseGroupMbid ?? null} 
                 />
-                <label 
-                    class="text-label" 
-                    for="listen-url"
-                >
-                    listen link
-                </label>
+                <div class="tooltip-group">
+                    <label 
+                        class="text-label" 
+                        for="listen-url"
+                    >
+                        listen link
+                    </label>
+                    <Tooltip>
+                        A link from Bandcamp, Soundcloud, Mixcloud, or YouTube can be embedded in your post. 
+                    </Tooltip>
+                </div>
                 <input 
                     class="text" 
                     id="listen-url" 
@@ -87,7 +98,7 @@
                     name="artist-name" 
                     type="text"
                     placeholder="artist name" 
-                    value={addedItem?.artistName ?? null}
+                    value={addedItem?.artist_name ?? null}
                 />
                 <label 
                     class="text-label" 
@@ -101,19 +112,19 @@
                     name="album-name" 
                     type="text"
                     placeholder="album name"
-                    value={addedItem?.releaseGroupName ?? null}
+                    value={addedItem?.release_group_name ?? null}
                 />
                 <input  
                     id="release-group-mbid" 
                     name="release-group-mbid" 
                     type="hidden"
-                    value={addedItem?.releaseGroupMbid ?? null}
+                    value={addedItem?.release_group_mbid ?? null}
                 />
                 <label 
                     class="text-label" 
                     for="post-text"
                 >
-                    write something
+                    thoughts
                 </label>
                 <textarea
                     cols="1"
@@ -121,6 +132,7 @@
                     id="post-text"
                     name="post-text"
                     spellcheck=true 
+                    placeholder="Some prompts: What do you like about this? Does it remind you of something? Are you looking for more like it?"
                 />
                 <button class="standard" formaction="?/postAlbum" type="submit">
                     submit
@@ -128,14 +140,19 @@
             </form>
         </Tabs.Content>
         <Tabs.Content value="track">
-            <MusicBrainzSearch
-                searchCategory="recordings"
-                searchButtonText="search"
-                searchPlaceholder="look it up"
-                bind:addedItems={addedItem}
-                bind:newItemAdded={newItemAdded}
-                mode="single"
-            ></MusicBrainzSearch>
+            <div class="search">
+                <MusicBrainzSearch
+                    searchCategory="recordings"
+                    searchButtonText="search"
+                    searchPlaceholder="look up a track"
+                    bind:addedItems={addedItem}
+                    bind:newItemAdded={newItemAdded}
+                    mode="single"
+                ></MusicBrainzSearch>
+                <Tooltip>
+                    Search for a track to autofill this form.
+                </Tooltip>
+            </div>
             <form name="track" class="vertical">
                 <input
                     id="username"
@@ -153,14 +170,19 @@
                     id="mbid" 
                     name="mbid" 
                     type="hidden" 
-                    value={addedItem?.recordingMbid ?? null} 
+                    value={addedItem?.recording_mbid ?? null} 
                 />
-                <label 
-                    class="text-label" 
-                    for="listen-url"
-                >
-                    listen link
-                </label>
+                <div class="tooltip-group">
+                    <label 
+                        class="text-label" 
+                        for="listen-url"
+                    >
+                        listen link
+                    </label>
+                    <Tooltip>
+                        A link from Bandcamp, Soundcloud, Mixcloud, or YouTube can be embedded in your post. 
+                    </Tooltip>
+                </div>
                 <input 
                     class="text" 
                     id="listen-url" 
@@ -180,13 +202,13 @@
                     name="artist-name" 
                     type="text"
                     placeholder="artist name" 
-                    value={addedItem?.artistName ?? null}
+                    value={addedItem?.artist_name ?? null}
                 />
                 <input  
                     id="artist-mbid" 
                     name="artist-mbid" 
                     type="hidden"
-                    value={addedItem?.artistMbid ?? null}
+                    value={addedItem?.artist_mbid ?? null}
                 />
                 <label 
                     class="text-label" 
@@ -200,13 +222,13 @@
                     name="album-name" 
                     type="text"
                     placeholder="album name" 
-                    value={addedItem?.releaseGroupName ?? null}
+                    value={addedItem?.release_group_name ?? null}
                 />
                 <input  
                     id="release-group-mbid" 
                     name="release-group-mbid" 
                     type="hidden"
-                    value={addedItem?.releaseGroupMbid ?? null}
+                    value={addedItem?.release_group_mbid ?? null}
                 />
                 <label
                     class="text-label" 
@@ -220,19 +242,19 @@
                     name="track-name" 
                     type="text"
                     placeholder="track title" 
-                    value={addedItem?.recordingName ?? null}
+                    value={addedItem?.recording_name ?? null}
                 />
                 <input  
                     id="recording-mbid" 
                     name="recording-mbid" 
                     type="hidden"
-                    value={addedItem?.recordingMbid ?? null}
+                    value={addedItem?.recording_mbid ?? null}
                 />
                 <label 
                     class="text-label" 
                     for="postText"
                 >
-                    write something
+                    thoughts
                 </label>
                 <textarea
                     cols="1"
@@ -240,6 +262,7 @@
                     id="postText"
                     name="postText"
                     spellcheck=true 
+                    placeholder="Some prompts: What do you like about this? Does it remind you of something? Are you looking for more like it?"
                 />
                 <button class="standard" type="submit">
                     submit
@@ -247,14 +270,14 @@
             </form>
         </Tabs.Content>
         <Tabs.Content value="mix">
-            <MusicBrainzSearch
+            <!-- <MusicBrainzSearch
                 searchCategory="artists"
                 searchButtonText="search"
                 searchPlaceholder="look it up"
                 bind:addedItems={addedItem}
                 bind:newItemAdded={newItemAdded}
                 mode="single"
-            ></MusicBrainzSearch>
+            ></MusicBrainzSearch> -->
             <form name="mix" class="vertical">
                 <input
                     id="username"
@@ -272,14 +295,19 @@
                     id="mbid" 
                     name="mbid" 
                     type="hidden" 
-                    value={addedItem?.artistMbid ?? null} 
+                    value={addedItem?.artist_mbid ?? null} 
                 />
-                <label 
-                    class="text-label" 
-                    for="listen-url"
-                >
-                    listen link
-                </label>
+                <div class="tooltip-group">
+                    <label 
+                        class="text-label" 
+                        for="listen-url"
+                    >
+                        listen link
+                    </label>
+                    <Tooltip>
+                        A link from Bandcamp, Soundcloud, Mixcloud, or YouTube can be embedded in your post. 
+                    </Tooltip>
+                </div>
                 <input 
                     class="text" 
                     id="listen-url" 
@@ -299,13 +327,13 @@
                     name="artist-name" 
                     type="text"
                     placeholder="artist name" 
-                    value={addedItem?.artistName ?? null}
+                    value={addedItem?.artist_name ?? null}
                 />
                 <input  
                     id="artist-mbid" 
                     name="artist-mbid" 
                     type="hidden"
-                    value={addedItem?.artistMbid ?? null}
+                    value={addedItem?.artist_mbid ?? null}
                 />
                 <label
                     class="text-label" 
@@ -319,7 +347,7 @@
                     name="episode" 
                     type="text"
                     placeholder="episode" 
-                    value={addedItem?.episodeName ?? null}
+                    value={addedItem?.episode_name ?? null}
                 />
                 <label
                     class="text-label" 
@@ -333,13 +361,13 @@
                     name="show" 
                     type="text"
                     placeholder="show" 
-                    value={addedItem?.showName ?? null}
+                    value={addedItem?.show_name ?? null}
                 />
                 <label 
                     class="text-label" 
                     for="post-text"
                 >
-                    write something
+                    thoughts
                 </label>
                 <textarea
                     cols="1"
@@ -347,6 +375,7 @@
                     id="post-text"
                     name="post-text"
                     spellcheck=true 
+                    placeholder="Some prompts: What do you like about this? Does it remind you of something? Are you looking for more like it?"
                 />
                 <button class="standard" type="submit">
                     submit
@@ -365,7 +394,11 @@
         margin: var(--freq-spacing-large) var(--freq-spacing-x-large);
         border: var(--freq-border-panel);
     }
-    form.vertical {
-        margin-top: 0;
+    .search {
+        display: flex;
+        flex-direction: row;
+        margin: var(--freq-height-spacer) var(--freq-width-spacer);
+        align-items: center;
+        gap: var(--freq-height-spacer-gap-quarter);
     }
 </style>

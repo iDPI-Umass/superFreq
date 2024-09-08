@@ -30,10 +30,10 @@ export const actions = {
         const update = await updateUsername(sessionUserId, newUsername)
 
         if ( !update?.success ) {
-            return { failed: true }
+            return { success: false }
         }
         else {
-            redirect(303, `/account`)
+            return { success: true }
         }
     }
 } satisfies Actions

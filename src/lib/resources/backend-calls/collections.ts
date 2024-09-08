@@ -353,6 +353,49 @@ export const selectEditableCollectionContents = async function ( collectionId: s
     return editableCollection
 }
 
+/* Select top albums collection for session user editing */
+
+export const selectEditableTopAlbumsCollection = async function ( sessionUserId: string ) {
+
+    const selectCollection = await db.transaction().execute(async (trx) => {
+
+        try {
+            const selectCollectionId = await trx
+            .selectFrom('profiles')
+            .select(['top_albums_collection_id'])
+            .where('id', '=', sessionUserId)
+            .executeTakeFirst()
+
+            const collectionId = selectCollectionId?.top_albums_collection_id as string
+
+            const selectCollection = await trx
+            .selectFrom('collections_info as info')
+            .innerJoin('collections_contents as contents', 'contents.collection_id', 'info.collection_id')
+            .innerJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
+            .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
+            .select([
+                'info.collection_id as collection_id',
+                'contents.item_position',
+                'contents.release_group_mbid',
+                'contents.artist_mbid',
+                'release_groups.release_group_name',
+                'release_groups.img_url',
+                'artists.artist_name'
+            ])
+            .where('info.collection_id', '=', collectionId)
+            .executeTakeFirstOrThrow()
+
+            const collection = selectCollection
+            return collection
+        }
+        catch( error ) {
+            return { collection: null }
+        }
+    })
+    const collection = await selectCollection
+    return collection
+}
+
 /*
 Insert collection with transaciton that does the following:
     - inserts and returns  collections_info row 
@@ -522,10 +565,10 @@ export const updateCollection = async function ( collectionInfo: App.RowData, co
         const infoChangelog = await selectInfoChangelog as App.Changelog
 
         infoChangelog[timestampISOString] = {
-            updated_by: collectionInfo['updated_by'],
-            status: collectionInfo['status'],
-            title: collectionInfo['title'],
-            description_text: collectionInfo['description_text']
+            'updated_by': collectionInfo['updated_by'],
+            'status': collectionInfo['status'],
+            'title': collectionInfo['title'],
+            'description_text': collectionInfo['description_text']
         }
 
         await trx
@@ -619,6 +662,183 @@ export const updateCollection = async function ( collectionInfo: App.RowData, co
     })
         const collectionUpdate = await update
         return collectionUpdate
+}
+
+export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: string, collectionItems: App.RowData ) {
+
+    const timestampISOString: string = new Date().toISOString()
+    const timestampISO: Date = parseISO(timestampISOString)
+
+    const collectionType = 'release_groups'
+
+    const { artistsMetadata, releaseGroupsMetadata } =  await prepareMusicMetadataInsert(collectionItems, collectionType)
+
+    const insertUpdateCollection = await db.transaction().execute(async (trx) => {
+        try {
+            const selectInfo = await trx
+            .selectFrom('collections_info as info')
+            .innerJoin('profiles as profile', 'profile.top_albums_collection_id', 'info.collection_id')
+            .select([
+                'info.collection_id as collection_id',
+                'info.title as title',
+                'info.status as status',
+                'info.description_text as text',
+                'info.changelog as changelog',
+                'profile.username as username'
+            ])
+            .where('profile.id', '=', sessionUserId)
+            .executeTakeFirstOrThrow()
+
+            const collectionId = selectInfo?.collection_id as string
+            const status = selectInfo?.status as string
+            const title = selectInfo?.title as string
+            const text = selectInfo?.text as string
+            const changelog = selectInfo?.changelog as App.Changelog
+            const username = selectInfo?.username as string
+
+            changelog[timestampISOString] = {
+                'updated_by': sessionUserId,
+                'status': status,
+                'title': title,
+                'description_text': text
+            }
+
+            await trx
+            .updateTable('collections_info')
+            .set({
+                updated_at: timestampISO,
+                updated_by: sessionUserId,
+                changelog: changelog
+            })
+            .where('collection_id', '=', collectionId)
+            .executeTakeFirst()
+            
+            await trx
+                .insertInto('collections_updates')
+                .values({
+                    collection_id: collectionId,
+                    updated_at: timestampISO,
+                    updated_by: sessionUserId
+                })
+                .executeTakeFirst()
+
+            await trx
+                .insertInto('artists')
+                .values(artistsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .execute()
+
+            await trx
+                .insertInto('release_groups')
+                .values(releaseGroupsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .execute()
+            
+            const collectionContents = await populateCollectionContents(collectionItems, collectionId) 
+            
+            await trx
+            .insertInto( 'collections_contents' )
+            .values( collectionContents )
+            .onConflict((oc) => oc
+                .column( 'id' )
+                .doUpdateSet((eb) => ({
+                    updated_at: eb.ref('excluded.updated_at'),
+                    item_position: eb.ref('excluded.item_position'),
+                    notes: eb.ref('excluded.notes')
+                }))
+            )
+            .returningAll()
+            .execute()
+
+            return { collectionId , username }
+        }
+        catch ( error ) {
+            const selectUsername = await trx
+            .selectFrom('profiles')
+            .select('username')
+            .where('id', '=', sessionUserId)
+            .executeTakeFirst()
+
+            const username = selectUsername?.username as string
+            const title = `${username}'s top albums collection`
+
+            const changelog = {} as App.Changelog
+
+            changelog[timestampISOString] = {
+                'updated_by': sessionUserId,
+                'status': 'public',
+                'title': title,
+                'description_text': null
+            }
+
+            const insertCollectionInfo = await trx
+            .insertInto('collections_info')
+            .values({
+                owner_id: sessionUserId,
+                created_by: sessionUserId,
+                created_at: timestampISO,
+                updated_at: timestampISO,
+                updated_by: sessionUserId,
+                title: title,
+                status: 'public',
+                type: 'release_groups',
+                changelog: changelog
+            })
+            .returning('collection_id')
+            .executeTakeFirst()
+
+            const collectionId = insertCollectionInfo?.collection_id as string
+
+            await trx
+                .insertInto('collections_updates')
+                .values({
+                    collection_id: collectionId,
+                    updated_at: timestampISO,
+                    updated_by: sessionUserId
+                })
+                .executeTakeFirst()
+
+            await trx
+                .insertInto('artists')
+                .values(artistsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .execute()
+
+            await trx
+                .insertInto('release_groups')
+                .values(releaseGroupsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .execute()
+
+            const collectionContents = await populateCollectionContents(collectionItems, collectionId) 
+            
+            await trx
+            .insertInto( 'collections_contents' )
+            .values( collectionContents )
+            .onConflict((oc) => oc
+                .column( 'id' )
+                .doUpdateSet((eb) => ({
+                    updated_at: eb.ref('excluded.updated_at'),
+                    item_position: eb.ref('excluded.item_position'),
+                    notes: eb.ref('excluded.notes')
+                }))
+            )
+            .execute()
+
+            return { collectionId, username }
+        }
+    })
+    const collectionInfo = insertUpdateCollection
+    return collectionInfo
+
 }
 
 export const selectCollectionUserFollowData = async function ( sessionUserId: string, collectionId: string ) {

@@ -58,10 +58,10 @@ export const categoriesTable: App.Lookup = {
     "artists": "artists",
     "release-groups": "release-group",
     "release_groups": "release-group",
-    "recordings": "recordings",
+    "recordings": "recording",
     "albums": "release-group",
-    "tracks": "recordings",
-    "songs": "recordings"
+    "tracks": "recording",
+    "songs": "recording"
 }
 
 /* Converts values to UI text */

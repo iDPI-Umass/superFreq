@@ -364,6 +364,13 @@ label.text-label {
 	font-style: italic;
 }
 
+.tooltip-group {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: var(--freq-height-spacer-gap-quarter);
+}
+
 input {
 	width: auto;
 	margin: var(--freq-height-spacer-quarter) 0;
@@ -623,6 +630,11 @@ dialog.notification {
 	color: var(--freq-color-text-dark);
 }
 
+[data-popover-trigger].tooltip:active {
+	background: var(--freq-color-button-lens-active);
+	color: var(--freq-color-text-dark);
+}
+
 [data-popover-content] {
 	display: flex;
 	flex-direction: column;
@@ -635,8 +647,22 @@ dialog.notification {
 	gap: var(--freq-height-spacer-gap-half);
 }
 
+
 [data-popover-content].reply {
 	width: 60%;
+}
+
+
+[data-popover-content].tooltip {
+	max-width: 250px;
+	background: var(--freq-color-info-box-background);
+	border: var(--freq-border-panel);
+	padding: var(--freq-height-spacer-half) var(--freq-width-spacer-half);
+	text-decoration: none;
+}
+
+[data-popover-content].tooltip p {
+	margin: 0;
 }
 
 /* Collapsible  */

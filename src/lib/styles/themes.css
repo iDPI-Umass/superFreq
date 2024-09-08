@@ -78,6 +78,7 @@ html {
     --freq-max-width-primary: 50rem;
     --freq-width-spacer: 1.5625rem;
     --freq-width-spacer-half: calc(0.5 * var(--freq-width-spacer));
+    --freq-width-spacer-quarter: calc(0.25 * var(--freq-width-spacer));
     --freq-height-spacer: 1.3125rem;
     --freq-height-spacer-half: calc(0.5 * var(--freq-height-spacer));
     --freq-height-spacer-quarter: calc(0.25 * var(--freq-height-spacer));
@@ -113,6 +114,7 @@ html {
 
 /* Images */
 html {
+    --freq-image-thumbnail-4x-small: 23px;
     --freq-image-thumbnail-3x-small: 32px;
     --freq-image-thumbnail-2x-small: 35px;
     --freq-image-thumbnail-x-small: 50px;

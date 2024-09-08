@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { enhance } from '$app/forms';
-    import type { SubmitFunction } from '@sveltejs/kit';
     import type { PageData, ActionData } from './$types';
     import PanelHeader from "$lib/components/PanelHeader.svelte"
 
@@ -108,7 +106,7 @@
     </div>
 
     </form>
-    {#if form?.failed }
+    {#if form?.success == false }
     <dialog open>
         <form method="dialog">
             <button class="standard">x</button>

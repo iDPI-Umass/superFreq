@@ -1,6 +1,28 @@
 import { db } from 'src/database.ts'
 import { parseISO } from 'date-fns'
 
+/* Select data for session user */
+
+export const selectSessionUserProfileData = async function ( sessionUserId: string ) {
+
+    const selectProfileData = await db
+    .selectFrom('profiles')
+    .select([
+        'id', 
+        'username', 
+        'display_name', 
+        'avatar_url', 
+        'website', 
+        'about', 
+        'top_albums_collection_id'
+    ])
+    .where('id', '=', sessionUserId)
+    .executeTakeFirst()
+    
+    const profile = await selectProfileData
+    return profile
+}
+
 /* Select data for a user's profile page. Data returned depends on if user has blocked session user. */
 
 export const selectProfilePageData = async function ( sessionUserId: string, profileUsername: string ) {

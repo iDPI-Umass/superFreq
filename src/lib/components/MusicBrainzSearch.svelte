@@ -156,19 +156,19 @@
 			if ( item["relations"][0]["artist"]["type"] == "remixer" ) {
 				remixerMbid = item["relations"][0]["artist"]["id"];
 			}
-			const releaseGroup = item["release-group"]["id"];
+			const releaseGroup = item["releases"][0]["release-group"]["id"];
 			const label = await getLabel(releaseGroup);
 			labelName = label?.labelName ?? null
 			labelMbid = label?.labelMbid ?? null
-			const coverArt = await getCoverArt( releaseGroup.mbid );
+			const coverArt = await getCoverArt( releaseGroup );
 			addedItems = [...addedItems, {
 				"item_position": addedItems.length,
 				"artist_mbid": item["artist-credit"][0]["artist"]["id"],
 				"artist_name": item["artist-credit"][0]["artist"]["name"],
-				"release_group_mbid": item["release-group"]["id"],
-				"release_group_name": item["release-group"]["title"],
+				"release_group_mbid": item["releases"][0]["release-group"]["id"],
+				"release_group_name": item["releases"][0]["release-group"]["title"],
 				"recording_mbid": item["id"],
-				"recording_name": item["name"],
+				"recording_name": item["title"],
 				"release_date": item["first-release-date"],
 				"remixer_mbid": remixerMbid,
 				"img_url": coverArt,
@@ -187,6 +187,7 @@
 
 	// adds single item from MusicBrainz search results to whatever needs it
 	async function addSingleItem( item: any ) {
+		console.log(item)
 		let labelName: string | null = null
 		let labelMbid: string | null = null
 		if ( searchCategory == "artists" ) {
@@ -233,18 +234,18 @@
 			if ( item["relations"][0]["artist"]["type"] == "remixer" ) {
 				remixerMbid = item["relations"][0]["artist"]["id"];
 			}
-			const releaseGroup = item["release-group"]["id"];
+			const releaseGroup = item["releases"][0]["release-group"]["id"];
 			const label = await getLabel(releaseGroup);
 			labelName = label?.labelName ?? null;
 			labelMbid = label?.labelMbid ?? null;
-			const coverArt = await getCoverArt( releaseGroup.mbid );
+			const coverArt = await getCoverArt( releaseGroup );
 			addedItems = {
 				"artist_mbid": item["artist-credit"][0]["artist"]["id"],
 				"artist_name": item["artist-credit"][0]["artist"]["name"],
-				"release_group_mbid": item["release-group"]["id"],
-				"release_group_name": item["release-group"]["title"],
+				"release_group_mbid": item["releases"][0]["release-group"]["id"],
+				"release_group_name": item["releases"][0]["release-group"]["title"],
 				"recording_mbid": item["id"],
-				"recording_name": item["name"],
+				"recording_name": item["title"],
 				"release_date": item["first-release-date"],
 				"remixer_mbid": remixerMbid,
 				"img_url": coverArt,
@@ -301,9 +302,9 @@
 							{item["artist-credit"][0]["artist"]["name"]} 
 							({item["first-release-date"]})
 						{:else if searchCategory == "recordings"}
-							<span>{item["name"]}</span> by 
+							<span>{item["title"]}</span> by 
 							{item["artist-credit"][0]["artist"]["name"]} 
-							({item["first-release-date"]})
+							({item["disambiguation"] ?? item["releases"][0]["release-group"]["title"]})
 						{/if}
 						</p>
 					</li>
@@ -341,7 +342,7 @@
         display: flex;
         flex-direction: row;
 		height: fit-content;
-        width: 100%;
+		width: auto;
         gap: 0;
         align-items: center;
     }

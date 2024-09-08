@@ -45,6 +45,7 @@
         console.log(collectionContents)
     }
 
+    const deletedItems = []
     // delete item from collection editor
 	function deleteItem( item: any ) {
 		items = items.filter(i => i != item);
@@ -52,6 +53,7 @@
 			i["id"] = items.indexOf(i) + 1;
 		}
         collectionContents = items
+        deletedItems.push(item)
 	}
 
     console.log(collectionContents)
