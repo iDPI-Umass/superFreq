@@ -17,13 +17,17 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession } 
     const timestampString = params.timestamp
     const postType = "now_playing"
 
-    console.log(params)
+    const select = await selectPostAndReplies( sessionUserId, username, timestampString, postType )
 
-    const { post, postReactionActive, replies, permission } = await selectPostAndReplies( sessionUserId, username, timestampString, postType )
+    const permission = select?.permission as boolean
 
     if ( !permission ) {
         return { sessionUserId: null, post: null, postReactionActive: null, replies: null }
     }
+
+    const post = select?.post as App.RowData
+    const postReactionActive = select?.postReactionActive?.active as boolean
+    const replies = select?.replies as App.RowData[]
 
     return { sessionUserId, post, postReactionActive, replies }
 }
@@ -38,6 +42,7 @@ export const actions = {
 
         const data = await request.formData()
         const replyText = data.get('reply-text') as string
+        const postId = data.get('post-id') as string
 
         const postData = {
             user_id: sessionUserId,
@@ -46,6 +51,7 @@ export const actions = {
             text: replyText,
             created_at: timestampISO,
             updated_at: timestampISO,
+            parent_post_id: postId,
         }
 
         const insertReply = await insertPost( postData )

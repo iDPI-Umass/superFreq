@@ -4,12 +4,14 @@
     import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
     import PostReply from '$lib/components/Posts/PostReply.svelte'
     import PostReplyEditor from '$lib/components/Posts/PostReplyEditor.svelte';
-    let username = "sug_umass"
 
     export let data: PageData
     export let form: ActionData
-    let { sessionUserId, post, postReactionActive, replies } = data
-    $: ({ sessionUserId, post, postReactionActive, replies } = data)
+    let { sessionUserId, post, postReactionActive } = data
+    $: ({ sessionUserId, post, postReactionActive } = data)
+
+    let replies = data?.replies as App.RowData[]
+    $: replies
 
     const postId = post?.id as string
 </script>
@@ -23,6 +25,13 @@
 
 <div class="post-panel">
     {#if sessionUserId}
+    <input 
+        type="hidden"
+        name="post-id" 
+        id="post-id"
+        form="submitReply"
+        value={postId}
+    />
     <input 
         type="hidden"
         name="post-id" 
@@ -42,7 +51,7 @@
         post={post}
         formData={form?.success ?? null}
         editState={form?.editState ?? false}
-        reactionActive={postReactionActive?.active ?? false} 
+        reactionActive={postReactionActive ?? false} 
     ></NowPlayingPost>
         <PostReplyEditor></PostReplyEditor>
         {#each replies as reply}

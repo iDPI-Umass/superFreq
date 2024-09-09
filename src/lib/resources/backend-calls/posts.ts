@@ -309,8 +309,6 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
 
             const postUserId = selectPostUserId?.id as string
 
-            console.log(postUserId)
-
             await trx
             .selectFrom('user_moderation_actions')
             .select(['id'])
@@ -323,7 +321,7 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
             .executeTakeFirstOrThrow()
 
 
-            return { post: null, replies: null, permission: false }
+            return { post: null, replies: null, permission: false, postReactionActive: null, reactionCount: null }
         }
         catch ( error ) {
             const post = await trx
@@ -362,7 +360,6 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
             .executeTakeFirst()
 
             const postId = post?.id as string
-            console.log(postId)
 
             const postReactionActive = await trx
             .selectFrom('post_reactions')
@@ -404,8 +401,8 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                 'commenter.username as username', 
                 'commenter.display_name as display_name', 
                 'commenter.avatar_url as avatar_url', 
-                'original_post.created_at as origina_post_date', 
-                'original_post.user_id as origina_poster_user_id', 
+                'original_post.created_at as original_post_date', 
+                'original_post.user_id as original_poster_user_id', 
                 'original_poster.username as original_poster_username', 
                 // 'reactions.reaction_count as reaction_count'
             ])

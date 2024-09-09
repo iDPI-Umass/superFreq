@@ -6,6 +6,7 @@
     import PostMenuSessionUser from 'src/lib/components/menus/PostMenuSessionUser.svelte'
     import LikeReact from '$lib/components/Posts/LikeReact.svelte'
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte'
+    import { displayDate } from '$lib/resources/parseData'
 
     import Reply from 'lucide-svelte/icons/reply'
     import Heart from 'lucide-svelte/icons/heart'
@@ -30,8 +31,8 @@
                         {reply.display_name}
                     </span>
                     <span class="comment-date">
-                        <a href={`/${reply.parent_post_username}/now-playing/${reply.parent_post_date}#${reply.username?.concat(reply.created_at.valueOf().toString())}`}>
-                            {reply.created_at}
+                        <a href={`/${reply.original_poster_username}/now-playing/${reply.original_post_date}#${reply.username?.concat(reply.created_at.valueOf().toString())}`}>
+                            {displayDate(reply.created_at)}
                         </a>
                     </span>
                 </div>
@@ -48,7 +49,7 @@
         </p>
         <div class="comment-reaction-row">
             <div class="row-group">
-                <Collapsible.Root bind:open={openState}>
+                <!-- <Collapsible.Root bind:open={openState}>
                     <Collapsible.Trigger>
                         <div class="row-group-icon-description">
                             <Reply size="16" color="var(--freq-color-text-muted)"></Reply>
@@ -57,15 +58,15 @@
                             </span>
                         </div>
                     </Collapsible.Trigger>
-                </Collapsible.Root>
-                {#each reply.reactions as reaction}
+                </Collapsible.Root> -->
+                <!-- {#each reply.reactions as reaction}
                 <div class="row-group-icon-description">
                     <LikeReact
                     postId={reply.id}
                     reactionActive={reply.reactionActive}
                     ></LikeReact>
                 </div>
-                {/each}
+                {/each} -->
             </div>
             <div class="row-group-icon-description">
                 {#if reply.userId == sessionUserId }
