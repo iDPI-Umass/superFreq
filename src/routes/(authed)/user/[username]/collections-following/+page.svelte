@@ -7,7 +7,7 @@
 
 <svelte:head>
 	<title>
-		${username}'s collections
+		Collections ${username} follows
 	</title>
 </svelte:head>
 

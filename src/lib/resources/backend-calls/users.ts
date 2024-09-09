@@ -650,3 +650,56 @@ export const insertUpdateCollectionFollow =  async function ( sessionUserId: str
 
     return follow
 }
+
+export const selectListUserFollowing = async function( sessionUserId: string, username: string ) {
+    const selectUserList = await db.transaction().execute(async (trx) => {
+
+        const userProfile = await trx
+            .selectFrom('profiles')
+            .select(['id', 'display_name'])
+            .where('username', '=', username)
+            .executeTakeFirst()
+
+        const profileUserId = userProfile?.id as string
+        const profileDisplayName = userProfile?.display_name as string
+
+        try {
+            const blockInfo = await trx
+            .selectFrom('user_moderation_actions')
+            .select(['id', 'type', 'active'])
+            .where(({eb, and}) => and([
+                eb('user_id', '=', profileUserId),
+                eb('target_user_id', '=', sessionUserId),
+                eb('type', '=', 'block'),
+                eb('active', '=', true)
+            ]))
+            .executeTakeFirstOrThrow()
+
+            if ( blockInfo ) {
+                return { permission: false, profiles: null, profileDisplayName: null }
+            }
+        }
+        catch ( error ) {
+            const selectProfiles = await trx
+            .selectFrom('profiles')
+            .innerJoin('social_graph as following', 'following.target_user_id', 'profiles.id')
+            .select([
+                'profiles.id as user_id',
+                'profiles.username as username',
+                'profiles.display_name as display_name',
+                'profiles.avatar_url as avatar_url',
+            ])
+            .where(({eb, and}) => and([
+                eb('following.user_id', '=', profileUserId),
+                eb('following.follows_now', '=', true)
+            ]))
+
+            const profiles = selectProfiles
+
+            return { permission: true, profiles, profileDisplayName }
+        }
+    })
+
+    const { permission, profiles, profileDisplayName } = selectUserList
+    return { permission, profiles, profileDisplayName } 
+}

@@ -19,7 +19,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     const profileData = await selectProfilePageData( sessionUserId, profileUsername )
     const feedItems = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
 
-    return { sessionUserId, profileData, feedItems }
+    return { sessionUserId, profileData, feedItems, profileUsername }
 }
 
 export const actions = { 

@@ -188,7 +188,7 @@ export const selectListProfileUserViewableCollections = async function ( usernam
     return collections
 }
 
-export const selectListProfileUserFollowingCollections = async function ( sessionUserId: string, username: string ) {
+export const selectListProfileUserFollowingCollections = async function ( username: string ) {
     const selectCollections = await db.transaction().execute(async (trx) => {
 
         const selectProfile = await trx

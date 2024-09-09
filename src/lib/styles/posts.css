@@ -278,7 +278,7 @@ form.reply {
 }
 
 .comment-display-name {
-    font-size: var(--freq-font-size-small);
+    font-size: var(--freq-font-size-medium);
     color: var(--freq-color-text);
     font-weight: var(--freq-font-weight-regular);
 }
@@ -292,7 +292,7 @@ form.reply {
 
 .comment-date {
     color: var(--freq-color-text-muted);
-    font-size: var(--freq-font-size-2x-small);
+    font-size: var(--freq-font-size-x-small);
     text-transform: uppercase;
     letter-spacing: var(--freq-letter-spacing-loose);
 }

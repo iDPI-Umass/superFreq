@@ -15,8 +15,8 @@
     export let form: ActionData
     $: data
 
-    let { sessionUserId, profileData, feedItems } = data
-    $: ({ sessionUserId, profileData, feedItems } = data) 
+    let { sessionUserId, profileData, feedItems, profileUsername } = data
+    $: ({ sessionUserId, profileData, feedItems, profileUsername } = data) 
 
     const { profileUserData, followInfo, permission, profileUserBlockInfo, profileUserFlagInfo } = profileData
 
@@ -117,44 +117,52 @@
     <div class="info-box-right">
         <div class="stats-box" aria-label="user metrics">
             <div class="metric" aria-label="metric">
-                <div class="numeral">
-                    <p class="metric-numerals">
-                        {collectionCount}
+                <a href="/user/{profileUsername}/collections">
+                    <div class="numeral">
+                        <p class="metric-numerals">
+                            {collectionCount}
+                        </p>
+                    </div>
+                    <p class="data-muted-uppercase">
+                        collections 
                     </p>
-                </div>
-                <p class="data-muted-uppercase">
-                    collections 
-                </p>
+                </a>
             </div>
             <div class="metric" aria-label="metric">
-                <div class="numeral">
-                    <p class="metric-numerals">
-                        {nowPlayingPostsCount}
+                <a href="/user/{profileUsername}/now-playing-posts">
+                    <div class="numeral">
+                        <p class="metric-numerals">
+                            {nowPlayingPostsCount}
+                        </p>
+                    </div>
+                    <p class="data-muted-uppercase">
+                        now playing posts 
                     </p>
-                </div>
-                <p class="data-muted-uppercase">
-                    now playing posts 
-                </p>
+                </a>
             </div>
             <div class="metric" aria-label="metric">
-                <div class="numeral">
-                    <p class="metric-numerals">
-                        {collectionFollowingCount}
+                <a href="/user/{profileUsername}/collections-following">
+                    <div class="numeral">
+                        <p class="metric-numerals">
+                            {collectionFollowingCount}
+                        </p>
+                    </div>
+                    <p class="data-muted-uppercase">
+                        collections followed 
                     </p>
-                </div>
-                <p class="data-muted-uppercase">
-                    collections followed 
-                </p>
+                </a>
             </div>
             <div class="metric" aria-label="metric">
-                <div class="numeral">
-                    <p class="metric-numerals">
-                        {userFollowingCount}
+                <a href="/user/{profileUsername}/users-following">
+                    <div class="numeral">
+                        <p class="metric-numerals">
+                            {userFollowingCount}
+                        </p>
+                    </div>
+                    <p class="data-muted-uppercase">
+                        users followed
                     </p>
-                </div>
-                <p class="data-muted-uppercase">
-                    users followed
-                </p>
+                </a>
             </div>
         </div>
     </div>
