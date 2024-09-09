@@ -14,24 +14,29 @@
 </script>
 
 <form method="POST" action="?/submitReaction">
+    <input
+        type="hidden"
+        name="post-id"
+        id="post-id"
+        value={postId}
+    />
+    <input
+        type="hidden"
+        name="reaction-type"
+        id="reaction-type"
+        value="like"
+    />
     <button class="like" formaction="?/submitReaction">
-        <input
-            type="hidden"
-            name="post-id"
-            id="post-id"
-            value={postId}
-        />
-        <input
-            type="hidden"
-            name="reaction-type"
-            id="reaction-type"
-            value="like"
-        />
-        {#if !reactionActive}
-            <Heart class="icon" size="16" color="var(--freq-color-text-muted)"></Heart>
-        {:else}
-            <Heart class="icon" size="16" color="var(--freq-color-text-muted)" fill="var(--freq-color-text-muted)"></Heart>
-        {/if}
+        <div class="row-group-icon-description">
+            {#if !reactionActive}
+                <Heart class="icon" size="16" color="var(--freq-color-text-muted)"></Heart>
+            {:else}
+                <Heart class="icon" size="16" color="var(--freq-color-text-muted)" fill="var(--freq-color-text-muted)"></Heart>
+            {/if}
+            <span class="descriptor">
+                like
+            </span>
+        </div>
         <!-- <span>
             {reactionCount ?? 0}
         </span> -->

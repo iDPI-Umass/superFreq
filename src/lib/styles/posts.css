@@ -47,6 +47,15 @@
     font-size: var(--freq-font-size-small);
 }
 
+.row-group-icons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--freq-inline-gap-double);
+    color: var(--freq-color-text-muted);
+    font-size: var(--freq-font-size-small);
+}
+
 .row-group-icon-description {
     display: flex;
     flex-direction: row;
@@ -71,7 +80,7 @@
     align-items: center;
     gap: var(--freq-inline-gap-double);
     background-color: var(--freq-color-background-badge-medium);
-    background: var(--freq-grid-light-background);
+    background: var(--freq-grid-dark-background);
     color: var(--freq-color-text-medium-dark);
     font-size: var(--freq-font-size-x-small);
     text-transform: uppercase;
@@ -284,6 +293,9 @@ form.reply {
 }
 
 .date {
+    display: flex;
+    align-items: center;
+    gap: var(--freq-inline-gap);
     color: var(--freq-color-text-muted);
     font-size: var(--freq-font-size-x-small);
     text-transform: uppercase;
@@ -299,7 +311,7 @@ form.reply {
 
 .descriptor {
     color: var(--freq-color-text-muted);
-    font-size: var(--freq-font-size-x-small);
+    font-size: var(--freq-font-size-small);
     text-transform: capitalize;
 }
 

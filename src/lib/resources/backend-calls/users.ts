@@ -693,6 +693,7 @@ export const selectListUserFollowing = async function( sessionUserId: string, us
                 eb('following.user_id', '=', profileUserId),
                 eb('following.follows_now', '=', true)
             ]))
+            .execute()
 
             const profiles = selectProfiles
 

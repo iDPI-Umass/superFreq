@@ -6,8 +6,8 @@
     import LikeReact from '$lib/components/Posts/LikeReact.svelte'
     import { displayDate } from '$lib/resources/parseData'
 
-    import Heart from 'lucide-svelte/icons/heart'
-    import Flag from 'lucide-svelte/icons/flag'
+    import Reply from 'lucide-svelte/icons/reply'
+    import Link from 'lucide-svelte/icons/link-2'
     import Music from 'lucide-svelte/icons/music'
 
     export let sessionUserId: string | null = null
@@ -15,7 +15,10 @@
     export let formData: boolean | null = null
     export let reactionActive: boolean | null =  null
     export let editState: boolean | null | undefined = null
+    export let mode: string | null = null
     $: editState
+
+    const permalink = `/posts/${post.username}/now-playing/${post.created_at.toISOString()}`
 
     function toggleEditState() {
         editState = !editState
@@ -29,12 +32,17 @@
             <div class="row-group-user-data">
                 <img class="avatar" src={post.avatar_url} alt={`${post.display_name}'s avatar`}/>
                 <div class="row-group-column">
-                    <span class="display-name">
-                        {post.display_name}
-                    </span>
-                    <span class="date">
-                        {displayDate(post.created_at)}
-                    </span>
+                    <a href="/user/{post.username}">
+                        <span class="display-name">
+                            {post.display_name}
+                        </span>
+                    </a>
+                    <a href={permalink}>
+                        <span class="date" aria-label="permalink">
+                            {displayDate(post.created_at)}
+                            <Link size="15" color=var(--freq-color-text-muted)></Link>
+                        </span>
+                    </a>
                 </div>
             </div>
             <div class="row-group">
@@ -69,11 +77,23 @@
             <iframe title="bandcamp-embed" style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=7134529/size=small/bgcol=333333/linkcol=ffffff/transparent=true/" seamless><a href="https://carlybarton.bandcamp.com/album/heart-scale">Heart Scale by Carly Barton</a></iframe>
         </div>
         <div class="post-row">
-            <LikeReact
-            postId={post.id}
-            reactionCount={post.reactionCount}
-            reactionActive={reactionActive ?? false}
-            ></LikeReact>
+            <div class="row-group-icons">
+                <LikeReact
+                postId={post.id}
+                reactionCount={post.reactionCount}
+                reactionActive={reactionActive ?? false}
+                ></LikeReact>
+                {#if mode == "feed"}
+                    <a href={permalink}>
+                        
+                            <Reply size="16" color="var(--freq-color-text-muted)"></Reply>
+                            <span class="descriptor">
+                                reply
+                            </span>
+                    
+                    </a>
+                {/if}
+            </div>
             <div class="row-group-icon-description">
                 {#if post.user_id == sessionUserId }
                     <UserActionsMenu

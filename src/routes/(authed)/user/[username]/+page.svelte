@@ -10,13 +10,14 @@
 	import { Info } from 'lucide-svelte';
 	import NewNowPlayingPost from '$lib/components/Posts/NewNowPlayingPost.svelte';
     import MiniFeed from '$lib/components/MiniFeed.svelte'
+	import NowPlayingPostsSample from 'src/lib/components/Posts/NowPlayingPostsSample.svelte';
 
     export let data: PageData
     export let form: ActionData
     $: data
 
-    let { sessionUserId, profileData, feedItems, profileUsername } = data
-    $: ({ sessionUserId, profileData, feedItems, profileUsername } = data) 
+    let { sessionUserId, profileData, feedItems, profileUsername, posts } = data
+    $: ({ sessionUserId, profileData, feedItems, profileUsername, posts } = data) 
 
     const { profileUserData, followInfo, permission, profileUserBlockInfo, profileUserFlagInfo } = profileData
 
@@ -45,6 +46,8 @@
     $: followingNow = form?.followStatus ?? followInfo?.follows_now ?? false
     $: profileUserBlocked = form?.blockStatus ?? profileUserBlockInfo?.active ?? false
     $: profileUserFlagged = form?.flagStatus ?? profileUserFlagInfo?.active ?? false
+
+    const displayName = profileUserData?.display_name as string
 </script>
 
 <svelte:head>
@@ -117,7 +120,7 @@
     <div class="info-box-right">
         <div class="stats-box" aria-label="user metrics">
             <div class="metric" aria-label="metric">
-                <a href="/user/{profileUsername}/collections">
+                <a class="metrics" href="/user/{profileUsername}/collections">
                     <div class="numeral">
                         <p class="metric-numerals">
                             {collectionCount}
@@ -129,7 +132,7 @@
                 </a>
             </div>
             <div class="metric" aria-label="metric">
-                <a href="/user/{profileUsername}/now-playing-posts">
+                <a class="metrics" href="/user/{profileUsername}/now-playing-posts">
                     <div class="numeral">
                         <p class="metric-numerals">
                             {nowPlayingPostsCount}
@@ -141,7 +144,7 @@
                 </a>
             </div>
             <div class="metric" aria-label="metric">
-                <a href="/user/{profileUsername}/collections-following">
+                <a class="metrics" href="/user/{profileUsername}/collections-following">
                     <div class="numeral">
                         <p class="metric-numerals">
                             {collectionFollowingCount}
@@ -153,7 +156,7 @@
                 </a>
             </div>
             <div class="metric" aria-label="metric">
-                <a href="/user/{profileUsername}/users-following">
+                <a class="metrics" href="/user/{profileUsername}/users-following">
                     <div class="numeral">
                         <p class="metric-numerals">
                             {userFollowingCount}
@@ -203,6 +206,12 @@
     <MiniFeed
         feedItems={feedItems?.feedData}
     ></MiniFeed>
+{:else}
+    <NowPlayingPostsSample
+        posts={posts}
+        displayName={displayName}
+        username={profileUsername}
+    ></NowPlayingPostsSample>
 {/if}
 
 <style>
@@ -273,7 +282,7 @@
         flex-direction: row;
         margin: var(--freq-spacing-x-large) var(--freq-spacing-large);
         padding: var(--freq-spacing-medium);
-        background: var(--freq-grid-light-background);
+        background: var(--freq-grid-dark-background);
         gap: var(--freq-spacer-gap);
         align-items: center;
     }

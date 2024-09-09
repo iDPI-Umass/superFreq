@@ -449,35 +449,128 @@ export const selectRandomPosts = async function ( postCount: number ) {
 
 /* Select a user's posts */
 
-// export const selectUserPosts = async function ( sessionUserId: string, userId: string ) {
-//     const selectPosts = await db.transaction().execute(async(trx) => {
+export const selectUserPosts = async function ( sessionUserId: string, username: string ) {
+    const selectPosts = await db.transaction().execute(async(trx) => {
 
-//         try {
-//             const permission =  await trx
-//             .selectFrom('user_moderation_actions')
-//             .select(['id','type', 'active'])
-//             .where(({and}) => and({
-//                 user_id: userId,
-//                 target_user_id: sessionUserId,
-//                 type: 'block',
-//                 active: true
-//             }))
-//             .executeTakeFirstOrThrow()
+        const userProfile = await trx
+        .selectFrom('profiles')
+        .select('id')
+        .where('username', '=', username)
+        .executeTakeFirst()
 
-//             return { permisison: false, posts: null }
-//         }
-//         catch ( error ) {
-//             const selectPosts = await trx
-//             .selectFrom('posts')
-//             .innerJoin('profiles', 'profiles.id', 'posts.user_id')
-//             .select([
-//                 'posts.id as id',
-//                 'posts.'
-//             ])
-//         }
+        const profileUserId = userProfile?.id as string
 
-//     })
-// }
+        try {
+            const blockInfo = await trx
+            .selectFrom('user_moderation_actions')
+            .select(['id', 'type', 'active'])
+            .where(({eb, and}) => and([
+                eb('user_id', '=', profileUserId),
+                eb('target_user_id', '=', sessionUserId),
+                eb('type', '=', 'block'),
+                eb('active', '=', true)
+            ]))
+            .executeTakeFirstOrThrow()
+
+            if ( blockInfo ) {
+                return { permission: false, posts: null }
+            }
+        }
+        catch ( error ) {
+            const selectPosts = await trx
+            .selectFrom('posts')
+            .innerJoin('profiles', 'profiles.id', 'posts.user_id')
+            .select([
+                'posts.id as id',
+                'posts.text as text',
+                'posts.mbid as mbid',
+                'posts.artist_name as artist_name',
+                'posts.release_group_name as release_group_name',
+                'posts.recording_name as recording_name',
+                'posts.created_at as created_at',
+                'posts.updated_at as updated_at',
+                'posts.episode_title as episode_title',
+                'posts.show_title as show_title',
+                'posts.listen_url as listen_url',
+                'profiles.id as user_id',
+                'profiles.username as username',
+                'profiles.display_name as display_name',
+                'profiles.avatar_url as avatar_url'
+            ])
+            .where('profiles.id', '=', profileUserId)
+            .orderBy('posts.created_at desc')
+            .execute()
+
+            const posts = selectPosts
+            return { permission: true, posts }
+        }
+    })
+    const posts = await selectPosts
+    return posts
+}
+
+/* Select a user's posts sample */
+
+export const selectUserPostsSample = async function ( sessionUserId: string, username: string, batchSize: number ) {
+    const selectPosts = await db.transaction().execute(async(trx) => {
+
+        const userProfile = await trx
+        .selectFrom('profiles')
+        .select('id')
+        .where('username', '=', username)
+        .executeTakeFirst()
+
+        const profileUserId = userProfile?.id as string
+
+        try {
+            const blockInfo = await trx
+            .selectFrom('user_moderation_actions')
+            .select(['id', 'type', 'active'])
+            .where(({eb, and}) => and([
+                eb('user_id', '=', profileUserId),
+                eb('target_user_id', '=', sessionUserId),
+                eb('type', '=', 'block'),
+                eb('active', '=', true)
+            ]))
+            .executeTakeFirstOrThrow()
+
+            if ( blockInfo ) {
+                return { posts: null }
+            }
+        }
+        catch ( error ) {
+            const selectPosts = await trx
+            .selectFrom('posts')
+            .innerJoin('profiles', 'profiles.id', 'posts.user_id')
+            .select([
+                'posts.id as id',
+                'posts.text as text',
+                'posts.mbid as mbid',
+                'posts.artist_name as artist_name',
+                'posts.release_group_name as release_group_name',
+                'posts.recording_name as recording_name',
+                'posts.created_at as created_at',
+                'posts.updated_at as updated_at',
+                'posts.episode_title as episode_title',
+                'posts.show_title as show_title',
+                'posts.listen_url as listen_url',
+                'profiles.id as user_id',
+                'profiles.username as username',
+                'profiles.display_name as display_name',
+                'profiles.avatar_url as avatar_url'
+            ])
+            .where('profiles.id', '=', profileUserId)
+            .orderBy('posts.created_at desc')
+            .limit(batchSize)
+            .execute()
+
+            const posts = selectPosts
+            return { posts }
+        }
+    })
+    const posts = await selectPosts
+    return posts
+}
 
 /* Inserts a reaction to a post, or updates reaction row if sesssion user has already submitted that reaction */
 

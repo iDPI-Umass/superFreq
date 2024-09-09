@@ -1,6 +1,7 @@
 import type { PageServerLoad, Actions } from './$types'
 import { selectProfilePageData, insertUpdateBlock, insertUserFlag, insertUpdateUserFollow } from '$lib/resources/backend-calls/users'
 import { selectFeedData } from '$lib/resources/backend-calls/feed'
+import { selectUserPostsSample } from '$lib/resources/backend-calls/posts'
 import { add } from 'date-fns'
 
 export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}) => {
@@ -18,8 +19,11 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
 
     const profileData = await selectProfilePageData( sessionUserId, profileUsername )
     const feedItems = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
+    const selectPosts = await selectUserPostsSample( sessionUserId, profileUsername, batchSize )
 
-    return { sessionUserId, profileData, feedItems, profileUsername }
+    const posts = selectPosts?.posts as App.RowData[]
+
+    return { sessionUserId, profileData, feedItems, profileUsername, posts }
 }
 
 export const actions = { 
