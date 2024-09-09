@@ -6,6 +6,7 @@
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import GridList from '$lib/components/GridList.svelte'
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
+    import Tooltip from '$lib/components/Tooltip.svelte'
 
 	export let data
     let { sessionUserId } = data
@@ -30,6 +31,12 @@
 		"recordings": "tracks"
 	}
 
+    function searchButtonLabel ( lookup: string ) {
+        if (!lookup) {
+            return '...'
+        }
+        else return lookup
+    }
 	let placeholderText = "Search for items to add to your collection"
 </script>
 
@@ -56,12 +63,17 @@
                 id="collection-contents"
                 value={JSON.stringify(collectionItems)}
             />
-            <label 
-                class="text-label" 
-                for="collection-title"
-            >
-                collection name
-            </label>
+            <div class="label-group">
+                <label 
+                    class="text-label" 
+                    for="collection-title"
+                >
+                    collection name
+                </label>
+                <span class="label-explainer">
+                    * required
+                </span>
+            </div>
             <input 
                 class="text" 
                 type="text" 
@@ -71,7 +83,15 @@
                 required 
             />
             <fieldset>
-                <legend>Type of collection</legend>
+                <div class="label-group">
+                    <legend>Type of collection</legend>
+                    <Tooltip>
+                        All items in a collection must be the same type. You can not mix and match artists, ablums, and tracks.
+                    </Tooltip>
+                </div>
+                <span class="label-explainer">
+                    * required
+                </span>
                 <ul>
                     <li>
                         <input 
@@ -109,7 +129,21 @@
                 </ul>
             </fieldset>
             <fieldset>
-                <legend>Status of collection</legend>
+                <div class="label-group">
+                    <legend>Status of collection</legend>
+                    <Tooltip>
+                        <u>Open</u> collections can be viewed and edited by anyone.
+                        <br />
+                        <br />
+                        <u>Public</u> collections can be viewed by anyone, but only edited by you.
+                        <br />
+                        <br />
+                        <u>Private</u> collections can only be viewed and edited by you.
+                    </Tooltip>
+                </div>
+                <span class="label-explainer">
+                    * required
+                </span>
                 <ul>
                     <li>
                         <input 
@@ -179,7 +213,7 @@
             searchCategory={collectionType}
 			bind:addedItems={collectionItems}
 			bind:newItemAdded={itemAdded}
-			searchButtonText={`add ${buttonTextLookup[collectionType]}`}
+			searchButtonText={`add ${searchButtonLabel(buttonTextLookup[collectionType])}`}
 			searchPlaceholder={placeholderText}
             mode="collection"
 		></MusicBrainzSearch>

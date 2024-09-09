@@ -51,7 +51,7 @@
 				>
 					Email
 				</label>
-				<a href="/account/update-email">
+				<a class="label-link" href="/account/update-email">
 					update email
 				</a>
 			</div>
@@ -72,7 +72,7 @@
 				>
 					Username
 				</label>
-				<a href="/account/update-username">
+				<a class="label-link" href="/account/update-username">
 					update username
 				</a>
 			</div>
@@ -130,23 +130,22 @@
 				value={website} 
 			/>
 			<input 
-				type="text" 
+				type="hidden" 
 				name="avatarUrl" 
 				id="avatarUrl" 
 				value={avatarItem?.img_url ?? avatarUrl} 
 			/>
 			<input 
-				type="text" 
+				type="hidden" 
 				name="avatarMbid" 
 				id="avatarMbid" 
 				value={avatarMbid} 
 			/>
 			<input 
-				type="text" 
+				type="hidden" 
 				name="avatarName" 
 				id="avatarName" 
 				value={avatarItem?.release_group_name} 
-				disabled
 			/>
 		</form>
 		<div class="form-column">

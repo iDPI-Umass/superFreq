@@ -91,6 +91,15 @@ a:hover,
 	text-decoration: underline;
 }
 
+a.label-link {
+	text-decoration: underline;
+}
+
+a.label-link:hover, :focus {
+	color: var(--freq-color-text);
+	text-decoration: none;
+}
+
 a.panel-header-link {
 	color: var(--freq-color-primary);
 	text-decoration: underline;
