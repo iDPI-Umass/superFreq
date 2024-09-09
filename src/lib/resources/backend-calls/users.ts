@@ -55,7 +55,7 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
             .executeTakeFirst()
 
         if ( sessionUserBlockInfo ) {
-            return { profileUserData, permission: false }
+            return { profileUserData, profileUserBlockInfo: null, profileUserFlagInfo: null, collectionCount: null, collectionFollowingCount: null, userFollowingCount: null, nowPlayingPostsCount: null, topAlbumsCollection: null, followInfo: null, permission: false }
         }
 
         // if sessionUser not blocked, do the following:

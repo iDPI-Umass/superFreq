@@ -1,4 +1,7 @@
+import { json } from "@sveltejs/kit"
 import { parseISO } from "date-fns"
+import { parseHTML } from 'linkedom'
+
 
 /*
 //
@@ -247,4 +250,33 @@ export const populateCollectionContents = function ( collectionItems: App.RowDat
         }];
     }
     return collectionContents;
+}
+
+export const getListenLinkData = async function ( listenUrlString: string, queryString: string ) {
+    const listenUrl = new URL(listenUrlString)
+
+    const response = await fetch(listenUrl)
+        
+    if (!response.ok) {
+            throw new Error(`Failed to fetch: ${response.status}`)
+        }
+      
+    async function getHtml( listenUrl: URL) {
+        const response = await fetch(listenUrl)
+        if (!response.ok) {
+            throw new Error(`Failed to fetch: ${response.status}`)
+        }
+        return await response.text()
+    }
+    
+    const html = await getHtml(listenUrl)
+    
+    async function parse( html: any ) {
+        const {document} = await parseHTML(html)
+        const content = document.head.querySelector(queryString).content
+        return content
+    }
+    
+    return parse(html)
+
 }

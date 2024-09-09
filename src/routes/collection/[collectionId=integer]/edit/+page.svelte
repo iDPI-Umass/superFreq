@@ -13,6 +13,7 @@
 
     import GridList from '$lib/components/GridList.svelte'
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
+    import Tooltip from '$lib/components/Tooltip.svelte'
 
 
 	export let data: PageData;
@@ -69,9 +70,17 @@
     </div>
     <form class="form-box" method="POST" action ="?/updateCollection">
         <div class="form-block">
-            <label class="text-label" for="collection-title">
-                collection name
-            </label>
+            <div class="label-group">
+                <label 
+                    class="text-label" 
+                    for="collection-title"
+                >
+                    collection name
+                </label>
+                <span class="label-explainer">
+                    * required
+                </span>
+            </div>
             <input class="text" type="text" name="collection-title" id="collection-title" bind:value={collectionTitle} required />
             <input 
                 type="hidden"
@@ -98,7 +107,18 @@
                 value={sessionUserId}
             />
             <fieldset>
-                <legend>Status of collection</legend>
+                <div class="label-group">
+                    <legend>Status of collection</legend>
+                    <Tooltip>
+                        <u>Open</u> collections can be viewed and edited by anyone.
+                        <br />
+                        <br />
+                        <u>Public</u> collections can be viewed by anyone, but only edited by you.
+                        <br />
+                        <br />
+                        <u>Private</u> collections can only be viewed and edited by you.
+                    </Tooltip>
+                </div>
                 <ul>
                     <li>
                         <input class="radio" type="radio" name="status" id="open" value="open" bind:group={collectionStatus} />

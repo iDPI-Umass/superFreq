@@ -1,4 +1,5 @@
 import type { PageServerLoad, Actions } from './$types'
+import { redirect } from '@sveltejs/kit'
 import { selectProfilePageData, insertUpdateBlock, insertUserFlag, insertUpdateUserFollow } from '$lib/resources/backend-calls/users'
 import { selectFeedData } from '$lib/resources/backend-calls/feed'
 import { selectUserPostsSample } from '$lib/resources/backend-calls/posts'
@@ -18,6 +19,11 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
 
     const profileData = await selectProfilePageData( sessionUserId, profileUsername )
+
+    if (!profileData.profileUserData) {
+        throw redirect(303, '/')
+    }
+
     const feedItems = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
     const selectPosts = await selectUserPostsSample( sessionUserId, profileUsername, batchSize )
 

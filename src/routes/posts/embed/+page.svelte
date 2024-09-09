@@ -2,5 +2,13 @@
     import ListenEmbed from '$lib/components/Posts/ListenEmbed.svelte'
 </script>
 
-<ListenEmbed listenUrl={`https://carlybarton.bandcamp.com/album/heart-scale`}>
-</ListenEmbed>
+<form method="POST" action="?/submitUrl">
+    <input 
+        type="text"
+        name="url"
+        id="url"
+    />
+    <button class="standard" formaction="?/submitUrl">
+        submit
+    </button>
+</form>

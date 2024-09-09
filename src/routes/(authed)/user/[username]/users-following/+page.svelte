@@ -7,7 +7,7 @@
 
 <svelte:head>
 	<title>
-		Users ${username} follows
+		Users {username} follows
 	</title>
 </svelte:head>
 
@@ -15,7 +15,7 @@
 {#each profiles as user}
 <ul>
     <li>
-        <a href="/user/${user.username}">
+        <a href="/user/{user.username}">
             <img src={user.avatar_url} alt="${user.display_name}'s avatar" class="avatar" />
             {user.display_name}
         </a>
