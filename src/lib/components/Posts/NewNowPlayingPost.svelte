@@ -1,5 +1,6 @@
 <script lang="ts">
-    import '$lib/styles/posts.css'
+    import { enhance } from '$app/forms'
+    import type { ActionData } from '../../../routes/$types'
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
     import Tooltip from '$lib/components/Tooltip.svelte'
@@ -7,9 +8,14 @@
 
     import { Tabs } from "bits-ui";
 
+    export let form: ActionData
     let addedItem: any
     let newItemAdded: boolean
     let type: string
+    let listenUrl: string
+    $: listenUrl
+
+    // const listenLinkQuery = form?.success ? `${form?.embedInfo.title} ${form?.embedInfo.artist}` : ''
 </script>
 
 
@@ -38,12 +44,13 @@
                     bind:addedItems={addedItem}
                     bind:newItemAdded={newItemAdded}
                     mode="single"
+                    limit="10"
                 ></MusicBrainzSearch>
                 <Tooltip>
                     Search for an album to autofill this form.
                 </Tooltip>
             </div>
-            <form method="POST" action="?/postAlbum" name="album" class="vertical">
+            <form method="POST" action="?/postAlbum" name="album" class="vertical" use:enhance>
                 <input
                     id="username"
                     name="username"
@@ -62,6 +69,12 @@
                     type="hidden" 
                     value={addedItem?.releaseGroupMbid ?? null} 
                 />
+                <!-- <input
+                    id="listen-url" 
+                    name="listen-url" 
+                    type="hidden" 
+                    value={form?.embedInfo.url ?? null}
+                /> -->
                 <div class="tooltip-group">
                     <label 
                         class="text-label" 
@@ -70,16 +83,22 @@
                         listen link
                     </label>
                     <Tooltip>
-                        A link from Bandcamp, Soundcloud, Mixcloud, or YouTube can be embedded in your post. 
+                        A link from Bandcamp, Soundcloud, or YouTube can be embedded in your post. 
                     </Tooltip>
                 </div>
-                <input 
-                    class="text" 
-                    id="listen-url" 
-                    name="listen-url" 
-                    type="text"
-                    placeholder="paste link" 
-                />
+                <!-- <form method="POST" action="?/parseListenUrl"> -->
+                    <input 
+                        class="text" 
+                        id="listen-url" 
+                        name="listen-url" 
+                        type="text"
+                        placeholder="paste link" 
+                    />
+<!-- 
+                    <button formaction="?/parseListenUrl">
+                        get data
+                    </button>
+                </form> -->
                 <label 
                     class="text-label" 
                     for="artist-name"

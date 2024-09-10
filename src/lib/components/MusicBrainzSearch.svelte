@@ -13,6 +13,7 @@
 
 <script lang="ts">
 	import { onMount } from 'svelte'
+	import { enhance } from '$app/forms'
 	import ListModal from 'src/lib/components/modals/ListModal.svelte'
     import { categoriesTable } from '$lib/resources/parseData.ts'
 
@@ -22,7 +23,9 @@
     export let addedItems: any
     export let newItemAdded: boolean
 	export let mode: string // "single" | "collection"
-	export let limit: number | null = null
+	export let limit = '25'
+	export let query = ''
+	export let requestSubmit = false
 
 	let showModal = false
 
@@ -32,7 +35,6 @@
 
 	// search MusicBrainz using form info
 	let mbData: any
-	let query: string
 	let searchComplete: boolean
 	async function mbSearch() {
 		console.log(searchCategory, query)
@@ -44,6 +46,7 @@
             
 		endpoint.searchParams.set("fmt", "json");
         endpoint.searchParams.set("query", `${query}`)
+		endpoint.searchParams.set("limit", limit)
 
 		if (searchCategory == "recordings") {
 			endpoint.searchParams.set("inc", "releases+release-groups+artist-rels")
@@ -157,7 +160,12 @@
 				remixerMbid = item["relations"][0]["artist"]["id"];
 			}
 			const releaseGroup = item["releases"][0]["release-group"]["id"];
-			const label = await getLabel(releaseGroup);
+			const releaseDate = item["first-release-date"]
+			const labelObject = {
+				'mbid': releaseGroup,
+				'releaseDate': releaseDate
+			}
+			const label = await getLabel(labelObject);
 			labelName = label?.labelName ?? null
 			labelMbid = label?.labelMbid ?? null
 			const coverArt = await getCoverArt( releaseGroup );
@@ -230,12 +238,18 @@
 			};
 		}
 		else if ( searchCategory == "recordings" ) {
+			console.log(item)
 			let remixerMbid: string | null = null;
-			if ( item["relations"][0]["artist"]["type"] == "remixer" ) {
+			if ( item["releations"] && item["relations"][0]["artist"]["type"] == "remixer" ) {
 				remixerMbid = item["relations"][0]["artist"]["id"];
 			}
 			const releaseGroup = item["releases"][0]["release-group"]["id"];
-			const label = await getLabel(releaseGroup);
+			const releaseDate = item["first-release-date"]
+			const labelObject = {
+				'mbid': releaseGroup,
+				'releaseDate': releaseDate
+			}
+			const label = await getLabel(labelObject);
 			labelName = label?.labelName ?? null;
 			labelMbid = label?.labelMbid ?? null;
 			const coverArt = await getCoverArt( releaseGroup );
@@ -318,6 +332,7 @@
 		<button 
 			class="double-border-top"
 			on:click={mbSearch} 
+			
 			disabled={!(searchCategory)}
 		>
 			<div class="inner-border">

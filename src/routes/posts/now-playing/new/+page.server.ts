@@ -2,6 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import { parseISO } from "date-fns"
 import type { PageServerLoad, Actions, Posts } from './$types'
 import { insertPost } from '$lib/resources/backend-calls/posts'
+import { getListenUrlData } from '$lib/resources/parseData'
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession}}) => {
     const session = await safeGetSession()
@@ -12,6 +13,15 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession}}) => {
 }
 
 export const actions = {
+    parseListenUrl: async ({ request }) => {
+        const data = await request.formData()
+        const listenUrlString = data.get('listen-url') as string
+
+        const embedInfo = await getListenUrlData(listenUrlString)
+
+        console.log(embedInfo)
+        return { embedInfo, success: true }
+    },
 	postAlbum: async ({ request, locals: { safeGetSession } }) => {
         const session = await safeGetSession()
         const sessionUserId = session.user?.id
@@ -20,13 +30,15 @@ export const actions = {
         const timestampISO: Date = parseISO(timestampISOString)
 
         const data = await request.formData()
-        const username = data.get('username')
-		const listenUrl = data.get('listen-url')
-        const mbid = data.get('mbid')
-        const mbidType = data.get('item-type')
-        const artistName = data.get('artist-name')
-        const albumName = data.get('album-name')
-        const postText = data.get('post-text')
+        const username = data.get('username') as string
+		const listenUrl = data.get('listen-url') as string
+        const mbid = data.get('mbid') as string
+        const mbidType = data.get('item-type') as string
+        const artistName = data.get('artist-name') as string
+        const albumName = data.get('album-name') as string
+        const postText = data.get('post-text') as string
+
+        const embedInfo = await getListenUrlData(listenUrl)
 
         const postData: Posts = {
             user_id: sessionUserId,
@@ -40,6 +52,9 @@ export const actions = {
             text: postText,
             created_at: timestampISO,
             updated_at: timestampISO,
+            embed_id: embedInfo.id,
+            embed_source: embedInfo.source,
+            embed_account: embedInfo.account
         }
 
         const newPost = await insertPost( postData )
@@ -61,14 +76,16 @@ export const actions = {
         const timestampISO: Date = parseISO(timestampISOString)
 
 		const data = await request.formData()
-        const username = data.get('username')
-        const listenUrl = data.get('listen-url')
-        const mbid = data.get('mbid')
-        const itemType = data.get('item-type')
-        const artistName = data.get('artist-name')
-        const albumName = data.get('album-name')
-        const recordingName = data.get('track-name')
-        const postText = data.get('post-text')
+        const username = data.get('username') as string
+        const listenUrl = data.get('listen-url') as string
+        const mbid = data.get('mbid') as string
+        const itemType = data.get('item-type') as string
+        const artistName = data.get('artist-name') as string
+        const albumName = data.get('album-name') as string
+        const recordingName = data.get('track-name') as string
+        const postText = data.get('post-text') as string
+
+        const embedInfo = await getListenUrlData(listenUrl)
 
         const postData: Posts = {
             user_id: sessionUserId,
@@ -83,6 +100,9 @@ export const actions = {
             text: postText,
             created_at: timestampISO,
             updated_at: timestampISO,
+            embed_id: embedInfo.id,
+            embed_source: embedInfo.source,
+            embed_account: embedInfo.account
         }
 
         const newPost = await insertPost( postData )
@@ -104,14 +124,16 @@ export const actions = {
         const timestampISO: Date = parseISO(timestampISOString)
 
 		const data = await request.formData()
-        const username = data.get('username')
-        const listenUrl = data.get('listen-url')
-        const mbid = data.get('mbid')
-        const itemType = data.get('item-type')
-        const artistName = data.get('artist-name')
-        const episode = data.get('episode')
-        const show = data.get('show')
-        const postText = data.get('post-text')
+        const username = data.get('username') as string
+        const listenUrl = data.get('listen-url') as string
+        const mbid = data.get('mbid') as string
+        const itemType = data.get('item-type') as string
+        const artistName = data.get('artist-name') as string
+        const episode = data.get('episode') as string
+        const show = data.get('show') as string
+        const postText = data.get('post-text') as string
+
+        const embedInfo = await getListenUrlData(listenUrl)
 
         const postData: Posts = {
             user_id: sessionUserId,
@@ -126,6 +148,9 @@ export const actions = {
             text: postText,
             created_at: timestampISO,
             updated_at: timestampISO,
+            embed_id: embedInfo.id,
+            embed_source: embedInfo.source,
+            embed_account: embedInfo.account
         }
 
         const newPost = await insertPost( postData )

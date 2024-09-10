@@ -40,6 +40,9 @@ declare global {
     interface Changelog {
       [index: string]: RowData
     }
+    interface Embed {
+      [index: string]: string | null
+    }
   }
 }
 

@@ -9,6 +9,7 @@
     import Reply from 'lucide-svelte/icons/reply'
     import Link from 'lucide-svelte/icons/link-2'
     import Music from 'lucide-svelte/icons/music'
+	import ListenEmbed from './ListenEmbed.svelte';
 
     export let sessionUserId: string | null = null
     export let post: any
@@ -19,6 +20,14 @@
     $: editState
 
     const permalink = `/posts/${post.username}/now-playing/${post.created_at.toISOString()}`
+
+    const embedInfo = {
+                'id': post?.embed_id,
+                'source': post?.embed_source,
+                'title': post?.release_group_name ?? post?.recording_name ?? post?.episode_title,
+                'artist': post?.artist_name,
+                'account': post?.embed_account
+            } as App.Embed
 
     function toggleEditState() {
         editState = !editState
@@ -74,13 +83,14 @@
             {:else if formData == false}
                 <p>edit failed</p>
             {/if}
-            <iframe title="bandcamp-embed" style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=7134529/size=small/bgcol=333333/linkcol=ffffff/transparent=true/" seamless><a href="https://carlybarton.bandcamp.com/album/heart-scale">Heart Scale by Carly Barton</a></iframe>
+            <ListenEmbed
+                embedInfo={embedInfo}
+            ></ListenEmbed>
         </div>
         <div class="post-row">
             <div class="row-group-icons">
                 <LikeReact
                 postId={post.id}
-                reactionCount={post.reactionCount}
                 reactionActive={reactionActive ?? false}
                 ></LikeReact>
                 {#if mode == "feed"}

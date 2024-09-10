@@ -252,15 +252,36 @@ export const populateCollectionContents = function ( collectionItems: App.RowDat
     return collectionContents;
 }
 
-export const getListenLinkData = async function ( listenUrlString: string, queryString: string ) {
-    const listenUrl = new URL(listenUrlString)
+/* Gets data for populating embed. Works with Bandcamp, Soundcloud, YouTube. Mixcloud needs to be debugged. */
 
-    const response = await fetch(listenUrl)
-        
-    if (!response.ok) {
-            throw new Error(`Failed to fetch: ${response.status}`)
+export const getListenUrlData = async function ( listenUrlString: string ) { 
+
+    if ( !listenUrlString ) {
+        const embedInfo = {
+            'id': null,
+            'source': null,
+            'title': null,
+            'artist': null,
+            'account': null
         }
-      
+        return embedInfo 
+    }
+    
+    function parseUrlSource ( listenUrlString: string ) {
+        const linkSplit = listenUrlString.split('/')
+        for ( const element of linkSplit ) {
+            if ( element.includes('youtu.be')) {
+                return 'youtube'
+            }
+            if ( element.includes('.com')) {
+                const domain = element.split('.')
+                return domain[domain.length - 2]
+            } 
+        }
+    }
+
+    const urlSource = parseUrlSource(listenUrlString)
+
     async function getHtml( listenUrl: URL) {
         const response = await fetch(listenUrl)
         if (!response.ok) {
@@ -268,15 +289,134 @@ export const getListenLinkData = async function ( listenUrlString: string, query
         }
         return await response.text()
     }
-    
-    const html = await getHtml(listenUrl)
-    
-    async function parse( html: any ) {
-        const {document} = await parseHTML(html)
-        const content = document.head.querySelector(queryString).content
-        return content
-    }
-    
-    return parse(html)
 
+    async function parseBandcampHtml( html: any ) {
+        const {document} = await parseHTML(html)
+        const embedLink = document.head.querySelector('meta[property="og:video"]').content
+        const embedAccount = document.head.querySelector('meta[property="og:site_name"]').content
+        const embedElements = embedLink.split('/')
+
+        let id = ''
+
+        for ( const element of embedElements ) {
+            console.log(element)
+            if ( element.includes('album=') || element.includes('track=') ) {
+                id = element
+                break
+            }
+        }
+
+        const pageTitle = document.title
+        const titleElements = pageTitle.split(' | ')
+        const itemTitle = titleElements[0]
+        const itemArtist = titleElements[1]
+        const itemInfo = {
+            'url': listenUrlString,
+            'id': id,
+            'source': 'bandcamp',
+            'title': itemTitle,
+            'artist': itemArtist,
+            'account': embedAccount
+        } 
+        return itemInfo
+    }
+
+    async function parseSoundcloudHtml ( html: any ) {
+        const {document} = await parseHTML(html)
+        const embedLink = document.head.querySelector('meta[property="twitter:app:url:googleplay"]').content
+        const elements = embedLink.split(':')
+        const itemId = elements[2]
+        const pageTitle = document.title
+        const titleElements = pageTitle.split(' | ')
+        const info = titleElements[0].split(' by ')
+        const itemTitle = info[0].replace('Stream ', '')
+        const itemAccount = info[1]
+        const itemInfo = {
+            'url': listenUrlString,
+            'id': itemId,
+            'source': 'soundcloud',
+            'title': itemTitle,
+            'artist': null,
+            'account': itemAccount
+        } 
+        return itemInfo
+    }
+
+    async function parseYouTubeHtml ( html: any, listenUrlString: string) {
+        const itemId = listenUrlString.split('=')[1]
+        const {document} = await parseHTML(html)
+        const pageTitle = document.title
+        let title: string | null = null
+        let artist: string | null = null
+
+        if ( pageTitle.includes(' - ')) {
+            const elements = pageTitle.split(' - ')
+            artist = elements[0]
+            title = elements[1]
+        }
+
+        const itemInfo = {
+            'url': listenUrlString,
+            'id': itemId,
+            'source': 'youtube',
+            'title': title ?? pageTitle,
+            'artist': artist,
+            'account': null
+        }
+        return itemInfo
+    }
+
+    async function parseMixcloudHtml ( html: any, listenUrlString: string ) {
+        const itemId = listenUrlString.split('.com')[1]
+        const {document} = await parseHTML(html)
+        const pageTitle = document.title
+        console.log(pageTitle)
+        const info = pageTitle.split(' - ')
+        const itemTitle = info[0]
+        const itemAccount = info[1]
+        const itemInfo = {
+            'url': listenUrlString,
+            'id': itemId,
+            'source': 'mixcloud',
+            'title': itemTitle,
+            'artist': null,
+            'account': itemAccount
+        }
+        return itemInfo
+    }
+
+    if ( urlSource == 'bandcamp' ) {
+        const listenUrl = new URL(listenUrlString)
+        const html = await getHtml(listenUrl)
+        const embedInfo = await parseBandcampHtml(html)
+        return embedInfo
+    }
+    else if ( urlSource == 'soundcloud') {
+        const listenUrl = new URL(listenUrlString)
+        const html = await getHtml(listenUrl)
+        const embedInfo = await parseSoundcloudHtml(html)
+        return embedInfo
+    }
+    else if ( urlSource == 'youtube' ) {
+        const listenUrl = new URL(listenUrlString)
+        const html = await getHtml(listenUrl)
+        const embedInfo =  await parseYouTubeHtml(html, listenUrlString)
+        return embedInfo
+    }
+    // else if ( urlSource == 'mixcloud' ) {
+    //     const listenUrl = new URL(listenUrlString)
+    //     const html = await getHtml(listenUrl)
+    //     const embedInfo =  await parseMixcloudHtml(html, listenUrlString)
+    //     return embedInfo
+    // }
+    else {
+        const embedInfo = {
+            'id': null,
+            'source': null,
+            'title': null,
+            'artist': null,
+            'account': null
+        }
+        return embedInfo
+    }
 }
