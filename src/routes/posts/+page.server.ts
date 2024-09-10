@@ -1,5 +1,6 @@
 import type { PageServerLoad, Actions } from './$types'
 import { mobyDickArray } from '$lib/assets/text/mobyDick'
+import logo from '$lib/assets/images/logo/freq-logo-dark.svg'
 import { selectRandomPosts } from '$lib/resources/backend-calls/posts'
 
 export const load: PageServerLoad = async () => {
@@ -23,6 +24,7 @@ export const actions = {
     
         for ( const post of posts ) {
             post['display_name'] = `${mobyDickArray[Math.floor(Math.random() * mobyDickArray.length)]} ${mobyDickArray[Math.floor(Math.random() * mobyDickArray.length)]}`
+            post['avatar_url'] = logo
         }
     
         return posts
