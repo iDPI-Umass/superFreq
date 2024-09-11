@@ -66,21 +66,20 @@
                     <h1>{profileUserData?.display_name}</h1>
                     <p class="data-muted">{profileUserData?.username}</p>
                 </div>
+                <div class="profile-buttons-group">
                 {#if profileUserData?.id == sessionUserId }
-                    <div class="buttons-group">
-                        <button class="double-border-top">
-                            <div class="inner-border-condensed">
-                                edit profile
+                    <button class="double-border-top">
+                        <div class="inner-border-condensed">
+                            edit profile
+                        </div>
+                    </button>
+                    <button class="double-border-top">
+                        <div class="inner-border-condensed">
+                            <div class="buttons-group-icon">
+                                <Settings size="16"></Settings>
                             </div>
-                        </button>
-                        <button class="double-border-top">
-                            <div class="inner-border-condensed">
-                                <div class="buttons-group-icon">
-                                    <Settings size="16"></Settings>
-                                </div>
-                            </div>
-                        </button>
-                    </div>
+                        </div>
+                    </button>
                 {:else}
                     <form
                         method="POST"
@@ -113,6 +112,7 @@
                         success={form?.success}
                     ></UserActionsMenu>
                 {/if}
+                </div>
             </div>
             <p>{profileUserData?.about ?? ''}</p>
         </div>
