@@ -6,6 +6,8 @@
     import NotificationModal from "src/lib/components/modals/NotificationModal.svelte"
 
     export let form: ActionData
+    $: form
+    console.log(form?.success)
 </script>
 
 <svelte:head>
@@ -55,12 +57,11 @@
 <NotificationModal
     showModal={form?.showModal ?? false}
 >
+    <span slot="header-text">
+        { form?.success ? 'Success' : 'Error'}
+    </span>
     <span slot="message">
-        {#if form?.success == true}
-        <p>check your inbox!</p>
-        {:else}
-        <p>Something went wrong. Please try again.</p>
-        {/if}
+        <p>{ form?.success ? 'Check your inbox!' : 'Something went wrong. Please try again.' }</p>
     </span>
 </NotificationModal>
 

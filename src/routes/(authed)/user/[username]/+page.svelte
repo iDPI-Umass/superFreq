@@ -58,11 +58,11 @@
 
 
 <div class="profile-info">
-    <div class="info-box-left">
+    <div class="profile-info-box-left">
         <img src={profileUserData?.avatar_url} alt="${profileUserData?.display_name}'s avatar" />
-        <div class="info-box-column">
-            <div class="username-buttons-row">
-                <div class="displayname-username-column">
+        <div class="profile-info-box-column">
+            <div class="profile-username-buttons-row">
+                <div class="profile-displayname-username-column">
                     <h1>{profileUserData?.display_name}</h1>
                     <p class="data-muted">{profileUserData?.username}</p>
                 </div>
@@ -75,7 +75,7 @@
                         </button>
                         <button class="double-border-top">
                             <div class="inner-border-condensed">
-                                <div class="icon">
+                                <div class="buttons-group-icon">
                                     <Settings size="16"></Settings>
                                 </div>
                             </div>
@@ -117,8 +117,8 @@
             <p>{profileUserData?.about ?? ''}</p>
         </div>
     </div>
-    <div class="info-box-right">
-        <div class="stats-box" aria-label="user metrics">
+    <div class="profile-info-box-right">
+        <div class="profile-stats-box" aria-label="user metrics">
             <div class="metric" aria-label="metric">
                 <a class="metrics" href="/user/{profileUsername}/collections">
                     <div class="numeral">
@@ -139,7 +139,7 @@
                         </p>
                     </div>
                     <p class="data-muted-uppercase">
-                        now playing posts 
+                        posts 
                     </p>
                 </a>
             </div>
@@ -172,147 +172,52 @@
 </div>
 <div class="border-full-vw"></div>
 
-<div class="panel-medium">
-    {#if topAlbumsCollection?.length > 0}
-    <PanelHeader>
-        top albums
-        {#if profileUserData?.id == sessionUserId}
-        <button class="standard" on:click={() => goto(`./${username}/top-albums`)}>edit</button>
+<div class="content">
+    <div class="panel-medium">
+        {#if topAlbumsCollection?.length > 0}
+        <PanelHeader>
+            top albums
+            {#if profileUserData?.id == sessionUserId}
+            <button class="standard" on:click={() => goto(`./${username}/top-albums`)}>edit</button>
+            {/if}
+        </PanelHeader>
+        <GridList
+            collectionContents={topAlbumsCollection}
+            collectionReturned={topAlbumsReturned}
+            collectionType="release_groups"
+            layout="condensed-grid"
+            mode="view"
+        >
+        </GridList>
+    
+        {:else if topAlbumsCollection?.length == 0 && profileUserData?.id == sessionUserId}
+        <PanelHeader>
+            top albums
+        </PanelHeader>
+        <div class="panel-button-buffer">
+            <button class="standard" on:click={() => goto(`./${username}/top-albums`)}>
+                choose your top albums
+            </button>
+        </div>
         {/if}
-    </PanelHeader>
-    <GridList
-        collectionContents={topAlbumsCollection}
-        collectionReturned={topAlbumsReturned}
-        collectionType="release_groups"
-        layout="condensed-grid"
-        mode="view"
-    >
-    </GridList>
-
-    {:else if topAlbumsCollection?.length == 0 && profileUserData?.id == sessionUserId}
-    <PanelHeader>
-        top albums
-    </PanelHeader>
-    <div class="placeholder">
-        <button class="standard" on:click={() => goto(`./${username}/top-albums`)}>
-            choose your top albums
-        </button>
     </div>
+    
+    {#if profileUserData?.id == sessionUserId}
+        <NewNowPlayingPost></NewNowPlayingPost>
+        <MiniFeed
+            feedItems={feedItems?.feedData}
+        ></MiniFeed>
+    {:else}
+        <NowPlayingPostsSample
+            posts={posts}
+            displayName={displayName}
+            username={profileUsername}
+        ></NowPlayingPostsSample>
     {/if}
 </div>
 
-{#if profileUserData?.id == sessionUserId}
-    <NewNowPlayingPost></NewNowPlayingPost>
-    <MiniFeed
-        feedItems={feedItems?.feedData}
-    ></MiniFeed>
-{:else}
-    <NowPlayingPostsSample
-        posts={posts}
-        displayName={displayName}
-        username={profileUsername}
-    ></NowPlayingPostsSample>
-{/if}
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/v8fLjiar1c8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
 <style>
-    .profile-info {
-        display: flex;
-        flex-direction: row;
-        width: 100%;
-    }
-    .profile-info img {
-        width: var(--freq-image-thumbnail-medium);
-        height: var(--freq-image-thumbnail-medium);
-    }
-    .profile-info h1{
-        font-size: var(--freq-font-size-medium);
-    }
-    .info-box-left {
-        display: flex;
-        flex-direction: row;
-        min-width: 40%;
-        max-width: 50%;
-        margin: var(--freq-height-spacer) var(--freq-width-spacer-half) var(--freq-height-spacer) var(--freq-width-spacer);
-        gap: var(--freq-spacer-gap);
-        align-items: start;
-    }
-    .info-box-column {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        gap: var(--freq-inline-gap);
-    }
-    .username-buttons-row {
-        display: flex;
-        flex-direction: row;
-        width: auto;
-        align-items: start;
-        justify-content: space-between;
-    }
-    .displayname-username-column {
-        display: flex;
-        flex-direction: column;
-    }
-    .displayname-username-column * {
-        padding: 0;
-        margin: 0;
-    }
-    .buttons-group {
-        display: flex;
-        flex-direction: row;
-        margin-left: auto;
-        margin-right: 4px;
-        gap: var(--freq-spacer-gap-half);
-    }
-    .icon {
-        display: flex;
-        height: 11px;
-        align-items: center;
-    }
-    .info-box-right {
-        display: flex;
-        flex-direction: row;
-        max-width: 50%;
-        border-left: var(--freq-border-panel);
-        margin-top: -5px;
-        align-items: flex-start;
-    }
-    .stats-box {
-        display: flex;
-        flex-direction: row;
-        margin: var(--freq-spacing-x-large) var(--freq-spacing-large);
-        padding: var(--freq-spacing-medium);
-        background: var(--freq-grid-dark-background);
-        gap: var(--freq-spacer-gap);
-        align-items: center;
-    }
-    .metric {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: var(--freq-spacer-gap-quarter);
-    }
-    .metric * {
-        margin: 0px;
-        padding: 0px;
-    }
-    .metric .numeral {
-        display: flex;
-        flex-direction: column;
-        background: var(--freq-color-panel-background); 
-        padding: 0px 10px;
-    }
-    .placeholder {
-        display: flex;
-        background-color: var(--freq-background-grid-fallback);
-        align-items: center;
-        justify-content: center;
-        height: 100px;
-    }
-    .placeholder p {
-        background-color: var(--freq-color-panel-background);
-        padding: var(--freq-height-spacer-half) var(--freq-width-spacer-half);
+    .content {
+        max-width: var(--freq-desktop-width);
     }
 </style>

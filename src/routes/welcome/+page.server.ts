@@ -16,8 +16,8 @@ export const actions = {
         const email = data.get('email') as string
 
         const { error } = await supabase.auth.signInWithOtp({ email: email })
+        console.log( error )
         if ( error ) {
-            console.error(error)
             return { 
                 success: false,
                 showModal: true
@@ -25,7 +25,7 @@ export const actions = {
         }
         else {
             return { 
-                succes: true,
+                success: true,
                 showModal: true
             }
         }

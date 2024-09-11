@@ -42,12 +42,14 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
         .where('username', '=', profileUsername)
         .executeTakeFirst()
 
+        const profileUserId = profileUserData?.id as string
+
         // return limited data if profile user actively blocks session user
         const sessionUserBlockInfo = await trx
             .selectFrom('user_moderation_actions')
             .select(['id'])
             .where(({ eb }) => eb.and({
-                user_id: profileUserData?.id as string,
+                user_id: profileUserId,
                 target_user_id: sessionUserId,
                 type: 'block',
                 active: true
@@ -66,7 +68,7 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
             .select(['id', 'follows_now'])
             .where(({ eb }) => eb.and({
                 user_id: sessionUserId,
-                target_user_id: profileUserData?.id as string,
+                target_user_id: profileUserId,
             }))
             .executeTakeFirst()
 
@@ -76,7 +78,7 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
         .select(['id', 'type', 'active'])
         .where(({ eb }) => eb.and({
             user_id: sessionUserId,
-            target_user_id: profileUserData?.id as string,
+            target_user_id: profileUserId,
             type: 'block'
         }))
         .executeTakeFirst()
@@ -87,7 +89,7 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
         .select(['id', 'type', 'active'])
         .where(({ eb }) => eb.and({
             user_id: sessionUserId,
-            target_user_id: profileUserData?.id as string,
+            target_user_id: profileUserId,
             type: 'flag'
         }))
         .executeTakeFirst()
@@ -99,10 +101,12 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
                 .fn.count<number>('id')
                 .as('count')
             )
-            .where(({eb, or}) => or([
-                eb('user_role','=', 'owner'),
-                eb('user_role', '=', 'collaborator')
-            ]))
+            .where(({eb, and, or}) => and([
+                eb('user_id', '=', profileUserId),
+                or([
+                    eb('user_role','=', 'owner'),
+                    eb('user_role', '=', 'collaborator')
+                ])]))
             .execute()
 
         const collectionFollowingCount = await trx
@@ -113,7 +117,8 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
             )
             .where(({eb}) => eb.and({
                 user_role: 'follower',
-                follows_now: true
+                follows_now: true,
+                user_id: profileUserId
             }))
             .execute()
 
@@ -124,7 +129,7 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
                 .as('count')
             )
             .where(({eb}) => eb.and({
-                user_id: profileUserData?.id as string,
+                user_id: profileUserId,
                 follows_now: true
             }))
             .execute()
@@ -136,7 +141,7 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
                 .as('count')
             )
             .where(({eb, and}) => and([
-                eb('user_id','=', profileUserData?.id as string),
+                eb('user_id','=', profileUserId),
                 eb('type', '=', 'now_playing'),
                 eb('status', '!=', 'deleted')
             ]))
@@ -333,9 +338,7 @@ export const updateUsername = async function ( sessionUserId: string, newUsernam
             .where('id', '!=', sessionUserId)
             .executeTakeFirstOrThrow()
 
-            success = false
-
-            return { success }
+            return { update: null, success: false }
         }
         catch (error) {
             const profileData = await trx
@@ -362,14 +365,12 @@ export const updateUsername = async function ( sessionUserId: string, newUsernam
                 changelog: changelog
             })
             .where('id', '=', sessionUserId)
-            .returning(['display_name', 'username', 'id'])
+            .returning(['display_name', 'username', 'id', 'avatar_url'])
             .executeTakeFirst() 
-
-            success = true
 
             const update = await updateUsername
 
-            return({ update, success }) 
+            return { update, success: true }
         }
     }) 
     return updateUsername

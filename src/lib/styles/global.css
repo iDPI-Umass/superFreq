@@ -15,19 +15,19 @@ body {
 
 .panel {
 	max-width: var(--freq-max-width-primary);
-	margin: 3vh 3vw;
+	margin: 3vh auto;
 	border: var(--freq-border-panel);
 }
 
 .panel-medium {
 	max-width: calc( var(--freq-max-width-primary) * 0.75);
-	margin: 3vh 3vw;
+	margin: 3vh auto;
 	border: var(--freq-border-panel);
 }
 
 .panel-narrow {
 	max-width: calc( var(--freq-max-width-primary) * 0.5);
-	margin: 3vh 3vw;
+	margin: 3vh auto;
 	border: var(--freq-border-panel);
 }
 
@@ -43,11 +43,22 @@ body {
 	padding-top: 4px;
 }
 
-.double--border-panel {
+.double-border-panel {
 	width: 100vw;
 	border-top: var(--freq-border-panel);
 	border-bottom: var(--freq-border-panel);
 	padding-top: 4px;
+}
+
+.info-box {
+    width: 50%;
+    margin: var(--freq-spacing-2x-large) auto;
+    padding: var(--freq-spacing-large) var(--freq-spacing-x-large);
+    background-color: var(--freq-color-info-box-background);
+    border: var(--freq-color-background-badge);
+    gap: 0;
+    text-align: center;
+    font-size: var(--freq-font-size-large)
 }
 
 /*
@@ -280,6 +291,29 @@ button.double-border-top:active > *   {
 	border-color: white;
 }
 
+/* Buttons layout */
+
+.buttons-group {
+    display: flex;
+    flex-direction: row;
+    margin-left: auto;
+    margin-right: 4px;
+    gap: var(--freq-spacer-gap-half);
+}
+.buttons-group-icon {
+    display: flex;
+    height: 11px;
+    align-items: center;
+}
+
+.panel-button-buffer {
+	display: flex;
+	background-color: var(--freq-background-grid-fallback);
+	align-items: center;
+	justify-content: center;
+	height: 100px;
+}
+
 /* Nav */
 
 nav {
@@ -312,6 +346,11 @@ nav button:active {
 	background: var(--freq-color-button-lens-active);
 	color: var(--freq-color-text-dark);
 }
+
+nav img {
+    max-height: 20px;
+    margin-right: var(--freq-spacing-small);
+  }
 
 /*
 //

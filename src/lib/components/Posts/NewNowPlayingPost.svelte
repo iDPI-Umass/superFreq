@@ -8,7 +8,7 @@
 
     import { Tabs } from "bits-ui";
 
-    export let form: ActionData
+    export let form: ActionData | null = null
     let addedItem: any
     let newItemAdded: boolean
     let type: string
@@ -410,7 +410,7 @@
         display: flex;
         flex-direction: column;
         width: calc( 0.75 * var(--freq-max-width-primary));
-        margin: var(--freq-spacing-large) var(--freq-spacing-x-large);
+        margin: var(--freq-spacing-large) auto;
         border: var(--freq-border-panel);
     }
     .search {

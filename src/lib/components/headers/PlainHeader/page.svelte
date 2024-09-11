@@ -12,7 +12,7 @@
   export let sessionUserId: string | null
   export let username: string = profileObject?.username as string
   export let displayName: string = profileObject?.display_name as string
-  export let avatarUrl: string = profileObject?.avatarUrl as string
+  export let avatarUrl: string = profileObject?.avatar_url as string
 
   let accountMenuItems = [
     { url: `/${username}`, text: 'profile' },
@@ -32,6 +32,7 @@
     <a class="logo" href="/">
       <img alt="Freq" src={logo} />
     </a>
+
     <nav>
       {#if sessionUserId}
       <a href="/feed">
@@ -123,30 +124,27 @@
   
 <style>
   .grid-background {
+    width: 100vw;
     background: var(--freq-grid-dark-background);
   }
   header {
     display: flex;
     flex-direction: row;
-    max-width: 1000px;
+    max-width: var(--freq-desktop-width);
     padding: 2vh 2vw;
     font-family: "Krona_One", sans-serif;
     color: #8091A3;
     gap: 0.25em;
     align-items: center;
     justify-content: space-between;
-}
+  }
   img {
       position: sticky;
       height: 46px; 
       width: auto;
       margin: auto 1vw;
   }
-  nav { 
-      display: flex;
-  }
-  nav img {
-    max-height: 20px;
-    margin-right: var(--freq-spacing-small);
+  nav {
+    margin-right: 10%;
   }
   </style>

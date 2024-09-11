@@ -38,7 +38,6 @@ export const actions = {
             'username': username,
             'display_name': displayName,
             'avatar_url': avatarUrl,
-            'website': website
           })
 
 

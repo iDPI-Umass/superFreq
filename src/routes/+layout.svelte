@@ -6,6 +6,9 @@
 	import "$lib/styles/media-grid-list.css";
 	import "$lib/styles/metadata-formatting.css";
 	import "$lib/styles/posts.css";
+	import "$lib/styles/profile.css";
+	import "$lib/styles/about.css";
+	import "$lib/styles/feed.css";
 
 	import { goto, invalidate } from '$app/navigation';
 	import { onMount, onDestroy } from 'svelte';
@@ -61,6 +64,6 @@
 
 <div class="double-border-full-vw"></div>
 <body>
-		<slot />
+	<slot />
 </body>
 <!-- <Footer /> -->

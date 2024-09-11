@@ -1,8 +1,9 @@
 <script lang="ts">
     import type { PageData, ActionData } from './$types'
     import { enhance } from '$app/forms'
-    import decoration from "$lib/assets/images/feed-item-decoration.svg";
-	import PanelHeader from '$lib/components/PanelHeader.svelte';
+    import decoration from "$lib/assets/images/feed-item-decoration.svg"
+	import PanelHeader from '$lib/components/PanelHeader.svelte'
+    import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
 
     export let data: PageData
     export let form: ActionData
@@ -10,9 +11,6 @@
     $: ({ feedData, remaining, totalRowCount, timestampStart, timestampEnd, batchSize, options } = data)
 
     const feedItems = feedData
-
-    console.log(remaining, totalRowCount)
-    console.log(options)
 </script>
 
 <svelte:head>
@@ -21,7 +19,7 @@
 	</title>
 </svelte:head>
 
-<div class="panel">
+<div class="feed-panel">
     <PanelHeader>
         feed
     </PanelHeader>
@@ -29,36 +27,28 @@
         <p>Nothing in your feed? Try following some more <a href="/users">users</a> and <a href="/collections" >collections</a>.</p>
     {/if}
     {#each (form?.feedItems ?? feedItems) as item}
-        {#if Object.keys(item).includes( 'now_playing_post_id' )}
-            <div class="feed-item">        
-                <a href={`/posts/${item.username}/now-playing/${item.feed_item_timestamp.toISOString()}`}>
-                    <div class="feed-item-user-data">
-                        <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
-                        {item.display_name}
-                        is Now Playing: 
-                    </div>
-                    <div class="feed-item-row">
-                        <img class="decoration" src={decoration} alt="decoration" />
-                        <div class="feed-item-now-playing">
-        
-                            <div class="feed-item-metadata">
-                                <span class="feed-item-music-info">
-                                    {item.release_group_name ?? item.recording_name ?? item.episode_title} by {item.artist_name}
-                                </span>
-                            </div>
-                            <p class="feed-item-text">
-        
-                                {item.text}
-                            </p>
-                        </div>
-                    </div>
-
-                </a>
+    <div class="feed-item">
+        {#if Object.keys(item).includes( 'now_playing_post_id' )}      
+            <a href={`/posts/${item.username}/now-playing/${item.feed_item_timestamp.toISOString()}`}>
+                <div class="feed-item-user-data">
+                    <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
+                    {item.display_name}
+                    posted: 
+                </div>
+            </a>
+            <div class="feed-item-row">
+                <img class="feed-item-ornament" src={decoration} alt="decoration" />
+                <div class="feed-item-now-playing">
+                    <NowPlayingPost
+                        post={item}
+                        mode="feed"
+                    ></NowPlayingPost>
+                </div>
             </div>
         {:else if Object.keys(item).includes( 'comment_id' )}
             <a href={`/posts/${item.original_poster_username}/now-playing/${item.feed_item_timestamp.toISOString()}`}>
                 <div class="feed-item-one-liner">
-                    <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
+                    <img csrc={item.avatar_url} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
                     {item.display_name} commented on {item.original_poster_display_name}'s post
                 </div>
             </a>
@@ -81,23 +71,19 @@
                 </div>
             </a>
         {:else if Object.keys(item).includes( 'collection_edit_id' )}
-            <div class="feed-item">
-                <a href={`/collection/${item.collection_id}`}>
-                    <div class="feed-item-one-liner">
-                        <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
-                        {item.display_name}
-                        edited the collection: 
-                        <span class="feed-item-subject">
-                            {item.title}
-                        </span>
-                    </div>
-                </a>
-            </div>
+            <a href={`/collection/${item.collection_id}`}>
+                <div class="feed-item-one-liner">
+                    <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
+                    {item.display_name}
+                    edited the collection: 
+                    <span class="feed-item-subject">
+                        {item.title}
+                    </span>
+                </div>
+            </a>
         {/if}
+        </div>
     {/each}
-</div>
-
-<div class="feed-panel">
     <form method="POST" action="?/loadMore" use:enhance>
         <input
             type="hidden"
@@ -146,11 +132,17 @@
     </form>
 </div>
 
+
+
+
 <style>
-    .decoration {
-        max-width: 30px;
-        margin-top: -95px;
-        margin-left: calc(var(--freq-spacing-x-large
-        ) * 0.94);
+    form {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin: var(--freq-height-spacer-half) auto;
+    }
+    button {
+        margin: 0 auto;
     }
 </style>

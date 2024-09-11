@@ -68,8 +68,9 @@ html.freq-font-arial {
 
 /* Body sizing and breakpoints */
 html {
-    --freq-desktop-width: 1600px;
-    --freq-table-width: 700px;
+    --freq-desktop-width: 1500px;
+    --freq-laptop-width: 1000px;
+    --freq-tablet-width: 770px;
     --freq-mobile-width: 400px;
 }
 

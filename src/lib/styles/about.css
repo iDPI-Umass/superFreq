@@ -1,0 +1,33 @@
+.about-text {
+    padding: var(--freq-height-spacer-quarter) var(--freq-width-spacer);
+    background-color: var(--freq-color-background-badge);
+}
+
+.about-text p {
+    font-size: var(--freq-font-size-medium);
+    color: var(--freq-color-reading-text);
+}
+
+.section-link-box {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    margin: var(--freq-height-spacer-quarter) 0;
+    padding: var(--freq-spacing-small) var(--freq-spacing-medium);
+    background-color: var(--freq-color-panel-background);
+    border: var(--freq-border-mellow);
+}
+
+.section-link-box ul {
+    margin-right: var(--freq-width-spacer);
+    line-height: var(--freq-line-height-dense)
+}
+
+.section-link-box ul li::marker {
+    color: var(--freq-color-primary);
+}
+
+.section-link-box a {
+    color: var(--freq-color-primary);
+    font-size: var(--freq-font-size-medium)
+}
