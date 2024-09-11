@@ -171,7 +171,7 @@
     {#key collectionItems?.length}
         <GridList 
             bind:collectionContents={collectionItems}
-            bind:deletedItems={deletedtems}
+            bind:deletedItems={deletedItems}
             collectionReturned={itemAdded}
             collectionType={collectionType}
             layout="list"
