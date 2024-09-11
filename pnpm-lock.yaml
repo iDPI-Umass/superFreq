@@ -23,9 +23,9 @@ importers:
       '@sveltejs/adapter-vercel':
         specifier: ^5.4.3
         version: 5.4.3(@sveltejs/kit@2.5.26(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.4(@types/node@22.5.4)))(svelte@4.2.19)(vite@5.4.4(@types/node@22.5.4)))
-      bits-ui:
-        specifier: ^0.21.13
-        version: 0.21.13(svelte@4.2.19)
+      # bits-ui:
+      #   specifier: ^0.21.13
+      #   version: 0.21.13(svelte@4.2.19)
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
