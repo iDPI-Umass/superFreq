@@ -285,8 +285,8 @@ export const updateSessionProfile = async function ( sessionUserId: string, prof
             'username': profileData?.username,
             'display_name': profileData?.displayName,
             'website': profileData?.website,
-            'avatar_mbid': profileData?.avatarMbid,
-            'avatar_url': profileData?.avatarUrl,
+            'avatar_mbid': profileData?.avatar_mbid,
+            'avatar_url': profileData?.avatar_url,
             'about': profileData?.about,
         }
 
@@ -295,8 +295,8 @@ export const updateSessionProfile = async function ( sessionUserId: string, prof
         .set({
             display_name: profileData?.displayName,
             website: profileData?.website,
-            avatar_mbid: profileData?.avatarMbid,
-            avatar_url: profileData?.avatarUrl,
+            avatar_mbid: profileData?.avatar_mbid,
+            avatar_url: profileData?.avatar_url,
             updated_at: timestampISO,
             about: profileData?.about,
             changelog: changelog

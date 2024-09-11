@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { DropdownMenu } from "bits-ui";
+  import { goto } from "$app/navigation"
+  import { DropdownMenu } from "bits-ui"
   import ChevronDown from 'lucide-svelte/icons/chevron-down';
   import logo from "$lib/assets/images/logo/freq-logo-dark.svg";
   import { profileStoresObject } from "src/lib/stores";
@@ -26,14 +27,13 @@
   <title>Freq</title>
 </svelte:head>
 
-
 <div class="grid-background">
   <header>
     <a class="logo" href="/">
       <img alt="Freq" src={logo} />
     </a>
 
-    <nav>
+    <nav class="wide">
       {#if sessionUserId}
       <a href="/feed">
         <button>
@@ -118,12 +118,86 @@
         </a>
       {/if}
     </nav>
+    <nav class="narrow">
+      {#if sessionUserId}
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger>
+          explore
+          <ChevronDown></ChevronDown>
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Content>
+            <DropdownMenu.Item href={"/feed"}>
+              feed
+            </DropdownMenu.Item>
+            <DropdownMenu.Item href={"/posts/now-playing/new"}>
+              new post
+            </DropdownMenu.Item>
+            <DropdownMenu.Item href={"/collection/new"}>
+              new collection
+            </DropdownMenu.Item>
+            <DropdownMenu.Item href={"/about"}>
+              about
+            </DropdownMenu.Item>
+            <DropdownMenu.Item href={"/collections"}>
+              discover collections
+            </DropdownMenu.Item>
+            <DropdownMenu.Item href={"/users"}>
+              discover users
+            </DropdownMenu.Item>
+        </DropdownMenu.Content>
+      </DropdownMenu.Root>
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger>
+          <img src={avatarUrl} alt="{displayName}'s avatar" />
+          {displayName} 
+          <ChevronDown></ChevronDown>
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Content>
+          <DropdownMenu.Item href={`/user/${username}`}>
+            profile
+          </DropdownMenu.Item>
+          <DropdownMenu.Item href={"/account"}>
+            account
+          </DropdownMenu.Item>
+          <DropdownMenu.Item href={"/sign-out"}>
+            sign out
+          </DropdownMenu.Item>
+        </DropdownMenu.Content>
+      </DropdownMenu.Root>
+      {:else}
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger>
+            Explore
+            <ChevronDown></ChevronDown>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content>
+            <DropdownMenu.Item href={"/about"}>
+              About
+            </DropdownMenu.Item>
+            <DropdownMenu.Item href={"/collections"}>
+              Collections
+            </DropdownMenu.Item>
+            <DropdownMenu.Item href={"/posts"}>
+              Posts
+            </DropdownMenu.Item>
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
+        <a href="/welcome">
+          <button>
+            log in/sign up
+          </button>
+        </a>
+      {/if}
+    </nav>
   </header>
+  <button class="standard" on:click={() => goto('https://docs.google.com/forms/d/e/1FAIpQLSfKj4FlApgfM-Kc4rYwAxNQslBMS9rk-DdfowMa5qcHlRYhew/viewform?usp=sf_link')}>report a bug</button>
 </div>
 
   
 <style>
   .grid-background {
+    display: flex;
+    flex-direction: column;
     width: 100vw;
     background: var(--freq-grid-dark-background);
   }
@@ -146,5 +220,19 @@
   }
   nav {
     margin-right: 10%;
+  }
+  nav.narrow {
+    display: none
+  }
+  button.standard {
+    margin: auto auto var(--freq-spacing-large) auto;
+  }
+  @media screen and (max-width: 770px) {
+    nav.wide {
+      display: none;
+    }
+    nav.narrow {
+      display: flex;
+    }
   }
   </style>

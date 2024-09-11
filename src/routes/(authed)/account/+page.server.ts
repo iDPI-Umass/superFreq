@@ -24,15 +24,22 @@ export const actions = {
     const username = formData.get('username') as string
     const website = formData.get('website') as string
     const avatarMbid = formData.get('avatarMbid') as string
+    const newAvatarMbid = formData.get('newAvatarMbid') as string
     const avatarUrl = formData.get('avatarUrl') as string
+    const newAvatarUrl = formData.get('newAvatarUrl') as string
     const about = formData.get('about') as string
 
-    console.log(avatarUrl)
+    const avatar = newAvatarUrl ? newAvatarUrl : avatarUrl
+    const mbid = newAvatarMbid ? newAvatarMbid : avatarMbid
+
+    console.log('avatar ' + avatar)
+    console.log('old avatar ' + avatarUrl)
+    console.log('new avatar ' + newAvatarUrl)
 
     profileStoresObject.set({
       'username': username,
       'display_name': displayName,
-      'avatar_url': avatarUrl,
+      'avatar_url': avatar,
       'website': website
     })
 
@@ -41,8 +48,8 @@ export const actions = {
       display_name: displayName,
       username: username,
       website: website,
-      avatar_mbid: avatarMbid,
-      avatar_url: avatarUrl,
+      avatar_mbid: mbid,
+      avatar_url: avatar,
       updated_at: new Date(),
       about: about,
     } as App.RowData

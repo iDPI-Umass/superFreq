@@ -26,6 +26,7 @@
 	export let limit = '25'
 	export let query = ''
 	export let requestSubmit = false
+	export let avatarSearch = false
 
 	let showModal = false
 
@@ -37,8 +38,7 @@
 	let mbData: any
 	let searchComplete: boolean
 	async function mbSearch() {
-		console.log(searchCategory, query)
-		const apiCategory = categoriesTable[`${searchCategory}`]
+		const apiCategory = categoriesTable[`${searchCategory}`] as string
 
 		let apiString = "https://musicbrainz.org/ws/2/"
 		apiString = apiString.concat(apiCategory)
@@ -58,6 +58,18 @@
         const mbObjectKey = apiCategory.concat('s')
 		mbData = searchResults[mbObjectKey]
 		
+		// if ( avatarSearch ) {
+		// 	for ( const item of mbData ) {
+		// 		console.log(item)
+		// 		const index = mbData.indexOf(item)
+		// 		console.log(index)
+		// 		console.log(mbData[index])
+		// 		const coverArt = await getCoverArt(item["id"])
+		// 		mbData[index]['img_url'] = coverArt
+		// 		console.log(mbData.index)
+		// 	}
+		// }
+
 		searchComplete =  true
 		showModal = true
 		return {
@@ -76,8 +88,6 @@
 		let releases = await res.json();
 		releases = releases["releases"];
 
-		console.log(releases)
-
         for ( const release of releases ) {
 			if ( releaseDate == release["date"] ) {
 				if ( release["label-info"].length > 0 ) {
@@ -94,7 +104,6 @@
     async function getCoverArt ( release_group_mbid: string ) {
         const endpoint = `http://coverartarchive.org/release-group/${release_group_mbid}/front`;
         const res = await fetch(endpoint);
-        console.log(res);
         const coverArtUrl = await res["url"];
 
         return  coverArtUrl;
@@ -321,6 +330,9 @@
 							({item["disambiguation"] ?? item["releases"][0]["release-group"]["title"]})
 						{/if}
 						</p>
+						<!-- {#if avatarSearch}
+							<img class="thumbnail" src={item["img_url"]} />
+						{/if} -->
 					</li>
 					<hr />
 					{/each}
@@ -357,7 +369,7 @@
         display: flex;
         flex-direction: row;
 		height: fit-content;
-		width: auto;
+		width: inherit;
         gap: 0;
         align-items: center;
     }
@@ -391,4 +403,15 @@
 	li p {
 		margin: 0 calc( var(--freq-inline-gap) * 2 );
 	}
+	img {
+		width: var(--freq-image-thumbnail-small);
+		margin-right: 1%;
+	}
+
+	@media screen and (max-width: 600px) {
+        .search-bar * {
+            flex-direction: column;
+			align-items: start;
+        }
+    }
 </style>

@@ -6,7 +6,7 @@ html {
     --freq-color-border-panel: #454C6C;
     --freq-color-panel-focus: #454C6C;
     --freq-border-panel: 1px solid #454C6C;
-    --freq-color-panel-light: #ebeef4;
+    --freq-border-panel-light: 1px solid #ebeef4;
     --freq-border-hr: 1px solid #9EACC8;
     --freq-border-mellow: 1px solid #5e6678;
     --freq-color-border-hr: #9EACC8;

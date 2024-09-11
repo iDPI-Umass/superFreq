@@ -68,18 +68,18 @@
                 </div>
                 <div class="profile-buttons-group">
                 {#if profileUserData?.id == sessionUserId }
-                    <button class="double-border-top">
+                    <button class="double-border-top" on:click={() => goto('/account')}>
                         <div class="inner-border-condensed">
                             edit profile
                         </div>
                     </button>
-                    <button class="double-border-top">
+                    <!-- <button class="double-border-top">
                         <div class="inner-border-condensed">
                             <div class="buttons-group-icon">
                                 <Settings size="16"></Settings>
                             </div>
                         </div>
-                    </button>
+                    </button> -->
                 {:else}
                     <form
                         method="POST"

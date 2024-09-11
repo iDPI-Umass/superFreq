@@ -41,7 +41,9 @@
 			x
 		</button>
 	</div>
-    <slot name="message" />
+	<p class="notification">
+		<slot name="message" />
+	</p>
 </dialog>
 
 <svelte:window

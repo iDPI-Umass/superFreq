@@ -40,7 +40,6 @@
 			class="form-column"
 			method="post"
 			action="?/update"
-			use:enhance
 			bind:this={profileForm}
 		>
 			<div class="label-group">
@@ -133,13 +132,25 @@
 				type="hidden" 
 				name="avatarUrl" 
 				id="avatarUrl" 
-				value={avatarItem?.img_url ?? avatarUrl} 
+				value={avatarUrl} 
+			/>
+			<input 
+				type="hidden" 
+				name="newAvatarUrl" 
+				id="newAvatarUrl" 
+				value={avatarItem?.img_url} 
 			/>
 			<input 
 				type="hidden" 
 				name="avatarMbid" 
 				id="avatarMbid" 
 				value={avatarMbid} 
+			/>
+			<input 
+				type="hidden" 
+				name="newAvatarMbid" 
+				id="newAvatarMbid" 
+				value={avatarItem?.release_group_mbid} 
 			/>
 			<input 
 				type="hidden" 
@@ -166,6 +177,8 @@
 					bind:addedItems={avatarItem}
 					bind:newItemAdded={newItemAdded}
 					mode="single"
+					limit="10"
+					avatarSearch={true}
 				>
 				</MusicBrainzSearch>
 			</div>

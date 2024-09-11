@@ -7,6 +7,7 @@
     import GridList from '$lib/components/GridList.svelte'
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
     import Tooltip from '$lib/components/Tooltip.svelte'
+	import InfoBox from 'src/lib/components/InfoBox.svelte';
 
 	export let data
     let { sessionUserId } = data
@@ -46,6 +47,9 @@
 	</title>
 </svelte:head>
 
+<InfoBox>
+    A collection is a list of albums, tracks, or artists. Among many other things, you can make a colleciton to keep track of music you want to listen to or create a resource for other people who might want to learn more about music you love.
+</InfoBox>
 
 <div class="panel">
     <PanelHeader>
@@ -235,5 +239,10 @@
         border-bottom: 1px solid var(--freq-color-border-panel);
         padding: var(--freq-height-spacer-half) var(--freq-width-spacer);
 		margin: var(--freq-spacing-3x-small) 0;
+    }
+    @media screen and (max-width: 600px) {
+        form.horizontal {
+            flex-direction: column;
+        }
     }
 </style>

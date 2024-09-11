@@ -221,4 +221,9 @@
         padding: var(--freq-height-spacer-half) var(--freq-width-spacer);
 		margin: var(--freq-spacing-3x-small) 0;
     }
+    @media screen and (max-width: 600px) {
+        form.horizontal {
+            flex-direction: column;
+        }
+    }
 </style>

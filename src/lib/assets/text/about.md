@@ -137,9 +137,11 @@ Should Freq prove relevant to enough users, and should the project continue past
 Known Bugs
 </h1>
 
-- Lots of layout and design stuff is still pretty weird
+- Layout/design weirdness
+    - Color in drop down menus
+    - Not all pages are currently responsive to mobile sizing
 - For a few reasons, cover art doesn’t always load
-- There are probably types. Please report those.
+- There are probably typos. Please report those.
 
 Notice other bugs? [Fill out this easy Google Form.](https://docs.google.com/forms/d/e/1FAIpQLSfKj4FlApgfM-Kc4rYwAxNQslBMS9rk-DdfowMa5qcHlRYhew/viewform?usp=sf_link)
 
