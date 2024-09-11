@@ -41,11 +41,13 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             followingUserIds.push(id)
         }
 
+        console.log(followingUserIds)
+
         /* count and fetch recent Now Playing posts by followed users */
         let postsTotal = 0
         let posts: App.RowData = []
 
-        if ( feedOptions.includes('nowPlayingPosts')) {
+        if ( feedOptions.includes('nowPlayingPosts') && followingUserIds.length > 0) {
             const countFollowingUsersPosts = await trx
             .selectFrom('posts')
             .select((eb) => eb.fn.count<number>('id').as('posts_count'))
@@ -92,7 +94,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
         let sessionUserPostsComments: App.RowData = []
         let comments: App.RowData = []
 
-        if ( feedOptions.includes('comments')) {
+        if ( feedOptions.includes('comments') && followingUserIds.length > 0) {
 
             const countSessionUserPostComments = await trx
             .selectFrom('posts as comments')
@@ -174,7 +176,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
         let sessionUserPostsReactions: App.RowData = []
         let reactions: App.RowData = []
 
-        if ( feedOptions.includes('reactions')) {
+        if ( feedOptions.includes('reactions') && followingUserIds.length > 0) {
 
             const countSessionUserPostsReactions = await trx
             .selectFrom('post_reactions')
@@ -257,7 +259,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
         let sessionUserCollectionFollows: App.RowData = []
         let collectionFollows: App.RowData = []
 
-        if ( feedOptions.includes('collectionFollows')) {
+        if ( feedOptions.includes('collectionFollows') && followingUserIds.length > 0) {
 
             const countSessionUserCollectionsSocialTotal = await trx
             .selectFrom('collections_social')
@@ -343,7 +345,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
         let collectionEditsTotal = 0
         let collectionEdits: App.RowData = []
 
-        if (feedOptions.includes('collectionEdits')) {
+        if (feedOptions.includes('collectionEdits') && followingUserIds.length > 0) {
             
 
             const countFollowingCollectionsEdits = await trx
