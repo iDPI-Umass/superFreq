@@ -1,4 +1,4 @@
-lockfileVersion: '9.10.0'
+lockfileVersion: '9.0'
 
 settings:
   autoInstallPeers: true
@@ -38,6 +38,9 @@ importers:
       lucide-svelte:
         specifier: ^0.377.0
         version: 0.377.0(svelte@4.2.19)
+      n:
+        specifier: ^10.0.0
+        version: 10.0.0
       pg:
         specifier: ^8.12.0
         version: 8.12.0
@@ -1460,6 +1463,11 @@ packages:
 
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
+
+  n@10.0.0:
+    resolution: {integrity: sha512-DUo92Hiufg66paQRSsUuXrZk/0NVt28iuzUZxdwVtCRaS9VEYadduJjSYmsjYKgkpdV7sT9Mn2Epp9YfsjuVuw==}
+    os: ['!win32']
+    hasBin: true
 
   nanoid@3.3.7:
     resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
@@ -3617,6 +3625,8 @@ snapshots:
   mrmime@2.0.0: {}
 
   ms@2.1.3: {}
+
+  n@10.0.0: {}
 
   nanoid@3.3.7: {}
 
