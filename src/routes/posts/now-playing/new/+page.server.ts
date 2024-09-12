@@ -29,7 +29,6 @@ export const actions = {
         const timestampISO: Date = parseISO(timestampISOString)
 
         const data = await request.formData()
-        const username = data.get('username') as string
 		const listenUrl = data.get('listen-url') as string
         const mbid = data.get('mbid') as string
         const mbidType = data.get('item-type') as string
@@ -56,9 +55,8 @@ export const actions = {
             embed_account: embedInfo.account
         }
 
-        const newPost = await insertPost( postData )
-        const createdAt = newPost?.created_at ?? null
-        const timestampSlug = createdAt?.valueOf().toString()
+        const { username, createdAt } = await insertPost( postData )
+        const timestampSlug = createdAt?.toISOString()
 
         if ( !timestampSlug ) {
             return { sucess: false }
@@ -75,7 +73,6 @@ export const actions = {
         const timestampISO: Date = parseISO(timestampISOString)
 
 		const data = await request.formData()
-        const username = data.get('username') as string
         const listenUrl = data.get('listen-url') as string
         const mbid = data.get('mbid') as string
         const itemType = data.get('item-type') as string
@@ -83,6 +80,8 @@ export const actions = {
         const albumName = data.get('album-name') as string
         const recordingName = data.get('track-name') as string
         const postText = data.get('post-text') as string
+
+        console.log(postText)
 
         const embedInfo = await getListenUrlData(listenUrl)
 
@@ -104,9 +103,8 @@ export const actions = {
             embed_account: embedInfo.account
         }
 
-        const newPost = await insertPost( postData )
-        const createdAt = newPost?.created_at ?? null
-        const timestampSlug = createdAt?.valueOf().toString()
+        const { username, createdAt } = await insertPost( postData )
+        const timestampSlug = createdAt?.toISOString()
 
         if ( !timestampSlug ) {
             return { sucess: false }
@@ -123,7 +121,6 @@ export const actions = {
         const timestampISO: Date = parseISO(timestampISOString)
 
 		const data = await request.formData()
-        const username = data.get('username') as string
         const listenUrl = data.get('listen-url') as string
         const mbid = data.get('mbid') as string
         const itemType = data.get('item-type') as string
@@ -152,9 +149,8 @@ export const actions = {
             embed_account: embedInfo.account
         }
 
-        const newPost = await insertPost( postData )
-        const createdAt = newPost?.created_at ?? null
-        const timestampSlug = createdAt?.valueOf().toString()
+        const { username, createdAt } = await insertPost( postData )
+        const timestampSlug = createdAt?.toISOString()
 
         if ( !timestampSlug ) {
             return { sucess: false }

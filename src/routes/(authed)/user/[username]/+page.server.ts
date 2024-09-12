@@ -25,6 +25,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     }
 
     const feedItems = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
+    console.log(feedItems)
     const selectPosts = await selectUserPostsSample( sessionUserId, profileUsername, batchSize )
 
     const posts = selectPosts?.posts as App.RowData[]
