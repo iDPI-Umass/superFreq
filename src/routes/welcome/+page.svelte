@@ -54,6 +54,7 @@
     </div>
 </div>
 
+{#if form?.permission == true }
 <NotificationModal
     showModal={form?.showModal ?? false}
 >
@@ -64,6 +65,18 @@
         <p>{ form?.success ? 'Check your inbox!' : 'Something went wrong. Please try again.' }</p>
     </span>
 </NotificationModal>
+{:else if form?.permission == false}
+<NotificationModal
+    showModal={form?.showModal ?? false}
+>
+    <span slot="header-text">
+        Not approved
+    </span>
+    <span slot="message">
+        <p>You are not yet approved to sign up for Freq. You can <a href="https://forms.gle/sGF4yjkubeorrBRH9">request an invite.</a></p>
+    </span>
+</NotificationModal>
+{/if}
 
 <div class="panel-medium">
     <div class="post-body">
