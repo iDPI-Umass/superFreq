@@ -947,6 +947,14 @@ export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: s
             const collectionId = insertCollectionInfo?.collection_id as string
 
             await trx
+                .updateTable('profiles')
+                .set({
+                    top_albums_collection_id: collectionId,
+                })
+                .where('id', '=', sessionUserId)
+                .executeTakeFirst()
+
+            await trx
                 .insertInto('collections_updates')
                 .values({
                     collection_id: collectionId,

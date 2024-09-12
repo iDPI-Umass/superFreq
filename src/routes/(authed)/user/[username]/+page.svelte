@@ -29,6 +29,8 @@
     let nowPlayingPostsCount: number | null = null
     let topAlbumsCollection: App.RowData | null = null
 
+    console.log(topAlbumsCollection)
+
     if ( permission ) {
         collectionCount = profileData['collectionCount'][0].count as number
         collectionFollowingCount = profileData['collectionFollowingCount'][0].count as number
