@@ -104,7 +104,9 @@
     async function getCoverArt ( release_group_mbid: string ) {
         const endpoint = `http://coverartarchive.org/release-group/${release_group_mbid}/front`;
         const res = await fetch(endpoint);
-        const coverArtUrl = await res["url"];
+		console.log(res)
+        const coverArtUrl = res["url"];
+		console.log(coverArtUrl)
 
         return  coverArtUrl;
     }
