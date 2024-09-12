@@ -8,7 +8,7 @@
 
     import { Tabs } from "bits-ui";
 
-    export let form: ActionData | null = null
+    // export let form: ActionData | null = null
     let addedItem: any
     let newItemAdded: boolean
     let type: string
@@ -51,12 +51,6 @@
                 </Tooltip>
             </div>
             <form method="POST" action="?/postAlbum" name="album" class="vertical" use:enhance>
-                <input
-                    id="username"
-                    name="username"
-                    type="hidden"
-                    value={username}
-                />
                 <input
                     id="item-type" 
                     name="item-type" 
@@ -172,13 +166,7 @@
                     Search for a track to autofill this form.
                 </Tooltip>
             </div>
-            <form name="track" class="vertical">
-                <input
-                    id="username"
-                    name="username"
-                    type="hidden"
-                    value={username}
-                />
+            <form method="POST"  name="track" class="vertical" action="?/postTrack" use:enhance>
                 <input
                     id="mbid-type" 
                     name="mbid-type" 
@@ -199,7 +187,7 @@
                         listen link
                     </label>
                     <Tooltip>
-                        A link from Bandcamp, Soundcloud, Mixcloud, or YouTube can be embedded in your post. 
+                        A link from Bandcamp, Soundcloud, or YouTube can be embedded in your post. 
                     </Tooltip>
                 </div>
                 <input 
@@ -278,12 +266,12 @@
                 <textarea
                     cols="1"
                     rows="5"
-                    id="postText"
-                    name="postText"
+                    id="post-text"
+                    name="post-text"
                     spellcheck=true 
                     placeholder="Some prompts: What do you like about this? Does it remind you of something? Are you looking for more like it?"
                 />
-                <button class="standard" type="submit">
+                <button class="standard" formaction="?/postTrack" type="submit">
                     submit
                 </button>
             </form>
@@ -297,13 +285,7 @@
                 bind:newItemAdded={newItemAdded}
                 mode="single"
             ></MusicBrainzSearch> -->
-            <form name="mix" class="vertical">
-                <input
-                    id="username"
-                    name="username"
-                    type="hidden"
-                    value={username}
-                />
+            <form method="POST" name="mix" class="vertical" action="?/postMix" use:enhance>
                 <input
                     id="item-type" 
                     name="item-type" 
@@ -396,7 +378,7 @@
                     spellcheck=true 
                     placeholder="Some prompts: What do you like about this? Does it remind you of something? Are you looking for more like it?"
                 />
-                <button class="standard" type="submit">
+                <button class="standard" formaction="?/postMix" type="submit">
                     submit
                 </button>
             </form>

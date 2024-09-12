@@ -2,8 +2,8 @@
 	import type { ActionData } from './$types'
     import NewNowPlayingPost from '$lib/components/Posts/NewNowPlayingPost.svelte'
 	
-	export let form: ActionData
-	$: form
+	// export let form: ActionData
+	// $: form
 </script>
 
 <svelte:head>
@@ -14,5 +14,4 @@
 
 
 <NewNowPlayingPost
-	form={form}
 ></NewNowPlayingPost>

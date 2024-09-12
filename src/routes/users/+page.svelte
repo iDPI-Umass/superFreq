@@ -17,8 +17,8 @@
 {#each users as user}
 <ul>
     <li>
-        <a href="/user/${user.username}">
-            <img src={user.avatar_url} alt="${user.display_name}'s avatar" class="avatar" />
+        <a href="/user/{user.username}">
+            <img src={user.avatar_url} alt="{user.display_name}'s avatar" class="avatar" />
             <span class="display-name">{user.display_name}</span>
         </a>
     </li>

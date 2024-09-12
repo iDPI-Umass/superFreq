@@ -74,7 +74,10 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'post.episode_title as episode_title', 
                 'post.show_title as show_title', 
                 'post.listen_url as listen_url', 
-                'post.created_at as feed_item_timestamp'
+                'post.created_at as feed_item_timestamp',
+                'post.embed_id as embed_id',
+                'post.embed_source as embed_source',
+                'post.embed_account as embed_account'
             ])
             .where('user_id', 'in', followingUserIds)
             .where('parent_post_id', 'is', null)

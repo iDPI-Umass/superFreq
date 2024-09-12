@@ -28,10 +28,6 @@
     {/each}
     </div>
 </div>
-<div class="post-panel">
-
-
-</div>
 
 <style>
     .posts-spacing {
