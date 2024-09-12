@@ -8,7 +8,6 @@ export const GET: RequestHandler = async ({ locals: { safeGetSession }}) => {
     const session = await safeGetSession()
 
     const sessionUserId = session.user?.id as string
-    console.log(sessionUserId)
 
     const select = await db
     .selectFrom("profiles")
@@ -22,7 +21,6 @@ export const GET: RequestHandler = async ({ locals: { safeGetSession }}) => {
     const display_name = profile?.display_name ?? null
     const avatar_url = profile?.avatar_url ?? null
 
-    console.log(username)
     if ( userId && username ) {
       profileStoresObject.set({
         'username': username,

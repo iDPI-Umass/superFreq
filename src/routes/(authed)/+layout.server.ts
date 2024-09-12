@@ -7,7 +7,6 @@ export async function load ({ parent, locals: { safeGetSession }}) {
 
     const username = profile?.username ?? null
 
-    console.log(session)
     if ( !session ) {
         throw redirect(307, '/')
     }
