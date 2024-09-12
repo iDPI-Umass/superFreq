@@ -195,7 +195,7 @@
             top albums
         </PanelHeader>
         <div class="panel-button-buffer">
-            <button class="standard" on:click={() => goto(`./${username}/top-albums`)}>
+            <button class="standard" on:click={() => goto(`/user/top-albums`)}>
                 choose your top albums
             </button>
         </div>
