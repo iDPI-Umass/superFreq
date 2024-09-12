@@ -24,7 +24,9 @@
         feed
     </PanelHeader>
     {#if totalRowCount == 0}
+    <div class="feed-item-one-liner">
         <p>Nothing in your feed? Try following some more <a href="/users">users</a> and <a href="/collections" >collections</a>.</p>
+    </div>
     {/if}
     {#each (form?.feedItems ?? feedItems) as item}
     <div class="feed-item">
