@@ -173,8 +173,9 @@
 <div class="border-full-vw"></div>
 
 <div class="content">
+    {#if topAlbumsCollection?.length > 0}
     <div class="panel-medium">
-        {#if topAlbumsCollection?.length > 0}
+        
         <PanelHeader>
             top albums
             {#if profileUserData?.id == sessionUserId}
@@ -189,8 +190,9 @@
             mode="view"
         >
         </GridList>
-    
-        {:else if topAlbumsCollection?.length == 0 && profileUserData?.id == sessionUserId}
+    </div>
+    {:else if topAlbumsCollection?.length == 0 && profileUserData?.id == sessionUserId}
+    <div class="panel-medium">
         <PanelHeader>
             top albums
         </PanelHeader>
@@ -199,9 +201,9 @@
                 choose your top albums
             </button>
         </div>
-        {/if}
+       
     </div>
-    
+    {/if}
     {#if profileUserData?.id == sessionUserId}
         <NewNowPlayingPost></NewNowPlayingPost>
         <MiniFeed
