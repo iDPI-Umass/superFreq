@@ -594,6 +594,13 @@ dialog {
 	width: 50%;
 	text-decoration: none;
 }
+
+@media screen and (max-width: 600px) {
+	.panel {
+		width: 80%;
+	}
+}
+
 .dialog-header {
 	display: flex;
 	flex-direction: row;

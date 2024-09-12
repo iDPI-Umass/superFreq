@@ -3,7 +3,7 @@ import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ url, parent, locals: { safeGetSession } }) => {
   const session = await safeGetSession()
-  console.log(session.session)
+
   // if the user is already logged in, redirect to feed
   const { profile } = await parent()
   const username = profile.username as string ?? null

@@ -51,7 +51,6 @@
 			method="POST"
 			action="?/create"
 			use:enhance
-			bind:this={profileForm}
 		>
             <label 
                 class="text-label" 
@@ -104,8 +103,8 @@
 			<input 
 				class="text" 
 				type="text" 
-				name="displayName" 
-				id="displayName" 
+				name="display-name" 
+				id="display-name" 
 				bind:value={displayName} 
 				form="account-data"
                 required
@@ -187,6 +186,7 @@
 					class="double-border-top"
 					type="submit"
 					disabled={!( username && displayName )}
+					form="account-data"
 					formaction="?/create"
 					>
 					<div class="inner-border">
