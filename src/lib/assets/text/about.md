@@ -69,6 +69,7 @@ Right now, there are three things you can do on Freq.
 <hr />
 <h1 id="guidelines">
 Community guidelines
+
 </h1>
 
 
