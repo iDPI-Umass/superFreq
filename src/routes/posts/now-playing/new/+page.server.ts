@@ -4,11 +4,18 @@ import type { PageServerLoad, Actions, Posts } from './$types'
 import { insertPost } from '$lib/resources/backend-calls/posts'
 import { getListenUrlData } from '$lib/resources/parseData'
 
-export const load: PageServerLoad = async ({ locals: { safeGetSession}}) => {
+export const load: PageServerLoad = async ({ parent, locals: { safeGetSession}}) => {
     const session = await safeGetSession()
 
-    if (!session.session) {
-        throw redirect(303, '/')
+    const { profile } = await parent()
+
+    const username = profile?.username ?? null
+
+    if ( !session.session ) {
+        throw redirect(307, '/')
+    }
+    else if( session.session && !username ) {
+        throw redirect(307, '/account/create-profile')
     }
 }
 

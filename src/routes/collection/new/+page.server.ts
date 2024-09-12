@@ -3,12 +3,19 @@ import { parseISO } from "date-fns"
 import type { PageServerLoad, Actions } from './$types'
 import { insertCollection } from 'src/lib/resources/backend-calls/collections'
 
-export const load: PageServerLoad = async ({ locals: {safeGetSession} }) => {
+export const load: PageServerLoad = async ({ parent, locals: {safeGetSession} }) => {
   const session = await safeGetSession()
 
-  if (!session.session) {
-    throw redirect(303, '/')
-}
+  const { profile } = await parent()
+
+  const username = profile?.username ?? null
+
+  if ( !session.session ) {
+      throw redirect(307, '/')
+  }
+  else if( session.session && !username ) {
+      throw redirect(307, '/account/create-profile')
+  }
   
   const sessionUserId = session.user?.id
 
