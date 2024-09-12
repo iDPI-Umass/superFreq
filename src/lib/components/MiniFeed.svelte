@@ -12,8 +12,11 @@
         <a class="panel-header-link" href="/feed">feed</a>
     </PanelHeader>
     {#if feedItems.length == 0}
+    <div class="feed-item-one-liner">
         <p>Nothing in your feed? Try following some more <a href="/users">users</a> and <a href="/collections" >collections</a>.</p>
-    {/if}
+    </div>
+       
+    {:else}
     {#each feedItems as item}
     <div class="feed-item">
         {#if Object.keys(item).includes( 'now_playing_post_id' )}
@@ -79,7 +82,7 @@
             see more
         </button>
     </div>
-
+    {/if}
 </div>
 
 <style>
