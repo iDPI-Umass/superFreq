@@ -81,8 +81,6 @@ export const actions = {
         const recordingName = data.get('track-name') as string
         const postText = data.get('post-text') as string
 
-        console.log(postText)
-
         const embedInfo = await getListenUrlData(listenUrl)
 
         const postData: Posts = {
