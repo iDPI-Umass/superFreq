@@ -13,9 +13,6 @@ export const load: PageServerLoad = async ({ url, parent, locals: { safeGetSessi
   else if (session.session && !username) {
     throw redirect(303, `/account/create-profile`)
   }
-  else {
-    throw redirect(303, '/welcome')
-  }
 
   return { url: url.origin }
 }
