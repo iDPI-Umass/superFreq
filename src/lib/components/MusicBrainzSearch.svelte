@@ -102,13 +102,12 @@
 
     // API call to Cover Art Archive using releaseMbid returned by getLabel()
     async function getCoverArt ( release_group_mbid: string ) {
-        const endpoint = `http://coverartarchive.org/release-group/${release_group_mbid}/front`;
-        const res = await fetch(endpoint);
-		console.log(res)
-        const coverArtUrl = res["url"];
-		console.log(coverArtUrl)
+        const endpoint = `https://coverartarchive.org/release-group/${release_group_mbid}/front`;
 
-        return  coverArtUrl;
+		const res = await fetch(endpoint);
+		const coverArtUrl = res["url"]
+		return  coverArtUrl;
+
     }
 
     // adds item from MusicBrainz search results to collection editor
