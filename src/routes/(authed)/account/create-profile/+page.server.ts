@@ -1,6 +1,7 @@
 import type { PageServerLoad, Actions } from "../$types"
 import { profileStoresObject } from "$lib/stores"
 import { newSessionProfile } from "$lib/resources/backend-calls/users"
+import logo from "$lib/assets/images/logo/freq-logo-dark.svg";
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
     const session = await safeGetSession()
@@ -24,9 +25,9 @@ export const actions = {
 
         const profileData = {
             'username': username,
-            'display_name': displayName,
+            'display_name': displayName ?? username,
             'website': website,
-            'avatar_url': avatarUrl,
+            'avatar_url': avatarUrl ?? logo,
             'avatar_mbid': avatarMbid,
             'about': about,
         }
@@ -36,8 +37,8 @@ export const actions = {
 
         profileStoresObject.set({
             'username': username,
-            'display_name': displayName,
-            'avatar_url': avatarUrl,
+            'display_name': displayName ?? username,
+            'avatar_url': avatarUrl ?? logo,
           })
 
 
