@@ -482,8 +482,6 @@ export const insertPostFlag = async function ( sessionUserId: string, postId: st
 
 export const insertUserFlag = async function ( sessionUserId: string, profileUserId: string ) {
 
-    console.log( sessionUserId, profileUserId)
-
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
 
@@ -515,7 +513,6 @@ export const insertUserFlag = async function ( sessionUserId: string, profileUse
     .executeTakeFirst()
 
     const flag = await insertFlag
-    console.log(flag)
     return flag
 } 
 

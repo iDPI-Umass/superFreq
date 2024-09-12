@@ -539,7 +539,6 @@ textarea::placeholder {
 
 textarea:focus {
 	background: var(--freq-color-panel-light);
-	color: var(--freq-color-text-dark);
 }
 
 fieldset {

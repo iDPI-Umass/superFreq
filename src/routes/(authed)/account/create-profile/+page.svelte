@@ -28,8 +28,6 @@
     }
     let profileForm: any
 
-	console.log(form?.success)
-
 </script>
 
 <svelte:head>

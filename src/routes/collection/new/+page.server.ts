@@ -53,8 +53,7 @@ export const actions = {
     } as App.RowData
 
     const collectionId = await insertCollection(sessionUserId, collectionInfo, collectionItems)
- 
-    console.log(collectionId)
+
     if ( !collectionId ) {
       alert('update not successful') 
     }

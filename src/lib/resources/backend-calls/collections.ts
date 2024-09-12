@@ -629,7 +629,6 @@ export const insertCollection = async function ( sessionUserId: string, collecti
                 .execute()
         }
         else if ( collectionInfo["type"] == 'release_groups' ) {
-            console.log('collection type: release_groups')
             await trx
                 .insertInto('artists')
                 .values(artistsMetadata)
@@ -759,7 +758,6 @@ export const updateCollection = async function ( collectionInfo: App.RowData, co
                 .execute()
         }
         else if ( collectionInfo["type"] == 'release_groups' ) {
-            console.log('collection type: release_groups')
             await trx
                 .insertInto('artists')
                 .values(artistsMetadata)

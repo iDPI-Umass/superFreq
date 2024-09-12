@@ -70,7 +70,6 @@ export const actions = {
         const session = await safeGetSession()
         const sessionUserId = session?.user?.id as string
 
-        console.log(sessionUserId)
         const data = await request.formData()
         const profileUserId = data.get('profile-user-id') as string
 
