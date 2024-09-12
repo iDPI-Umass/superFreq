@@ -19,6 +19,8 @@
     export let editState = false
 
     let openState: boolean
+
+    console.log(reply)
 </script>
 
 <div class="comment-panel">    
