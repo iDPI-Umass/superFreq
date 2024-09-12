@@ -19,7 +19,6 @@ export const actions = {
 
         const embedInfo = await getListenUrlData(listenUrlString)
 
-        console.log(embedInfo)
         return { embedInfo, success: true }
     },
 	postAlbum: async ({ request, locals: { safeGetSession } }) => {

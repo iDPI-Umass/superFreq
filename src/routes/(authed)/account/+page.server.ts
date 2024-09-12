@@ -10,7 +10,6 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
   const sessionUserId = user?.id as string
   const profile = await selectSessionProfile( sessionUserId )
 
-  console.log(profile?.avatar_url)
   return { user, sessionUserId, profile }
 }
 
@@ -32,9 +31,6 @@ export const actions = {
     const avatar = newAvatarUrl ? newAvatarUrl : avatarUrl
     const mbid = newAvatarMbid ? newAvatarMbid : avatarMbid
 
-    console.log('avatar ' + avatar)
-    console.log('old avatar ' + avatarUrl)
-    console.log('new avatar ' + newAvatarUrl)
 
     profileStoresObject.set({
       'username': username,

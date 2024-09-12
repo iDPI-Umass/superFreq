@@ -198,13 +198,11 @@
 		newItemAdded = true
 		query = ""
 		searchComplete = false
-		console.log(addedItems)
 		return {newItemAdded, showModal, query, searchComplete}
 	}
 
 	// adds single item from MusicBrainz search results to whatever needs it
 	async function addSingleItem( item: any ) {
-		console.log(item)
 		let labelName: string | null = null
 		let labelMbid: string | null = null
 		if ( searchCategory == "artists" ) {
@@ -247,7 +245,6 @@
 			};
 		}
 		else if ( searchCategory == "recordings" ) {
-			console.log(item)
 			let remixerMbid: string | null = null;
 			if ( item["releations"] && item["relations"][0]["artist"]["type"] == "remixer" ) {
 				remixerMbid = item["relations"][0]["artist"]["id"];
@@ -281,7 +278,6 @@
 		showModal = false
 		query = ""
 		searchComplete = false
-		console.log(addedItems)
 		return {newItemAdded, showModal, addedItems, query, searchComplete}
 	}
 </script>

@@ -299,7 +299,6 @@ export const selectPostReplies = async function ( sessionUserId: string, postId:
 export const selectPostAndReplies = async function( sessionUserId: string, username: string, timestampString: string, postType: string ) {
 
     const select = await db.transaction().execute(async(trx) => {
-        console.log(username)
         try {
             const selectPostUserId = await trx
             .selectFrom('profiles')

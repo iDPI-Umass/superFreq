@@ -7,7 +7,6 @@
 
     export let form: ActionData
     $: form
-    console.log(form?.success)
 </script>
 
 <svelte:head>

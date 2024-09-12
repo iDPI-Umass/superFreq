@@ -5,8 +5,6 @@
     export let posts: App.RowData[]
     export let username: string
     export let displayName: string
-
-    console.log(posts)
 </script>
 
 <div class="panel-medium">

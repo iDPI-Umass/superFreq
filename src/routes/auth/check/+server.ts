@@ -6,7 +6,6 @@ import { profileStoresObject } from '$lib/stores'
 export const GET: RequestHandler = async ({ locals: { safeGetSession }}) => {
 
     const session = await safeGetSession()
-    console.log(session)
 
     const sessionUserId = session.user?.id as string
 

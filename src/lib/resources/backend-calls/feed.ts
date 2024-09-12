@@ -41,7 +41,6 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             followingUserIds.push(id)
         }
 
-        console.log(followingUserIds)
 
         /* count and fetch recent Now Playing posts by followed users */
         let postsTotal = 0
