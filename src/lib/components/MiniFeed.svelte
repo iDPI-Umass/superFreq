@@ -36,7 +36,7 @@
                 ></NowPlayingPost>
             </div>
         </div>
-        {:else if Object.keys(item).includes( 'comment_id' )}
+        {:else if (Object.keys(item).includes( 'comment_id' ) && item.parent_post_id == null)}
             <a href={`/${item.original_poster_username}/now-playing/${item.original_post_date}#${item.username?.concat(item.created_at.valueOf().toString())}`}>
                 <div class="feed-item-one-liner">
                     <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
