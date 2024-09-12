@@ -3,12 +3,19 @@ import type { PageServerLoad, Actions } from './$types'
 import { timestampISO } from '$lib/resources/parseData'
 import { selectEditableCollectionContents, updateCollection } from '$lib/resources/backend-calls/collections'
 
-export const load: PageServerLoad = async ({ params, locals: { safeGetSession } }) => {
+export const load: PageServerLoad = async ({ parent, params, locals: { safeGetSession } }) => {
   const session = await safeGetSession()
 
-  if (!session.session) {
-    throw redirect(303, '/')
-}
+  const { profile } = await parent()
+
+  const username = profile?.username ?? null
+
+  if ( !session.session ) {
+      throw redirect(307, '/')
+  }
+  else if( session.session && !username ) {
+      throw redirect(307, '/account/create-profile')
+  }
 
   const collectionId = parseInt(params.collectionId).toString()
 

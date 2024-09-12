@@ -28,6 +28,9 @@
     }
     let profileForm: any
 
+	$: username
+	$: displayName
+
 </script>
 
 <svelte:head>
@@ -84,7 +87,7 @@
 				name="username"
 				id="username"
 				form="account-data"
-				value={username}
+				bind:value={username}
                 required
 			/>
             <div class="label-group">
@@ -103,7 +106,8 @@
 				type="text" 
 				name="displayName" 
 				id="displayName" 
-				value={displayName} 
+				bind:value={displayName} 
+				form="account-data"
                 required
 			/>
 
@@ -183,6 +187,7 @@
 					class="double-border-top"
 					type="submit"
 					disabled={!( username && displayName )}
+					formaction="?/create"
 					>
 					<div class="inner-border">
 						submit 
