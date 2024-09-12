@@ -15,6 +15,7 @@ export const GET: RequestHandler = async ({ locals: { safeGetSession }}) => {
     .where("id", '=', sessionUserId)
     .executeTakeFirst()
 
+    console.log(select)
     const profile = await select
     const userId = profile?.id ?? null
     const username = profile?.username ?? null
