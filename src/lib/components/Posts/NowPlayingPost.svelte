@@ -32,7 +32,7 @@
     function toggleEditState() {
         editState = !editState
     }
-
+    console.log(post.id)
 </script>
 
 <div class="box">
@@ -90,7 +90,7 @@
         <div class="post-row">
             <div class="row-group-icons">
                 <LikeReact
-                postId={post.id}
+                postId={post.id ?? post.now_playing_post_id}
                 reactionActive={reactionActive ?? false}
                 ></LikeReact>
                 {#if mode == "feed"}

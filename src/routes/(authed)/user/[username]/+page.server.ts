@@ -1,8 +1,8 @@
 import type { PageServerLoad, Actions, Posts } from './$types'
 import { redirect } from '@sveltejs/kit'
-import { selectProfilePageData, insertUpdateBlock, insertUserFlag, insertUpdateUserFollow } from '$lib/resources/backend-calls/users'
+import { selectProfilePageData, insertUpdateBlock, insertUserFlag, insertUpdateUserFollow, insertPostFlag } from '$lib/resources/backend-calls/users'
 import { selectFeedData } from '$lib/resources/backend-calls/feed'
-import { selectUserPostsSample, insertPost } from '$lib/resources/backend-calls/posts'
+import { selectUserPostsSample, insertPost, insertUpdateReaction } from '$lib/resources/backend-calls/posts'
 import { getListenUrlData } from '$lib/resources/parseData'
 import { add, parseISO } from 'date-fns'
 
@@ -223,4 +223,26 @@ export const actions = {
             redirect(303, `/user/${username}/now-playing/${timestampSlug}`)
         }
 	},
+    flagPost: async ({ request, locals: { safeGetSession }}) => {
+        const session = await safeGetSession()
+        const sessionUserId = session.user?.id as string
+
+        const data = await request.formData()
+        const postId = data.get('post-id') as string
+
+        const flag = await insertPostFlag( sessionUserId, postId )
+
+        return flag
+    },
+    submitReaction: async ({ request, locals: { safeGetSession }}) => {
+        const session = await safeGetSession()
+        const sessionUserId = session.user?.id as string
+        const data = await request.formData()
+        const postId = data.get('post-id') as string
+        const reactionType = data.get('reaction-type') as string
+
+        const reaction = await insertUpdateReaction( sessionUserId, postId, reactionType )
+
+        return reaction
+    }
 } satisfies Actions

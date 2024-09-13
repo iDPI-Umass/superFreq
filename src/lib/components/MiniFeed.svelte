@@ -4,6 +4,7 @@
     import NowPlayingPost from './Posts/NowPlayingPost.svelte'
     import decoration from "$lib/assets/images/feed-item-decoration.svg"
     export let feedItems: App.RowData[]
+    console.log(feedItems)
 </script>
 
 
