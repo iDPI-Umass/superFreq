@@ -32,7 +32,6 @@
     function toggleEditState() {
         editState = !editState
     }
-    console.log(post.id)
 </script>
 
 <div class="box">
