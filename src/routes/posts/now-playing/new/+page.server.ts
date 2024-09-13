@@ -69,7 +69,7 @@ export const actions = {
             return { sucess: false }
         }
         else {
-            redirect(303, `/user/${username}/now-playing/${timestampSlug}`)
+            redirect(303, `/posts/${username}/now-playing/${timestampSlug}`)
         }
 	},
     postTrack: async ({ request, locals: { safeGetSession } }) => {
@@ -115,7 +115,7 @@ export const actions = {
             return { sucess: false }
         }
         else{
-            redirect(303, `/user/${username}/now-playing/${timestampSlug}`)
+            redirect(303, `/posts/${username}/now-playing/${timestampSlug}`)
         }
 	},
     postMix: async ({ request, locals: { safeGetSession } }) => {
@@ -161,7 +161,7 @@ export const actions = {
             return { sucess: false }
         }
         else{
-            redirect(303, `/user/${username}/now-playing/${timestampSlug}`)
+            redirect(303, `/posts/${username}/now-playing/${timestampSlug}`)
         }
 	},
 } satisfies Actions
