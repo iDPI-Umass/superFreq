@@ -190,7 +190,10 @@
       {/if}
     </nav>
   </header>
-  <button class="standard" on:click={() => goto('https://docs.google.com/forms/d/e/1FAIpQLSfKj4FlApgfM-Kc4rYwAxNQslBMS9rk-DdfowMa5qcHlRYhew/viewform?usp=sf_link')}>report a bug</button>
+  <a class="report" target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSfKj4FlApgfM-Kc4rYwAxNQslBMS9rk-DdfowMa5qcHlRYhew/viewform?usp=sf_link">
+    <button class="standard">report a bug</button>
+  </a>
+
 </div>
 
   
@@ -224,7 +227,7 @@
   nav.narrow {
     display: none
   }
-  button.standard {
+  a.report {
     margin: auto auto var(--freq-spacing-large) auto;
   }
   @media screen and (max-width: 770px) {
