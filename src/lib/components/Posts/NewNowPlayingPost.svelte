@@ -32,7 +32,7 @@
                 track
             </Tabs.Trigger>
             <Tabs.Trigger value="mix">
-                show episode / dj mix
+                episode / mix
             </Tabs.Trigger>
         </Tabs.List>
         <Tabs.Content value="album">

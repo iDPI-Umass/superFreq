@@ -4,6 +4,7 @@
     import decoration from "$lib/assets/images/feed-item-decoration.svg"
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
     import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
+    import { displayDate } from '$lib/resources/parseData'
 
     export let data: PageData
     export let form: ActionData
@@ -81,6 +82,22 @@
                     <span class="feed-item-subject">
                         {item.title}
                     </span>
+                </div>
+            </a>
+        {:else if Object.keys(item).includes( 'session_user_post_commenter_id' )}
+            <a href={`/posts/${item.username}/now-playing/${item.post_created_at.toISOString()}`}>
+                <div class="feed-item-one-liner">
+                    <img src={item.session_user_post_commenter_avatar_url} alt={`${item.session_user_post_commenter_display_name}'s avatar`} class="feed-avatar" />
+                    {item.session_user_post_commenter_display_name}
+                    commented on your post from {displayDate(item.post_created_at)}
+                </div>
+            </a>
+        {:else if Object.keys(item).includes( 'session_user_post_commenter_id' )}
+            <a href={`/posts/${item.username}/now-playing/${item.post_created_at.toISOString()}`}>
+                <div class="feed-item-one-liner">
+                    <img src={item.session_user_post_post_react_avatar_url} alt={`${item.session_user_post_post_react_display_name}'s avatar`} class="feed-avatar" />
+                    {item.session_user_post_post_reactr_display_name}
+                    liked your post from {displayDate(item.post_created_at)}
                 </div>
             </a>
         {/if}
