@@ -93,12 +93,17 @@
                         get data
                     </button>
                 </form> -->
-                <label 
-                    class="text-label" 
-                    for="artist-name"
-                >
-                    artist name
-                </label>
+                <div class="label-group">
+                    <label 
+                        class="text-label" 
+                        for="artist-name"
+                    >
+                        artist name
+                    </label>        
+                    <span class="label-explainer">
+                        * required
+                    </span>
+                </div>
                 <input  
                     id="artist-mbid" 
                     name="artist-mbid" 
@@ -113,12 +118,17 @@
                     placeholder="artist name" 
                     value={addedItem?.artist_name ?? null}
                 />
-                <label 
-                    class="text-label" 
-                    for="album-name"
-                >
-                    album name
-                </label>
+                <div class="label-group">
+                    <label 
+                        class="text-label" 
+                        for="album-name"
+                    >
+                        album name
+                    </label>
+                    <span class="label-explainer">
+                        * required
+                    </span>
+                </div>
                 <input 
                     class="text" 
                     id="album-name" 
@@ -197,12 +207,17 @@
                     type="text"
                     placeholder="paste link" 
                 />
-                <label 
-                    class="text-label" 
-                    for="artist-name"
-                >
-                    artist name
-                </label>
+                <div class="label-group">
+                    <label 
+                        class="text-label" 
+                        for="artist-name"
+                    >
+                        artist name
+                    </label>        
+                    <span class="label-explainer">
+                        * required
+                    </span>
+                </div>
                 <input
                     class="text"  
                     id="artist-name" 
@@ -237,12 +252,17 @@
                     type="hidden"
                     value={addedItem?.release_group_mbid ?? null}
                 />
-                <label
-                    class="text-label" 
-                    for="track-name"
-                >
-                    track name
-                </label>
+                <div class="label-group">
+                    <label
+                        class="text-label" 
+                        for="track-name"
+                    >
+                        track name
+                    </label>
+                    <span class="label-explainer">
+                        * required
+                    </span>
+                </div>
                 <input 
                     class="text"    
                     id="track-name" 
@@ -316,12 +336,17 @@
                     type="text"
                     placeholder="paste link" 
                 />
-                <label 
-                    class="text-label" 
-                    for="artist-name"
-                >
+                <div class="label-group">
+                    <label 
+                        class="text-label" 
+                        for="artist-name"
+                    >
                     host / dj
-                </label>
+                    </label>        
+                    <span class="label-explainer">
+                        * required
+                    </span>
+                </div>
                 <input
                     class="text"  
                     id="artist-name" 
@@ -336,12 +361,17 @@
                     type="hidden"
                     value={addedItem?.artist_mbid ?? null}
                 />
-                <label
-                    class="text-label" 
-                    for="episode"
-                >
-                    episode / mix title
-                </label>
+                <div class="label-group">
+                    <label
+                        class="text-label" 
+                        for="episode"
+                    >
+                        episode / mix title
+                    </label>
+                    <span class="label-explainer">
+                        * required
+                    </span>
+                </div>
                 <input 
                     class="text"    
                     id="episode" 
