@@ -614,6 +614,7 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
                 active: !active
             }
 
+            console.log(active)
             return await trx
             .updateTable('post_reactions')
             .set({
@@ -630,10 +631,13 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
             changelog[timestampISOString] = {
                 active: true
             }
+
+            console.log(sessionUserId, postId, reactionType)
         
-            return await trx
+            const insertReaction = await trx
             .insertInto('post_reactions')
             .values({
+                id: sql`default`,
                 post_id: postId,
                 user_id: sessionUserId,
                 reaction: reactionType,
@@ -643,6 +647,10 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
             })
             .returning(['id', 'reaction', 'active'])
             .executeTakeFirst()
+
+            const reaction = await insertReaction
+            console.log(reaction)
+            return reaction
         }
     })
 
