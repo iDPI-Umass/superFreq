@@ -33,7 +33,6 @@ export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSe
     }
 
     const post = select?.post as App.RowData
-    console.log(post)
     const postReactionActive = select?.postReactionActive?.active as boolean
     const replies = select?.replies as App.RowData[]
 
