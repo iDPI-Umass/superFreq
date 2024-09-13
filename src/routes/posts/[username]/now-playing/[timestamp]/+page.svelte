@@ -14,6 +14,7 @@
     $: replies
 
     const postId = post?.id as string
+    console.log(postId)
 </script>
 
 <svelte:head>

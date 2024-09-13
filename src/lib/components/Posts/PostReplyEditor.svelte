@@ -1,5 +1,5 @@
 <div class="reply-editor">
-    <form class="reply" method="post" action="?/submitReply">
+    <form name="submitReply" id="submitReply" class="reply" method="post" action="?/submitReply">
         <textarea
             rows="4"
             cols="1"
