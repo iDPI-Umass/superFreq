@@ -6,7 +6,7 @@ import type { LayoutLoad } from './$types'
 
 import { profileStoresObject } from '$lib/stores'
 
-export const load: LayoutLoad = async ({ data, depends, fetch }) => {
+export const load: LayoutLoad = async ({ url, data, depends, fetch }) => {
   /**
    * Declare a dependency so the layout can be invalidated, for example, on
    * session refresh.
@@ -52,6 +52,8 @@ export const load: LayoutLoad = async ({ data, depends, fetch }) => {
   const { profile, urlString } = data
 
   profileStoresObject.set(profile)
+
+  const urlString = url.toString()
 
   return { session, user, profile, urlString, supabase }
 }
