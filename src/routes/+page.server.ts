@@ -1,4 +1,4 @@
-import { redirect } from '@sveltejs/kit'
+import { redirect, error } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
 import { db } from 'src/database.ts'
 

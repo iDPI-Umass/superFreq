@@ -81,3 +81,10 @@ const authGuard: Handle = async ({ event, resolve }) => {
 
 
 export const handle: Handle = sequence(supabase, authGuard)
+
+export function handleError ({ event, error }) {
+  if ( error ) {
+    redirect(303, '/')
+  }
+
+}

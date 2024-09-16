@@ -2,10 +2,9 @@ import type { LayoutServerLoad } from './$types'
 import { db } from 'src/database.ts'
 import logo from "$lib/assets/images/logo/freq-logo-dark.svg"
 
-export const load: LayoutServerLoad = async ({ url, locals: { safeGetSession }, cookies }) => {
+export const load: LayoutServerLoad = async ({ locals: { safeGetSession }, cookies }) => {
   const { session, user } = await safeGetSession()
 
-  const urlString = JSON.stringify(url)
   if (session) {
       const select = await db
       .selectFrom('profiles')
@@ -24,5 +23,5 @@ export const load: LayoutServerLoad = async ({ url, locals: { safeGetSession }, 
     'website': 'https://freq.social'
   }
 
-  return { session, profile, urlString, cookies: cookies.getAll() }
+  return { session, profile, cookies: cookies.getAll() }
 }
