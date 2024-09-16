@@ -29,12 +29,13 @@ export const actions = {
     if (token_hash && type) {
       const { error } = await supabase.auth.verifyOtp({ type, token_hash })
       if (!error) {
-        redirectTo.searchParams.delete('next')
+        console.log('success redirecting')
         redirect(303, redirectTo)
       }
     }
 
     redirectTo.pathname = '/auth/error'
+    console.log('error redirecting')
     redirect(303, redirectTo)
   }
 } satisfies Actions
