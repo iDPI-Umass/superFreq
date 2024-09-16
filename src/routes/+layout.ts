@@ -53,5 +53,8 @@ export const load: LayoutLoad = async ({ data, depends, fetch }) => {
 
   profileStoresObject.set(profile)
 
-  return { session, user, profile, supabase }
+  if ( session ) {
+    return { session, user, profile, supabase }
+  }
+  return { session: null, user: null, profile: null, supabase: null }
 }
