@@ -1,11 +1,10 @@
 <script lang="ts">
-    import type { PageLoadData, ActionData } from "./$types"
+    import type { PageData } from "./$types"
 
-    export let data: PageLoadData
+    export let data: PageData
     $: data
 
     const urlString = data?.urlString as string
-    console.log(urlString)
 </script>
 
 <form class="horizontal" method="POST" action="?/confirm">
