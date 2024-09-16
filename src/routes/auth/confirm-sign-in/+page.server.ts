@@ -3,18 +3,18 @@ import { redirect } from "@sveltejs/kit"
 import type { EmailOtpType } from '@supabase/supabase-js'
 
 export const load: PageServerLoad = async ({ url }) => { 
-    console.log(url)
-    const urlString = JSON.stringify(url)
+    const urlString = url.toString()
     return {urlString}
 }
 
 export const actions = {
     confirm: async ({ request, locals: { supabase }}) => {
       const data = await request.formData()
-      const url = JSON.parse(data.get('url-string') as string) as URL
+      const urlString = data.get('url-string') as string
+      const url = URL.parse(urlString)
       const token_hash = url.searchParams.get('token_hash')
       const type = url.searchParams.get('type') as EmailOtpType | null
-      const next = url.searchParams.get('next') ?? '/auth/check'
+      const next = '/auth/check'
       
       /**
        * Clean up the redirect URL by deleting the Auth flow parameters.
