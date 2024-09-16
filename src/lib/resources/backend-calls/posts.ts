@@ -614,7 +614,6 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
                 active: !active
             }
 
-            console.log(active)
             return await trx
             .updateTable('post_reactions')
             .set({
@@ -632,7 +631,6 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
                 active: true
             }
 
-            console.log(sessionUserId, postId, reactionType)
         
             const insertReaction = await trx
             .insertInto('post_reactions')
@@ -649,7 +647,6 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
             .executeTakeFirst()
 
             const reaction = await insertReaction
-            console.log(reaction)
             return reaction
         }
     })

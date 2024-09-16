@@ -51,8 +51,6 @@ export const actions = {
         const replyText = data.get('reply-text') as string
         const postId = data.get('post-id') as string
 
-        console.log(postId)
-
         const postData = {
             user_id: sessionUserId,
             type: "reply",
