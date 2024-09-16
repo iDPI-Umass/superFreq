@@ -49,12 +49,9 @@ export const load: LayoutLoad = async ({ data, depends, fetch }) => {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const { profile } = data
+  const { profile, urlString } = data
 
   profileStoresObject.set(profile)
 
-  if ( session ) {
-    return { session, user, profile, supabase }
-  }
-  return { session: null, user: null, profile: null, supabase: null }
+  return { session, user, profile, urlString, supabase }
 }
