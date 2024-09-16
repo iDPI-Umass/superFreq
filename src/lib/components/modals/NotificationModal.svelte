@@ -53,3 +53,9 @@
 		}
 	}}
 />
+
+<style>
+	dialog {
+		max-width: 300px;
+	}
+</style>

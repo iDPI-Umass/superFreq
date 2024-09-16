@@ -118,7 +118,7 @@ export const actions = {
 
         return flag
     },
-    insertReaction: async ({ request, locals: { safeGetSession }}) => {
+    submitReaction: async ({ request, locals: { safeGetSession }}) => {
         const session = await safeGetSession()
         const sessionUserId = session.user?.id as string
         const data = await request.formData()

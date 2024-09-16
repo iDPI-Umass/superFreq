@@ -5,6 +5,7 @@
     import decoration from "$lib/assets/images/feed-item-decoration.svg"
     export let feedItems: App.RowData[]
     console.log(feedItems)
+
 </script>
 
 
@@ -33,6 +34,7 @@
             <div class="feed-item-now-playing">
                 <NowPlayingPost
                     post={item}
+                    reactionActive={item.postReactionActive}
                     mode="feed"
                 ></NowPlayingPost>
             </div>
