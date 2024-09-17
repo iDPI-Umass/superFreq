@@ -1,4 +1,4 @@
-import type { PageServerLoad, Actions } from "../$types"
+import type { PageServerLoad, Actions } from "../(authed)/account/$types"
 import { profileStoresObject } from "$lib/stores"
 import { newSessionProfile } from "$lib/resources/backend-calls/users"
 import logo from "$lib/assets/images/logo/freq-logo-dark.svg";

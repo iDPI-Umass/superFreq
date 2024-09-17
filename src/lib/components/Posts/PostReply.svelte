@@ -23,8 +23,6 @@
 
     const permalink = `/posts/${reply.username}/now-playing/${reply.original_post_date.toISOString()}#${reply.username?.concat(reply.created_at.toISOString())}`
 
-
-    console.log(reply.user_id = sessionUserId)
 </script>
 
 <div class="comment-panel">    
@@ -81,6 +79,7 @@
                 {#if reply.user_id == sessionUserId }
                     <UserActionsMenu
                         mode='sessionUserPostMenu'
+                        postId={reply.id}
                         bind:editState={editState}
                     ></UserActionsMenu>
                 {:else if reply.user_id != sessionUserId}

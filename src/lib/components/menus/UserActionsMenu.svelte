@@ -20,8 +20,6 @@
     export let postId: string | null =  null
     export let success: boolean | null | undefined = null
 
-    console.log(mode)
-
     let popOverOpenState: boolean
     let showModal: boolean = false
     let dialog: any
@@ -236,6 +234,7 @@
         id="post-id"
         name="post-id"
         value={postId}
+        form={formIDs[dialogMode]} 
     />
     {#if success == null}
         <h2>{diaglogTitleOptions[dialogMode]}</h2>
