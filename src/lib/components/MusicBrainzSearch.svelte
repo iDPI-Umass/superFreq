@@ -38,6 +38,7 @@
 	let mbData: any
 	let searchComplete: boolean
 	async function mbSearch() {
+		showModal = true
 		const apiCategory = categoriesTable[`${searchCategory}`] as string
 
 		let apiString = "https://musicbrainz.org/ws/2/"
@@ -71,7 +72,6 @@
 		// }
 
 		searchComplete =  true
-		showModal = true
 		return {
 			mbData, searchComplete
 		}
@@ -286,7 +286,13 @@
 <div class="search-bar">
 	<ListModal bind:showModal>
 		<h1 slot="header-text">
+			{#if !query}
+			Please enter valid input in the search bar.
+			{:else if query && !searchComplete}
+			Loading...
+			{:else if query && searchComplete}
 			Results for <span class="dialog-header">{query}</span>
+			{/if}
 		</h1>
 		<div slot="list">
 			{#if searchComplete}
