@@ -38,7 +38,7 @@ export const actions = {
         profileStoresObject.set({
             'username': username,
             'display_name': displayName ?? username,
-            'avatar_url': avatarUrl ?? logo,
+            'avatar_url': avatarUrl,
           })
 
 

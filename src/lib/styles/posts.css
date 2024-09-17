@@ -41,6 +41,7 @@
 .row-group-user-data {
     display: flex;
     flex-direction: row;
+    width: 100%;
     align-items: end;
     gap: var(--freq-inline-gap-double);
     color: var(--freq-color-text-muted);
@@ -218,6 +219,11 @@ form.reply {
 }
 
 /* Images */
+
+.fallback-avatar {
+	max-width: var(--freq-image-thumbnail-x-small);
+	border-radius: var(--freq-border-radius-circle);
+}
 
 .avatar {
 	max-width: var(--freq-image-thumbnail-2x-small);
