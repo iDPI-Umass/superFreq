@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ url, parent, locals: { safeGetSessi
   const session = await safeGetSession()
 
   // if the user is already logged in, redirect to feed
-  const { profile, urlString } = await parent()
+  const { profile } = await parent()
   const username = profile.username as string | null
 
   if (session.session && username) {
@@ -15,8 +15,6 @@ export const load: PageServerLoad = async ({ url, parent, locals: { safeGetSessi
   else if (session.session && !username) {
     throw redirect(303, `/account/create-profile`)
   }
-
-  return ({urlString})
 }
 
 export const actions = { 
