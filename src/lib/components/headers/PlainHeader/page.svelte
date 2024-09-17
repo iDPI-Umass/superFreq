@@ -2,8 +2,9 @@
   import { goto } from "$app/navigation"
   import { DropdownMenu } from "bits-ui"
   import ChevronDown from 'lucide-svelte/icons/chevron-down';
-  import logo from "$lib/assets/images/logo/freq-logo-dark.svg";
-  import { profileStoresObject } from "src/lib/stores";
+  import logo from "$lib/assets/images/logo/freq-logo-dark.svg"
+  import wave from "$lib/assets/images/logo/freq-wave.svg"
+  import { profileStoresObject } from "src/lib/stores"
 
   let profileObject: App.ProfileObject
   $: profileObject
@@ -75,8 +76,8 @@
       </a>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
-          <img src={avatarUrl} alt="{displayName}'s avatar" />
-          {displayName} 
+          <img src={avatarUrl ?? wave} alt="{displayName}'s avatar" />
+          {displayName ?? 'display name'} 
           <ChevronDown></ChevronDown>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
@@ -148,8 +149,8 @@
       </DropdownMenu.Root>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
-          <img src={avatarUrl} alt="{displayName}'s avatar" />
-          {displayName} 
+          <img src={avatarUrl ?? wave} alt="{displayName}'s avatar" />
+          {displayName ?? 'display name'} 
           <ChevronDown></ChevronDown>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>

@@ -14,7 +14,7 @@
 <ul>
     {#each collections as collection}
     <li>
-        <a href="/collection/${collection.id}">
+        <a href="/collection/{collection.id}">
             ${collection.title} by ${collection.display_name}
         </a>
     </li>

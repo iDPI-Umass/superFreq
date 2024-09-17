@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     const sessionUserId = session?.user?.id as string
 
     const profileUsername = params.username
-
+    
     const batchSize = 10
     const batchIterator = 0
     const timestampEnd = new Date()
@@ -28,7 +28,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     const feedItems = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
     const selectPosts = await selectUserPostsSample( sessionUserId, profileUsername, batchSize )
 
-    const posts = selectPosts
+    const { posts } = selectPosts as App.NestedObject
 
     return { sessionUserId, profileData, feedItems, profileUsername, posts }
 }
@@ -213,7 +213,6 @@ export const actions = {
             embed_account: embedInfo.account
         }
 
-        console.log(postData)
         const { username, createdAt } = await insertPost( postData )
         const timestampSlug = createdAt?.toISOString()
 
