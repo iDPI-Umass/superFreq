@@ -2,7 +2,7 @@ import { redirect, error } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
 import { db } from 'src/database.ts'
 
-export const load: PageServerLoad = async ({ url, parent, locals: { safeGetSession } }) => {
+export const load: PageServerLoad = async ({ parent, locals: { safeGetSession } }) => {
   const session = await safeGetSession()
 
   // if the user is already logged in, redirect to feed
