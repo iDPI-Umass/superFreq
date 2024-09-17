@@ -224,7 +224,7 @@ export const newSessionProfile = async function ( sessionUserId: string, profile
             .where('id', '=', sessionUserId)
             .executeTakeFirst()
     
-            const changelog = selectChangelog as App.Changelog
+            const changelog = selectChangelog?.changelog as App.Changelog
     
             changelog[timestampISOString] = {
                 'username': profileData?.username,
@@ -238,6 +238,7 @@ export const newSessionProfile = async function ( sessionUserId: string, profile
             await trx
             .updateTable('profiles')
             .set({
+                username: profileData?.username,
                 display_name: profileData?.displayName,
                 website: profileData?.website,
                 avatar_mbid: profileData?.avatarMbid,
@@ -279,7 +280,7 @@ export const updateSessionProfile = async function ( sessionUserId: string, prof
         .where('id', '=', sessionUserId)
         .executeTakeFirst()
 
-        const changelog = selectChangelog as App.Changelog
+        const changelog = selectChangelog?.changelog as App.Changelog
 
         changelog[timestampISOString] = {
             'username': profileData?.username,

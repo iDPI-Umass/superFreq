@@ -597,7 +597,7 @@ dialog {
 
 dialog::backdrop {
 	background-color: var(--freq-color-panel-background);
-	opacity: 65%;
+	opacity: 70%;
 }
 
 @media screen and (max-width: 600px) {

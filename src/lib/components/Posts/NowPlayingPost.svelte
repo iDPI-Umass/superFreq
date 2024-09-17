@@ -9,7 +9,9 @@
     import Reply from 'lucide-svelte/icons/reply'
     import Link from 'lucide-svelte/icons/link-2'
     import Music from 'lucide-svelte/icons/music'
-	import ListenEmbed from './ListenEmbed.svelte';
+	import ListenEmbed from './ListenEmbed.svelte'
+
+    import wave from "$lib/assets/images/logo/freq-wave.svg"
 
     export let sessionUserId: string | null = null
     export let post: any
@@ -38,7 +40,11 @@
     <div class="double-border">
         <div class="post-row">
             <div class="row-group-user-data">
+                {#if post.avatar_url}
                 <img class="avatar" src={post.avatar_url} alt={`${post.display_name}'s avatar`}/>
+                {:else if !post.avatar_url}
+                <img class="fallback-avatar" src={wave} alt={`${post.display_name}'s avatar`}/>
+                {/if}
                 <div class="row-group-column">
                     <a href="/user/{post.username}">
                         <span class="display-name">

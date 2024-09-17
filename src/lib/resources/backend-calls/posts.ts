@@ -458,7 +458,18 @@ export const selectRandomPosts = async function ( postCount: number ) {
 
     const selectPosts = await db
     .selectFrom('posts')
-    .select(['text', 'artist_name', 'release_group_name', 'recording_name', 'item_type', 'created_at'])
+    .select([
+        'text', 
+        'artist_name', 
+        'release_group_name', 
+        'recording_name', 
+        'episode_title',
+        'embed_id',
+        'embed_source',
+        'show_title',
+        'item_type', 
+        'created_at'
+    ])
     .where('status', '!=', 'deleted')
     .where('parent_post_id', 'is', null)
     .orderBy(sql`random()`)
