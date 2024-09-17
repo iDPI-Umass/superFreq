@@ -595,6 +595,11 @@ dialog {
 	text-decoration: none;
 }
 
+dialog::backdrop {
+	background-color: var(--freq-color-panel-background);
+	opacity: 65%;
+}
+
 @media screen and (max-width: 600px) {
 	.panel {
 		width: 80%;

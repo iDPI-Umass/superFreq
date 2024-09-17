@@ -71,6 +71,7 @@
 <style>
 	dialog {
         text-decoration: none;
+		margin-top: 15%;
     }
 	.dialog-header {
 		display: flex;
