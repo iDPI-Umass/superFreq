@@ -160,6 +160,8 @@ export const deletePost = async function ( sessionUserId: string, postId: string
             show_title: post?.show_title,
         }
 
+        console.log(post)
+
         const updatePost = await trx
         .updateTable('posts')
         .set({

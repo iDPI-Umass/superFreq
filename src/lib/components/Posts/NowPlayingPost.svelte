@@ -107,6 +107,7 @@
                 {#if post.user_id == sessionUserId }
                     <UserActionsMenu
                         mode='sessionUserPostMenu'
+                        postId={post.id}
                         bind:editState={editState}
                     ></UserActionsMenu>
                 {:else if sessionUserId}
