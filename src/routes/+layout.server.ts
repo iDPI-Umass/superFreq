@@ -13,7 +13,7 @@ export const load: LayoutServerLoad = async ({ locals: { safeGetSession }, cooki
       .executeTakeFirst()
 
       const profile = await select as App.ProfileObject
-      return { session, profile, urlString, cookies: cookies.getAll() }
+      return { session, profile, cookies: cookies.getAll() }
   }
 
   const profile: App.ProfileObject = {
