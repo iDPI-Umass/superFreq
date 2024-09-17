@@ -6,20 +6,23 @@ import { profileStoresObject } from '$lib/stores'
 export const GET: RequestHandler = async ({ locals: { safeGetSession }}) => {
 
     const session = await safeGetSession()
-    console.log(session)
 
     const sessionUserId = session.user?.id as string
 
     const select = await db
     .selectFrom("profiles")
-    .select(['username', 'display_name', 'avatar_url'])
+    .select(['id', 'username', 'display_name', 'avatar_url'])
     .where("id", '=', sessionUserId)
-    .executeTakeFirstOrThrow()
+    .executeTakeFirst()
 
+    console.log(select)
     const profile = await select
-    const { username, display_name, avatar_url } =  profile as App.ProfileObject
+    const userId = profile?.id ?? null
+    const username = profile?.username ?? null
+    const display_name = profile?.display_name ?? null
+    const avatar_url = profile?.avatar_url ?? null
 
-    if ( profile && username ) {
+    if ( userId && username ) {
       profileStoresObject.set({
         'username': username,
         'display_name': display_name,
@@ -27,7 +30,7 @@ export const GET: RequestHandler = async ({ locals: { safeGetSession }}) => {
       })
       return redirect(303, `/user/${username}`)
     }
-    else if ( profile && !username ) {
+    else if ( userId && !username ) {
       return redirect(303, '/account/create-profile')
     }
 

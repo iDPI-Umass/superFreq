@@ -106,7 +106,6 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
             }];
         }
         else if	( collectionType == "release_groups" ) {
-            console.log(thisItem["artist_name"])
             artistsMetadata = [...artistsMetadata, {
                 "artist_mbid": thisItem["artist_mbid"],
                 "artist_name": thisItem["artist_name"],
@@ -122,7 +121,6 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
                 "img_url": thisItem["img_url"],
                 "added_at": timestampISO
             }];
-            console.log(thisItem["release_group_name"])
         }
         else if ( collectionType == "recordings" ) {
             artistsMetadata = [...artistsMetadata, {
@@ -299,7 +297,6 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
         let id = ''
 
         for ( const element of embedElements ) {
-            console.log(element)
             if ( element.includes('album=') || element.includes('track=') ) {
                 id = element
                 break
@@ -370,7 +367,6 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
         const itemId = listenUrlString.split('.com')[1]
         const {document} = await parseHTML(html)
         const pageTitle = document.title
-        console.log(pageTitle)
         const info = pageTitle.split(' - ')
         const itemTitle = info[0]
         const itemAccount = info[1]

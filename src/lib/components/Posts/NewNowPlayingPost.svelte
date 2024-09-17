@@ -8,7 +8,7 @@
 
     import { Tabs } from "bits-ui";
 
-    export let form: ActionData | null = null
+    // export let form: ActionData | null = null
     let addedItem: any
     let newItemAdded: boolean
     let type: string
@@ -32,7 +32,7 @@
                 track
             </Tabs.Trigger>
             <Tabs.Trigger value="mix">
-                show episode / dj mix
+                episode / mix
             </Tabs.Trigger>
         </Tabs.List>
         <Tabs.Content value="album">
@@ -51,12 +51,6 @@
                 </Tooltip>
             </div>
             <form method="POST" action="?/postAlbum" name="album" class="vertical" use:enhance>
-                <input
-                    id="username"
-                    name="username"
-                    type="hidden"
-                    value={username}
-                />
                 <input
                     id="item-type" 
                     name="item-type" 
@@ -99,12 +93,17 @@
                         get data
                     </button>
                 </form> -->
-                <label 
-                    class="text-label" 
-                    for="artist-name"
-                >
-                    artist name
-                </label>
+                <div class="label-group">
+                    <label 
+                        class="text-label" 
+                        for="artist-name"
+                    >
+                        artist name
+                    </label>        
+                    <span class="label-explainer">
+                        * required
+                    </span>
+                </div>
                 <input  
                     id="artist-mbid" 
                     name="artist-mbid" 
@@ -119,12 +118,17 @@
                     placeholder="artist name" 
                     value={addedItem?.artist_name ?? null}
                 />
-                <label 
-                    class="text-label" 
-                    for="album-name"
-                >
-                    album name
-                </label>
+                <div class="label-group">
+                    <label 
+                        class="text-label" 
+                        for="album-name"
+                    >
+                        album name
+                    </label>
+                    <span class="label-explainer">
+                        * required
+                    </span>
+                </div>
                 <input 
                     class="text" 
                     id="album-name" 
@@ -172,13 +176,7 @@
                     Search for a track to autofill this form.
                 </Tooltip>
             </div>
-            <form name="track" class="vertical">
-                <input
-                    id="username"
-                    name="username"
-                    type="hidden"
-                    value={username}
-                />
+            <form method="POST"  name="track" class="vertical" action="?/postTrack" use:enhance>
                 <input
                     id="mbid-type" 
                     name="mbid-type" 
@@ -199,7 +197,7 @@
                         listen link
                     </label>
                     <Tooltip>
-                        A link from Bandcamp, Soundcloud, Mixcloud, or YouTube can be embedded in your post. 
+                        A link from Bandcamp, Soundcloud, or YouTube can be embedded in your post. 
                     </Tooltip>
                 </div>
                 <input 
@@ -209,12 +207,17 @@
                     type="text"
                     placeholder="paste link" 
                 />
-                <label 
-                    class="text-label" 
-                    for="artist-name"
-                >
-                    artist name
-                </label>
+                <div class="label-group">
+                    <label 
+                        class="text-label" 
+                        for="artist-name"
+                    >
+                        artist name
+                    </label>        
+                    <span class="label-explainer">
+                        * required
+                    </span>
+                </div>
                 <input
                     class="text"  
                     id="artist-name" 
@@ -249,12 +252,17 @@
                     type="hidden"
                     value={addedItem?.release_group_mbid ?? null}
                 />
-                <label
-                    class="text-label" 
-                    for="track-name"
-                >
-                    track name
-                </label>
+                <div class="label-group">
+                    <label
+                        class="text-label" 
+                        for="track-name"
+                    >
+                        track name
+                    </label>
+                    <span class="label-explainer">
+                        * required
+                    </span>
+                </div>
                 <input 
                     class="text"    
                     id="track-name" 
@@ -278,12 +286,12 @@
                 <textarea
                     cols="1"
                     rows="5"
-                    id="postText"
-                    name="postText"
+                    id="post-text"
+                    name="post-text"
                     spellcheck=true 
                     placeholder="Some prompts: What do you like about this? Does it remind you of something? Are you looking for more like it?"
                 />
-                <button class="standard" type="submit">
+                <button class="standard" formaction="?/postTrack" type="submit">
                     submit
                 </button>
             </form>
@@ -297,13 +305,7 @@
                 bind:newItemAdded={newItemAdded}
                 mode="single"
             ></MusicBrainzSearch> -->
-            <form name="mix" class="vertical">
-                <input
-                    id="username"
-                    name="username"
-                    type="hidden"
-                    value={username}
-                />
+            <form method="POST" name="mix" class="vertical" action="?/postMix" use:enhance>
                 <input
                     id="item-type" 
                     name="item-type" 
@@ -334,12 +336,17 @@
                     type="text"
                     placeholder="paste link" 
                 />
-                <label 
-                    class="text-label" 
-                    for="artist-name"
-                >
+                <div class="label-group">
+                    <label 
+                        class="text-label" 
+                        for="artist-name"
+                    >
                     host / dj
-                </label>
+                    </label>        
+                    <span class="label-explainer">
+                        * required
+                    </span>
+                </div>
                 <input
                     class="text"  
                     id="artist-name" 
@@ -354,12 +361,17 @@
                     type="hidden"
                     value={addedItem?.artist_mbid ?? null}
                 />
-                <label
-                    class="text-label" 
-                    for="episode"
-                >
-                    episode / mix title
-                </label>
+                <div class="label-group">
+                    <label
+                        class="text-label" 
+                        for="episode"
+                    >
+                        episode / mix title
+                    </label>
+                    <span class="label-explainer">
+                        * required
+                    </span>
+                </div>
                 <input 
                     class="text"    
                     id="episode" 
@@ -396,7 +408,7 @@
                     spellcheck=true 
                     placeholder="Some prompts: What do you like about this? Does it remind you of something? Are you looking for more like it?"
                 />
-                <button class="standard" type="submit">
+                <button class="standard" formaction="?/postMix" type="submit">
                     submit
                 </button>
             </form>

@@ -22,8 +22,6 @@
 	$: collectionItems
 	let itemAdded = false
 
-    console.log(collectionItems)
-
 	// UI
 	const buttonTextLookup: {[index: string]: string} = {
 		"": "...",

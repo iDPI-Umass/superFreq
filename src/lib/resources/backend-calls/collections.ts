@@ -629,7 +629,6 @@ export const insertCollection = async function ( sessionUserId: string, collecti
                 .execute()
         }
         else if ( collectionInfo["type"] == 'release_groups' ) {
-            console.log('collection type: release_groups')
             await trx
                 .insertInto('artists')
                 .values(artistsMetadata)
@@ -759,7 +758,6 @@ export const updateCollection = async function ( collectionInfo: App.RowData, co
                 .execute()
         }
         else if ( collectionInfo["type"] == 'release_groups' ) {
-            console.log('collection type: release_groups')
             await trx
                 .insertInto('artists')
                 .values(artistsMetadata)
@@ -947,6 +945,14 @@ export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: s
             .executeTakeFirst()
 
             const collectionId = insertCollectionInfo?.collection_id as string
+
+            await trx
+                .updateTable('profiles')
+                .set({
+                    top_albums_collection_id: collectionId,
+                })
+                .where('id', '=', sessionUserId)
+                .executeTakeFirst()
 
             await trx
                 .insertInto('collections_updates')

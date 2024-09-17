@@ -12,8 +12,11 @@
         <a class="panel-header-link" href="/feed">feed</a>
     </PanelHeader>
     {#if feedItems.length == 0}
+    <div class="feed-item-one-liner">
         <p>Nothing in your feed? Try following some more <a href="/users">users</a> and <a href="/collections" >collections</a>.</p>
-    {/if}
+    </div>
+       
+    {:else}
     {#each feedItems as item}
     <div class="feed-item">
         {#if Object.keys(item).includes( 'now_playing_post_id' )}
@@ -29,11 +32,12 @@
             <div class="feed-item-now-playing">
                 <NowPlayingPost
                     post={item}
+                    reactionActive={item.postReactionActive}
                     mode="feed"
                 ></NowPlayingPost>
             </div>
         </div>
-        {:else if Object.keys(item).includes( 'comment_id' )}
+        {:else if (Object.keys(item).includes( 'comment_id' ) && item.parent_post_id == null)}
             <a href={`/${item.original_poster_username}/now-playing/${item.original_post_date}#${item.username?.concat(item.created_at.valueOf().toString())}`}>
                 <div class="feed-item-one-liner">
                     <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
@@ -71,6 +75,22 @@
                     </div>
                 </a>
             </div>
+        {:else if Object.keys(item).includes( 'session_user_post_commenter_id' )}
+            <a href={`/posts/${item.username}/now-playing/${item.post_created_at.toISOString()}`}>
+                <div class="feed-item-one-liner">
+                    <img src={item.session_user_post_commenter_avatar_url} alt={`${item.session_user_post_commenter_display_name}'s avatar`} class="feed-avatar" />
+                    {item.session_user_post_commenter_display_name}
+                    commented on your post from {displayDate(item.post_created_at)}
+                </div>
+            </a>
+        {:else if Object.keys(item).includes( 'session_user_post_commenter_id' )}
+            <a href={`/posts/${item.username}/now-playing/${item.post_created_at.toISOString()}`}>
+                <div class="feed-item-one-liner">
+                    <img src={item.session_user_post_post_react_avatar_url} alt={`${item.session_user_post_post_react_display_name}'s avatar`} class="feed-avatar" />
+                    {item.session_user_post_post_reactr_display_name}
+                    liked your post from {displayDate(item.post_created_at)}
+                </div>
+            </a>
         {/if}
     </div>
     {/each}
@@ -79,7 +99,7 @@
             see more
         </button>
     </div>
-
+    {/if}
 </div>
 
 <style>

@@ -26,7 +26,6 @@
 			"avatarUrl": profile?.avatar_url
 		}
 
-        console.log(profileStorageItem)
 		localStorage.setItem("profile", JSON.stringify(profileStorageItem))
 
 		profileStoresObject.set(profileStorageItem)

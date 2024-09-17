@@ -4,11 +4,18 @@ import type { PageServerLoad, Actions, Posts } from './$types'
 import { insertPost } from '$lib/resources/backend-calls/posts'
 import { getListenUrlData } from '$lib/resources/parseData'
 
-export const load: PageServerLoad = async ({ locals: { safeGetSession}}) => {
+export const load: PageServerLoad = async ({ parent, locals: { safeGetSession}}) => {
     const session = await safeGetSession()
 
-    if (!session.session) {
-        throw redirect(303, '/')
+    const { profile } = await parent()
+
+    const username = profile?.username ?? null
+
+    if ( !session.session ) {
+        throw redirect(307, '/')
+    }
+    else if( session.session && !username ) {
+        throw redirect(307, '/account/create-profile')
     }
 }
 
@@ -19,7 +26,6 @@ export const actions = {
 
         const embedInfo = await getListenUrlData(listenUrlString)
 
-        console.log(embedInfo)
         return { embedInfo, success: true }
     },
 	postAlbum: async ({ request, locals: { safeGetSession } }) => {
@@ -30,7 +36,6 @@ export const actions = {
         const timestampISO: Date = parseISO(timestampISOString)
 
         const data = await request.formData()
-        const username = data.get('username') as string
 		const listenUrl = data.get('listen-url') as string
         const mbid = data.get('mbid') as string
         const mbidType = data.get('item-type') as string
@@ -57,15 +62,14 @@ export const actions = {
             embed_account: embedInfo.account
         }
 
-        const newPost = await insertPost( postData )
-        const createdAt = newPost?.created_at ?? null
-        const timestampSlug = createdAt?.valueOf().toString()
+        const { username, createdAt } = await insertPost( postData )
+        const timestampSlug = createdAt?.toISOString()
 
         if ( !timestampSlug ) {
             return { sucess: false }
         }
         else {
-            redirect(303, `/user/${username}/now-playing/${timestampSlug}`)
+            redirect(303, `/posts/${username}/now-playing/${timestampSlug}`)
         }
 	},
     postTrack: async ({ request, locals: { safeGetSession } }) => {
@@ -76,7 +80,6 @@ export const actions = {
         const timestampISO: Date = parseISO(timestampISOString)
 
 		const data = await request.formData()
-        const username = data.get('username') as string
         const listenUrl = data.get('listen-url') as string
         const mbid = data.get('mbid') as string
         const itemType = data.get('item-type') as string
@@ -105,15 +108,14 @@ export const actions = {
             embed_account: embedInfo.account
         }
 
-        const newPost = await insertPost( postData )
-        const createdAt = newPost?.created_at ?? null
-        const timestampSlug = createdAt?.valueOf().toString()
+        const { username, createdAt } = await insertPost( postData )
+        const timestampSlug = createdAt?.toISOString()
 
         if ( !timestampSlug ) {
             return { sucess: false }
         }
         else{
-            redirect(303, `/user/${username}/now-playing/${timestampSlug}`)
+            redirect(303, `/posts/${username}/now-playing/${timestampSlug}`)
         }
 	},
     postMix: async ({ request, locals: { safeGetSession } }) => {
@@ -124,7 +126,6 @@ export const actions = {
         const timestampISO: Date = parseISO(timestampISOString)
 
 		const data = await request.formData()
-        const username = data.get('username') as string
         const listenUrl = data.get('listen-url') as string
         const mbid = data.get('mbid') as string
         const itemType = data.get('item-type') as string
@@ -153,15 +154,14 @@ export const actions = {
             embed_account: embedInfo.account
         }
 
-        const newPost = await insertPost( postData )
-        const createdAt = newPost?.created_at ?? null
-        const timestampSlug = createdAt?.valueOf().toString()
+        const { username, createdAt } = await insertPost( postData )
+        const timestampSlug = createdAt?.toISOString()
 
         if ( !timestampSlug ) {
             return { sucess: false }
         }
         else{
-            redirect(303, `/user/${username}/now-playing/${timestampSlug}`)
+            redirect(303, `/posts/${username}/now-playing/${timestampSlug}`)
         }
 	},
 } satisfies Actions

@@ -27,7 +27,6 @@
 
     let items = collectionContents
 
-    console.log(items)
     const flipDurationMs = 300;
 
     function handleSort( e: any ) {
@@ -44,7 +43,6 @@
         for (const [index, item] of collectionContents.entries()) {
 			item.id = index + 1
 		}
-        console.log(collectionContents)
     }
 
     // delete item from collection editor
@@ -61,7 +59,7 @@
         }
 	}
 
-    console.log(collectionContents)
+
 </script>
 
 {#if ( collectionReturned || collectionContents.length > 0 ) && mode == "edit"}

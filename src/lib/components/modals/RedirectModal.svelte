@@ -6,7 +6,6 @@
     export let redirectPath: string // expects format '/route'
     let dialog: any
 
-    console.log(showModal)
 	$: if (dialog && showModal) dialog.showModal()
 	$: if (dialog && !showModal) dialog.close()
 

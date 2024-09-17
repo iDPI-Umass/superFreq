@@ -184,10 +184,6 @@ h3 {
 	font-size: var(--freq-font-size-large);
 }
 
-ol {
-	list-style:
-}
-
 /*
 //
 ** Button styling
@@ -439,6 +435,7 @@ form.vertical input {
 label {
 	font-size: var(--freq-font-size-x-small);
 	color: var(--freq-color-text-muted);
+	font-size: var(--freq-font-size-small);
 }
 
 label.text-label {
@@ -483,6 +480,7 @@ label.text-label {
 input {
 	width: auto;
 	margin: var(--freq-height-spacer-quarter) 0;
+	font-size: var(--freq-font-size-medium);
 }
 
 input.text {
@@ -497,6 +495,7 @@ input.radio {
 	height: var(--freq-font-size-medium);
 	border: solid 2px var(--freq-color-primary);
 	transition: 0.15s all steps(3, start);
+	font-size: var(--freq-font-size-medium);
 }
 
 input.radio:active {
@@ -535,6 +534,7 @@ textarea {
 	resize: none;
 	margin: var(--freq-height-spacer-quarter) 0 var(--freq-height-spacer) 0;
 	font-family: var(--freq-font-family);
+	font-size: var(--freq-font-size-medium);
 }
 
 textarea::placeholder {
@@ -543,7 +543,6 @@ textarea::placeholder {
 
 textarea:focus {
 	background: var(--freq-color-panel-light);
-	color: var(--freq-color-text-dark);
 }
 
 fieldset {
@@ -558,11 +557,11 @@ fieldset {
 fieldset legend {
 	text-transform: uppercase;
 	color: var(--freq-color-panel-muted);
-	font-size: var(--freq-font-size-x-small);
+	font-size: var(--freq-font-size-small);
 }
 
 fieldset label {
-	font-size: var(--freq-font-size-small);
+	font-size: var(--freq-font-size-medium);
 	color: var(--freq-color-text)
 }
 
@@ -578,7 +577,6 @@ fieldset ul li, ol li {
 	flex-direction: row;
 	align-items: center;
 	gap: var(--freq-inline-gap);
-	font-size: var(--freq-font-size-medium);
 }
 
 fieldset ul li label, ol li label {
@@ -596,6 +594,13 @@ dialog {
 	width: 50%;
 	text-decoration: none;
 }
+
+@media screen and (max-width: 600px) {
+	.panel {
+		width: 80%;
+	}
+}
+
 .dialog-header {
 	display: flex;
 	flex-direction: row;

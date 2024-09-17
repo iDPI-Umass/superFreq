@@ -77,7 +77,7 @@
 			searchButtonText={`add ${buttonTextLookup[collectionType]}`}
 			searchPlaceholder={placeholderText}
             mode="collection"
-            limit={8}
+            limit="8"
 		></MusicBrainzSearch>
     </div>
     {#key collectionItems.length}

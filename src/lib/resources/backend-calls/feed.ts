@@ -15,6 +15,94 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
 
     const select = await db.transaction().execute(async (trx) => {
 
+        /* get list of session user's recent post IDs */
+
+        const selectPosts = await trx
+            .selectFrom('posts')
+            .select('id')
+            .where('user_id', '=', sessionUserId)
+            .where('parent_post_id', 'is', null)
+            .execute()
+
+        const postList = await selectPosts
+
+        const postIdList = []
+
+        let commentsSessionUserPostTotal = 0
+        let commentsSessionuserPost: App.RowData = []
+        let reactionsSessionUserPostTotal = 0
+        let reactionsSessionUserPost: App.RowData = []
+
+        if ( postList.length > 0 ) {
+            for ( const post of postList ) {
+                postIdList.push(post.id)
+            }
+
+            /* count comments on a post session user made */
+            const countCommentsSessionUserPost = await trx
+            .selectFrom('posts as comments')
+            .select((eb) => eb.fn.count<number>('comments.id').as('comments_count'))
+            .where('comments.parent_post_id', 'in', postIdList)
+            .where((eb) => eb.between('created_at', timestampStart, timestampEnd))
+            .execute()
+
+            commentsSessionUserPostTotal = countCommentsSessionUserPost[0]['comments_count']
+
+            /* get data about those comments */
+            const selectCommentsSessionUserPost = await trx
+            .selectFrom('posts as comments')
+            .innerJoin('profiles as commenter', 'commenter.id', 'comments.user_id')
+            .innerJoin('posts as user_posts', 'user_posts.id', 'comments.parent_post_id')
+            .innerJoin('profiles as user', 'user.id', 'user_posts.user_id')
+            .select([
+                'commenter.id as session_user_post_commenter_id', 
+                'commenter.display_name as session_user_post_commenter_display_name', 
+                'commenter.username as session_user_post_commenter_username',
+                'commenter.avatar_url as session_user_post_commenter_avatar_url',
+                'comments.created_at as feed_item_timestamp',
+                'user_posts.id as post_id',
+                'user_posts.created_at as post_created_at',
+                'user.username as username'
+            ])
+            .where('comments.parent_post_id', 'in', postIdList)
+            .where((eb) => eb.between('comments.created_at', timestampStart, timestampEnd))
+            .execute()
+
+            commentsSessionuserPost = selectCommentsSessionUserPost
+
+            /* count reactions to a post session user made */
+            const countReactionsSessionUserPost = await trx
+            .selectFrom('post_reactions')
+            .select((eb) => eb.fn.count<number>('post_reactions.id').as('reactions_count'))
+            .where('post_reactions.post_id', 'in', postIdList)
+            .where((eb) => eb.between('updated_at', timestampStart, timestampEnd))
+            .execute()
+
+            reactionsSessionUserPostTotal = countReactionsSessionUserPost[0]['reactions_count']
+
+            /* get data about those reactions */
+            const selectReactionsSessionUserPost = await trx
+            .selectFrom('post_reactions')
+            .innerJoin('profiles as react_user', 'react_user.id', 'post_reactions.user_id')
+            .innerJoin('posts as user_posts', 'user_posts.id', 'post_reactions.post_id')
+            .innerJoin('profiles as user', 'user.id', 'user_posts.user_id')
+            .select([
+                'react_user.id as session_user_post_react_user_id', 
+                'react_user.display_name as session_user_post_react_user_display_name', 
+                'react_user.username as session_user_post_react_user_username',
+                'react_user.avatar_url as session_user_post_react_user_avatar_url',
+                'post_reactions.updated_at as feed_item_timestamp',
+                'user_posts.id as post_id',
+                'user_posts.created_at as post_created_at',
+                'user.username as username'
+            ])
+            .where('post_reactions.post_id', 'in', postIdList)
+            .where((eb) => eb.between('post_reactions.updated_at', timestampStart, timestampEnd))
+            .execute()
+
+            reactionsSessionUserPost = selectReactionsSessionUserPost
+        }
+
         /* fetch data for all users that Session User follows that aren't blocking Session User */
         const selectFollowingUsers = await trx
         .selectFrom('social_graph')
@@ -45,7 +133,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
         let postsTotal = 0
         let posts: App.RowData = []
 
-        if ( feedOptions.includes('nowPlayingPosts')) {
+        if ( feedOptions.includes('nowPlayingPosts') && followingUserIds.length > 0) {
             const countFollowingUsersPosts = await trx
             .selectFrom('posts')
             .select((eb) => eb.fn.count<number>('id').as('posts_count'))
@@ -73,7 +161,10 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'post.episode_title as episode_title', 
                 'post.show_title as show_title', 
                 'post.listen_url as listen_url', 
-                'post.created_at as feed_item_timestamp'
+                'post.created_at as feed_item_timestamp',
+                'post.embed_id as embed_id',
+                'post.embed_source as embed_source',
+                'post.embed_account as embed_account'
             ])
             .where('user_id', 'in', followingUserIds)
             .where('parent_post_id', 'is', null)
@@ -92,7 +183,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
         let sessionUserPostsComments: App.RowData = []
         let comments: App.RowData = []
 
-        if ( feedOptions.includes('comments')) {
+        if ( feedOptions.includes('comments') && followingUserIds.length > 0) {
 
             const countSessionUserPostComments = await trx
             .selectFrom('posts as comments')
@@ -174,7 +265,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
         let sessionUserPostsReactions: App.RowData = []
         let reactions: App.RowData = []
 
-        if ( feedOptions.includes('reactions')) {
+        if ( feedOptions.includes('reactions') && followingUserIds.length > 0) {
 
             const countSessionUserPostsReactions = await trx
             .selectFrom('post_reactions')
@@ -257,7 +348,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
         let sessionUserCollectionFollows: App.RowData = []
         let collectionFollows: App.RowData = []
 
-        if ( feedOptions.includes('collectionFollows')) {
+        if ( feedOptions.includes('collectionFollows') && followingUserIds.length > 0) {
 
             const countSessionUserCollectionsSocialTotal = await trx
             .selectFrom('collections_social')
@@ -343,7 +434,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
         let collectionEditsTotal = 0
         let collectionEdits: App.RowData = []
 
-        if (feedOptions.includes('collectionEdits')) {
+        if (feedOptions.includes('collectionEdits') && followingUserIds.length > 0) {
             
 
             const countFollowingCollectionsEdits = await trx
@@ -378,9 +469,9 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             collectionEdits = selectFollowingCollectionsEdits
         }
 
-        const totalRowCount = Number(postsTotal) + Number(sessionUserPostsCommentsTotal) + Number(commentsTotal) + Number(sessionUserPostsReactionsTotal) + Number(reactionsTotal) + Number(sessionUserCollectionsSocialTotal) + Number(collectionsSocialTotal) + Number(collectionEditsTotal)
+        const totalRowCount = Number(commentsSessionUserPostTotal) + Number(reactionsSessionUserPostTotal) + Number(postsTotal) + Number(sessionUserPostsCommentsTotal) + Number(commentsTotal) + Number(sessionUserPostsReactionsTotal) + Number(reactionsTotal) + Number(sessionUserCollectionsSocialTotal) + Number(collectionsSocialTotal) + Number(collectionEditsTotal)
 
-        return ({posts, sessionUserPostsComments, comments, sessionUserPostsReactions, reactions, sessionUserCollectionFollows, collectionFollows, collectionEdits, totalRowCount})
+        return { commentsSessionUserPostTotal, reactionsSessionUserPostTotal, commentsSessionuserPost, reactionsSessionUserPost, posts, sessionUserPostsComments, comments, sessionUserPostsReactions, reactions, sessionUserCollectionFollows, collectionFollows, collectionEdits, totalRowCount }
     })
 
     const data = await select

@@ -36,14 +36,26 @@ postData template for new comments:
 
 export const insertPost = async function ( postData: any ) {
 
-    const insertPost = await db
-    .insertInto('posts')
-    .values(postData)
-    .returning('created_at')
-    .executeTakeFirst()
+    const post = await db.transaction().execute(async(trx) => {
+        const insertPost = await trx
+        .insertInto('posts')
+        .values(postData)
+        .returning('created_at')
+        .executeTakeFirst()
 
-    const post = await insertPost
-    return post
+        const selectProfile = await trx
+        .selectFrom('profiles')
+        .select('username')
+        .where('id', '=', postData.user_id)
+        .executeTakeFirst()
+
+        return { insertPost, selectProfile }
+    })
+
+    const { insertPost, selectProfile } = await post
+    const createdAt = insertPost?.created_at as Date
+    const username = selectProfile?.username as string
+    return { createdAt, username }
 }
 
 /* Update post */
@@ -299,7 +311,6 @@ export const selectPostReplies = async function ( sessionUserId: string, postId:
 export const selectPostAndReplies = async function( sessionUserId: string, username: string, timestampString: string, postType: string ) {
 
     const select = await db.transaction().execute(async(trx) => {
-        console.log(username)
         try {
             const selectPostUserId = await trx
             .selectFrom('profiles')
@@ -495,6 +506,9 @@ export const selectUserPosts = async function ( sessionUserId: string, username:
                 'posts.episode_title as episode_title',
                 'posts.show_title as show_title',
                 'posts.listen_url as listen_url',
+                'posts.embed_id as embed_id',
+                'posts.embed_source as embed_source',
+                'posts.embed_account as embed_account',
                 'profiles.id as user_id',
                 'profiles.username as username',
                 'profiles.display_name as display_name',
@@ -616,10 +630,12 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
             changelog[timestampISOString] = {
                 active: true
             }
+
         
-            return await trx
+            const insertReaction = await trx
             .insertInto('post_reactions')
             .values({
+                id: sql`default`,
                 post_id: postId,
                 user_id: sessionUserId,
                 reaction: reactionType,
@@ -629,6 +645,9 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
             })
             .returning(['id', 'reaction', 'active'])
             .executeTakeFirst()
+
+            const reaction = await insertReaction
+            return reaction
         }
     })
 

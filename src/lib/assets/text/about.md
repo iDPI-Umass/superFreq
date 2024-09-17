@@ -69,6 +69,7 @@ Right now, there are three things you can do on Freq.
 <hr />
 <h1 id="guidelines">
 Community guidelines
+
 </h1>
 
 
@@ -138,8 +139,11 @@ Known Bugs
 </h1>
 
 - Layout/design weirdness
-    - Color in drop down menus
+    - Dropdown menu background color and text color are behaving in bizarre ways
     - Not all pages are currently responsive to mobile sizing
+    - Search bar in new/edit collections doesn't always resize correctly
+    - Fonts may or may not be loading correctly
+    - Some modal dialogs are too wide
 - For a few reasons, cover art doesn’t always load
 - There are probably typos. Please report those.
 

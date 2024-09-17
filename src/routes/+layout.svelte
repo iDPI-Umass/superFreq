@@ -19,8 +19,8 @@
 	
 
 	export let data: LayoutData
-	let { session, user, profile, supabase } = data
-	$: ({ session, user, profile, supabase } = data)
+	let { session, user, profile, urlString, supabase } = data
+	$: ({ session, user, profile, urlString, supabase } = data)
 
 	const sessionUserId = user?.id as string
 
@@ -28,6 +28,7 @@
 	let avatarUrl: string
 	let username: string
 	$: displayName, avatarUrl, username
+
 
 	if (typeof window !== 'undefined') {   
 		username = profile?.username as string
@@ -43,7 +44,7 @@
 				 * triggering function from completing
 				 */
 				setTimeout(() => {
-					goto('/', { invalidateAll: true });
+					goto(urlString, { invalidateAll: true });
 				});
 			}
 			if (newSession?.expires_at !== session?.expires_at) {
