@@ -36,24 +36,6 @@
 		avatarUrl = profile?.avatar_url as string
 	}
 
-	onMount(() => {
-		const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
-			if (!newSession) {
-				/**
-				 * Queue this as a task so the navigation won't prevent the
-				 * triggering function from completing
-				 */
-				setTimeout(() => {
-					goto('/', { invalidateAll: true });
-				});
-			}
-			if (newSession?.expires_at !== session?.expires_at) {
-				invalidate('supabase:auth');
-			}
-		});
-
-		return () => data.subscription.unsubscribe();
-	});
 </script>
 
 <PlainHeader
