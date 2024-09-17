@@ -20,6 +20,8 @@
     export let postId: string | null =  null
     export let success: boolean | null | undefined = null
 
+    console.log(mode)
+
     let popOverOpenState: boolean
     let showModal: boolean = false
     let dialog: any
@@ -170,19 +172,6 @@
                 </span>
             </button>
             {/if}
-        {:else if mode = 'postMenu'}
-            <button
-                class="popover-item" 
-                on:click|preventDefault={() => openDialog('flagPost')} 
-            >
-                <Flag 
-                    size="16" 
-                    color="var(--freq-color-text-muted)"
-                ></Flag>
-                <span class="descriptor">
-                    flag post
-                </span>
-            </button>
         {:else if mode == 'sessionUserPostMenu'}
             <button 
                 class="popover-item" 
@@ -206,6 +195,19 @@
                 ></Trash2>
                 <span class="descriptor">
                     delete
+                </span>
+            </button>
+        {:else if mode = 'postMenu'}
+            <button
+                class="popover-item" 
+                on:click|preventDefault={() => openDialog('flagPost')} 
+            >
+                <Flag 
+                    size="16" 
+                    color="var(--freq-color-text-muted)"
+                ></Flag>
+                <span class="descriptor">
+                    flag post
                 </span>
             </button>
         {/if}
