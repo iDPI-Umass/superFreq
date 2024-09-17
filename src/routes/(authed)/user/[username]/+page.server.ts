@@ -125,10 +125,10 @@ export const actions = {
         const timestampSlug = createdAt?.toISOString()
 
         if ( !timestampSlug ) {
-            return { sucess: false }
+            return { success: false }
         }
         else {
-            redirect(303, `/user/${username}/now-playing/${timestampSlug}`)
+            redirect(303, `/posts/${username}/now-playing/${timestampSlug}`)
         }
 	},
     postTrack: async ({ request, locals: { safeGetSession } }) => {
@@ -171,10 +171,10 @@ export const actions = {
         const timestampSlug = createdAt?.toISOString()
 
         if ( !timestampSlug ) {
-            return { sucess: false }
+            return { success: false }
         }
         else{
-            redirect(303, `/user/${username}/now-playing/${timestampSlug}`)
+            redirect(303, `/posts/${username}/now-playing/${timestampSlug}`)
         }
 	},
     postMix: async ({ request, locals: { safeGetSession } }) => {
@@ -204,7 +204,7 @@ export const actions = {
             mbid: mbid,
             artist_name: artistName,
             episode_title: episode,
-            show_name: show,
+            show_title: show,
             text: postText,
             created_at: timestampISO,
             updated_at: timestampISO,
@@ -213,14 +213,15 @@ export const actions = {
             embed_account: embedInfo.account
         }
 
+        console.log(postData)
         const { username, createdAt } = await insertPost( postData )
         const timestampSlug = createdAt?.toISOString()
 
         if ( !timestampSlug ) {
-            return { sucess: false }
+            return { success: false }
         }
         else{
-            redirect(303, `/user/${username}/now-playing/${timestampSlug}`)
+            redirect(303, `/posts/${username}/now-playing/${timestampSlug}`)
         }
 	},
     flagPost: async ({ request, locals: { safeGetSession }}) => {

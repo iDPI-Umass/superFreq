@@ -178,6 +178,12 @@
             </div>
             <form method="POST"  name="track" class="vertical" action="?/postTrack" use:enhance>
                 <input
+                    id="item-type" 
+                    name="item-type" 
+                    type="hidden" 
+                    value="recording"
+                />
+                <input
                     id="mbid-type" 
                     name="mbid-type" 
                     type="hidden" 
@@ -310,7 +316,7 @@
                     id="item-type" 
                     name="item-type" 
                     type="hidden" 
-                    value="artist"
+                    value="episode"
                 />
                 <input
                     id="mbid" 
