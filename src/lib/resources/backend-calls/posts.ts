@@ -37,17 +37,22 @@ postData template for new comments:
 export const insertPost = async function ( postData: any ) {
 
     const post = await db.transaction().execute(async(trx) => {
+        console.log('running')
         const insertPost = await trx
         .insertInto('posts')
         .values(postData)
         .returning('created_at')
         .executeTakeFirst()
 
+        console.log(insertPost)
+
         const selectProfile = await trx
         .selectFrom('profiles')
         .select('username')
         .where('id', '=', postData.user_id)
         .executeTakeFirst()
+
+        console.log(selectProfile)
 
         return { insertPost, selectProfile }
     })
