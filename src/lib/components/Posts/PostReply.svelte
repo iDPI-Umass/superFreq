@@ -16,7 +16,7 @@
     import { Collapsible } from "bits-ui";
 
     export let reply: any
-    export let sessionUserId: string
+    export let sessionUserId: string | null
     export let editState = false
 
     let openState: boolean
