@@ -40,11 +40,7 @@
     <div class="double-border">
         <div class="post-row">
             <div class="row-group-user-data">
-                {#if post.avatar_url}
-                <img class="avatar" src={post.avatar_url} alt={`${post.display_name}'s avatar`}/>
-                {:else if !post.avatar_url}
-                <img class="fallback-avatar" src={wave} alt={`${post.display_name}'s avatar`}/>
-                {/if}
+                <img class="avatar" src={post.avatar_url ?? wave} alt={`${post.display_name}'s avatar`}/>
                 <div class="row-group-column">
                     <a href="/user/{post.username}">
                         <span class="display-name">

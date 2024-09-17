@@ -5,6 +5,7 @@
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
     import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
     import { displayDate } from '$lib/resources/parseData'
+    import wave from "$lib/assets/images/logo/freq-wave.svg"
 
     export let data: PageData
     export let form: ActionData
@@ -34,7 +35,7 @@
         {#if Object.keys(item).includes( 'now_playing_post_id' )}      
             <a href={`/posts/${item.username}/now-playing/${item.feed_item_timestamp.toISOString()}`}>
                 <div class="feed-item-user-data">
-                    <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
+                    <img src={item.avatar_url ?? wave} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
                     {item.display_name}
                     posted: 
                 </div>
@@ -51,7 +52,7 @@
         {:else if Object.keys(item).includes( 'comment_id' )}
             <a href={`/posts/${item.original_poster_username}/now-playing/${item.feed_item_timestamp.toISOString()}`}>
                 <div class="feed-item-one-liner">
-                    <img csrc={item.avatar_url} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
+                    <img src={item.avatar_url ?? wave} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
                     {item.display_name} commented on {item.original_poster_display_name}'s post
                 </div>
             </a>
@@ -65,7 +66,7 @@
         {:else if Object.keys(item).includes( 'collection_follow_id' )}
             <a href={`/collection/${item.collection_id}`}>
                 <div class="feed-item-one-liner">
-                    <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
+                    <img src={item.avatar_url ?? wave} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
                     {item.display_name}
                     followed a collection: 
                     <span class="feed-item-subject">
@@ -76,7 +77,7 @@
         {:else if Object.keys(item).includes( 'collection_edit_id' )}
             <a href={`/collection/${item.collection_id}`}>
                 <div class="feed-item-one-liner">
-                    <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
+                    <img src={item.avatar_url ?? wave} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
                     {item.display_name}
                     edited the collection: 
                     <span class="feed-item-subject">
@@ -87,7 +88,7 @@
         {:else if Object.keys(item).includes( 'session_user_post_commenter_id' )}
             <a href={`/posts/${item.username}/now-playing/${item.post_created_at.toISOString()}`}>
                 <div class="feed-item-one-liner">
-                    <img src={item.session_user_post_commenter_avatar_url} alt={`${item.session_user_post_commenter_display_name}'s avatar`} class="feed-avatar" />
+                    <img src={item.session_user_post_commenter_avatar_url ?? wave} alt={`${item.session_user_post_commenter_display_name}'s avatar`} class="feed-avatar" />
                     {item.session_user_post_commenter_display_name}
                     commented on your post from {displayDate(item.post_created_at)}
                 </div>
@@ -95,7 +96,7 @@
         {:else if Object.keys(item).includes( 'session_user_post_commenter_id' )}
             <a href={`/posts/${item.username}/now-playing/${item.post_created_at.toISOString()}`}>
                 <div class="feed-item-one-liner">
-                    <img src={item.session_user_post_post_react_avatar_url} alt={`${item.session_user_post_post_react_display_name}'s avatar`} class="feed-avatar" />
+                    <img src={item.session_user_post_post_react_avatar_url ?? wave} alt={`${item.session_user_post_post_react_display_name}'s avatar`} class="feed-avatar" />
                     {item.session_user_post_post_reactr_display_name}
                     liked your post from {displayDate(item.post_created_at)}
                 </div>

@@ -7,7 +7,7 @@
     import {dragHandleZone, dndzone, dragHandle} from "svelte-dnd-action";
     import Grip from 'lucide-svelte/icons/grip';
 
-    import logo from '$lib/assets/images/logo/freq-logo-dark.png'
+    import wave from "$lib/assets/images/logo/freq-wave.svg"
 
     import "$lib/styles/media-grid-list.css"
     import "$lib/styles/metadata-formatting.css"
@@ -99,7 +99,7 @@
                 class={format[layout][1]} 
             >
                 <img 
-                    src={contentItem["img_url"] ?? ''} 
+                    src={contentItem["img_url"] ?? wave} 
                     alt="{contentItem["release_group_name"]} cover art"
                 />
                 <div class="metadata-blurb">
@@ -127,7 +127,7 @@
                 animate:flip="{{duration: flipDurationMs}}" 
                 class={format[layout][0]}
             >
-                <img src={contentItem["imgUrl"]}  alt={contentItem["recording_name"]} />
+                <img src={contentItem["imgUrl"] ?? wave}  alt={contentItem["recording_name"]} />
                 <div class="metadata-blurb">
                     <h2>{contentItem["recording_name"]}</h2>
                     <p>{contentItem["artist_name"]}</p>
@@ -159,9 +159,7 @@
         <div class={format[layout][0]}>
             {#each collectionContents as contentItem}
             <div class={format[layout][1]}>
-                    <img src={(
-                        contentItem['img_url'] && contentItem['img_url'] != '') ? contentItem['img_url'] : logo
-                        } 
+                    <img src={contentItem['img_url'] ?? wave} 
                         alt={contentItem['release_group_name']} />
                     <div class="metadata-blurb">
                         <a href={`https://musicbrainz.org/release-group/${contentItem["release_group_mbid"]}`}>
@@ -178,7 +176,7 @@
         <div class={format[layout][0]}>
             {#each collectionContents as contentItem}
             <div class={format[layout][1]}>
-                    <img src={contentItem["release_groups"]["img_url"]}  alt={contentItem["recordings"]["recording_name"]} />
+                    <img src={contentItem["release_groups"]["img_url"] ?? wave}  alt={contentItem["recordings"]["recording_name"]} />
                     <div class="metata-blurb">
                         <a href={`https://musicbrainz.org/recording/${contentItem["recording_mbid"]}`}>
                             <h2>{contentItem["recordings"]["recording_name"]}</h2>
