@@ -199,7 +199,7 @@ export const selectSessionProfile = async function ( sessionUserId: string ) {
 
 /* New profile for session user updating row generated during account confirmation. Checks if username is already taken. */
 
-export const newSessionProfile = async function ( sessionUserId: string, profileData: App.RowData ) {
+export const newSessionProfile = async function ( sessionUserId: string, profileData: App.RowData, email: string ) {
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
 
@@ -218,9 +218,17 @@ export const newSessionProfile = async function ( sessionUserId: string, profile
             return { success: false }
         }
         catch ( error ) {
+            await trx
+            .updateTable('approved_users')
+            .set({
+                user_id: sessionUserId
+            })
+            .where('email', '=', email)
+            .executeTakeFirst()
+            
             const selectChangelog = await trx
             .selectFrom('profiles')
-            .select('changelog')
+            .select(['id','changelog'])
             .where('id', '=', sessionUserId)
             .executeTakeFirst()
     
