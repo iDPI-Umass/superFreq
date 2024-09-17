@@ -19,8 +19,8 @@
 	
 
 	export let data: LayoutData
-	let { session, user, profile, urlString, supabase } = data
-	$: ({ session, user, profile, urlString, supabase } = data)
+	let { session, user, profile, supabase } = data
+	$: ({ session, user, profile, supabase } = data)
 
 	const sessionUserId = user?.id as string
 
@@ -44,7 +44,7 @@
 				 * triggering function from completing
 				 */
 				setTimeout(() => {
-					goto(urlString, { invalidateAll: true });
+					goto('/', { invalidateAll: true });
 				});
 			}
 			if (newSession?.expires_at !== session?.expires_at) {
