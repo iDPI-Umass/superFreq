@@ -69,7 +69,7 @@
                 form="flagPost"
                 value={reply.id}
             />
-            <div id={reply.username?.concat(reply.created_at.valueOf().toString())}>
+            <div id={reply.username?.concat(reply.created_at.toISOString())}>
                 <PostReply
                     reply={reply}
                     sessionUserId={sessionUserId}

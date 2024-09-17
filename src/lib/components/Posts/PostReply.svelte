@@ -11,6 +11,7 @@
     import Reply from 'lucide-svelte/icons/reply'
     import Heart from 'lucide-svelte/icons/heart'
     import Flag from 'lucide-svelte/icons/flag'
+    import Link from 'lucide-svelte/icons/link-2'
 
     import { Collapsible } from "bits-ui";
 
@@ -20,7 +21,10 @@
 
     let openState: boolean
 
-    console.log(reply)
+    const permalink = `/posts/${reply.username}/now-playing/${reply.original_post_date.toISOString()}#${reply.username?.concat(reply.created_at.toISOString())}`
+
+
+    console.log(reply.user_id = sessionUserId)
 </script>
 
 <div class="comment-panel">    
@@ -29,16 +33,17 @@
             <div class="row-group-user-data">
                 <img class="comment-avatar" src={reply.avatar_url} alt={`${reply.display_name}'s avatar`} />
                 <div class="row-group-column">
-                    <a href="/user/{reply.username}">
+                    <a href="/posts/{reply.username}">
                         <span class="comment-display-name">
                             {reply.display_name}
                         </span>
                     </a>
-                    <span class="comment-date">
-                        <a href={`/${reply.original_poster_username}/now-playing/${reply.original_post_date}#${reply.username?.concat(reply.created_at.valueOf().toString())}`}>
+                    <a href={permalink}>
+                        <span class="date" aria-label="permalink">
                             {displayDate(reply.created_at)}
-                        </a>
-                    </span>
+                            <Link size="15" color=var(--freq-color-text-muted)></Link>
+                        </span>
+                    </a>
                 </div>
 
             </div>
@@ -73,12 +78,12 @@
                 {/each} -->
             </div>
             <div class="row-group-icon-description">
-                {#if reply.userId == sessionUserId }
+                {#if reply.user_id == sessionUserId }
                     <UserActionsMenu
                         mode='sessionUserPostMenu'
                         bind:editState={editState}
                     ></UserActionsMenu>
-                {:else}
+                {:else if reply.user_id != sessionUserId}
                     <UserActionsMenu
                         mode='postMenu'
                     ></UserActionsMenu>
