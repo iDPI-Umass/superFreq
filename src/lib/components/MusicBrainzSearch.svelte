@@ -12,8 +12,6 @@
 -->
 
 <script lang="ts">
-	import { onMount } from 'svelte'
-	import { enhance } from '$app/forms'
 	import ListModal from 'src/lib/components/modals/ListModal.svelte'
     import { categoriesTable } from '$lib/resources/parseData.ts'
 
@@ -51,6 +49,10 @@
 
 		if (searchCategory == "recordings") {
 			endpoint.searchParams.set("inc", "releases+release-groups+artist-rels")
+		}
+
+		for ( const param of endpoint.searchParams) {
+			console.log(param)
 		}
 
         const res = await fetch(endpoint)
@@ -164,9 +166,9 @@
 			}];
 		}
 		else if ( searchCategory == "recordings" ) {
-
+			console.log(item)
 			let remixerMbid: string | null = null;
-			if ( item["relations"][0]["artist"]["type"] == "remixer" ) {
+			if ( item["relations"] && item["relations"][0]["artist"]["type"] == "remixer" ) {
 				remixerMbid = item["relations"][0]["artist"]["id"];
 			}
 			const releaseGroup = item["releases"][0]["release-group"]["id"];

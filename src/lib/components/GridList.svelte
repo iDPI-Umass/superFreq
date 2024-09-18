@@ -127,7 +127,7 @@
                 animate:flip="{{duration: flipDurationMs}}" 
                 class={format[layout][0]}
             >
-                <img src={contentItem["imgUrl"] ?? wave}  alt={contentItem["recording_name"]} />
+                <img src={contentItem["img_url"] ?? wave}  alt={contentItem["recording_name"]} />
                 <div class="metadata-blurb">
                     <h2>{contentItem["recording_name"]}</h2>
                     <p>{contentItem["artist_name"]}</p>
