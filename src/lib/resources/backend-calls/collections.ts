@@ -443,7 +443,6 @@ export const selectEditableCollectionContents = async function ( collectionId: s
                 'artists.artist_name as artist_name',
             ])
             .where('contents.collection_id', '=', collectionId)
-            .where('contents.item_position', 'is not', null)
             .execute()
         }
         else if ( collectionType == 'release_groups' ) {
@@ -464,7 +463,6 @@ export const selectEditableCollectionContents = async function ( collectionId: s
                 'release_groups.release_date as release_date'
             ])
             .where('contents.collection_id', '=', collectionId)
-            .where('contents.item_position', 'is not', null)
             .execute()
         }
         else if ( collectionType == 'recordings' ) {
@@ -489,26 +487,24 @@ export const selectEditableCollectionContents = async function ( collectionId: s
                 'recordings.remixer_artist_mbid as remixer_artist_mbid'
             ])
             .where('contents.collection_id', '=', collectionId)
-            .where('contents.item_position', 'is not', null)
             .execute()
         }
 
-
-        const selectDeletedCollectionContents = await trx
-        .selectFrom('collections_contents as contents')
-        .select([
-            'contents.id as original_id',
-            'contents.collection_id as collection_id',
-            'contents.inserted_at as inserted_at',
-            'contents.item_position as item_position',
-        ])
-        .where('contents.collection_id', '=', collectionId)
-        .where('contents.item_position', 'is', null)
-        .execute()
-
         const info = selectCollectionInfo
         const collectionContents = selectCollectionContents as App.RowData[]
-        const deletedCollectionContents = selectDeletedCollectionContents
+        let deletedCollectionContents = [] as any
+
+        console.log('collection items original: ' + collectionContents)
+        console.log('deleted items original: ' + deletedCollectionContents)
+        for ( const item of collectionContents ) {
+            if (item.item_position == null) {
+                deletedCollectionContents = [...deletedCollectionContents, item]
+                collectionContents.splice(collectionContents.indexOf(item), 1)
+            }
+        }
+
+        console.log('new collection items: ' + collectionContents)
+        console.log('new deleted items: ' + deletedCollectionContents)
 
         // create ID for each item for svelte-dnd component in colleciton editor
         let counter = 0
