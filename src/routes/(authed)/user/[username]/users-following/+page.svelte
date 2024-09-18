@@ -1,4 +1,5 @@
 <script lang="ts">
+    import wave from "$lib/assets/images/logo/freq-wave.svg"
     export let data
 
     let { profiles, profileDisplayName, username } = data
@@ -16,7 +17,7 @@
 <ul>
     <li>
         <a href="/user/{user.username}">
-            <img src={user.avatar_url} alt="{user.display_name}'s avatar" class="avatar" />
+            <img src={user.avatar_url ?? wave} alt="{user.display_name}'s avatar" class="avatar" />
             {user.display_name}
         </a>
     </li>
