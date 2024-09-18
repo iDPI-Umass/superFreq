@@ -25,7 +25,7 @@
     const categories: App.Lookup = {
         "artists": "artists",
         "release_groups": "albums",
-        "recording": "tracks"
+        "recordings": "tracks"
     }
 
     
@@ -35,7 +35,7 @@
 
 <svelte:head>
 	<title>
-		{collectionInfo.title}
+		{collectionInfo?.title}
 	</title>
 </svelte:head>
 
