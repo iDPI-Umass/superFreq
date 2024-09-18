@@ -325,6 +325,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
                 'artists.artist_name as artist_name'
             ])
             .where('contents.collection_id', '=', collectionId)
+            .where('contents.item_position', 'is not', null)
             .orderBy('item_position')
             .execute()
 
@@ -346,6 +347,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
                 'release_groups.img_url as img_url'
             ])
             .where('contents.collection_id', '=', collectionId)
+            .where('contents.item_position', 'is not', null)
             .orderBy('item_position')
             .execute()
 
@@ -370,6 +372,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
                 'recordings.recording_mbid as recording_mbid'
             ])
             .where('contents.collection_id', '=', collectionId)
+            .where('contents.item_position', 'is not', null)
             .orderBy('item_position')
             .execute()
 
@@ -393,7 +396,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
 Fetches collection for editing if session user is owner or collaborator
 */
 
-export const selectEditableCollectionContents = async function ( collectionId: string, collectionType: string, sessionUserId: string ) {
+export const selectEditableCollectionContents = async function ( collectionId: string, sessionUserId: string ) {
 
     const selectCollection = await db.transaction().execute(async (trx) => {
         
@@ -424,17 +427,18 @@ export const selectEditableCollectionContents = async function ( collectionId: s
         ]))
         .executeTakeFirst()
 
+        const collectionType = selectCollectionInfo?.type as string
+
         let selectCollectionContents
         if ( collectionType == 'artists' ) {
             selectCollectionContents = await trx
             .selectFrom('collections_contents as contents')
             .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
             .select([
+                'contents.id as original_id',
                 'contents.collection_id as collection_id',
                 'contents.inserted_at as inserted_at',
                 'contents.artist_mbid as artist_mbid',
-                'contents.release_group_mbid as release_group_mbid',
-                'contents.recording_mbid as recordings_mbid',
                 'contents.item_position as item_position',
                 'artists.artist_name as artist_name',
             ])
@@ -448,15 +452,16 @@ export const selectEditableCollectionContents = async function ( collectionId: s
             .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
             .innerJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
             .select([
+                'contents.id as origina_id',
                 'contents.collection_id as collection_id',
                 'contents.inserted_at as inserted_at',
                 'contents.artist_mbid as artist_mbid',
                 'contents.release_group_mbid as release_group_mbid',
-                'contents.recording_mbid as recordings_mbid',
                 'contents.item_position as item_position',
                 'artists.artist_name as artist_name',
                 'release_groups.release_group_name as release_group_name',
                 'release_groups.img_url as img_url',
+                'release_groups.release_date as release_date'
             ])
             .where('contents.collection_id', '=', collectionId)
             .where('contents.item_position', 'is not', null)
@@ -469,16 +474,19 @@ export const selectEditableCollectionContents = async function ( collectionId: s
             .innerJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
             .innerJoin('recordings', 'recordings.recording_mbid', 'contents.recording_mbid')
             .select([
+                'contents.id as original_id',
                 'contents.collection_id as collection_id',
                 'contents.inserted_at as inserted_at',
                 'contents.artist_mbid as artist_mbid',
                 'contents.release_group_mbid as release_group_mbid',
-                'contents.recording_mbid as recordings_mbid',
+                'contents.recording_mbid as recording_mbid',
                 'contents.item_position as item_position',
                 'artists.artist_name as artist_name',
                 'release_groups.release_group_name as release_group_name',
                 'release_groups.img_url as img_url',
+                'release_groups.release_date as release_date',
                 'recordings.recording_name as recording_name',
+                'recordings.remixer_artist_mbid as remixer_artist_mbid'
             ])
             .where('contents.collection_id', '=', collectionId)
             .where('contents.item_position', 'is not', null)
@@ -489,6 +497,7 @@ export const selectEditableCollectionContents = async function ( collectionId: s
         const selectDeletedCollectionContents = await trx
         .selectFrom('collections_contents as contents')
         .select([
+            'contents.id as original_id',
             'contents.collection_id as collection_id',
             'contents.inserted_at as inserted_at',
             'contents.item_position as item_position',
@@ -498,8 +507,15 @@ export const selectEditableCollectionContents = async function ( collectionId: s
         .execute()
 
         const info = selectCollectionInfo
-        const collectionContents = selectCollectionContents
+        const collectionContents = selectCollectionContents as App.RowData[]
         const deletedCollectionContents = selectDeletedCollectionContents
+
+        // create ID for each item for svelte-dnd component in colleciton editor
+        let counter = 0
+        for ( const item of collectionContents) {
+            item['id'] = counter
+            counter += 1
+        }
 
         return { info, collectionContents, deletedCollectionContents }
     })
@@ -530,6 +546,7 @@ export const selectEditableTopAlbumsCollection = async function ( sessionUserId:
             .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
             .select([
                 'info.collection_id as collection_id',
+                'contents.id as original_id',
                 'contents.item_position',
                 'contents.release_group_mbid',
                 'contents.artist_mbid',

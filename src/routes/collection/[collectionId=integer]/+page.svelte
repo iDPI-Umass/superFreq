@@ -31,6 +31,8 @@
     
     const updatedAt = new Date(collectionUpdatedAt).toLocaleDateString()
 
+    
+
 </script>
 
 <svelte:head>
