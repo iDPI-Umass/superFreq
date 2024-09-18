@@ -132,7 +132,7 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
                 "artist_mbid": thisItem["artist_mbid"],
                 "release_group_mbid": thisItem["release_group_mbid"],
                 "release_group_name": thisItem["release_group_name"],
-                "release_date": thisItem["release_fate"],
+                "release_date": thisItem["release_date"],
                 "label": thisItem["label"],
                 "img_url": thisItem["img_url"],
                 "added_at": timestampISO

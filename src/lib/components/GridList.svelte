@@ -91,7 +91,7 @@
                 </div>
             </li>
             {/each}
-        {:else if collectionType == "release_groups" || collectionContents.length > 0 }
+        {:else if collectionType == "release_groups" }
             {#each items as contentItem, index(contentItem.id)}
             <li 
                 aria-label="{contentItem["release_group_name"]} by ${contentItem["artist_name"]}" 
@@ -125,9 +125,9 @@
             <li 
                 aria-label="{contentItem["recording_name"]} by ${contentItem["artist_name"]}" 
                 animate:flip="{{duration: flipDurationMs}}" 
-                class={format[layout][0]}
+                class={format[layout][1]}
             >
-                <img src={contentItem["imgUrl"] ?? wave}  alt={contentItem["recording_name"]} />
+                <img src={contentItem["img_url"] ?? wave}  alt={contentItem["recording_name"]} />
                 <div class="metadata-blurb">
                     <h2>{contentItem["recording_name"]}</h2>
                     <p>{contentItem["artist_name"]}</p>
@@ -176,13 +176,13 @@
         <div class={format[layout][0]}>
             {#each collectionContents as contentItem}
             <div class={format[layout][1]}>
-                    <img src={contentItem["release_groups"]["img_url"] ?? wave}  alt={contentItem["recordings"]["recording_name"]} />
-                    <div class="metata-blurb">
+                    <img src={contentItem["img_url"] ?? wave}  alt={contentItem["recording_name"]} />
+                    <div class="metadata-blurb">
                         <a href={`https://musicbrainz.org/recording/${contentItem["recording_mbid"]}`}>
-                            <h2>{contentItem["recordings"]["recording_name"]}</h2>
+                            <h2>{contentItem["recording_name"]}</h2>
                         </a>
                         <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
-                            <p>{contentItem["artists"]["artist_name"]}</p>
+                            <p>{contentItem["artist_name"]}</p>
                         </a>
                     </div>
             </div>
