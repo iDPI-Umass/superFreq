@@ -53,6 +53,7 @@
 	}
 
 	let placeholderText = "Search for items to add to your collection"
+
 </script>
 
 <svelte:head>
@@ -86,6 +87,11 @@
                 type="hidden"
                 name="collection-id"
                 value={collectionId}
+            />
+            <input 
+                type="hidden"
+                name="collection-type"
+                value={collectionType}
             />
             {#key collectionItems?.length}
             <input 

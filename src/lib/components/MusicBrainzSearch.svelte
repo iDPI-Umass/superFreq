@@ -115,6 +115,7 @@
 
     // adds item from MusicBrainz search results to collection editor
 	async function addCollectionItem( item: any ) {
+		console.log(item)
 		if ( limit && addedItems.length === limit ) {
 			alert(`Only ${limit} items are allowed in this collection. Please delete an item before you add something new.`)
 			return addedItems

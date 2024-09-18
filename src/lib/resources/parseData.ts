@@ -91,6 +91,8 @@ Prepare data for table insert in format expected by: artists, release_groups, an
 
 export const prepareMusicMetadataInsert = function ( collectionItems: App.RowData, collectionType: string ) {
 
+    console.log(collectionType)
+
     let artistsMetadata = [] as any
     let releaseGroupsMetadata = [] as any
     let recordingsMetadata = [] as any
@@ -142,13 +144,14 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
                 "artist_mbid": thisItem["artist_mbid"],
                 "recording_mbid": thisItem["recording_mbid"],
                 "recording_name": thisItem["recording_name"],
-                "remixer_mbid": thisItem["remixer_mbid"],
+                "remixer_artist_mbid": thisItem["remixer_artist_mbid"],
                 "release_date": thisItem["release_date"],
                 "added_at": timestampISO
             }];
         }
     }
 
+    console.log(recordingsMetadata)
     return { artistsMetadata, releaseGroupsMetadata, recordingsMetadata };
 }
 
@@ -236,6 +239,7 @@ export const populateCollectionContents = function ( collectionItems: App.RowDat
         }
 
         collectionContents = [...collectionContents, {
+            "id": thisItem["original_id"],
             "collection_id": collectionId,
             "inserted_at": thisItem["inserted_at"] ?? timestampISO,
             "updated_at": timestampISO,

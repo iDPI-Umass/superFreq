@@ -21,7 +21,7 @@ export const load: PageServerLoad = async ({ parent, params, locals: { safeGetSe
 
   const sessionUserId = session.user?.id as string
 
-  const collection = await selectEditableCollectionContents(collectionId, 'release_groups', sessionUserId)
+  const collection = await selectEditableCollectionContents(collectionId, sessionUserId)
 
   if ( collection ) {
       return { collection, sessionUserId, collectionId };
@@ -37,6 +37,7 @@ export const actions: Actions = {
 
     const collectionTitle = data.get('collection-title')
     const collectionId = data.get('collection-id')
+    const collectionType = data.get('collection-type')
     const collectionStatus = data.get('status')
     const collectionDescription = data.get('description')
     const items = data.get('collection-contents') as string
@@ -46,11 +47,13 @@ export const actions: Actions = {
     const collectionItems = JSON.parse(items) as App.RowData
     const deletedCollectionItems = JSON.parse(deletedItems) as App.RowData
 
+    console.log(collectionItems)
     const activeAndDeletedCollectionItems = collectionItems.concat(deletedCollectionItems)
 
     const collectionInfo = {
       title: collectionTitle,
       status: collectionStatus,
+      type: collectionType,
       collection_id: collectionId,
       description_text: collectionDescription,
       updated_at: timestampISO,
