@@ -74,6 +74,7 @@
 		// }
 
 		searchComplete =  true
+		console.log(searchComplete)
 		return {
 			mbData, searchComplete
 		}
@@ -190,7 +191,7 @@
 				"recording_mbid": item["id"],
 				"recording_name": item["title"],
 				"release_date": item["first-release-date"],
-				"remixer_mbid": remixerMbid,
+				"remixer_artist_mbid": remixerMbid,
 				"img_url": coverArt,
 				"label_name": labelName, 
 				"label_mbid": labelMbid,
@@ -201,6 +202,7 @@
 		newItemAdded = true
 		query = ""
 		searchComplete = false
+		showModal = false
 		return {newItemAdded, showModal, query, searchComplete}
 	}
 
@@ -270,7 +272,7 @@
 				"recording_mbid": item["id"],
 				"recording_name": item["title"],
 				"release_date": item["first-release-date"],
-				"remixer_mbid": remixerMbid,
+				"remixer_artist_mbid": remixerMbid,
 				"img_url": coverArt,
 				"label_name": labelName, 
 				"label_mbid": labelMbid,
@@ -322,17 +324,17 @@
 						{/if}
 						<p>
 							{#if searchCategory == "artists"}
-							<span>{item["name"]}</span>
-							({item["area"]["name"]}, 
-							{item["life-span"]["begin"]})
+							<span>{item["name"] ?? ''}</span>
+							({item["area"]["name"] ?? ''}, 
+							{item["life-span"]["begin"] ?? ''})
 						{:else if searchCategory == "release_groups"}
-							<span >{item["title"]}</span>  by 
-							{item["artist-credit"][0]["artist"]["name"]} 
-							({item["first-release-date"]})
+							<span >{item["title"] ?? ''}</span>  by 
+							{item["artist-credit"][0]["artist"]["name"] ?? ''} 
+							({item["first-release-date"] ?? ''})
 						{:else if searchCategory == "recordings"}
-							<span>{item["title"]}</span> by 
-							{item["artist-credit"][0]["artist"]["name"]} 
-							({item["disambiguation"] ?? item["releases"][0]["release-group"]["title"]})
+							<span>{item["title"] ?? ''}</span> by 
+							{item["artist-credit"][0]["artist"]["name"] ?? ''} 
+							({item["releases"] ? item["releases"][0]["release-group"]["title"] : ''})
 						{/if}
 						</p>
 						<!-- {#if avatarSearch}
