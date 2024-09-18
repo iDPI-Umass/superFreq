@@ -1,6 +1,6 @@
 import type { LayoutServerLoad } from './$types'
 import { db } from 'src/database.ts'
-import logo from "$lib/assets/images/logo/freq-logo-dark.svg"
+import wave from "$lib/assets/images/logo/freq-wave.svg"
 
 export const load: LayoutServerLoad = async ({ locals: { safeGetSession }, cookies }) => {
   const { session, user } = await safeGetSession()
@@ -19,7 +19,7 @@ export const load: LayoutServerLoad = async ({ locals: { safeGetSession }, cooki
   const profile: App.ProfileObject = {
     'username': null,
     'display_name': null,
-    'avatar_url': logo,
+    'avatar_url': wave,
     'website': 'https://freq.social'
   }
 

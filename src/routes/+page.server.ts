@@ -15,6 +15,10 @@ export const load: PageServerLoad = async ({ parent, locals: { safeGetSession } 
   else if (session.session && !username) {
     throw redirect(303, `/create-profile`)
   }
+
+//  if (session.session && !username) {
+//     throw redirect(303, `/create-profile`)
+//   }
 }
 
 export const actions = { 

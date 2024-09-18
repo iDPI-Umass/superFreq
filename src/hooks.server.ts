@@ -12,17 +12,16 @@ const supabase: Handle = async ({ event, resolve }) => {
    */
   event.locals.supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
     cookies: {
-      get: (key) => event.cookies.get(key),
+      getAll: () => event.cookies.getAll(),
       /**
        * SvelteKit's cookies API requires `path` to be explicitly set in
        * the cookie options. Setting `path` to `/` replicates previous/
        * standard behavior.
        */
-      set: (key, value, options) => {
-        event.cookies.set(key, value, { ...options, path: '/' })
-      },
-      remove: (key, options) => {
-        event.cookies.delete(key, { ...options, path: '/' })
+      setAll: (cookiesToSet) => {
+        cookiesToSet.forEach(({ name, value, options }) => {
+          event.cookies.set(name, value, { ...options, path: '/' })
+        })
       },
     },
   })
@@ -37,7 +36,7 @@ const supabase: Handle = async ({ event, resolve }) => {
       data: { session },
     } = await event.locals.supabase.auth.getSession()
     if (!session) {
-      return { session: null, user: null}
+      return { session: null, user: null }
     }
 
     const {
@@ -69,22 +68,14 @@ const authGuard: Handle = async ({ event, resolve }) => {
   event.locals.user = user
 
   if (!event.locals.session && event.url.pathname.startsWith('/private')) {
-    return redirect(303, '/auth')
+    redirect(303, '/auth')
   }
 
   if (event.locals.session && event.url.pathname === '/auth') {
-    return redirect(303, '/private')
+    redirect(303, '/private')
   }
 
   return resolve(event)
 }
 
-
 export const handle: Handle = sequence(supabase, authGuard)
-
-export function handleError ({ event, error }) {
-  if ( error ) {
-    redirect(303, '/')
-  }
-
-}

@@ -10,7 +10,7 @@
 	import "$lib/styles/about.css";
 	import "$lib/styles/feed.css";
 
-	import { goto, invalidate } from '$app/navigation';
+	import { goto, invalidate, invalidateAll } from '$app/navigation';
 	import { onMount, onDestroy } from 'svelte';
 
 	import { profileStoresObject } from '$lib/stores.ts'
@@ -18,11 +18,11 @@
 	import type { LayoutData } from "./$types";
 	
 
-	export let data: LayoutData
+	export let data
 	let { session, user, profile, supabase } = data
 	$: ({ session, user, profile, supabase } = data)
 
-	const sessionUserId = user?.id as string
+	const sessionUserId = user ? user?.id as string : null
 
 	let displayName: string
 	let avatarUrl: string
@@ -44,14 +44,14 @@
 		});
 
 		return () => data.subscription.unsubscribe();
-	})
+	});
 </script>
 
 <PlainHeader
+	sessionUserId={sessionUserId}
 	username={username}
 	displayName={displayName}
 	avatarUrl={avatarUrl}
-	sessionUserId={sessionUserId}
 ></PlainHeader>
 
 <div class="double-border-full-vw"></div>
