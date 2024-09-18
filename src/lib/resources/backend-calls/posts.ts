@@ -589,6 +589,7 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
                 'posts.episode_title as episode_title',
                 'posts.show_title as show_title',
                 'posts.listen_url as listen_url',
+                'posts.parent_post_id as parent_post_id',
                 'profiles.id as user_id',
                 'profiles.username as username',
                 'profiles.display_name as display_name',
