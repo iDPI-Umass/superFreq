@@ -588,14 +588,16 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
                 'posts.updated_at as updated_at',
                 'posts.episode_title as episode_title',
                 'posts.show_title as show_title',
-                'posts.listen_url as listen_url',
+                'posts.embed_id as embed_id',
+                'posts.embed_source as embed_source',
                 'posts.parent_post_id as parent_post_id',
                 'profiles.id as user_id',
                 'profiles.username as username',
                 'profiles.display_name as display_name',
                 'profiles.avatar_url as avatar_url'
             ])
-            .where('profiles.id', '=', profileUserId)
+            .where('posts.user_id', '=', profileUserId)
+            .where('posts.parent_post_id', 'is', null)
             .orderBy('posts.created_at desc')
             .limit(batchSize)
             .execute()
@@ -605,6 +607,7 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
         }
     })
     const posts = await selectPosts
+    console.log(posts)
     return posts
 }
 

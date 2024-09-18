@@ -17,20 +17,12 @@
     </PanelHeader>
     <div class="posts-spacing">
     {#each posts as post}
-        {#if !post.parent_post_id}
         <NowPlayingPost
             post={post}
             sessionUserId={sessionUserId}
             mode="feed"
         >
         </NowPlayingPost>
-        {:else if post.parent_post_id}
-        <PostReply
-            reply={post}
-            sessionUserId={sessionUserId}
-        >
-        </PostReply>
-        {/if}
     {/each}
     </div>
     <div class="button-spacer">
