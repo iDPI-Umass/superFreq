@@ -6,14 +6,15 @@ export const load: LayoutServerLoad = async ({ locals: { safeGetSession }, cooki
   const { session, user } = await safeGetSession()
 
   if (session) {
-      const select = await db
+    const sessionUserId = user?.id as string
+    const select = await db
       .selectFrom('profiles')
       .select(['username', 'display_name', 'website', 'avatar_url'])
       .where('id', '=', user?.id as string)
       .executeTakeFirst()
 
-      const profile = await select as App.ProfileObject
-      return { session, profile, cookies: cookies.getAll() }
+    const profile = await select as App.ProfileObject
+    return { session, sessionUserId, profile, cookies: cookies.getAll() }
   }
 
   const profile: App.ProfileObject = {
@@ -23,5 +24,5 @@ export const load: LayoutServerLoad = async ({ locals: { safeGetSession }, cooki
     'website': 'https://freq.social'
   }
 
-  return { session, profile, cookies: cookies.getAll() }
+  return { session, sessionUserId: null, profile, cookies: cookies.getAll() }
 }

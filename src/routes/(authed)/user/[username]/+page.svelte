@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { ActionData, PageData } from './$types.js'
-    import { goto } from '$app/navigation'
+    import { afterUpdate, onMount } from 'svelte'
+    import { goto, invalidate, invalidateAll } from '$app/navigation'
     import { enhance } from '$app/forms'
     import { username } from '$lib/resources/localStorage'
     import Settings from 'lucide-svelte/icons/settings'
@@ -14,30 +15,23 @@
 
     export let data: PageData
     export let form: ActionData
-    $: data
 
     let { sessionUserId, profileData, feedItems, profileUsername, posts } = data
     $: ({ sessionUserId, profileData, feedItems, profileUsername, posts } = data) 
 
-    const { profileUserData, followInfo, permission, profileUserBlockInfo, profileUserFlagInfo } = profileData
+    let { profileUserData, followInfo, permission, profileUserBlockInfo, profileUserFlagInfo } = profileData
+
+    $: ({ profileUserData, followInfo, permission, profileUserBlockInfo, profileUserFlagInfo } = profileData)
 
     const profileUserId = profileUserData?.id as string
 
-    let collectionCount: number | null = null
-    let collectionFollowingCount: number | null = null
-    let userFollowingCount: number | null = null
-    let nowPlayingPostsCount: number | null = null
-    let topAlbumsCollection: App.RowData | null = null
+    $: collectionCount = permission ? profileData.collectionCount as number : null
+    $: collectionFollowingCount = permission ? profileData.collectionFollowingCount as number : null
+    $: userFollowingCount = permission ? profileData.userFollowingCount as number : null
+    $: nowPlayingPostsCount = permission ? profileData.userFollowingCount as number : null
+    $: topAlbumsCollection = permission ? profileData.topAlbumsCollection as App.ProfileObject[] : null
 
-    if ( permission ) {
-        collectionCount = profileData['collectionCount'][0].count as number
-        collectionFollowingCount = profileData['collectionFollowingCount'][0].count as number
-        userFollowingCount = profileData['userFollowingCount'][0].count as number
-        nowPlayingPostsCount = profileData['nowPlayingPostsCount'][0].count as number
-        topAlbumsCollection = profileData.topAlbumsCollection as App.RowData
-    }
-
-    let topAlbumsReturned: boolean
+    $: topAlbumsReturned = false
     if ( topAlbumsCollection ) {
         topAlbumsReturned = true
     }
@@ -47,7 +41,7 @@
     $: profileUserBlocked = form?.blockStatus ?? profileUserBlockInfo?.active ?? false
     $: profileUserFlagged = form?.flagStatus ?? profileUserFlagInfo?.active ?? false
 
-    const displayName = profileUserData?.display_name as string
+    $: displayName = profileUserData?.display_name as string
 </script>
 
 <svelte:head>
