@@ -91,8 +91,6 @@ Prepare data for table insert in format expected by: artists, release_groups, an
 
 export const prepareMusicMetadataInsert = function ( collectionItems: App.RowData, collectionType: string ) {
 
-    console.log(collectionType)
-
     let artistsMetadata = [] as any
     let releaseGroupsMetadata = [] as any
     let recordingsMetadata = [] as any
@@ -151,7 +149,6 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
         }
     }
 
-    console.log(recordingsMetadata)
     return { artistsMetadata, releaseGroupsMetadata, recordingsMetadata };
 }
 
@@ -350,7 +347,6 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
         let title: string | null = null
         let artist: string | null = null
 
-        console.log(itemId)
         if ( pageTitle.includes(' - ')) {
             const elements = pageTitle.split(' - ')
             artist = elements[0]
