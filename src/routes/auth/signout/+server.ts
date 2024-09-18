@@ -1,15 +1,15 @@
 import { redirect } from '@sveltejs/kit'
-import type { PageServerLoad } from './$types'
+import type { RequestHandler } from './$types'
 import { profileStoresObject } from '$lib/stores'
 
-export const load: PageServerLoad = async ({ locals: { supabase, session }}) => {
+export const GET: RequestHandler = async ({ locals: { supabase, safeGetSession }}) => {
+    const { session } = await safeGetSession()
     if ( session ) {
         await supabase.auth.signOut()
         profileStoresObject.set({
             'username': null,
             'display_name': null,
-            'avatar_url': null,
           })
-        throw redirect(303, '/')
+        throw redirect(303, '/welcome')
     }
 }

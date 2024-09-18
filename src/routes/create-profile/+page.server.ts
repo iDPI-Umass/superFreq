@@ -22,6 +22,7 @@ export const actions = {
         const website = formData.get('website') as string
         const avatarUrl = formData.get('avatar-url') as string
         const avatarMbid = formData.get('avatar-mbid') as string
+        const email = formData.get('email') as string
 
         const profileData = {
             'username': username,
@@ -33,7 +34,7 @@ export const actions = {
         }
 
         
-        const update = await newSessionProfile( sessionUserId, profileData )
+        const update = await newSessionProfile( sessionUserId, profileData, email )
 
         profileStoresObject.set({
             'username': username,

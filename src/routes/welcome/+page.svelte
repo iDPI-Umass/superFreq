@@ -1,12 +1,17 @@
 <script lang="ts">
     import type { ActionData } from './$types'
+    import { onMount } from 'svelte'
     import { enhance } from '$app/forms'
+    import { invalidateAll } from '$app/navigation'
     import '$lib/styles/posts.css'
 	import PanelHeader from "$lib/components/PanelHeader.svelte"
     import NotificationModal from "src/lib/components/modals/NotificationModal.svelte"
 
+
     export let form: ActionData
     $: form
+
+    onMount(() => invalidateAll())
 </script>
 
 <svelte:head>

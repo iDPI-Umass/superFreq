@@ -607,7 +607,6 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
         }
     })
     const posts = await selectPosts
-    console.log(posts)
     return posts
 }
 

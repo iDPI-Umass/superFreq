@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { PageData, ActionData } from "../$types"
+    import type { PageData,  ActionData } from "../$types"
     import { beforeUpdate, tick } from "svelte"
     import { enhance } from "$app/forms"
     import { goto } from "$app/navigation"
@@ -9,7 +9,7 @@
     import NotificationModal from "src/lib/components/modals/NotificationModal.svelte"
     import RedirectModal from "$lib/components/modals/RedirectModal.svelte"
 
-    export let data: PageData
+    export let data
     export let form: ActionData
 
     let { email } = data
