@@ -451,7 +451,7 @@ export const selectEditableCollectionContents = async function ( collectionId: s
             .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
             .innerJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
             .select([
-                'contents.id as origina_id',
+                'contents.id as original_id',
                 'contents.collection_id as collection_id',
                 'contents.inserted_at as inserted_at',
                 'contents.artist_mbid as artist_mbid',
@@ -491,19 +491,19 @@ export const selectEditableCollectionContents = async function ( collectionId: s
         }
 
         const info = selectCollectionInfo
-        const collectionContents = selectCollectionContents as App.RowData[]
+        let collectionContents = selectCollectionContents as App.RowData[]
 
-        // create an array of deleted items and remove all 'item_post is null' items from collectionContents
-        let deletedCollectionContents = [] as any
+        // create an array of deleted items and remove all items where 'item_position is null' from collectionContents
+        let deletedCollectionContents = [] as App.RowData[]
+        let filteredContents = collectionContents
         for ( const item of collectionContents ) {
             if (item.item_position == null) {
                 deletedCollectionContents = [...deletedCollectionContents, item]
-                collectionContents.splice(collectionContents.indexOf(item), 1)
+                filteredContents = filteredContents.filter((element) => element != item)
             }
         }
 
-        console.log('new collection items: ' + collectionContents)
-        console.log('new deleted items: ' + deletedCollectionContents)
+        collectionContents = filteredContents
 
         // create ID for each item for svelte-dnd component in colleciton editor
         let counter = 0

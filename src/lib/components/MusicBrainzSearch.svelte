@@ -13,12 +13,13 @@
 
 <script lang="ts">
 	import ListModal from 'src/lib/components/modals/ListModal.svelte'
-    import { categoriesTable } from '$lib/resources/parseData.ts'
+    import { categoriesTable, mbidCategoryTable } from '$lib/resources/parseData.ts'
 
 	export let searchCategory: string // "artists" | "release_groups" | "releases" | "recordings" | "labels"
     export let searchButtonText: string
     export let searchPlaceholder: string
     export let addedItems: any
+	export let deletedItems: any = []
     export let newItemAdded: boolean
 	export let mode: string // "single" | "collection"
 	export let limit = '25'
@@ -28,6 +29,8 @@
 
 	let showModal = false
 
+	$: deletedItems
+	$: addedItems
     /*
 	Functions to call MusicBrainz database and parse relevant data.
 	*/
@@ -51,10 +54,6 @@
 			endpoint.searchParams.set("inc", "releases+release-groups+artist-rels")
 		}
 
-		for ( const param of endpoint.searchParams) {
-			console.log(param)
-		}
-
         const res = await fetch(endpoint)
         const searchResults = await res.json()
 
@@ -74,7 +73,6 @@
 		// }
 
 		searchComplete =  true
-		console.log(searchComplete)
 		return {
 			mbData, searchComplete
 		}
@@ -113,18 +111,73 @@
 
     }
 
+	const mbidCategory = mbidCategoryTable[searchCategory] as string
+
+	// Check if item is already in collection
+	function checkDuplicate ( item: App.RowData, addedItems: App.RowData[] ) {
+		const itemMbid = item['id']
+		const isDuplicate = addedItems.find((item) => item[mbidCategory] == itemMbid) ? true : false
+		return isDuplicate
+	}
+
+	// Check if item was previously deleted
+	function checkDeleted ( item: App.RowData, deletedItems: App.RowData[] ) {
+		const itemMbid = item['id']
+		const wasDeleted = deletedItems.find((item) => item[mbidCategory] == itemMbid) ? true : false
+		return wasDeleted
+	}
+
+	// Check if collection has reached limit
+	function checkLimit ( limit: string, addedItems: App.RowData[] ) {
+		const limitValue = parseInt(limit)
+		const limitReached = ( addedItems.length >= limitValue ) ? true : false
+		return limitReached
+	}
+
     // adds item from MusicBrainz search results to collection editor
 	async function addCollectionItem( item: any ) {
-		console.log(item)
-		if ( limit && addedItems.length === limit ) {
+
+		const isDuplicate = checkDuplicate( item, addedItems )
+		const wasDeleted = checkDeleted( item, deletedItems )
+		const limitReached = checkLimit ( limit, addedItems )
+
+		const itemMbid = item['id']
+
+		// Warn if item already in collection and don't add new item.
+		if ( isDuplicate ) {
+			newItemAdded = false
+			query = ""
+			searchComplete = false
+			showModal = false
+			alert(`That item is already in this collection.`)
+			return {newItemAdded, showModal, query, searchComplete}
+		}
+
+		// Delete item from deletedItems and warn that it was previously deleted from this collection, but let rest of function proceed.
+		let originalId: string |  null = null
+
+		if ( wasDeleted ) {
+			const deletedItem = deletedItems.find((item) => item[mbidCategory] == itemMbid)
+			originalId = deletedItem?.original_id
+			deletedItems = deletedItems.filter((item) => item != deletedItem)
+			alert(`That item was previously deleted from this collection, but will now be added back in.`)
+		}
+
+		// Warn if collection is at limit and don't add new item.
+		if ( limitReached ) {
+			newItemAdded = false
+			query = ""
+			searchComplete = false
+			showModal = false
 			alert(`Only ${limit} items are allowed in this collection. Please delete an item before you add something new.`)
-			return addedItems
+			return {newItemAdded, showModal, query, searchComplete}
 		}
 
 		let labelName: string | null = null
 		let labelMbid: string | null = null
 		if ( searchCategory == "artists" ) {
 			addedItems = [...addedItems, {
+				"original_id": originalId ?? null,
 				"item_position": addedItems.length,
 				"artist_mbid": item["id"],
 				"artist_name": item["name"],
@@ -151,6 +204,7 @@
 			labelMbid = label?.labelMbid ?? null
 			const coverArt = await getCoverArt( releaseGroup.mbid );
 			addedItems = [...addedItems, {
+				"original_id": originalId ?? null,
 				"item_position": addedItems.length,
 				"artist_mbid": item["artist-credit"][0]["artist"]["id"],
 				"artist_name": item["artist-credit"][0]["artist"]["name"],
@@ -168,7 +222,6 @@
 			}];
 		}
 		else if ( searchCategory == "recordings" ) {
-			console.log(item)
 			let remixerMbid: string | null = null;
 			if ( item["relations"] && item["relations"][0]["artist"]["type"] == "remixer" ) {
 				remixerMbid = item["relations"][0]["artist"]["id"];
@@ -184,6 +237,7 @@
 			labelMbid = label?.labelMbid ?? null
 			const coverArt = await getCoverArt( releaseGroup );
 			addedItems = [...addedItems, {
+				"original_id": originalId ?? null,
 				"item_position": addedItems.length,
 				"artist_mbid": item["artist-credit"][0]["artist"]["id"],
 				"artist_name": item["artist-credit"][0]["artist"]["name"],

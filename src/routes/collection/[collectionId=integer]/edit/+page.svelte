@@ -37,11 +37,11 @@
 		[index: string]: string
 	}
 
-	let collectionItems = collection?.collectionContents as App.RowData
+	let collectionItems = collection?.collectionContents as App.RowData[]
 	$: collectionItems
 	let itemAdded = false
 	
-    let deletedItems = collection?.deletedCollectionContents as App.RowData
+    let deletedItems = collection?.deletedCollectionContents as App.RowData[]
     $: deletedItems
 
 	// UI
@@ -168,6 +168,7 @@
 		<MusicBrainzSearch 
             searchCategory={collectionType}
 			bind:addedItems={collectionItems}
+            bind:deletedItems={deletedItems}
 			bind:newItemAdded={itemAdded}
 			searchButtonText={`add ${buttonTextLookup[collectionType]}`}
 			searchPlaceholder={placeholderText}
