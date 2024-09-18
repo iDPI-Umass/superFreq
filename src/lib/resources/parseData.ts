@@ -270,13 +270,13 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
     }
     
     function parseUrlSource ( listenUrlString: string ) {
-        const linkSplit = listenUrlString.split('/')
-        for ( const element of linkSplit ) {
-            if ( element.includes('youtu.be')) {
+        const linkTokens = listenUrlString.split('/')
+        for ( const token of linkTokens ) {
+            if ( token.includes('youtu.be')) {
                 return 'youtube'
             }
-            if ( element.includes('.com')) {
-                const domain = element.split('.')
+            if ( token.includes('.com')) {
+                const domain = token.split('.')
                 return domain[domain.length - 2]
             } 
         }
@@ -344,12 +344,13 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
     }
 
     async function parseYouTubeHtml ( html: any, listenUrlString: string) {
-        const itemId = listenUrlString.split('=')[1]
+        const itemId = listenUrlString.includes('youtu.be') ? listenUrlString.split('/')[3].split('?')[0] : listenUrlString.split('=')[1]
         const {document} = await parseHTML(html)
         const pageTitle = document.title
         let title: string | null = null
         let artist: string | null = null
 
+        console.log(itemId)
         if ( pageTitle.includes(' - ')) {
             const elements = pageTitle.split(' - ')
             artist = elements[0]
