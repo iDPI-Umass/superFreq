@@ -2,19 +2,18 @@ import { redirect, error } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
 import { db } from 'src/database.ts'
 
-export const load: PageServerLoad = async ({ parent, locals: { safeGetSession } }) => {
-  const session = await safeGetSession()
+export const load: PageServerLoad = async ({ parent }) => {
 
-  // if the user is already logged in, redirect to feed
-  const { profile } = await parent()
-  const username = profile.username as string | null
+    // if the user is already logged in, redirect to their profile
+    const { profile, session } = await parent()
+    const username = profile.username as string | null
 
-  if (session.session && username) {
+    if (session && username) {
     throw redirect(303, `/user/${username}`)
-  }
-  else if (session.session && !username) {
-    throw redirect(303, `/create-profile`)
-  }
+    }
+    if (session && !username) {
+        throw redirect(303, `/create-profile`)
+    }
 
 //  if (session.session && !username) {
 //     throw redirect(303, `/create-profile`)

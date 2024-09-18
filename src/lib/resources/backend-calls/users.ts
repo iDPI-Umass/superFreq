@@ -95,7 +95,7 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
         .executeTakeFirst()
 
         // get metrics
-        const collectionCount = await trx
+        const countCollections = await trx
             .selectFrom('collections_social')
             .select((eb) => eb
                 .fn.count<number>('id')
@@ -108,8 +108,10 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
                     eb('user_role', '=', 'collaborator')
                 ])]))
             .execute()
+        
+        const collectionCount = countCollections[0]['count']
 
-        const collectionFollowingCount = await trx
+        const countCollectionsFollowing = await trx
             .selectFrom('collections_social')
             .select((eb) => eb
                 .fn.count<number>('id')
@@ -122,7 +124,9 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
             }))
             .execute()
 
-        const userFollowingCount = await trx
+        const collectionFollowingCount = countCollectionsFollowing[0]['count']
+
+        const countUsersFollowing = await trx
             .selectFrom('social_graph')
             .select((eb) => eb
                 .fn.count<number>('id')
@@ -134,7 +138,9 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
             }))
             .execute()
 
-        const nowPlayingPostsCount = await trx
+        const userFollowingCount = countUsersFollowing[0]['count']
+
+        const countNowPlayingPosts = await trx
             .selectFrom('posts')
             .select((eb) => eb
                 .fn.count<number>('id')
@@ -146,6 +152,8 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
                 eb('status', '!=', 'deleted')
             ]))
             .execute()
+        
+        const nowPlayingPostsCount = countNowPlayingPosts[0]['count']
 
         // get user's top albums collection
         const topAlbumsCollection = await trx
@@ -164,6 +172,7 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
             .where('collection_id', '=', profileUserData?.top_albums_collection_id as string)
             .execute()
 
+        
         return { profileUserData, profileUserBlockInfo, profileUserFlagInfo, collectionCount, collectionFollowingCount, userFollowingCount, nowPlayingPostsCount, topAlbumsCollection, followInfo, permission: true }
     })
     

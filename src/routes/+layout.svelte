@@ -18,11 +18,9 @@
 	import type { LayoutData } from "./$types";
 	
 
-	export let data
-	let { session, user, profile, supabase } = data
-	$: ({ session, user, profile, supabase } = data)
-
-	const sessionUserId = user ? user?.id as string : null
+	export let data: LayoutData
+	let { session, sessionUserId, user, profile, supabase } = data
+	$: ({ session, sessionUserId, user, profile, supabase } = data)
 
 	let displayName: string
 	let avatarUrl: string
