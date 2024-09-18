@@ -92,7 +92,7 @@
             <div class="label-group">
                 <label 
                     class="text-label"
-                    for="displayName"
+                    for="display-name"
                 >
                     Display name
                 </label>

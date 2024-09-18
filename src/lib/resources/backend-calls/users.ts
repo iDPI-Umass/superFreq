@@ -245,10 +245,10 @@ export const newSessionProfile = async function ( sessionUserId: string, profile
     
             changelog[timestampISOString] = {
                 'username': profileData?.username,
-                'display_name': profileData?.displayName,
+                'display_name': profileData?.display_name,
                 'website': profileData?.website,
-                'avatar_mbid': profileData?.avatarMbid,
-                'avatar_url': profileData?.avatarUrl,
+                'avatar_mbid': profileData?.avatar_mbid,
+                'avatar_url': profileData?.avatar_url,
                 'about': profileData?.about,
             }
     
@@ -256,10 +256,10 @@ export const newSessionProfile = async function ( sessionUserId: string, profile
             .updateTable('profiles')
             .set({
                 username: profileData?.username,
-                display_name: profileData?.displayName,
+                display_name: profileData?.display_name,
                 website: profileData?.website,
-                avatar_mbid: profileData?.avatarMbid,
-                avatar_url: profileData?.avatarUrl,
+                avatar_mbid: profileData?.avatar_mbid,
+                avatar_url: profileData?.avatar_url,
                 updated_at: timestampISO,
                 about: profileData?.about,
                 changelog: changelog
@@ -301,7 +301,7 @@ export const updateSessionProfile = async function ( sessionUserId: string, prof
 
         changelog[timestampISOString] = {
             'username': profileData?.username,
-            'display_name': profileData?.displayName,
+            'display_name': profileData?.display_name,
             'website': profileData?.website,
             'avatar_mbid': profileData?.avatar_mbid,
             'avatar_url': profileData?.avatar_url,
@@ -311,7 +311,7 @@ export const updateSessionProfile = async function ( sessionUserId: string, prof
         const updateProfile = await trx
         .updateTable('profiles')
         .set({
-            display_name: profileData?.displayName,
+            display_name: profileData?.display_name,
             website: profileData?.website,
             avatar_mbid: profileData?.avatar_mbid,
             avatar_url: profileData?.avatar_url,
