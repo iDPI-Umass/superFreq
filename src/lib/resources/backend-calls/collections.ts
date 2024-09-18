@@ -492,10 +492,9 @@ export const selectEditableCollectionContents = async function ( collectionId: s
 
         const info = selectCollectionInfo
         const collectionContents = selectCollectionContents as App.RowData[]
-        let deletedCollectionContents = [] as any
 
-        console.log('collection items original: ' + collectionContents)
-        console.log('deleted items original: ' + deletedCollectionContents)
+        // create an array of deleted items and remove all 'item_post is null' items from collectionContents
+        let deletedCollectionContents = [] as any
         for ( const item of collectionContents ) {
             if (item.item_position == null) {
                 deletedCollectionContents = [...deletedCollectionContents, item]
