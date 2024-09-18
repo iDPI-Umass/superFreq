@@ -67,6 +67,18 @@ export const categoriesTable: App.Lookup = {
     "songs": "recording"
 }
 
+/* Converts values to mbid slug */
+
+export const mbidCategoryTable: App.Lookup = {
+    "artists": "artist_mbid",
+    "release-groups": "release_group_mbid",
+    "release_groups": "release_group_mbid",
+    "recordings": "recording_mbid",
+    "albums": "release_group_mbid",
+    "tracks": "recording_mbid",
+    "songs": "recording_mbid"
+}
+
 /* Converts values to UI text */
 
 export const categories: App.Lookup = {
@@ -90,8 +102,6 @@ Prepare data for table insert in format expected by: artists, release_groups, an
 */
 
 export const prepareMusicMetadataInsert = function ( collectionItems: App.RowData, collectionType: string ) {
-
-    console.log(collectionType)
 
     let artistsMetadata = [] as any
     let releaseGroupsMetadata = [] as any
@@ -151,7 +161,6 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
         }
     }
 
-    console.log(recordingsMetadata)
     return { artistsMetadata, releaseGroupsMetadata, recordingsMetadata };
 }
 
@@ -238,18 +247,34 @@ export const populateCollectionContents = function ( collectionItems: App.RowDat
             "notes": thisItem["notes"]
         }
 
-        collectionContents = [...collectionContents, {
-            "id": thisItem["original_id"],
-            "collection_id": collectionId,
-            "inserted_at": thisItem["inserted_at"] ?? timestampISO,
-            "updated_at": timestampISO,
-            "artist_mbid": thisItem["artist_mbid"],
-            "release_group_mbid": thisItem["release_group_mbid"],
-            "recording_mbid": thisItem["recording_mbid"],
-            "item_position": itemPosition,
-            "notes": thisItem["notes"],
-            "changelog": changelog
-        }];
+        if ( thisItem.original_id != null ) {
+            collectionContents = [...collectionContents, {
+                "id": thisItem["original_id"],
+                "collection_id": collectionId,
+                "inserted_at": thisItem["inserted_at"] ?? timestampISO,
+                "updated_at": timestampISO,
+                "artist_mbid": thisItem["artist_mbid"],
+                "release_group_mbid": thisItem["release_group_mbid"],
+                "recording_mbid": thisItem["recording_mbid"],
+                "item_position": itemPosition,
+                "notes": thisItem["notes"],
+                "changelog": changelog
+            }];
+        }
+        else {
+            collectionContents = [...collectionContents, {
+                "collection_id": collectionId,
+                "inserted_at": thisItem["inserted_at"] ?? timestampISO,
+                "updated_at": timestampISO,
+                "artist_mbid": thisItem["artist_mbid"],
+                "release_group_mbid": thisItem["release_group_mbid"],
+                "recording_mbid": thisItem["recording_mbid"],
+                "item_position": itemPosition,
+                "notes": thisItem["notes"],
+                "changelog": changelog
+            }];
+        }
+
     }
     return collectionContents;
 }
@@ -350,7 +375,6 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
         let title: string | null = null
         let artist: string | null = null
 
-        console.log(itemId)
         if ( pageTitle.includes(' - ')) {
             const elements = pageTitle.split(' - ')
             artist = elements[0]

@@ -85,7 +85,7 @@
                         class="text" 
                         id="listen-url" 
                         name="listen-url" 
-                        type="text"
+                        type="url"
                         placeholder="paste link" 
                     />
 <!-- 
@@ -210,7 +210,7 @@
                     class="text" 
                     id="listen-url" 
                     name="listen-url" 
-                    type="text"
+                    type="url"
                     placeholder="paste link" 
                 />
                 <div class="label-group">
@@ -339,7 +339,7 @@
                     class="text" 
                     id="listen-url" 
                     name="listen-url" 
-                    type="text"
+                    type="url"
                     placeholder="paste link" 
                 />
                 <div class="label-group">
