@@ -1,105 +1,57 @@
-<!-- 
- Example:
-
-	<MusicBrainzSearch 
-		searchCategory={collectionType}
-		bind:addedItems={collectionItems}
-		bind:newItemAdded={itemAdded}
-		searchButtonText={`add ${buttonTextLookup[collectionType]}`}
-		searchPlaceholder={placeholderText}
-		mode="collection"
-	></MusicBrainzSearch>
--->
-
 <script lang="ts">
 	import ListModal from 'src/lib/components/modals/ListModal.svelte'
-    import { categoriesTable, mbidCategoryTable } from '$lib/resources/parseData.ts'
+	import { mbSearch, addCollectionItem, addSingleItem, mbidCateogory } from '$lib/resources/musicbrainz'
 
-	export let searchCategory: string // "artists" | "release_groups" | "releases" | "recordings" | "labels"
+	export let searchCategory: "artists" | "release_groups" | "releases" | "recordings" | "labels"
     export let searchButtonText: string
     export let searchPlaceholder: string
     export let addedItems: any
-	export let deletedItems: any = []
-    export let newItemAdded: boolean
-	export let mode: string // "single" | "collection"
+	export let deletedItems: App.RowData[] = []
+    export let newItemAdded = false
+	export let mode: "single" | "collection"
 	export let limit = '25'
 	export let query = ''
-	export let requestSubmit = false
 	export let avatarSearch = false
 
 	let showModal = false
 
 	$: deletedItems
 	$: addedItems
-    /*
-	Functions to call MusicBrainz database and parse relevant data.
-	*/
+	let mbData = [] as any[]
+	let searchComplete = false
 
-	// search MusicBrainz using form info
-	let mbData: any
-	let searchComplete: boolean
-	async function mbSearch() {
+	const mbidCategory = mbidCateogory( searchCategory )
+
+	async function search ( query: string, searchCategory: string, limit: string ) {
+		mbData = []
 		showModal = true
-		const apiCategory = categoriesTable[`${searchCategory}`] as string
-
-		let apiString = "https://musicbrainz.org/ws/2/"
-		apiString = apiString.concat(apiCategory)
-        const endpoint = new URL (apiString)
-            
-		endpoint.searchParams.set("fmt", "json");
-        endpoint.searchParams.set("query", `${query}`)
-		endpoint.searchParams.set("limit", limit)
-
-		if (searchCategory == "recordings") {
-			endpoint.searchParams.set("inc", "releases+release-groups+artist-rels")
+		const searchResults = await mbSearch(query, searchCategory, limit)
+		mbData = searchResults.mbData
+		searchComplete = searchResults.searchComplete
+		return { mbData, searchComplete, showModal }
+	}
+	
+	async function addItem ( mode: string, item: App.RowData ) {
+		if ( mode == 'single' ) {
+			const singleItem = await addSingleItem( item, addedItems, searchCategory )
+			addedItems = singleItem.addedItems
+			query = ""
+			searchComplete = false
+			newItemAdded = true
+			showModal = false
+			return { addedItems, query, searchComplete, newItemAdded, showModal }
 		}
-
-        const res = await fetch(endpoint)
-        const searchResults = await res.json()
-
-        const mbObjectKey = apiCategory.concat('s')
-		mbData = searchResults[mbObjectKey]
-		
-		// if ( avatarSearch ) {
-		// 	for ( const item of mbData ) {
-		// 		console.log(item)
-		// 		const index = mbData.indexOf(item)
-		// 		console.log(index)
-		// 		console.log(mbData[index])
-		// 		const coverArt = await getCoverArt(item["id"])
-		// 		mbData[index]['img_url'] = coverArt
-		// 		console.log(mbData.index)
-		// 	}
-		// }
-
-		searchComplete =  true
-		return {
-			mbData, searchComplete
-		}
-    }
-
-	// returns mbid and label name for earliest release in release group
-	async function getLabel( item: any ) {
-		const releaseGroupMbid = item["mbid"];
-		const releaseDate = item["releaseDate"];
-		let labelName: string | null = null
-		let labelMbid: string | null = null
-		const endpoint = `https://musicbrainz.org/ws/2/release?release-group=${releaseGroupMbid}&inc=labels&fmt=json`;
-		const res = await fetch (endpoint);
-		let releases = await res.json();
-		releases = releases["releases"];
-
-        for ( const release of releases ) {
-			if ( releaseDate == release["date"] ) {
-				if ( release["label-info"].length > 0 ) {
-					labelName = release["label-info"][0]["label"]["name"];
-					labelMbid = release["label-info"][0]["label"]["id"];
-				}
-				return { labelName, labelMbid }
-			}
+		if ( mode == 'collection' ) {
+			const collectionItems = await addCollectionItem( item, addedItems, deletedItems, limit, searchCategory, mbidCategory )
+			addedItems = collectionItems.addedItems
+			deletedItems = collectionItems.deletedItems
+			query = ""
+			searchComplete = false
+			newItemAdded = collectionItems.newItemAdded
+			showModal = false
+			return { addedItems, deletedItems, query, searchComplete, newItemAdded, showModal }
 		}
 	}
-
 
     // API call to Cover Art Archive using releaseMbid returned by getLabel()
     async function getCoverArt ( release_group_mbid: string ) {
@@ -110,242 +62,6 @@
 		return  coverArtUrl;
 
     }
-
-	const mbidCategory = mbidCategoryTable[searchCategory] as string
-
-	// Check if item is already in collection
-	function checkDuplicate ( item: App.RowData, addedItems: App.RowData[] ) {
-		if (addedItems.length <= 1) {
-			return false
-		}
-		const itemMbid = item['id']
-		const isDuplicate = addedItems.find((item) => item[mbidCategory] == itemMbid) ? true : false
-		return isDuplicate
-	}
-
-	// Check if item was previously deleted
-	function checkDeleted ( item: App.RowData, deletedItems: App.RowData[] ) {
-		if (addedItems.length <= 1) {
-			return false
-		}
-		const itemMbid = item['id']
-		const wasDeleted = deletedItems.find((item) => item[mbidCategory] == itemMbid) ? true : false
-		return wasDeleted
-	}
-
-	// Check if collection has reached limit
-	function checkLimit ( limit: string, addedItems: App.RowData[] ) {
-		const limitValue = parseInt(limit)
-		const limitReached = ( addedItems.length >= limitValue ) ? true : false
-		return limitReached
-	}
-
-    // adds item from MusicBrainz search results to collection editor
-	async function addCollectionItem( item: any ) {
-
-		const isDuplicate = checkDuplicate( item, addedItems )
-		const wasDeleted = checkDeleted( item, deletedItems )
-		const limitReached = checkLimit ( limit, addedItems )
-
-		const itemMbid = item['id']
-
-		// Warn if item already in collection and don't add new item.
-		if ( isDuplicate ) {
-			newItemAdded = false
-			query = ""
-			searchComplete = false
-			showModal = false
-			alert(`That item is already in this collection.`)
-			return {newItemAdded, showModal, query, searchComplete}
-		}
-
-		// Delete item from deletedItems and warn that it was previously deleted from this collection, but let rest of function proceed.
-		let originalId: string |  null = null
-
-		if ( wasDeleted ) {
-			const deletedItem = deletedItems.find((item) => item[mbidCategory] == itemMbid)
-			originalId = deletedItem?.original_id
-			deletedItems = deletedItems.filter((item) => item != deletedItem)
-			alert(`That item was previously deleted from this collection, but will now be added back in.`)
-		}
-
-		// Warn if collection is at limit and don't add new item.
-		if ( limitReached ) {
-			newItemAdded = false
-			query = ""
-			searchComplete = false
-			showModal = false
-			alert(`Only ${limit} items are allowed in this collection. Please delete an item before you add something new.`)
-			return {newItemAdded, showModal, query, searchComplete}
-		}
-
-		let labelName: string | null = null
-		let labelMbid: string | null = null
-		if ( searchCategory == "artists" ) {
-			addedItems = [...addedItems, {
-				"original_id": originalId ?? null,
-				"item_position": addedItems.length,
-				"artist_mbid": item["id"],
-				"artist_name": item["name"],
-				"release_group_mbid": null,
-				"release_group_name": null,
-				"release_date": null,
-				"recording_mbid": null,
-				"recording_name": null,
-				"remixer_mbid": null,
-				"img_url": null,
-				"label_name": null,
-				"label_mbid": null,
-				"notes": null,
-				"id": addedItems.length + 1
-			}];
-		}
-		else if ( searchCategory == "release_groups" ) {
-			const releaseGroup = {
-				mbid: item["id"],
-				releaseDate: item["first-release-date"] 
-			}
-			const label = await getLabel(releaseGroup);
-			labelName = label?.labelName ?? null
-			labelMbid = label?.labelMbid ?? null
-			const coverArt = await getCoverArt( releaseGroup.mbid );
-			addedItems = [...addedItems, {
-				"original_id": originalId ?? null,
-				"item_position": addedItems.length,
-				"artist_mbid": item["artist-credit"][0]["artist"]["id"],
-				"artist_name": item["artist-credit"][0]["artist"]["name"],
-				"release_group_mbid": item["id"],
-				"release_group_name": item["title"],
-				"release_date": item["first-release-date"],
-				"recording_mbid": null,
-				"recording_name": null,
-				"remixer_mbid": null,
-				"img_url": coverArt,
-				"label_name": labelName, 
-				"label_mbid": labelMbid,
-				"notes": null,
-				"id": addedItems.length + 1
-			}];
-		}
-		else if ( searchCategory == "recordings" ) {
-			let remixerMbid: string | null = null;
-			if ( item["relations"] && item["relations"][0]["artist"]["type"] == "remixer" ) {
-				remixerMbid = item["relations"][0]["artist"]["id"];
-			}
-			const releaseGroup = item["releases"][0]["release-group"]["id"];
-			const releaseDate = item["first-release-date"]
-			const labelObject = {
-				'mbid': releaseGroup,
-				'releaseDate': releaseDate
-			}
-			const label = await getLabel(labelObject);
-			labelName = label?.labelName ?? null
-			labelMbid = label?.labelMbid ?? null
-			const coverArt = await getCoverArt( releaseGroup );
-			addedItems = [...addedItems, {
-				"original_id": originalId ?? null,
-				"item_position": addedItems.length,
-				"artist_mbid": item["artist-credit"][0]["artist"]["id"],
-				"artist_name": item["artist-credit"][0]["artist"]["name"],
-				"release_group_mbid": item["releases"][0]["release-group"]["id"],
-				"release_group_name": item["releases"][0]["release-group"]["title"],
-				"recording_mbid": item["id"],
-				"recording_name": item["title"],
-				"release_date": item["first-release-date"],
-				"remixer_artist_mbid": remixerMbid,
-				"img_url": coverArt,
-				"label_name": labelName, 
-				"label_mbid": labelMbid,
-				"notes": null,
-				"id": addedItems.length +1
-			}];
-		}
-		newItemAdded = true
-		query = ""
-		searchComplete = false
-		showModal = false
-		return {newItemAdded, showModal, query, searchComplete}
-	}
-
-	// adds single item from MusicBrainz search results to whatever needs it
-	async function addSingleItem( item: any ) {
-		let labelName: string | null = null
-		let labelMbid: string | null = null
-		if ( searchCategory == "artists" ) {
-			addedItems =  {
-				"artist_mbid": item["id"],
-				"artist_name": item["name"],
-				"release_group_mbid": null,
-				"release_group_name": null,
-				"release_date": null,
-				"recording_mbid": null,
-				"recording_name": null,
-				"remixer_mbid": null,
-				"img_url": null,
-				"label": null,
-				"notes": null,
-			}
-		}
-		else if ( searchCategory == "release_groups" ) {
-			const releaseGroup = {
-				mbid: item["id"],
-				releaseDate: item["first-release-date"] 
-			}
-			const label = await getLabel(releaseGroup);
-			labelName = label?.labelName ?? null
-			labelMbid = label?.labelMbid ?? null
-			const coverArt = await getCoverArt( releaseGroup.mbid );
-			addedItems = {
-				"artist_mbid": item["artist-credit"][0]["artist"]["id"],
-				"artist_name": item["artist-credit"][0]["artist"]["name"],
-				"release_group_mbid": item["id"],
-				"release_group_name": item["title"],
-				"release_date": item["first-release-date"],
-				"recording_mbid": null,
-				"recording_name": null,
-				"remixer_mbid": null,
-				"img_url": coverArt,
-				"label_name": labelName, 
-				"label_mbid": labelMbid,
-				"notes": null,
-			}
-		}
-		else if ( searchCategory == "recordings" ) {
-			let remixerMbid: string | null = null;
-			if ( item["releations"] && item["relations"][0]["artist"]["type"] == "remixer" ) {
-				remixerMbid = item["relations"][0]["artist"]["id"];
-			}
-			const releaseGroup = item["releases"][0]["release-group"]["id"];
-			const releaseDate = item["first-release-date"]
-			const labelObject = {
-				'mbid': releaseGroup,
-				'releaseDate': releaseDate
-			}
-			const label = await getLabel(labelObject);
-			labelName = label?.labelName ?? null;
-			labelMbid = label?.labelMbid ?? null;
-			const coverArt = await getCoverArt( releaseGroup );
-			addedItems = {
-				"artist_mbid": item["artist-credit"][0]["artist"]["id"],
-				"artist_name": item["artist-credit"][0]["artist"]["name"],
-				"release_group_mbid": item["releases"][0]["release-group"]["id"],
-				"release_group_name": item["releases"][0]["release-group"]["title"],
-				"recording_mbid": item["id"],
-				"recording_name": item["title"],
-				"release_date": item["first-release-date"],
-				"remixer_artist_mbid": remixerMbid,
-				"img_url": coverArt,
-				"label_name": labelName, 
-				"label_mbid": labelMbid,
-				"notes": null,
-			}
-		}
-		newItemAdded = true
-		showModal = false
-		query = ""
-		searchComplete = false
-		return {newItemAdded, showModal, addedItems, query, searchComplete}
-	}
 </script>
 
 <div class="search-bar">
@@ -364,30 +80,19 @@
 				<ol>
 					{#each mbData as item}
 					<li>
-						{#if mode === "collection"}
-							<button 
-								class="standard"
-								aria-label="add item"
-								on:click|preventDefault={() => addCollectionItem(item)}
-								on:click={() => ( showModal = false )}
-							>
-								+ add
-							</button>
-						{:else if mode === "single"}
-							<button 
-								class="standard"
-								aria-label="add item"
-								on:click|preventDefault={() => addSingleItem(item)}
-								on:click={() => ( showModal = false )}
-							>
-								+ add
-							</button>
-						{/if}
+						<button 
+							class="standard"
+							aria-label="add item"
+							on:click|preventDefault={() => addItem(mode, item)}
+		
+						>
+							+ add
+						</button>
 						<p>
 							{#if searchCategory == "artists"}
 							<span>{item["name"] ?? ''}</span>
-							({item["area"]["name"] ?? ''}, 
-							{item["life-span"]["begin"] ?? ''})
+							({item["area"] ? item["area"]["name"] : ''}, 
+							{item["life-span"] ? item["life-span"]["begin"] : ''})
 						{:else if searchCategory == "release_groups"}
 							<span >{item["title"] ?? ''}</span>  by 
 							{item["artist-credit"][0]["artist"]["name"] ?? ''} 
@@ -411,7 +116,7 @@
 	<form class="search">
 		<button 
 			class="double-border-top"
-			on:click={mbSearch} 
+			on:click={() => search(query, searchCategory, limit)} 
 			
 			disabled={!(searchCategory)}
 		>

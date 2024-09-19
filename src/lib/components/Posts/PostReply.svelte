@@ -31,7 +31,7 @@
             <div class="row-group-user-data">
                 <img class="comment-avatar" src={reply.avatar_url} alt={`${reply.display_name}'s avatar`} />
                 <div class="row-group-column">
-                    <a href="/posts/{reply.username}">
+                    <a href="/user/{reply.username}">
                         <span class="comment-display-name">
                             {reply.display_name}
                         </span>
