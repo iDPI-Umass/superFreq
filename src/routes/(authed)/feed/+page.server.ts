@@ -1,5 +1,6 @@
 import type { PageServerLoad, Actions } from './$types'
 import { selectFeedData } from '$lib/resources/backend-calls/feed'
+import { insertUpdateReaction } from '$lib/resources/backend-calls/posts'
 import { add, parseISO } from 'date-fns'
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
@@ -37,5 +38,16 @@ export const actions = {
         const remaining = remainingCount as number
 
         return { feedItems, remaining, batchIterator }
+    },
+    submitReaction: async ({ request, locals: { safeGetSession }}) => {
+        const session = await safeGetSession()
+        const sessionUserId = session.user?.id as string
+        const data = await request.formData()
+        const postId = data.get('post-id') as string
+        const reactionType = data.get('reaction-type') as string
+
+        const reaction = await insertUpdateReaction( sessionUserId, postId, reactionType )
+
+        return reaction
     }
 } satisfies Actions
