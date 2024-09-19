@@ -57,7 +57,7 @@ export const profileName = function (username: string, display_name: string) {
 /* Converts values to mbid categories */
 
 export const categoriesTable: App.Lookup = {
-    "artists": "artists",
+    "artists": "artist",
     "release-groups": "release-group",
     "release_groups": "release-group",
     "recordings": "recording",
