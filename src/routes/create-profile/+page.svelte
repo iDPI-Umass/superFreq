@@ -21,15 +21,11 @@
     let about = ''
     let website = ''
     let newItemAdded = false
-    let avatarItem = {
-        'img_url': '',
-        'release_group_mbid': '',
-        'release_group_name': ''
-    }
-    let profileForm: any
+    let avatarItem = {} as App.RowData
 
 	$: username
 	$: displayName
+	$: avatarItem
 
 </script>
 
@@ -142,15 +138,21 @@
 			/>
 			<input 
 				type="hidden" 
+				name="avatar-item" 
+				id="avatar-item" 
+				value={JSON.stringify(avatarItem)} 
+			/>
+			<input 
+				type="hidden" 
 				name="avatarUrl" 
 				id="avatarUrl" 
-				value={avatarItem.img_url} 
+				value={avatarItem.img_url ?? null} 
 			/>
 			<input 
 				type="hidden" 
 				name="avatarMbid" 
 				id="avatarMbid" 
-				value={avatarItem.release_group_mbid} 
+				value={avatarItem.release_group_mbid ?? null} 
 			/>
 		</form>
 		<div class="form-column">

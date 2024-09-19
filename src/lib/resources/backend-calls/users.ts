@@ -1,5 +1,6 @@
 import { db } from 'src/database.ts'
 import { parseISO } from 'date-fns'
+import { prepareAvatarMetadataInsert } from '$lib/resources/parseData'
 
 /* Select data for session user */
 
@@ -208,13 +209,25 @@ export const selectSessionProfile = async function ( sessionUserId: string ) {
 
 /* New profile for session user updating row generated during account confirmation. Checks if username is already taken. */
 
-export const newSessionProfile = async function ( sessionUserId: string, profileData: App.RowData, email: string ) {
+export const newSessionProfile = async function ( sessionUserId: string, profileData: App.RowData, email: string, avatarItem: App.RowData ) {
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
+
+    // prepare avatar metadata if avatar is being updated
+    const hasAvatar = Object.keys(avatarItem).length > 0 ? true : false
+    let artistsMetadata = []
+    let releaseGroupsMetadata = []
+
+    if ( hasAvatar ) {
+        const preparedMetadata = prepareAvatarMetadataInsert(avatarItem)
+        artistsMetadata = preparedMetadata.artistsMetadata
+        releaseGroupsMetadata = preparedMetadata.releaseGroupsMetadata
+    }
 
     const update = await db.transaction().execute(async (trx) => {
 
         try {
+            // make sure username isn't taken
             const username = profileData?.username
 
             await trx
@@ -227,6 +240,7 @@ export const newSessionProfile = async function ( sessionUserId: string, profile
             return { success: false }
         }
         catch ( error ) {
+            // associate profile with approved_users table
             await trx
             .updateTable('approved_users')
             .set({
@@ -234,7 +248,28 @@ export const newSessionProfile = async function ( sessionUserId: string, profile
             })
             .where('email', '=', email)
             .executeTakeFirst()
+
+            // music metadata inserts for new avatar as release_group
+            if (hasAvatar) {
+                await trx
+                        .insertInto('artists')
+                        .values(artistsMetadata)
+                        .onConflict((oc) => oc
+                            .doNothing()
+                        )
+                        .returningAll()
+                        .execute()
+                await trx
+                    .insertInto('release_groups')
+                    .values(releaseGroupsMetadata)
+                    .onConflict((oc) => oc
+                        .doNothing()
+                    )
+                    .returningAll()
+                    .execute()
+            }
             
+            // new changelog entry
             const selectChangelog = await trx
             .selectFrom('profiles')
             .select(['id','changelog'])
@@ -252,6 +287,7 @@ export const newSessionProfile = async function ( sessionUserId: string, profile
                 'about': profileData?.about,
             }
     
+            // update profile
             await trx
             .updateTable('profiles')
             .set({
@@ -285,12 +321,44 @@ export const newSessionProfile = async function ( sessionUserId: string, profile
 
 /* Update profile for session user's account */
 
-export const updateSessionProfile = async function ( sessionUserId: string, profileData: App.RowData ) {
+export const updateSessionProfile = async function ( sessionUserId: string, profileData: App.RowData, avatarItem: App.RowData ) {
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
 
+    // prepare avatar metadata if avatar is being updated
+    const hasAvatar = Object.keys(avatarItem).length > 0 ? true : false
+    let artistsMetadata = []
+    let releaseGroupsMetadata = []
+
+    if ( hasAvatar ) {
+        const preparedMetadata = prepareAvatarMetadataInsert(avatarItem)
+        artistsMetadata = preparedMetadata.artistsMetadata
+        releaseGroupsMetadata = preparedMetadata.releaseGroupsMetadata
+    }
+
     const update = await db.transaction().execute(async (trx) => {
 
+        // music metadata inserts for new avatar as release_group
+        if (hasAvatar) {
+            await trx
+                    .insertInto('artists')
+                    .values(artistsMetadata)
+                    .onConflict((oc) => oc
+                        .doNothing()
+                    )
+                    .returningAll()
+                    .execute()
+            await trx
+                .insertInto('release_groups')
+                .values(releaseGroupsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .returningAll()
+                .execute()
+        }
+
+        // new changelog entry
         const selectChangelog = await trx
         .selectFrom('profiles')
         .select('changelog')
@@ -308,6 +376,7 @@ export const updateSessionProfile = async function ( sessionUserId: string, prof
             'about': profileData?.about,
         }
 
+        // update profile
         const updateProfile = await trx
         .updateTable('profiles')
         .set({

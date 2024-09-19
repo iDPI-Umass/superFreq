@@ -1,4 +1,3 @@
-import { json } from "@sveltejs/kit"
 import { parseISO } from "date-fns"
 import { parseHTML } from 'linkedom'
 
@@ -162,6 +161,34 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
     }
 
     return { artistsMetadata, releaseGroupsMetadata, recordingsMetadata };
+}
+
+/*
+Prepare data for table insert in format expected by: artists, release_groups, and recordings.
+*/
+
+export const prepareAvatarMetadataInsert = function ( avatarItem: App.RowData ) {
+
+    let artistsMetadata = [] as any
+    let releaseGroupsMetadata = [] as any
+
+    artistsMetadata = [...artistsMetadata, {
+        "artist_mbid": avatarItem["artist_mbid"],
+        "artist_name": avatarItem["artist_name"],
+        "added_at": timestampISO
+    }]
+
+    releaseGroupsMetadata = [...releaseGroupsMetadata, {
+        "artist_mbid": avatarItem["artist_mbid"],
+        "release_group_mbid": avatarItem["release_group_mbid"],
+        "release_group_name": avatarItem["release_group_name"],
+        "release_date": avatarItem["release_date"],
+        "label": avatarItem["label_name"],
+        "img_url": avatarItem["img_url"],
+        "added_at": timestampISO
+    }]
+
+    return { artistsMetadata, releaseGroupsMetadata };
 }
 
 /*

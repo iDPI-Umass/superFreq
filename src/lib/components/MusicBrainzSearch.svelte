@@ -115,6 +115,9 @@
 
 	// Check if item is already in collection
 	function checkDuplicate ( item: App.RowData, addedItems: App.RowData[] ) {
+		if (addedItems.length <= 1) {
+			return false
+		}
 		const itemMbid = item['id']
 		const isDuplicate = addedItems.find((item) => item[mbidCategory] == itemMbid) ? true : false
 		return isDuplicate
@@ -122,6 +125,9 @@
 
 	// Check if item was previously deleted
 	function checkDeleted ( item: App.RowData, deletedItems: App.RowData[] ) {
+		if (addedItems.length <= 1) {
+			return false
+		}
 		const itemMbid = item['id']
 		const wasDeleted = deletedItems.find((item) => item[mbidCategory] == itemMbid) ? true : false
 		return wasDeleted
@@ -278,7 +284,7 @@
 				"img_url": null,
 				"label": null,
 				"notes": null,
-			};
+			}
 		}
 		else if ( searchCategory == "release_groups" ) {
 			const releaseGroup = {
@@ -302,7 +308,7 @@
 				"label_name": labelName, 
 				"label_mbid": labelMbid,
 				"notes": null,
-			};
+			}
 		}
 		else if ( searchCategory == "recordings" ) {
 			let remixerMbid: string | null = null;
@@ -332,7 +338,7 @@
 				"label_name": labelName, 
 				"label_mbid": labelMbid,
 				"notes": null,
-			};
+			}
 		}
 		newItemAdded = true
 		showModal = false

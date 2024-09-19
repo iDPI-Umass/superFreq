@@ -22,15 +22,15 @@ export const actions = {
     const displayName = formData.get('displayName') as string
     const username = formData.get('username') as string
     const website = formData.get('website') as string
+    const avatarItem = JSON.parse(formData.get('avatar-item') as string)
     const avatarMbid = formData.get('avatarMbid') as string
-    const newAvatarMbid = formData.get('newAvatarMbid') as string
+    const newAvatarMbid = formData.get('newAvatarMbid') ?? null
     const avatarUrl = formData.get('avatarUrl') as string
-    const newAvatarUrl = formData.get('newAvatarUrl') as string
+    const newAvatarUrl = formData.get('newAvatarUrl') ?? null
     const about = formData.get('about') as string
 
     const avatar = newAvatarUrl ? newAvatarUrl : avatarUrl
     const mbid = newAvatarMbid ? newAvatarMbid : avatarMbid
-
 
     profileStoresObject.set({
       'username': username,
@@ -50,7 +50,7 @@ export const actions = {
       about: about,
     } as App.RowData
 
-    const submitUpdate = await updateSessionProfile(sessionUserId, profileData)
+    const submitUpdate = await updateSessionProfile(sessionUserId, profileData, avatarItem)
 
     if ( submitUpdate ) {
       return { success: true}

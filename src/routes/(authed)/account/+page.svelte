@@ -1,20 +1,21 @@
 <script lang="ts">
-	import { enhance } from '$app/forms'
-	import type { SubmitFunction } from '@sveltejs/kit'
-	import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
-	import PanelHeader from '$lib/components/PanelHeader.svelte';
 	import type { ActionData, PageData } from './$types'
+	import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
+	import PanelHeader from '$lib/components/PanelHeader.svelte'
+	import NotificationModal from 'src/lib/components/modals/NotificationModal.svelte'
 	export let data: PageData;
 	export let form: ActionData;
+	$: form
 
-	let { user, sessionUserId, profile } = data
-	$: ({ user, sessionUserId, profile } = data)
+	let { user, profile } = data
+	$: ({ user, profile } = data)
 
-	let avatarItem: any
+	$: success = form?.success ?? false
+
+	let avatarItem = {} as App.RowData
 	let newItemAdded: boolean
 	let profileForm: HTMLFormElement
 	let loading = false
-	let complete = false
 	let displayName: string = profile?.display_name ?? ''
 	let username: string = profile?.username ?? ''
 	let website: string = profile?.website ?? ''
@@ -29,7 +30,7 @@
 		Account
 	</title>
 </svelte:head>
-
+ 
 <div class="panel" id="profile-info">
 	<PanelHeader>
 		profile info
@@ -130,6 +131,12 @@
 			/>
 			<input 
 				type="hidden" 
+				name="avatar-item" 
+				id="avatarm-item" 
+				value={JSON.stringify(avatarItem)} 
+			/>
+			<input 
+				type="hidden" 
 				name="avatarUrl" 
 				id="avatarUrl" 
 				value={avatarUrl} 
@@ -138,7 +145,7 @@
 				type="hidden" 
 				name="newAvatarUrl" 
 				id="newAvatarUrl" 
-				value={avatarItem?.img_url} 
+				value={avatarItem?.img_url ?? null} 
 			/>
 			<input 
 				type="hidden" 
@@ -150,13 +157,13 @@
 				type="hidden" 
 				name="newAvatarMbid" 
 				id="newAvatarMbid" 
-				value={avatarItem?.release_group_mbid} 
+				value={avatarItem?.release_group_mbid ?? null} 
 			/>
 			<input 
 				type="hidden" 
 				name="avatarName" 
 				id="avatarName" 
-				value={avatarItem?.release_group_name} 
+				value={avatarItem?.release_group_name ?? null} 
 			/>
 		</form>
 		<div class="form-column">
@@ -187,9 +194,6 @@
 				<img src={avatarUrl} alt="user avatar"/>
 			{:else if avatarItem && newItemAdded}
 				<img src={avatarItem.img_url} alt="user avatar"/>
-			{/if}
-			{#if form?.success}
-				<p>update submitted</p>
 			{/if}
 			<div class="actions">
 				<button
@@ -222,7 +226,16 @@
 	</div>
 </div>
 
-
+<NotificationModal
+	showModal={success}
+>
+	<span slot="header-text">
+		Success!
+	</span>
+	<span slot="message">
+		Your profile has been updated.
+	</span>
+</NotificationModal>
 
 <style>
 	.form-wrapper {
