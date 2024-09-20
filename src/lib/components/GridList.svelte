@@ -6,8 +6,11 @@
     import {flip} from "svelte/animate";
     import {dragHandleZone, dndzone, dragHandle} from "svelte-dnd-action";
     import Grip from 'lucide-svelte/icons/grip';
+    import { imgPromiseStore } from '$lib/stores'
 
     import wave from "$lib/assets/images/logo/freq-wave.svg"
+    import loadingImage from "$lib/assets/images/loading-image.png"
+    import imgNotFound from "$lib/assets/images/image-not-found.png"
 
     import "$lib/styles/media-grid-list.css"
     import "$lib/styles/metadata-formatting.css"
@@ -91,6 +94,7 @@
             {/each}
         {:else if collectionType == "release_groups" }
             {#each items as contentItem, index(contentItem.id)}
+            
             <li 
                 aria-label="{contentItem["release_group_name"]} by ${contentItem["artist_name"]}" 
                 animate:flip="{{duration: flipDurationMs}}" 
@@ -98,7 +102,7 @@
             >
                 <img 
                     src={contentItem["img_url"] ?? wave} 
-                    alt="{contentItem["release_group_name"]} cover art"
+                    alt="{contentItem["img_url"] ? contentItem["release_group_name"] : 'loading...'} cover art"
                 />
                 <div class="metadata-blurb">
                     <h2>
@@ -117,6 +121,7 @@
                     </div>
                 </div>
             </li>
+
             {/each}
         {:else if collectionType == "recordings" }
             {#each items as contentItem, index(contentItem.id)}

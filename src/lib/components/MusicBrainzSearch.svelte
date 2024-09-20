@@ -1,17 +1,24 @@
+<!-- Need to improve image placeholder in GridList using a promise created in this component -->
+
 <script lang="ts">
 	import ListModal from 'src/lib/components/modals/ListModal.svelte'
-	import { mbSearch, addCollectionItem, addSingleItem, mbidCateogory } from '$lib/resources/musicbrainz'
+	import { mbSearch, addCollectionItem, addCollectionItemNoImg, addSingleItem, mbidCateogory } from '$lib/resources/musicbrainz'
+	import { imgPromiseStore } from '$lib/stores'
+	import imgNotFound from "$lib/assets/images/image-not-found.png"
 
-	export let searchCategory: "artists" | "release_groups" | "releases" | "recordings" | "labels"
+	export let searchCategory: string // "artists" | "release_groups" | "releases" | "recordings" | "labels"
     export let searchButtonText: string
     export let searchPlaceholder: string
     export let addedItems: any
 	export let deletedItems: App.RowData[] = []
     export let newItemAdded = false
-	export let mode: "single" | "collection"
+	export let mode: string // "single" | "collection"
 	export let limit = '25'
 	export let query = ''
 	export let avatarSearch = false
+	export let imgPromise: any = null
+
+	$: imgPromise
 
 	let showModal = false
 
@@ -31,6 +38,7 @@
 		return { mbData, searchComplete, showModal }
 	}
 	
+	// Attempting to create promise for await block with cover image in GridList component, still working on it.
 	async function addItem ( mode: string, item: App.RowData ) {
 		if ( mode == 'single' ) {
 			const singleItem = await addSingleItem( item, addedItems, searchCategory )
@@ -42,24 +50,43 @@
 			return { addedItems, query, searchComplete, newItemAdded, showModal }
 		}
 		if ( mode == 'collection' ) {
-			const collectionItems = await addCollectionItem( item, addedItems, deletedItems, limit, searchCategory, mbidCategory )
+			imgPromise = null
+			const collectionItems = await addCollectionItemNoImg( item, addedItems, deletedItems, limit, searchCategory, mbidCategory )
 			addedItems = collectionItems.addedItems
 			deletedItems = collectionItems.deletedItems
 			query = ""
 			searchComplete = false
 			newItemAdded = collectionItems.newItemAdded
 			showModal = false
-			return { addedItems, deletedItems, query, searchComplete, newItemAdded, showModal }
+
+			// let coverImg: string | null = null
+			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
+				const release_group_mbid = item["id"] ?? item["releases"][0]["release-group"]["id"]
+				const { success, coverArtUrl } = await getCoverArt(release_group_mbid)
+				addedItems.at(-1)["img_url"] = success ? coverArtUrl : null
+				imgPromise = await coverArtUrl
+			}
+			console.log(imgPromise)
+			console.log(addedItems.at(-1)["img_url"])
+			imgPromise = null
+			return { addedItems, deletedItems, query, searchComplete, newItemAdded, showModal, imgPromise }
 		}
 	}
 
     // API call to Cover Art Archive using releaseMbid returned by getLabel()
     async function getCoverArt ( release_group_mbid: string ) {
-        const endpoint = `https://coverartarchive.org/release-group/${release_group_mbid}/front`;
+		try {
+			const endpoint = `https://coverartarchive.org/release-group/${release_group_mbid}/front`;
 
-		const res = await fetch(endpoint);
-		const coverArtUrl = res["url"]
-		return  coverArtUrl;
+			const res = await fetch(endpoint);
+			const coverArtUrl = res["url"]
+			return  { coverArtUrl, success: true }
+		}
+		catch ( error ) {
+			imgPromise = imgNotFound
+			return { coverArtUrl: null, success: false }
+		}
+
 
     }
 </script>
@@ -94,7 +121,7 @@
 							({item["area"] ? item["area"]["name"] : ''}, 
 							{item["life-span"] ? item["life-span"]["begin"] : ''})
 						{:else if searchCategory == "release_groups"}
-							<span >{item["title"] ?? ''}</span>  by 
+							<span >{item["title"] ?? '0'}</span>  by 
 							{item["artist-credit"][0]["artist"]["name"] ?? ''} 
 							({item["first-release-date"] ?? ''})
 						{:else if searchCategory == "recordings"}
