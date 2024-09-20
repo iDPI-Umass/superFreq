@@ -46,6 +46,7 @@
                     <NowPlayingPost
                         post={item}
                         mode="feed"
+                        reactionActive={item.active}
                     ></NowPlayingPost>
                 </div>
             </div>
