@@ -1,10 +1,5 @@
-<!-- 
- submitReaction action needs uses insertReaction and updateReaction from '$lib/resources/backend-calls/posts.ts'
-
- reactionData needs results from countReactions and getSessionUserReact
--->
-
 <script lang="ts">
+    import { enhance } from '$app/forms'
     import '$lib/styles/posts.css'
     import Heart from 'lucide-svelte/icons/heart'
 
@@ -13,7 +8,7 @@
     export let reactionActive: boolean
 </script>
 
-<form method="POST" action="?/submitReaction">
+<form method="POST" action="?/submitReaction" use:enhance>
     <input
         type="hidden"
         name="post-id"
