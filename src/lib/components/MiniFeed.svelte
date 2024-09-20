@@ -34,7 +34,7 @@
             <div class="feed-item-now-playing">
                 <NowPlayingPost
                     post={item}
-                    reactionActive={item.postReactionActive}
+                    reactionActive={item.active}
                     mode="feed"
                 ></NowPlayingPost>
             </div>

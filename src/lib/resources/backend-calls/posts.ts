@@ -635,6 +635,8 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
                 active: !active
             }
 
+            const { id } = selectReaction
+
             return await trx
             .updateTable('post_reactions')
             .set({
@@ -642,7 +644,7 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
                 updated_at: timestampISO,
                 changelog: changelog
             })
-            .where('id', '=', postId)
+            .where('id', '=', id)
             .returning(['id', 'reaction', 'active'])
             .executeTakeFirst()
         }
@@ -651,7 +653,6 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
             changelog[timestampISOString] = {
                 active: true
             }
-
         
             const insertReaction = await trx
             .insertInto('post_reactions')
@@ -672,7 +673,9 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
         }
     })
 
+
     const reaction =  await insertUpdateReaction
+    console.log(reaction)
     return reaction 
 }
 

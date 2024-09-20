@@ -146,7 +146,13 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
 
             const selectFollowingPosts = await trx
             .selectFrom('posts as post')
-            .innerJoin('profiles as profile', 'user_id', 'profile.id')
+            .innerJoin('profiles as profile', 'post.user_id', 'profile.id')
+            .innerJoin(
+                'post_reactions as reaction',
+                (join) => join
+                .onRef('reaction.post_id', '=', 'post.id')
+                .on((eb) => eb('reaction.user_id', '=', sessionUserId))
+            )
             .select([
                 'post.id as now_playing_post_id', 
                 'post.user_id as user_id', 
@@ -164,9 +170,11 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'post.created_at as feed_item_timestamp',
                 'post.embed_id as embed_id',
                 'post.embed_source as embed_source',
-                'post.embed_account as embed_account'
+                'post.embed_account as embed_account',
+                'reaction.reaction as reaction',
+                'reaction.active as active'
             ])
-            .where('user_id', 'in', followingUserIds)
+            .where('post.user_id', 'in', followingUserIds)
             .where('parent_post_id', 'is', null)
             .where((eb) => eb.between('post.created_at', timestampStart, timestampEnd))
             .limit(batchSize)
