@@ -1,9 +1,8 @@
 <script lang="ts">
-    import { goto } from '$app/navigation'
     import type { PageData, ActionData } from './$types'
     import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
     import PostReply from '$lib/components/Posts/PostReply.svelte'
-    import PostReplyEditor from '$lib/components/Posts/PostReplyEditor.svelte';
+    import PostReplyEditor from '$lib/components/Posts/PostReplyEditor.svelte'
 
     export let data: PageData
     export let form: ActionData
