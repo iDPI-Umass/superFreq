@@ -18,7 +18,7 @@ export const timestampISO: Date = parseISO(timestampISOString)
 
 /* Convert Date string into ISO format Date */
 
-export const dateToISODate = ( dateString: string ) => {
+export function dateToISODate ( dateString: string ) {
     return new Date(parseInt(dateString.valueOf()))
 }
 
