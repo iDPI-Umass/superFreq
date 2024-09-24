@@ -10,6 +10,6 @@ export async function load ({ parent }) {
         throw redirect(307, '/')
     }
     else if( session && !username ) {
-        throw redirect(307, '/account/create-profile')
+        throw redirect(307, '/create-profile')
     }
 }
