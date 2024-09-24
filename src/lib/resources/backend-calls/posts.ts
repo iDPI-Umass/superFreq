@@ -512,15 +512,18 @@ export const selectUserPosts = async function ( sessionUserId: string, username:
             const selectPosts = await trx
             .selectFrom('posts')
             .innerJoin('profiles', 'profiles.id', 'posts.user_id')
+            .innerJoin('posts as parent_post', 'parent_post.id', 'posts.parent_post_id')
+            .innerJoin('profiles as parent_poster', 'parent_poster.id', 'parent_post.user_id')
             .select([
                 'posts.id as id',
                 'posts.text as text',
                 'posts.mbid as mbid',
+                'posts.created_at as created_at',
+                'posts.updated_at as updated_at',
+                'posts.type as type',
                 'posts.artist_name as artist_name',
                 'posts.release_group_name as release_group_name',
                 'posts.recording_name as recording_name',
-                'posts.created_at as created_at',
-                'posts.updated_at as updated_at',
                 'posts.episode_title as episode_title',
                 'posts.show_title as show_title',
                 'posts.listen_url as listen_url',
@@ -530,9 +533,12 @@ export const selectUserPosts = async function ( sessionUserId: string, username:
                 'profiles.id as user_id',
                 'profiles.username as username',
                 'profiles.display_name as display_name',
-                'profiles.avatar_url as avatar_url'
+                'profiles.avatar_url as avatar_url',
+                'parent_post.created_at as original_post_date',
+                'parent_poster.username as original_poster_username'
             ])
             .where('profiles.id', '=', profileUserId)
+            .where('posts.status', '!=', 'deleted')
             .orderBy('posts.created_at desc')
             .execute()
 

@@ -1,6 +1,7 @@
 <script lang="ts">
     import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
-	import PanelHeader from '$lib/components/PanelHeader.svelte';
+    import PostReply from '$lib/components/Posts/PostReply.svelte'
+	import PanelHeader from '$lib/components/PanelHeader.svelte'
     export let data
 
     let { posts, username, sessionUserId } =  data
@@ -19,12 +20,19 @@
     </PanelHeader>
     <div class="posts-spacing">
     {#each posts as post}
+        {#if post.type == 'now_playing'}
         <NowPlayingPost
             sessionUserId={sessionUserId}
             post={post}
             mode="feed"
         >
         </NowPlayingPost>
+        {:else if post.type == "reply"}
+        <PostReply
+            reply={post}
+            sessionUserId={sessionUserId}
+        ></PostReply>
+        {/if}
     {/each}
     </div>
 </div>
