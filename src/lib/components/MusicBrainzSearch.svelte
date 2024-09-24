@@ -62,12 +62,12 @@
 			// let coverImg: string | null = null
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
 				const release_group_mbid = item["id"] ?? item["releases"][0]["release-group"]["id"]
+				console.log(release_group_mbid)
 				const { success, coverArtUrl } = await getCoverArt(release_group_mbid)
-				addedItems.at(-1)["img_url"] = success ? coverArtUrl : null
+				const thisItemIndex = addedItems.findIndex((item) => item['release_group_mbid'] == release_group_mbid)
+				addedItems[thisItemIndex]["img_url"] = success ? coverArtUrl : null
 				imgPromise = await coverArtUrl
 			}
-			console.log(imgPromise)
-			console.log(addedItems.at(-1)["img_url"])
 			imgPromise = null
 			return { addedItems, deletedItems, query, searchComplete, newItemAdded, showModal, imgPromise }
 		}
