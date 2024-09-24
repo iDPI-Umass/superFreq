@@ -21,7 +21,14 @@
 
     let openState: boolean
 
-    const permalink = `/posts/${reply.username}/now-playing/${reply.original_post_date.toISOString()}#${reply.username?.concat(reply.created_at.toISOString())}`
+
+    const originalPostTimestampString = reply?.original_post_date.toISOString()
+    const originalPostTimestamp = Date.parse(originalPostTimestampString).toString()
+
+    const permalinkTimestampString = reply?.created_at.toISOString()
+    const permalinkTimestamp = Date.parse(permalinkTimestampString).toString()
+
+    const permalink = `/posts/${reply.original_poster_username}/now-playing/${originalPostTimestamp}#${reply.username?.concat(permalinkTimestamp)}`
 
 </script>
 
