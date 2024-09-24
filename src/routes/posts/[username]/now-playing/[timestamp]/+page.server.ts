@@ -3,7 +3,6 @@ import { parseISO } from "date-fns"
 import type { PageServerLoad, Actions } from './$types'
 import { selectPostAndReplies, insertPost, updatePost, deletePost, insertUpdateReaction } from '$lib/resources/backend-calls/posts'
 import { insertPostFlag } from '$lib/resources/backend-calls/users'
-import { dateToISODate } from '$lib/resources/parseData'
 
 export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSession } }) => {
     const session = await safeGetSession()

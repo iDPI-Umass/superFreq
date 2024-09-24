@@ -12,6 +12,7 @@
 	import ListenEmbed from './ListenEmbed.svelte'
 
     import wave from "$lib/assets/images/logo/freq-wave.svg"
+	import { parseISO } from 'date-fns';
 
     export let sessionUserId: string | null = null
     export let post: any
@@ -34,6 +35,11 @@
     function toggleEditState() {
         editState = !editState
     }
+
+    const createdAt = post?.created_at
+    console.log(createdAt)
+    const dateTest = Date.parse(post?.created_at)
+    console.log(dateTest)
 </script>
 
 <div class="box">
