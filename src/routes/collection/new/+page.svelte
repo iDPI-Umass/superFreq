@@ -13,7 +13,6 @@
     let { sessionUserId } = data
 	$: ({ sessionUserId } = data)
 
-
 	let collectionTitle: string
 	let collectionType: string
 	let collectionStatus: string
@@ -21,6 +20,8 @@
 	let collectionItems: object[] = []
 	$: collectionItems
 	let itemAdded = false
+    let imgPromise
+    $:imgPromise
 
 	// UI
 	const buttonTextLookup: {[index: string]: string} = {
@@ -220,6 +221,7 @@
 			searchButtonText={`add ${searchButtonLabel(buttonTextLookup[collectionType])}`}
 			searchPlaceholder={placeholderText}
             mode="collection"
+            bind:imgPromise={imgPromise}
 		></MusicBrainzSearch>
     </div>
     {#key collectionItems.length}
@@ -229,6 +231,7 @@
             collectionType={collectionType}
             layout="list"
             mode="edit"
+            imgPromise={imgPromise}
         ></GridList>
     {/key}
 </div>
