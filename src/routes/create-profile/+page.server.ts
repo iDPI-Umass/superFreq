@@ -20,9 +20,9 @@ export const actions = {
         const displayName = formData.get('display-name') as string
         const about = formData.get('about') as string
         const website = formData.get('website') as string
-        const avatarItem = JSON.parse(formData.get('avatar-item') as string)
-        const avatarUrl = formData.get('avatar-url') ?? null
-        const avatarMbid = formData.get('avatar-mbid') ?? null
+        const avatarItem = JSON.parse(formData.get('avatarItem') as string)
+        const avatarUrl = formData.get('avatarUrl')
+        const avatarMbid = formData.get('avatarMbid')
         const email = formData.get('email') as string
 
         const profileData = {
@@ -34,7 +34,6 @@ export const actions = {
             'about': about,
         }
 
-        
         const update = await newSessionProfile( sessionUserId, profileData, email, avatarItem )
 
         profileStoresObject.set({

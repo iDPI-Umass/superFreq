@@ -138,15 +138,15 @@
 			/>
 			<input 
 				type="hidden" 
-				name="avatar-item" 
-				id="avatar-item" 
+				name="avatarItem" 
+				id="avatarItem" 
 				value={JSON.stringify(avatarItem)} 
 			/>
 			<input 
 				type="hidden" 
 				name="avatarUrl" 
 				id="avatarUrl" 
-				value={avatarItem.img_url ?? null} 
+				value={avatarItem?.img_url ?? null} 
 			/>
 			<input 
 				type="hidden" 
