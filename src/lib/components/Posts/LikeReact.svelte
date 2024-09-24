@@ -8,7 +8,12 @@
     export let reactionActive: boolean
 </script>
 
-<form method="POST" action="?/submitReaction" use:enhance>
+<form 
+    method="POST" 
+    id="submitReaction"
+    action="?/submitReaction" 
+    use:enhance
+>
     <input
         type="hidden"
         name="post-id"

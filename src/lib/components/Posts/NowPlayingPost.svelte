@@ -79,11 +79,11 @@
                     bind:editState={editState}
                 ></EditPostBody>
             {/if}
-            {#if formData == true }
+            <!-- {#if formData == true }
                 <p>edited!</p>
             {:else if formData == false}
                 <p>edit failed</p>
-            {/if}
+            {/if} -->
             <ListenEmbed
                 embedInfo={embedInfo}
             ></ListenEmbed>
@@ -96,12 +96,10 @@
                 ></LikeReact>
                 {#if mode == "feed"}
                     <a href={permalink}>
-                        
-                            <Reply size="16" color="var(--freq-color-text-muted)"></Reply>
-                            <span class="descriptor">
-                                reply
-                            </span>
-                    
+                        <Reply size="16" color="var(--freq-color-text-muted)"></Reply>
+                        <span class="descriptor">
+                            reply
+                        </span>
                     </a>
                 {/if}
             </div>

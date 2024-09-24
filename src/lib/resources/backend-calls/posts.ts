@@ -616,6 +616,7 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
 
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
+    console.log('reaction')
 
     const insertUpdateReaction = await db.transaction().execute(async (trx) => {
         try {

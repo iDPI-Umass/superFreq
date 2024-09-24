@@ -34,10 +34,52 @@
     />
     <input 
         type="hidden"
+        name="post-created-at" 
+        id="post-created-at"
+        form="submitReply"
+        value={post?.created_at.toISOString()}
+    />
+    <input
+        type="hidden"
+        name="post-username"
+        id="post-username"
+        form="submitReaction"
+        value={post?.username}
+    />
+    <input
+        type="hidden"
+        name="post-created-at"
+        id="post-created-at"
+        form="submitReaction"
+        value={post?.created_at.toISOString()}}
+    />
+    <input 
+        type="hidden"
+        name="post-username" 
+        id="post-username"
+        form="submitReply"
+        value={post?.username}
+    />
+    <input 
+        type="hidden"
         name="post-id" 
         id="post-id"
-        form="deletePost"
+        form="delete"
         value={postId}
+    />
+    <input 
+        type="hidden"
+        name="post-username" 
+        id="post-username"
+        form="delete"
+        value={post?.username}
+    />
+    <input 
+        type="hidden"
+        name="post-created-at" 
+        id="post-created-at"
+        form="delete"
+        value={post?.created_at.toISOString()}}
     />
     <input 
         type="hidden"
@@ -45,6 +87,20 @@
         id="post-id"
         form="flagPost"
         value={postId}
+    />
+    <input 
+        type="hidden"
+        name="post-created-at" 
+        id="post-created-at"
+        form="flagPost"
+        value={post?.created_at.toISOString()}}
+    />
+    <input 
+        type="hidden"
+        name="post-username" 
+        id="post-username"
+        form="flagPost"
+        value={post?.username}
     />
     <NowPlayingPost
         sessionUserId={sessionUserId}
@@ -59,7 +115,7 @@
                 type="hidden"
                 name="post-id" 
                 id="post-id"
-                form="deletePost"
+                form="delete"
                 value={reply.id}
             />
             <input 
