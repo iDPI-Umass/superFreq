@@ -46,7 +46,6 @@
 			class="form-column"
 			method="POST"
 			action="?/create"
-			use:enhance
 		>
             <label 
                 class="text-label" 
@@ -217,7 +216,6 @@
 <RedirectModal
     showModal={ form?.success ? form?.success : false }
     redirectPath={'/about#guidelines'}
-	invalidate={true}
 >
     <span slot="header-text">
         Profiled created!
