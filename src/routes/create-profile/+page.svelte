@@ -177,7 +177,7 @@
 				</MusicBrainzSearch>
 			</div>
 			<!-- add alt text and change column in postgres -->
-			{#if avatarItem.img_url.length > 0}
+			{#if avatarItem.img_url && avatarItem.img_url.length > 0}
 				<img src={avatarItem.img_url} alt="user avatar"/>
 			{/if}
 			{#if form?.success}
