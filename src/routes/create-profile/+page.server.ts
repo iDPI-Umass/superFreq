@@ -1,3 +1,4 @@
+import { invalidateAll } from "$app/navigation"
 import type { PageServerLoad, Actions } from "../(authed)/account/$types"
 import { profileStoresObject } from "$lib/stores"
 import { newSessionProfile } from "$lib/resources/backend-calls/users"
@@ -25,12 +26,14 @@ export const actions = {
         const avatarMbid = formData.get('avatarMbid')
         const email = formData.get('email') as string
 
+        console.log(avatarUrl, avatarMbid)
+
         const profileData = {
             'username': username,
             'display_name': displayName ?? username,
             'website': website,
-            'avatar_url': avatarUrl,
-            'avatar_mbid': avatarMbid,
+            'avatar_url': avatarUrl ?? null,
+            'avatar_mbid': avatarMbid ?? null,
             'about': about,
         }
 

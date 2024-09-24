@@ -46,7 +46,6 @@
 			class="form-column"
 			method="POST"
 			action="?/create"
-			use:enhance
 		>
             <label 
                 class="text-label" 

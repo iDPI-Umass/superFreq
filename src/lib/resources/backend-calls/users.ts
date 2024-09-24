@@ -214,9 +214,11 @@ export const newSessionProfile = async function ( sessionUserId: string, profile
     const timestampISO: Date = parseISO(timestampISOString)
 
     // prepare avatar metadata if avatar is being updated
-    const hasAvatar = Object.keys(avatarItem).length > 0 ? true : false
+    const hasAvatar = profileData.avatar_url ? true : false
     let artistsMetadata = []
     let releaseGroupsMetadata = []
+
+    console.log(hasAvatar)
 
     if ( hasAvatar ) {
         const preparedMetadata = prepareAvatarMetadataInsert(avatarItem)
@@ -286,34 +288,63 @@ export const newSessionProfile = async function ( sessionUserId: string, profile
                 'avatar_url': profileData?.avatar_url,
                 'about': profileData?.about,
             }
-    
-            // update profile
-            await trx
-            .updateTable('profiles')
-            .set({
-                username: profileData?.username,
-                display_name: profileData?.display_name,
-                website: profileData?.website,
-                avatar_mbid: profileData?.avatar_mbid,
-                avatar_url: profileData?.avatar_url,
-                updated_at: timestampISO,
-                about: profileData?.about,
-                changelog: changelog
-            })
-            .where('id', '=', sessionUserId)
-            .returning([
-                'id',
-                'username', 
-                'display_name', 
-                'website', 
-                'avatar_mbid', 
-                'avatar_url', 
-                'about', 
-                'updated_at'
-            ])
-            .executeTakeFirst()
 
-            return { success: true }
+            // update profile
+    
+            if ( hasAvatar ) {       
+                await trx
+                .updateTable('profiles')
+                .set({
+                    username: profileData?.username,
+                    display_name: profileData?.display_name,
+                    website: profileData?.website,
+                    avatar_mbid: profileData?.avatar_mbid,
+                    avatar_url: profileData?.avatar_url,
+                    updated_at: timestampISO,
+                    about: profileData?.about,
+                    changelog: changelog
+                })
+                .where('id', '=', sessionUserId)
+                .returning([
+                    'id',
+                    'username', 
+                    'display_name', 
+                    'website', 
+                    'avatar_mbid', 
+                    'avatar_url', 
+                    'about', 
+                    'updated_at'
+                ])
+                .executeTakeFirst()
+
+                return { success: true }
+            }
+            else {
+                await trx
+                .updateTable('profiles')
+                .set({
+                    username: profileData?.username,
+                    display_name: profileData?.display_name,
+                    website: profileData?.website,
+                    updated_at: timestampISO,
+                    about: profileData?.about,
+                    changelog: changelog
+                })
+                .where('id', '=', sessionUserId)
+                .returning([
+                    'id',
+                    'username', 
+                    'display_name', 
+                    'website', 
+                    'avatar_mbid', 
+                    'avatar_url', 
+                    'about', 
+                    'updated_at'
+                ])
+                .executeTakeFirst()
+
+                return { success: true }
+            }
         }
     })
     return update

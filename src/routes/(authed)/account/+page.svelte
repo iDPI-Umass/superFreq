@@ -173,9 +173,6 @@
 			>
 				choose an album cover for your avatar
 			</label>
-			<!--
-				Form to search for avatar url
-			-->
 			<div class="mb-search">
 				<MusicBrainzSearch
 					searchCategory="release_groups"
@@ -189,7 +186,6 @@
 				>
 				</MusicBrainzSearch>
 			</div>
-			<!-- add alt text and change column in postgres -->
 			{#if avatarUrl && !newItemAdded}
 				<img src={avatarUrl} alt="user avatar"/>
 			{:else if avatarItem && newItemAdded}
