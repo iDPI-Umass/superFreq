@@ -94,7 +94,6 @@ export const actions = {
         }
     },
     deletePost: async ({ request, locals: { safeGetSession } }) => {
-        console.log('deleting')
         const session = await safeGetSession()
         const sessionUserId = session.user?.id as string
 

@@ -16,13 +16,12 @@
 
     export let sessionUserId: string | null = null
     export let post: any
-    export let formData: boolean | null = null
     export let reactionActive: boolean | null =  null
     export let editState: boolean | null | undefined = null
     export let mode: string | null = null
     $: editState
 
-    const permalinkTimestampString = (post.created_at ?? post.feed_item_timestamp).toISOString()
+    const permalinkTimestampString = (post?.created_at ?? post?.feed_item_timestamp).toISOString()
     const permalinkTimestamp = Date.parse(permalinkTimestampString).toString()
 
     const permalink = `/posts/${post.username}/now-playing/${permalinkTimestamp}`

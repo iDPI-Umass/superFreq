@@ -13,6 +13,13 @@
     $: replies
 
     const postId = post?.id as string
+
+    function replyId ( username: string, createdAt: Date ) {
+        const replyTimestampString = createdAt.toISOString()
+        const replyTimestamp = Date.parse(replyTimestampString).toString()
+        const slug = username?.concat(replyTimestamp)
+        return slug
+    }
 </script>
 
 <svelte:head>
@@ -104,7 +111,6 @@
     <NowPlayingPost
         sessionUserId={sessionUserId}
         post={post}
-        formData={form?.success ?? null}
         editState={form?.editState ?? false}
         reactionActive={postReactionActive ?? false} 
     ></NowPlayingPost>
@@ -124,7 +130,7 @@
                 form="flagPost"
                 value={reply.id}
             />
-            <div id={reply.username?.concat(reply.created_at.toISOString())}>
+            <div id={replyId( reply.username, reply.created_at )}>
                 <PostReply
                     reply={reply}
                     sessionUserId={sessionUserId}
