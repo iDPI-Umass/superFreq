@@ -1,3 +1,4 @@
+import { invalidateAll } from "$app/navigation"
 import type { PageServerLoad, Actions } from "../(authed)/account/$types"
 import { profileStoresObject } from "$lib/stores"
 import { newSessionProfile } from "$lib/resources/backend-calls/users"

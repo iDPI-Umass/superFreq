@@ -217,6 +217,7 @@
 <RedirectModal
     showModal={ form?.success ? form?.success : false }
     redirectPath={'/about#guidelines'}
+	invalidate={true}
 >
     <span slot="header-text">
         Profiled created!

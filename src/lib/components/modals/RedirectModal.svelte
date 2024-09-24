@@ -1,9 +1,10 @@
 <script lang="ts">
     import { beforeUpdate, tick } from 'svelte'
-    import { goto } from '$app/navigation'
+    import { goto, invalidateAll } from '$app/navigation'
 
     export let showModal: boolean 
     export let redirectPath: string // expects format '/route'
+    export let invalidate = false
     let dialog: any
 
 	$: if (dialog && showModal) dialog.showModal()
@@ -11,6 +12,9 @@
 
     beforeUpdate ( async () => {
         await tick
+        if ( invalidate == true ) {
+            invalidateAll()
+        }
         if ( showModal == true ) {
             setTimeout(() => goto(redirectPath), 5000)
         }
