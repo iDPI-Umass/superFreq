@@ -238,7 +238,9 @@
     />
     {#if success == null}
         <h2>{diaglogTitleOptions[dialogMode]}</h2>
-        {dialogTextOptions[dialogMode]}
+        <p>
+            {dialogTextOptions[dialogMode]}
+        </p>
         <div class="dialog-options">
             <button 
                 aria-label="close modal" 
@@ -256,7 +258,9 @@
             </button>
         </div>
     {:else if success == true}
-        Successful submission
+        <p>
+            Successful submission
+        </p>
         <div class="dialog-options">
             <button 
                 aria-label="close modal" 
@@ -267,7 +271,9 @@
             </button>
         </div>
     {:else if success == false}
-        Something went wrong
+        <p>
+            Something went wrong
+        </p>
         <div class="dialog-options">
             <button 
                 aria-label="close modal" 
@@ -282,6 +288,9 @@
 </dialog>
 
 <style>
+    dialog {
+        max-width: 300px;
+    }
 	dialog[open] {
         display: flex;
         flex-direction: column;

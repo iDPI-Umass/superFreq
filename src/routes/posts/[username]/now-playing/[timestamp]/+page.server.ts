@@ -101,7 +101,7 @@ export const actions = {
         const data = await request.formData()
         const postId = data.get('post-id') as string
         const postUsername = data.get('post-username') as string
-        const postCreatedAt = parseISO(data.get('post-created-at') as string)
+        const postCreatedAt = data.get('post-created-at') as string
 
 
         const submitDelete = await deletePost( sessionUserId, postId )
