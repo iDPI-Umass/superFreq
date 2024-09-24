@@ -21,6 +21,7 @@
     export let collectionType: string // "artists" | "release_groups" | "recordings" | "labels"
     export let layout: string // "grid" | "condensed-grid" | "list"
     export let mode: string //"view" | "edit"
+    export let imgPromise: any = null
     
     const format: App.NestedObject = {
         "grid": ["media-grid", "media-grid-item"],
@@ -100,10 +101,12 @@
                 animate:flip="{{duration: flipDurationMs}}" 
                 class={format[layout][1]} 
             >
+            {#await imgPromise then}
                 <img 
                     src={contentItem["img_url"] ?? wave} 
-                    alt="{contentItem["img_url"] ? contentItem["release_group_name"] : 'loading...'} cover art"
+                    alt="{contentItem["img_url"] ? contentItem["release_group_name"] : 'no available'} cover art"
                 />
+            {/await}
                 <div class="metadata-blurb">
                     <h2>
                         {contentItem["release_group_name"]}

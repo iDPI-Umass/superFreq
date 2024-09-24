@@ -50,7 +50,6 @@
 			return { addedItems, query, searchComplete, newItemAdded, showModal }
 		}
 		if ( mode == 'collection' ) {
-			imgPromise = null
 			const collectionItems = await addCollectionItemNoImg( item, addedItems, deletedItems, limit, searchCategory, mbidCategory )
 			addedItems = collectionItems.addedItems
 			deletedItems = collectionItems.deletedItems
@@ -63,12 +62,10 @@
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
 				const release_group_mbid = item["id"] ?? item["releases"][0]["release-group"]["id"]
 				const { success, coverArtUrl } = await getCoverArt(release_group_mbid)
-				addedItems.at(-1)["img_url"] = success ? coverArtUrl : null
-				imgPromise = await coverArtUrl
+				const thisItemIndex = addedItems.findIndex((item) => item['release_group_mbid'] == release_group_mbid)
+				addedItems[thisItemIndex]["img_url"] = success ? coverArtUrl : null
+				imgPromise = new Promise ((resolve) => resolve(coverArtUrl)) 
 			}
-			console.log(imgPromise)
-			console.log(addedItems.at(-1)["img_url"])
-			imgPromise = null
 			return { addedItems, deletedItems, query, searchComplete, newItemAdded, showModal, imgPromise }
 		}
 	}
@@ -83,7 +80,6 @@
 			return  { coverArtUrl, success: true }
 		}
 		catch ( error ) {
-			imgPromise = imgNotFound
 			return { coverArtUrl: null, success: false }
 		}
 
