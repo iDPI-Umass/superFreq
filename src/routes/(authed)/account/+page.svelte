@@ -131,8 +131,8 @@
 			/>
 			<input 
 				type="hidden" 
-				name="avatar-item" 
-				id="avatarm-item" 
+				name="avatarItem" 
+				id="avatarmItem" 
 				value={JSON.stringify(avatarItem)} 
 			/>
 			<input 

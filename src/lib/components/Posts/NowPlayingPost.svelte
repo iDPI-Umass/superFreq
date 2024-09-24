@@ -36,10 +36,10 @@
         editState = !editState
     }
 
-    const createdAt = post?.created_at
-    console.log(createdAt)
-    const dateTest = Date.parse(post?.created_at)
-    console.log(dateTest)
+    // const createdAt = post?.created_at
+    // console.log(createdAt)
+    // const dateTest = Date.parse(post?.created_at)
+    // console.log(dateTest)
 </script>
 
 <div class="box">
