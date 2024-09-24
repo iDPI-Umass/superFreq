@@ -1,39 +1,19 @@
 <script lang="ts">
-    import { enhance } from '$app/forms';
-    import type { SubmitFunction } from '@sveltejs/kit';
-    import type { PageData, ActionData } from './$types';
+    import type { PageData, ActionData } from './$types'
     import PanelHeader from "$lib/components/PanelHeader.svelte"
-    import { profileStoresObject } from 'src/lib/stores.ts';
-    import NotificationModal from '$lib/components/modals/NotificationModal.svelte';
-	import RedirectModal from '$lib/components/modals/RedirectModal.svelte';
+    import Tooltip from '$lib/components/Tooltip.svelte'
+    import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
+	import RedirectModal from '$lib/components/modals/RedirectModal.svelte'
 
     export let data: PageData
 	export let form: ActionData
 
-	let { session, supabase, profile } = data
-	$: ({ session, supabase, profile } = data)
+	let { profile } = data
+	$: ({ profile } = data)
 
-    let profileForm: HTMLFormElement
     let loading = false
-    let username: string = profile?.username ?? form?.currentUsername
+    let username = profile?.username as string
 
-    // sets new username to local storage
-	const handleSubmit: SubmitFunction = () => {
-        loading = true
-		const profileStorageItem = {
-			"displayName": profile?.display_name,
-			"username": username,
-			"avatarUrl": profile?.avatar_url
-		}
-
-		localStorage.setItem("profile", JSON.stringify(profileStorageItem))
-
-		profileStoresObject.set(profileStorageItem)
-
-		return async ({ result }) => {
-			loading = false
-		}
-	}
 </script>
 
 <svelte:head>
