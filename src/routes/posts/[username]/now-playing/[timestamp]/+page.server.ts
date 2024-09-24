@@ -21,7 +21,8 @@ export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSe
     const sessionUserId = session.user?.id as string
 
     username = params.username
-    const timestampString = params.timestamp
+    const timestamp = parseInt(params.timestamp)
+    const timestampString = new Date(timestamp).toISOString()
     const postType = "now_playing"
 
     const select = await selectPostAndReplies( sessionUserId, username, timestampString, postType )

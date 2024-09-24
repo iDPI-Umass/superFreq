@@ -34,7 +34,7 @@
     <input 
         type="hidden"
         name="post-created-at" 
-        id="post-created-at"
+        id="post-c reated-at"
         form="submitReply"
         value={post?.created_at.toISOString()}
     />

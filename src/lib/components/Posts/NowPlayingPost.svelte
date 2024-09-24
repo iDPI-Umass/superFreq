@@ -22,7 +22,10 @@
     export let mode: string | null = null
     $: editState
 
-    const permalink = `/posts/${post.username}/now-playing/${(post.created_at ?? post.feed_item_timestamp).toISOString()}`
+    const permalinkTimestampString = (post.created_at ?? post.feed_item_timestamp).toISOString()
+    const permalinkTimestamp = Date.parse(permalinkTimestampString).toString()
+
+    const permalink = `/posts/${post.username}/now-playing/${permalinkTimestamp}`
 
     const embedInfo = {
                 'id': post?.embed_id,
@@ -35,11 +38,6 @@
     function toggleEditState() {
         editState = !editState
     }
-
-    // const createdAt = post?.created_at
-    // console.log(createdAt)
-    // const dateTest = Date.parse(post?.created_at)
-    // console.log(dateTest)
 </script>
 
 <div class="box">
