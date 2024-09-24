@@ -41,7 +41,7 @@
     <input 
         type="hidden"
         name="post-created-at" 
-        id="post-c reated-at"
+        id="post-created-at"
         form="submitReply"
         value={post?.created_at.toISOString()}
     />
@@ -130,7 +130,7 @@
                 form="flagPost"
                 value={reply.id}
             />
-            <div id={replyId( reply.username, reply.created_at )}>
+            <div id={ replyId( reply.username, reply.created_at )}>
                 <PostReply
                     reply={reply}
                     sessionUserId={sessionUserId}
