@@ -15,7 +15,7 @@ export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSe
         throw redirect(307, '/')
     }
     else if( session.session && !username ) {
-        throw redirect(307, '/account/create-profile')
+        throw redirect(307, '/create-profile')
     }
     
     const sessionUserId = session.user?.id as string

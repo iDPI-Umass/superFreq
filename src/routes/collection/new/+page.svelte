@@ -21,7 +21,7 @@
 	$: collectionItems
 	let itemAdded = false
     let imgPromise
-    $:imgPromise
+    $: imgPromise
 
 	// UI
 	const buttonTextLookup: {[index: string]: string} = {
