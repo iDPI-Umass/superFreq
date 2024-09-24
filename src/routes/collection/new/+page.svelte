@@ -198,16 +198,18 @@
                 spellcheck=true 
                 required
             ></textarea>
-            <button 
-                class="double-border-top" 
-                type="submit"
-                formAction="?/insertCollection"
-                disabled={!(collectionStatus && collectionTitle)}
-            >
-                <div class="inner-border">
-                    submit
-                </div>
-            </button>
+            <div class="button-spacing">
+                <button 
+                    class="double-border-top" 
+                    type="submit"
+                    formAction="?/insertCollection"
+                    disabled={!(collectionStatus && collectionTitle && (collectionItems.length > 0))}
+                >
+                    <div class="inner-border">
+                        create new collection
+                    </div>
+                </button>
+            </div>
         </div>
     </form>
     <div class="search-bar">
@@ -237,6 +239,9 @@
         border-bottom: 1px solid var(--freq-color-border-panel);
         padding: var(--freq-height-spacer-half) var(--freq-width-spacer);
 		margin: var(--freq-spacing-3x-small) 0;
+    }
+    .button-spacing {
+        margin: auto 0 0 auto;
     }
     @media screen and (max-width: 600px) {
         form.horizontal {
