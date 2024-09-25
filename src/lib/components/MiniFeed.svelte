@@ -4,6 +4,7 @@
     import NowPlayingPost from './Posts/NowPlayingPost.svelte'
     import decoration from "$lib/assets/images/feed-item-decoration.svg"
     import wave from "$lib/assets/images/logo/freq-wave.svg"
+    import { displayDate } from '../resources/parseData'
 
     export let feedItems: App.RowData[]
 </script>
