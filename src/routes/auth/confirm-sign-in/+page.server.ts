@@ -34,7 +34,6 @@ export const actions = {
     }
 
     redirectTo.pathname = '/auth/error'
-    console.log('error redirecting')
     redirect(303, redirectTo)
   }
 } satisfies Actions

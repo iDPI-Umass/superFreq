@@ -23,6 +23,7 @@
     let popOverOpenState: boolean
     let showModal: boolean = false
     let dialog: any
+    
     const diaglogTitleOptions: App.Lookup = {
         blockUser: 'Block uesr?',
         deletePost: 'Delete post?',

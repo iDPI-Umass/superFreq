@@ -5,6 +5,5 @@ export const load = async () => {
 
     const someData = await getListenUrlData(listenUrlString)
 
-    console.log(someData)
     return someData
 }

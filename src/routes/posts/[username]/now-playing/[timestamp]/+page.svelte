@@ -24,13 +24,12 @@
 
 <svelte:head>
 	<title>
-		{post?.display_name}'s Now Playing Post
+		{post?.display_name}'s Now Playing post
 	</title>
 </svelte:head>
 
 
 <div class="post-panel">
-    {#if sessionUserId}
     <input 
         type="hidden"
         name="post-id" 
@@ -114,28 +113,27 @@
         editState={form?.editState ?? false}
         reactionActive={postReactionActive ?? false} 
     ></NowPlayingPost>
-        <PostReplyEditor></PostReplyEditor>
-        {#each replies as reply}
-            <input 
-                type="hidden"
-                name="post-id" 
-                id="post-id"
-                form="delete"
-                value={reply.id}
-            />
-            <input 
-                type="hidden"
-                name="post-id" 
-                id="post-id"
-                form="flagPost"
-                value={reply.id}
-            />
-            <div id={ replyId( reply.username, reply.created_at )}>
-                <PostReply
-                    reply={reply}
-                    sessionUserId={sessionUserId}
-                ></PostReply>
-            </div>
-        {/each}
-    {/if}
+    <PostReplyEditor></PostReplyEditor>
+    {#each replies as reply}
+        <input 
+            type="hidden"
+            name="post-id" 
+            id="post-id"
+            form="delete"
+            value={reply.id}
+        />
+        <input 
+            type="hidden"
+            name="post-id" 
+            id="post-id"
+            form="flagPost"
+            value={reply.id}
+        />
+        <div id={ replyId( reply.username, reply.created_at )}>
+            <PostReply
+                reply={reply}
+                sessionUserId={sessionUserId}
+            ></PostReply>
+        </div>
+    {/each}
 </div>

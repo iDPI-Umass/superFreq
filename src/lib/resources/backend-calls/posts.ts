@@ -37,22 +37,17 @@ postData template for new comments:
 export const insertPost = async function ( postData: any ) {
 
     const post = await db.transaction().execute(async(trx) => {
-        console.log('running')
         const insertPost = await trx
         .insertInto('posts')
         .values(postData)
         .returning('created_at')
         .executeTakeFirst()
 
-        console.log(insertPost)
-
         const selectProfile = await trx
         .selectFrom('profiles')
         .select('username')
         .where('id', '=', postData.user_id)
         .executeTakeFirst()
-
-        console.log(selectProfile)
 
         return { insertPost, selectProfile }
     })
@@ -159,8 +154,6 @@ export const deletePost = async function ( sessionUserId: string, postId: string
             episode_title: post?.episode_title,
             show_title: post?.show_title,
         }
-
-        console.log(post)
 
         const updatePost = await trx
         .updateTable('posts')
@@ -519,6 +512,7 @@ export const selectUserPosts = async function ( sessionUserId: string, username:
                 'posts.created_at as created_at',
                 'posts.updated_at as updated_at',
                 'posts.type as type',
+                'posts.status as status',
                 'posts.artist_name as artist_name',
                 'posts.release_group_name as release_group_name',
                 'posts.recording_name as recording_name',
@@ -551,6 +545,7 @@ export const selectUserPosts = async function ( sessionUserId: string, username:
                 'posts.created_at as created_at',
                 'posts.updated_at as updated_at',
                 'posts.type as type',
+                'posts.status as status',
                 'posts.artist_name as artist_name',
                 'posts.release_group_name as release_group_name',
                 'posts.recording_name as recording_name',
@@ -657,7 +652,6 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
 
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
-    console.log('reaction')
 
     const insertUpdateReaction = await db.transaction().execute(async (trx) => {
         try {
@@ -717,7 +711,6 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
 
 
     const reaction =  await insertUpdateReaction
-    console.log(reaction)
     return reaction 
 }
 
