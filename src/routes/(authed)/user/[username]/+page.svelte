@@ -8,8 +8,8 @@
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import GridList from "$lib/components/GridList.svelte"
 	import { Info } from 'lucide-svelte';
-	import NewNowPlayingPost from '$lib/components/Posts/NewNowPlayingPost.svelte';
-    import MiniFeed from '$lib/components/MiniFeed.svelte'
+	import NewNowPlayingPost from '$lib/components/Posts/NewNowPlayingPost.svelte'
+    import Feed from '$lib/components/Feed.svelte'
 	import NowPlayingPostsSample from 'src/lib/components/Posts/NowPlayingPostsSample.svelte';
 
     export let data: PageData
@@ -198,9 +198,10 @@
     {/if}
     {#if profileUserData?.id == sessionUserId}
         <NewNowPlayingPost></NewNowPlayingPost>
-        <MiniFeed
+        <Feed
             feedItems={feedItems?.feedData}
-        ></MiniFeed>
+            mode="mini"
+        ></Feed>
     {:else}
         <NowPlayingPostsSample
             posts={posts}

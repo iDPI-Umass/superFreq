@@ -128,10 +128,11 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'comments.embed_id as embed_id',
                 'comments.embed_source as embed_source',
                 'comments.embed_account as embed_account',
+                'profile.username as username',
                 'profile.display_name as display_name',
                 'profile.avatar_url as avatar_url',
                 'original_poster.username as original_poster_username',
-                'original_poster.display_name as original_poster_display_name'
+                'original_poster.display_name as original_poster_display_name','original_post.created_at as original_post_created_at'
             ])
             .where('comments.user_id', '=', sessionUserId)
             .where('original_post.user_id', '!=', sessionUserId)
@@ -166,12 +167,12 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             .select([
                 'commenter.id as session_user_post_commenter_id', 
                 'commenter.display_name as session_user_post_commenter_display_name', 
-                'commenter.username as session_user_post_commenter_username',
+                'commenter.username as username',
                 'commenter.avatar_url as session_user_post_commenter_avatar_url',
                 'comments.created_at as feed_item_timestamp',
                 'user_posts.id as post_id',
-                'user_posts.created_at as post_created_at',
-                'user.username as username'
+                'user_posts.created_at as original_post_created_at',
+                'user.username as original_poster_username'
             ])
             .where('comments.parent_post_id', 'in', postIdList)
             .where('comments.status','!=', 'deleted')
@@ -329,12 +330,14 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             .select([
                 'comments.id as followed_user_comment_id', 
                 'comments.user_id as user_id', 
+                'commenter.username as username',
                 'commenter.display_name as display_name', 
                 'commenter.avatar_url as avatar_url', 
                 'comments.text as comment_text', 'comments.parent_post_id', 
                 'original_post.user_id as original_poster_user_id', 
                 'original_poster.display_name as original_poster_display_name', 
                 'original_poster.username as original_poster_username', 
+                'original_post.created_at as original_post_created_at',
                 'comments.created_at as feed_item_timestamp'
             ])
             .where('comments.user_id', 'in', followingUserIds)
