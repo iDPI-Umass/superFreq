@@ -8,7 +8,7 @@
 
     export let feedItems: App.RowData[]
     export let batchSize = 0
-    export let batchIterator = 0
+    export let offset = 0
     export let timestampStart: Date | null = null
     export let timestampEnd: Date | null = null
     export let options: App.Lookup = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
@@ -20,6 +20,8 @@
         const timestamp = Date.parse(timestampString).toString()
         return timestamp
     }
+
+    console.log(timestampStart)
 </script>
 
 <svelte:head>
@@ -160,9 +162,9 @@
         />
         <input
             type="hidden"
-            name="batch-iterator"
-            id="batch-iterator"
-            value={batchIterator}
+            name="offset"
+            id="offset"
+            value={remaining}
         />
         <input
             type="hidden"

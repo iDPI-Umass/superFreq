@@ -605,6 +605,6 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
     const { totalRowCount } = data
     batchIterator ++
     offset = batchSize * batchIterator
-    const remainingCount = totalRowCount - offset
+    const remainingCount = totalRowCount - feedData.length
     return { feedData, totalRowCount, remainingCount }
 }

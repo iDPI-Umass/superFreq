@@ -7,6 +7,7 @@
     $: form
     let { feedData, remaining, timestampStart, timestampEnd, batchSize, options } = data
     $: ({ feedData, remaining, totalRowCount, timestampStart, timestampEnd, batchSize, options } = data)
+
 </script>
 
 <svelte:head>
@@ -18,7 +19,7 @@
 <Feed
     feedItems={form?.feedItems ?? feedData}
     batchSize={batchSize}
-    batchIterator={form?.batchIterator}
+    batchIterator={form?.batchIterator ?? 0}
     timestampStart={timestampStart}
     timestampEnd={timestampEnd}
     options={options}
