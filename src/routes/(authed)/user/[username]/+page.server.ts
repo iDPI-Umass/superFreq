@@ -123,12 +123,14 @@ export const actions = {
 
         const { username, createdAt } = await insertPost( postData )
         const timestampSlug = createdAt?.toISOString()
+        const timestamp = Date.parse(timestampSlug).toString()
+
 
         if ( !timestampSlug ) {
             return { success: false }
         }
         else {
-            redirect(303, `/posts/${username}/now-playing/${timestampSlug}`)
+            redirect(303, `/posts/${username}/now-playing/${timestamp}`)
         }
 	},
     postTrack: async ({ request, locals: { safeGetSession } }) => {
@@ -169,12 +171,13 @@ export const actions = {
 
         const { username, createdAt } = await insertPost( postData )
         const timestampSlug = createdAt?.toISOString()
+        const timestamp = Date.parse(timestampSlug).toString()
 
         if ( !timestampSlug ) {
             return { success: false }
         }
         else{
-            redirect(303, `/posts/${username}/now-playing/${timestampSlug}`)
+            redirect(303, `/posts/${username}/now-playing/${timestamp}`)
         }
 	},
     postMix: async ({ request, locals: { safeGetSession } }) => {
@@ -215,12 +218,13 @@ export const actions = {
 
         const { username, createdAt } = await insertPost( postData )
         const timestampSlug = createdAt?.toISOString()
+        const timestamp = Date.parse(timestampSlug).toString()
 
         if ( !timestampSlug ) {
             return { success: false }
         }
         else{
-            redirect(303, `/posts/${username}/now-playing/${timestampSlug}`)
+            redirect(303, `/posts/${username}/now-playing/${timestamp}`)
         }
 	},
     flagPost: async ({ request, locals: { safeGetSession }}) => {
