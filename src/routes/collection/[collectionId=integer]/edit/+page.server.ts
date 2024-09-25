@@ -47,7 +47,6 @@ export const actions: Actions = {
     const collectionItems = JSON.parse(items) as App.RowData
     const deletedCollectionItems = JSON.parse(deletedItems) as App.RowData
 
-    console.log(collectionItems)
     const activeAndDeletedCollectionItems = collectionItems.concat(deletedCollectionItems)
 
     const collectionInfo = {

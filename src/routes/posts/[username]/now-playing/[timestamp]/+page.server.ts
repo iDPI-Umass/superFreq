@@ -75,6 +75,25 @@ export const actions = {
             return { success: false }
         }
     },
+    submitReaction: async ({ request, locals: { safeGetSession }}) => {
+        const session = await safeGetSession()
+        const sessionUserId = session.user?.id as string
+        const data = await request.formData()
+        const postId = data.get('post-id') as string
+        const reactionType = data.get('reaction-type') as string
+        const postUsername = data.get('post-username') as string
+        const postCreatedAt = data.get('post-created-at') as string
+
+        const reaction = await insertUpdateReaction( sessionUserId, postId, reactionType )
+
+        const permalink = `/posts/${postUsername}/now-playing/${postCreatedAt}`
+        
+        if ( reaction ) {
+            throw redirect(303, permalink)
+        }
+        else { return { success: false }}
+
+    },
     editPost: async ({ request, locals: { safeGetSession } }) => {
 
         const session = await safeGetSession()
@@ -125,24 +144,5 @@ export const actions = {
         const flag = await insertPostFlag( sessionUserId, postId )
 
         return flag
-    },
-    submitReaction: async ({ request, locals: { safeGetSession }}) => {
-        const session = await safeGetSession()
-        const sessionUserId = session.user?.id as string
-        const data = await request.formData()
-        const postId = data.get('post-id') as string
-        const reactionType = data.get('reaction-type') as string
-        const postUsername = data.get('post-username') as string
-        const postCreatedAt = data.get('post-created-at') as string
-
-        const reaction = await insertUpdateReaction( sessionUserId, postId, reactionType )
-
-        const permalink = `/posts/${postUsername}/now-playing/${postCreatedAt}`
-        
-        if ( reaction ) {
-            throw redirect(303, permalink)
-        }
-        else { return { success: false }}
-
     }
 } satisfies Actions

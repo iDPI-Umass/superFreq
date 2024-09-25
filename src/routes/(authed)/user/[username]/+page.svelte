@@ -167,7 +167,7 @@
 <div class="border-full-vw"></div>
 
 <div class="content">
-    {#if topAlbumsCollection?.length > 0}
+    {#if topAlbumsCollection && topAlbumsCollection.length > 0}
     <div class="panel-medium">
         
         <PanelHeader>

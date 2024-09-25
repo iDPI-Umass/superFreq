@@ -8,12 +8,12 @@
     }
 </script>
 
-<form name="editPostText" class="vertical" action="?/editPost">
+<form method="POST" name="editPostText" class="vertical" action="?/editPost">
     <input 
         id="post-data"
         name="post-data"
         type="hidden"
-        value={postData}
+        value={JSON.stringify(postData)}
     />
     <textarea
         cols="1"

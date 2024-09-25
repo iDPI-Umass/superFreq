@@ -37,22 +37,17 @@ postData template for new comments:
 export const insertPost = async function ( postData: any ) {
 
     const post = await db.transaction().execute(async(trx) => {
-        console.log('running')
         const insertPost = await trx
         .insertInto('posts')
         .values(postData)
         .returning('created_at')
         .executeTakeFirst()
 
-        console.log(insertPost)
-
         const selectProfile = await trx
         .selectFrom('profiles')
         .select('username')
         .where('id', '=', postData.user_id)
         .executeTakeFirst()
-
-        console.log(selectProfile)
 
         return { insertPost, selectProfile }
     })
@@ -159,8 +154,6 @@ export const deletePost = async function ( sessionUserId: string, postId: string
             episode_title: post?.episode_title,
             show_title: post?.show_title,
         }
-
-        console.log(post)
 
         const updatePost = await trx
         .updateTable('posts')
@@ -479,9 +472,9 @@ export const selectRandomPosts = async function ( postCount: number ) {
     return selectPosts
 }
 
-/* Select a user's posts */
+/* Select a user's Now Playing posts */
 
-export const selectUserPosts = async function ( sessionUserId: string, username: string ) {
+export const selectUserNowPlayingPosts = async function ( sessionUserId: string, username: string ) {
     const selectPosts = await db.transaction().execute(async(trx) => {
 
         const userProfile = await trx
@@ -519,6 +512,76 @@ export const selectUserPosts = async function ( sessionUserId: string, username:
                 'posts.created_at as created_at',
                 'posts.updated_at as updated_at',
                 'posts.type as type',
+                'posts.status as status',
+                'posts.artist_name as artist_name',
+                'posts.release_group_name as release_group_name',
+                'posts.recording_name as recording_name',
+                'posts.episode_title as episode_title',
+                'posts.show_title as show_title',
+                'posts.listen_url as listen_url',
+                'posts.embed_id as embed_id',
+                'posts.embed_source as embed_source',
+                'posts.embed_account as embed_account',
+                'profiles.id as user_id',
+                'profiles.username as username',
+                'profiles.display_name as display_name',
+                'profiles.avatar_url as avatar_url',
+            ])
+            .where('profiles.id', '=', profileUserId)
+            .where('posts.parent_post_id', 'is', null)
+            .where('posts.status', '!=', 'deleted')
+            .orderBy('posts.created_at desc')
+            .execute()
+
+            const posts = selectPosts
+            return { permission: true, posts }
+        }
+    })
+    const posts = await selectPosts
+    return posts
+}
+
+/* Select a user's posts and comments */
+
+export const selectUserPostsAndComments = async function ( sessionUserId: string, username: string ) {
+    const selectPosts = await db.transaction().execute(async(trx) => {
+
+        const userProfile = await trx
+        .selectFrom('profiles')
+        .select('id')
+        .where('username', '=', username)
+        .executeTakeFirst()
+
+        const profileUserId = userProfile?.id as string
+
+        try {
+            const blockInfo = await trx
+            .selectFrom('user_moderation_actions')
+            .select(['id', 'type', 'active'])
+            .where(({eb, and}) => and([
+                eb('user_id', '=', profileUserId),
+                eb('target_user_id', '=', sessionUserId),
+                eb('type', '=', 'block'),
+                eb('active', '=', true)
+            ]))
+            .executeTakeFirstOrThrow()
+
+            if ( blockInfo ) {
+                return { permission: false, posts: null, comments: null }
+            }
+        }
+        catch ( error ) {
+            const selectPosts = await trx
+            .selectFrom('posts')
+            .innerJoin('profiles', 'profiles.id', 'posts.user_id')
+            .select([
+                'posts.id as id',
+                'posts.text as text',
+                'posts.mbid as mbid',
+                'posts.created_at as created_at',
+                'posts.updated_at as updated_at',
+                'posts.type as type',
+                'posts.status as status',
                 'posts.artist_name as artist_name',
                 'posts.release_group_name as release_group_name',
                 'posts.recording_name as recording_name',
@@ -551,6 +614,7 @@ export const selectUserPosts = async function ( sessionUserId: string, username:
                 'posts.created_at as created_at',
                 'posts.updated_at as updated_at',
                 'posts.type as type',
+                'posts.status as status',
                 'posts.artist_name as artist_name',
                 'posts.release_group_name as release_group_name',
                 'posts.recording_name as recording_name',
@@ -581,7 +645,8 @@ export const selectUserPosts = async function ( sessionUserId: string, username:
     const { permission, posts, comments } = await selectPosts
     let postsAndComments = [] as object[]
     postsAndComments = postsAndComments.concat( posts, comments )
-    postsAndComments.sort(( a: App.RowData, b: App.RowData ) => b.created_at = a.created_at )
+    postsAndComments.sort(( a: App.RowData, b: App.RowData ) => b.created_at - a.created_at )
+    console.log(postsAndComments)
     return {permission, postsAndComments}
 }
 
@@ -657,7 +722,6 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
 
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
-    console.log('reaction')
 
     const insertUpdateReaction = await db.transaction().execute(async (trx) => {
         try {
@@ -717,7 +781,6 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
 
 
     const reaction =  await insertUpdateReaction
-    console.log(reaction)
     return reaction 
 }
 

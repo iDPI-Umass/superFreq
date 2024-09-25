@@ -18,6 +18,7 @@
     export let reply: any
     export let sessionUserId: string | null
     export let editState = false
+    export let userActionSuccess: boolean | null = null
 
     let openState: boolean
 
@@ -85,10 +86,12 @@
                         mode='sessionUserPostMenu'
                         postId={reply.id}
                         bind:editState={editState}
+                        success={userActionSuccess}
                     ></UserActionsMenu>
                 {:else if reply.user_id != sessionUserId}
                     <UserActionsMenu
                         mode='postMenu'
+                        success={userActionSuccess}
                     ></UserActionsMenu>
                 {/if}
             </div>

@@ -26,12 +26,47 @@
     </PanelHeader>
     <div class="posts-spacing">
     {#each posts as post}
+        <input 
+            type="hidden"
+            name="post-id" 
+            id="post-id"
+            form="delete"
+            value={post?.id}
+        />
+        <input 
+            type="hidden"
+            name="post-username" 
+            id="post-username"
+            form="delete"
+            value={post?.username}
+        />
+        <input 
+            type="hidden"
+            name="post-id" 
+            id="post-id"
+            form="flagPost"
+            value={post?.id}
+        />
+        <input
+            type="hidden"
+            name="post-id"
+            id="post-id"
+            form="submitReaction"
+            value={post?.id}
+        />
+        <input
+            type="hidden"
+            name="reaction-type"
+            id="reaction-type"
+            form="submitReaction"
+            value="like"
+        />
         {#if post.type == 'now_playing'}
         <NowPlayingPost
             sessionUserId={sessionUserId}
             post={post}
             mode="feed"
-            userActionSuccess={form?.deleted}
+            userActionSuccess={form?.success}
         >
         </NowPlayingPost>
         {:else if post.type == "reply"}
@@ -44,15 +79,12 @@
     </div>
 </div>
 
-{#if form?.deleted}
+{#if form?.success}
 <NotificationModal
-    showModal={form?.deleted}
+    showModal={form?.success}
 >
     <span slot="header-text">
         success!
-    </span>
-    <span slot="message">
-        Post deleted.
     </span>
 </NotificationModal>
 {/if}
