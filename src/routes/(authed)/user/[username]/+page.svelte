@@ -1,7 +1,6 @@
 <script lang="ts">
     import type { ActionData, PageData } from './$types.js'
-    import { afterUpdate, onMount } from 'svelte'
-    import { goto, invalidate, invalidateAll } from '$app/navigation'
+    import { goto } from '$app/navigation'
     import { enhance } from '$app/forms'
     import { username } from '$lib/resources/localStorage'
     import Settings from 'lucide-svelte/icons/settings'
@@ -36,7 +35,6 @@
         topAlbumsReturned = true
     }
     
-    const sessionUserBlocked = permission ? false : true
     $: followingNow = form?.followStatus ?? followInfo?.follows_now ?? false
     $: profileUserBlocked = form?.blockStatus ?? profileUserBlockInfo?.active ?? false
     $: profileUserFlagged = form?.flagStatus ?? profileUserFlagInfo?.active ?? false
