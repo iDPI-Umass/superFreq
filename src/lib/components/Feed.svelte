@@ -58,6 +58,14 @@
                     ></NowPlayingPost>
                 </div>
             </div>
+        <!-- Some user followed user -->
+        {:else if Object.keys(item).includes( 'new_follow_id' )}
+            <a href={`/user/${item.username}`}>
+                <div class="feed-item-one-liner">
+                    <img src={item.avatar_url ?? wave} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
+                    {item.display_name} followed you
+                </div>
+            </a>
         <!-- Some user comment on user's post -->
         {:else if Object.keys(item).includes( 'session_user_post_commenter_id' )}
             <a href={`/posts/${item.original_poster_username}/now-playing/${parseTimestamp(item.original_post_created_at)}#${item.username?.concat(parseTimestamp(item.feed_item_timestamp))}`}>

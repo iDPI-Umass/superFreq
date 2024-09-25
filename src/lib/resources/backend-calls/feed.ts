@@ -555,15 +555,51 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             collectionEdits = selectFollowingCollectionsEdits
         }
 
-        const totalRowCount = Number(sessionUserPostsTotal) + Number(sessionUserCommentsTotal) + Number(commentsSessionUserPostTotal) + Number(reactionsSessionUserPostTotal) + Number(postsTotal) + Number(commentsTotal) + Number(sessionUserPostsReactionsTotal) + Number(reactionsTotal) + Number(sessionUserCollectionsSocialTotal) + Number(collectionsSocialTotal) + Number(collectionEditsTotal)
+        /* count and fetch other users following session user */
+        let newFollowsTotal = 0
+        let newFollows: App.RowData = []
 
-        return { sessionUserPostsTotal, sessionUserCommentsTotal, commentsSessionUserPostTotal, reactionsSessionUserPostTotal, sessionUserPosts, sessionUserComments, commentsSessionUserPost, reactionsSessionUserPost, posts, comments, reactions, sessionUserCollectionFollows, collectionFollows, collectionEdits, totalRowCount }
+        const countNewFollows = await trx
+        .selectFrom('social_graph')
+        .select((eb) => eb.fn.count<number>('id').as('follows_count'))
+        .where(({eb, and}) => and ([
+            eb('target_user_id', '=', sessionUserId),
+            eb('follows_now', '=', true),
+        ]))
+        .where((eb) => eb.between('updated_at', timestampStart, timestampEnd))
+        .execute()
+
+        newFollowsTotal = countNewFollows[0]['follows_count']
+
+        const selectNewFollows = await trx
+        .selectFrom('social_graph')
+        .innerJoin('profiles as follower', 'follower.id', 'social_graph.user_id')
+        .select([
+            'social_graph.id as new_follow_id',
+            'social_graph.updated_at as feed_item_timestamp',
+            'follower.username as username',
+            'follower.display_name as display_name',
+            'follower.avatar_url as avatar_url'
+        ])
+        .where('target_user_id', '=', sessionUserId)
+        .where('follows_now', '=', true)
+        .where((eb) => eb.between('social_graph.updated_at', timestampStart, timestampEnd))
+        .limit(batchSize)
+        .offset(offset)
+        .orderBy('feed_item_timestamp desc')
+        .execute()
+
+        newFollows = selectNewFollows
+
+        const totalRowCount = Number(sessionUserPostsTotal) + Number(sessionUserCommentsTotal) + Number(commentsSessionUserPostTotal) + Number(reactionsSessionUserPostTotal) + Number(postsTotal) + Number(commentsTotal) + Number(sessionUserPostsReactionsTotal) + Number(reactionsTotal) + Number(sessionUserCollectionsSocialTotal) + Number(collectionsSocialTotal) + Number(collectionEditsTotal) + Number(newFollowsTotal)
+
+        return { sessionUserPostsTotal, sessionUserCommentsTotal, commentsSessionUserPostTotal, reactionsSessionUserPostTotal, sessionUserPosts, sessionUserComments, commentsSessionUserPost, reactionsSessionUserPost, posts, comments, reactions, sessionUserCollectionFollows, collectionFollows, collectionEdits, newFollows, totalRowCount }
     })
 
     const data = await select
 
     let feedData: object[] = []
-    feedData = feedData.concat(data.sessionUserPosts, data.sessionUserComments, data.commentsSessionUserPost, data.reactionsSessionUserPost, data.posts, data.comments, data.reactions, data.sessionUserCollectionFollows, data.collectionFollows, data.collectionEdits)
+    feedData = feedData.concat(data.sessionUserPosts, data.sessionUserComments, data.commentsSessionUserPost, data.reactionsSessionUserPost, data.posts, data.comments, data.reactions, data.sessionUserCollectionFollows, data.collectionFollows, data.collectionEdits, data.newFollows)
 
     feedData.sort(( a: App.RowData, b: App.RowData ) => b.feed_item_timestamp - a.feed_item_timestamp)
     const { totalRowCount } = data
