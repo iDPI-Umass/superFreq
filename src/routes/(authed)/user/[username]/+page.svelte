@@ -28,7 +28,7 @@
     $: collectionCount = permission ? profileData.collectionCount as number : null
     $: collectionFollowingCount = permission ? profileData.collectionFollowingCount as number : null
     $: userFollowingCount = permission ? profileData.userFollowingCount as number : null
-    $: nowPlayingPostsCount = permission ? profileData.userFollowingCount as number : null
+    $: nowPlayingPostsCount = permission ? profileData.nowPlayingPostsCount as number : null
     $: topAlbumsCollection = permission ? profileData.topAlbumsCollection as App.ProfileObject[] : null
 
     $: topAlbumsReturned = false
