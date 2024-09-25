@@ -1,6 +1,6 @@
 import type { PageServerLoad, Actions } from "./$types"
 import { redirect  } from "@sveltejs/kit"
-import { selectUserPosts, updatePost, deletePost, insertUpdateReaction } from "$lib/resources/backend-calls/posts"
+import { selectUserNowPlayingPosts, updatePost, deletePost, insertUpdateReaction } from "$lib/resources/backend-calls/posts"
 import { insertPostFlag } from "$lib/resources/backend-calls/users"
 
 export const load: PageServerLoad = async ({ params, locals: { safeGetSession } }) => {
@@ -8,10 +8,10 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession } 
     const sessionUserId = session.user?.id as string
     const username = params.username
     
-    const selectPosts = await selectUserPosts( sessionUserId, username )
+    const selectPosts = await selectUserNowPlayingPosts( sessionUserId, username )
 
     const permission = selectPosts?.permission as boolean
-    const posts = selectPosts?.postsAndComments as App.RowData[]
+    const posts = selectPosts?.posts as App.RowData[]
 
     if ( posts.length == 0 || !permission ) {
         throw redirect(303, `/user/${username}`)
