@@ -39,10 +39,31 @@
     />
     <input 
         type="hidden"
+        name="post-username" 
+        id="post-username"
+        form="submitReply"
+        value={post?.username}
+    />
+    <input 
+        type="hidden"
         name="post-created-at" 
         id="post-created-at"
         form="submitReply"
         value={post?.created_at.toISOString()}
+    />
+    <input 
+        type="hidden"
+        name="post-id" 
+        id="post-id"
+        form="submitReaction"
+        value={postId}
+    />
+    <input
+        type="hidden"
+        name="reaction-type"
+        id="reaction-type"
+        form="submitReaction"
+        value="like"
     />
     <input
         type="hidden"
@@ -60,13 +81,6 @@
     />
     <input 
         type="hidden"
-        name="post-username" 
-        id="post-username"
-        form="submitReply"
-        value={post?.username}
-    />
-    <input 
-        type="hidden"
         name="post-id" 
         id="post-id"
         form="delete"
@@ -92,20 +106,6 @@
         id="post-id"
         form="flagPost"
         value={postId}
-    />
-    <input 
-        type="hidden"
-        name="post-created-at" 
-        id="post-created-at"
-        form="flagPost"
-        value={post?.created_at.toISOString()}}
-    />
-    <input 
-        type="hidden"
-        name="post-username" 
-        id="post-username"
-        form="flagPost"
-        value={post?.username}
     />
     <NowPlayingPost
         sessionUserId={sessionUserId}
@@ -133,6 +133,7 @@
             <PostReply
                 reply={reply}
                 sessionUserId={sessionUserId}
+                userActionSuccess={form?.success}
             ></PostReply>
         </div>
     {/each}
