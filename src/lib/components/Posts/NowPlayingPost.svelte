@@ -19,6 +19,7 @@
     export let reactionActive: boolean | null =  null
     export let editState: boolean | null | undefined = null
     export let mode: string | null = null
+    export let userActionSuccess: boolean | null = null
     $: editState
 
     const permalinkTimestampString = (post?.created_at ?? post?.feed_item_timestamp).toISOString()
@@ -112,10 +113,12 @@
                         mode='sessionUserPostMenu'
                         postId={post.id}
                         bind:editState={editState}
+                        success={userActionSuccess}
                     ></UserActionsMenu>
                 {:else if sessionUserId}
                     <UserActionsMenu
                         mode='postMenu'
+                        success={userActionSuccess}
                     ></UserActionsMenu>
                 {/if}
             </div>

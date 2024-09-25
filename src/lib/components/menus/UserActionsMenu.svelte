@@ -18,7 +18,7 @@
     export let blocked: boolean = false
     export let flagged: boolean = false
     export let postId: string | null =  null
-    export let success: boolean | null | undefined = null
+    export let success: boolean | null = null
 
     let popOverOpenState: boolean
     let showModal: boolean = false
@@ -36,6 +36,13 @@
         flagPost: 'This will notify site admins that something about this post is fishy.',
         reportUser: 'This will notify site admins that something about this user is fishy.',
         unblockUser: 'This grants this user the same permission to see your activity that everyone else has.',
+    }
+    const successTextOptions: App.Lookup = {
+        blockUser: 'User blocked',
+        deletePost: 'Post deleted',
+        flagPost: 'Post flagged',
+        reportUser: 'User reported',
+        unblockUser: 'User unblocked',
     }
     const dialogConfirmButtonOptions: App.Lookup = {
         blockUser: 'block',
@@ -94,7 +101,6 @@
 	})
 
 	const dispatch = createEventDispatcher();
-
 </script>
 
 <svelte:window
@@ -221,7 +227,6 @@
         method="POST" 
         id={formIDs[dialogMode]} 
         action={formActions[dialogMode]}
-        use:enhance
     >
     <input
         type="hidden"
@@ -259,7 +264,7 @@
         </div>
     {:else if success == true}
         <p>
-            Successful submission
+            {successTextOptions[dialogMode]}
         </p>
         <div class="dialog-options">
             <button 

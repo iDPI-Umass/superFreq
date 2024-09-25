@@ -1,8 +1,14 @@
 <script lang="ts">
+    import type { PageData, ActionData } from './$types'
     import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
     import PostReply from '$lib/components/Posts/PostReply.svelte'
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
-    export let data
+    import RedirectModal from '$lib/components/modals/RedirectModal.svelte'
+    import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
+
+    export let data: PageData
+    export let form: ActionData
+    $: form
 
     let { posts, username, sessionUserId } =  data
     $: ({ posts, username, sessionUserId } =  data)
@@ -25,6 +31,7 @@
             sessionUserId={sessionUserId}
             post={post}
             mode="feed"
+            userActionSuccess={form?.deleted}
         >
         </NowPlayingPost>
         {:else if post.type == "reply"}
@@ -36,6 +43,19 @@
     {/each}
     </div>
 </div>
+
+{#if form?.deleted}
+<NotificationModal
+    showModal={form?.deleted}
+>
+    <span slot="header-text">
+        success!
+    </span>
+    <span slot="message">
+        Post deleted.
+    </span>
+</NotificationModal>
+{/if}
 
 <style>
     .posts-spacing {

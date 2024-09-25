@@ -505,11 +505,41 @@ export const selectUserPosts = async function ( sessionUserId: string, username:
             .executeTakeFirstOrThrow()
 
             if ( blockInfo ) {
-                return { permission: false, posts: null }
+                return { permission: false, posts: null, comments: null }
             }
         }
         catch ( error ) {
             const selectPosts = await trx
+            .selectFrom('posts')
+            .innerJoin('profiles', 'profiles.id', 'posts.user_id')
+            .select([
+                'posts.id as id',
+                'posts.text as text',
+                'posts.mbid as mbid',
+                'posts.created_at as created_at',
+                'posts.updated_at as updated_at',
+                'posts.type as type',
+                'posts.artist_name as artist_name',
+                'posts.release_group_name as release_group_name',
+                'posts.recording_name as recording_name',
+                'posts.episode_title as episode_title',
+                'posts.show_title as show_title',
+                'posts.listen_url as listen_url',
+                'posts.embed_id as embed_id',
+                'posts.embed_source as embed_source',
+                'posts.embed_account as embed_account',
+                'profiles.id as user_id',
+                'profiles.username as username',
+                'profiles.display_name as display_name',
+                'profiles.avatar_url as avatar_url',
+            ])
+            .where('profiles.id', '=', profileUserId)
+            .where('posts.parent_post_id', 'is', null)
+            .where('posts.status', '!=', 'deleted')
+            .orderBy('posts.created_at desc')
+            .execute()
+
+            const selectComments = await trx
             .selectFrom('posts')
             .innerJoin('profiles', 'profiles.id', 'posts.user_id')
             .innerJoin('posts as parent_post', 'parent_post.id', 'posts.parent_post_id')
@@ -538,16 +568,21 @@ export const selectUserPosts = async function ( sessionUserId: string, username:
                 'parent_poster.username as original_poster_username'
             ])
             .where('profiles.id', '=', profileUserId)
+            .where('posts.parent_post_id', 'is not', null)
             .where('posts.status', '!=', 'deleted')
             .orderBy('posts.created_at desc')
             .execute()
 
             const posts = selectPosts
-            return { permission: true, posts }
+            const comments = selectComments
+            return { permission: true, posts, comments }
         }
     })
-    const posts = await selectPosts
-    return posts
+    const { permission, posts, comments } = await selectPosts
+    let postsAndComments = [] as object[]
+    postsAndComments = postsAndComments.concat( posts, comments )
+    postsAndComments.sort(( a: App.RowData, b: App.RowData ) => b.created_at = a.created_at )
+    return {permission, postsAndComments}
 }
 
 /* Select a user's posts sample */
