@@ -1,7 +1,6 @@
 <script lang="ts">
     import type { ActionData, PageData } from './$types.js'
-    import { afterUpdate, onMount } from 'svelte'
-    import { goto, invalidate, invalidateAll } from '$app/navigation'
+    import { goto } from '$app/navigation'
     import { enhance } from '$app/forms'
     import { username } from '$lib/resources/localStorage'
     import Settings from 'lucide-svelte/icons/settings'
@@ -9,8 +8,8 @@
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import GridList from "$lib/components/GridList.svelte"
 	import { Info } from 'lucide-svelte';
-	import NewNowPlayingPost from '$lib/components/Posts/NewNowPlayingPost.svelte';
-    import MiniFeed from '$lib/components/MiniFeed.svelte'
+	import NewNowPlayingPost from '$lib/components/Posts/NewNowPlayingPost.svelte'
+    import Feed from '$lib/components/Feed.svelte'
 	import NowPlayingPostsSample from 'src/lib/components/Posts/NowPlayingPostsSample.svelte';
 
     export let data: PageData
@@ -28,7 +27,7 @@
     $: collectionCount = permission ? profileData.collectionCount as number : null
     $: collectionFollowingCount = permission ? profileData.collectionFollowingCount as number : null
     $: userFollowingCount = permission ? profileData.userFollowingCount as number : null
-    $: nowPlayingPostsCount = permission ? profileData.userFollowingCount as number : null
+    $: nowPlayingPostsCount = permission ? profileData.nowPlayingPostsCount as number : null
     $: topAlbumsCollection = permission ? profileData.topAlbumsCollection as App.ProfileObject[] : null
 
     $: topAlbumsReturned = false
@@ -36,7 +35,6 @@
         topAlbumsReturned = true
     }
     
-    const sessionUserBlocked = permission ? false : true
     $: followingNow = form?.followStatus ?? followInfo?.follows_now ?? false
     $: profileUserBlocked = form?.blockStatus ?? profileUserBlockInfo?.active ?? false
     $: profileUserFlagged = form?.flagStatus ?? profileUserFlagInfo?.active ?? false
@@ -200,9 +198,10 @@
     {/if}
     {#if profileUserData?.id == sessionUserId}
         <NewNowPlayingPost></NewNowPlayingPost>
-        <MiniFeed
+        <Feed
             feedItems={feedItems?.feedData}
-        ></MiniFeed>
+            mode="mini"
+        ></Feed>
     {:else}
         <NowPlayingPostsSample
             posts={posts}

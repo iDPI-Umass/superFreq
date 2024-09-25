@@ -181,9 +181,9 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
     return profile
 }
 
-/* Select list of all users who don't block session user */
+/* Select list of all users */
 
-export const selectAllUsers = async function ( sessionUserId: string ) {
+export const selectAllUsers = async function () {
     const selectUsers = await db
     .selectFrom('profiles')
     .select(['id', 'username', 'display_name', 'avatar_url'])
