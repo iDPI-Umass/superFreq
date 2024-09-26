@@ -14,11 +14,15 @@
     import GridList from '$lib/components/GridList.svelte'
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
     import Tooltip from '$lib/components/Tooltip.svelte'
+    import InfoBox from '$lib/components/InfoBox.svelte'
 
 
 	export let data: PageData;
-    let { collection, sessionUserId, collectionId } = data;
-    $: ({ collection, sessionUserId, collectionId } = data);
+    let { collection, sessionUserId, collectionId, infoBoxText } = data;
+    $: ({ collection, sessionUserId, collectionId, infoBoxText } = data);
+
+    let imgPromise
+    $: imgPromise
 
 	/* 
 	Let's declare some variables for...
@@ -31,6 +35,8 @@
 	let collectionType = collectionInfo["type"] 
 	let collectionStatus = collectionInfo["status"] 
 	let descriptionText = collectionInfo["description_text"] 
+
+    $: collectionStatus
 
 	// collections_contents
 	interface collectionObject {
@@ -53,7 +59,7 @@
 	}
 
 	let placeholderText = "Search for items to add to your collection"
-
+    const isOwner = ( sessionUserId == collectionInfo.owner_id ) ? true : false
 </script>
 
 <svelte:head>
@@ -112,34 +118,43 @@
                 name="updated-by"
                 value={sessionUserId}
             />
-            <fieldset>
-                <div class="label-group">
-                    <legend>Status of collection</legend>
-                    <Tooltip>
-                        <u>Open</u> collections can be viewed and edited by anyone.
-                        <br />
-                        <br />
-                        <u>Public</u> collections can be viewed by anyone, but only edited by you.
-                        <br />
-                        <br />
-                        <u>Private</u> collections can only be viewed and edited by you.
-                    </Tooltip>
-                </div>
-                <ul>
-                    <li>
-                        <input class="radio" type="radio" name="status" id="open" value="open" bind:group={collectionStatus} />
-                        <label for="open">open</label>
-                    </li>
-                    <li>
-                        <input class="radio" type="radio" name="status" id="public" value="public" bind:group={collectionStatus} />
-                        <label for="public">public</label>
-                    </li>
-                    <li>
-                        <input class="radio" type="radio" name="status" id="private" value="private" bind:group={collectionStatus} />
-                        <label for="private">private</label>
-                    </li>
-                </ul>
-            </fieldset>
+            {#if isOwner}
+                <fieldset>
+                    <div class="label-group">
+                        <legend>Status of collection</legend>
+                        <Tooltip>
+                            <u>Open</u> collections can be viewed and edited by anyone.
+                            <br />
+                            <br />
+                            <u>Public</u> collections can be viewed by anyone, but only edited by you.
+                            <br />
+                            <br />
+                            <u>Private</u> collections can only be viewed and edited by you.
+                        </Tooltip>
+                    </div>
+                    <ul>
+                        <li>
+                            <input class="radio" type="radio" name="status" id="open" value="open" bind:group={collectionStatus} />
+                            <label for="open">open</label>
+                        </li>
+                        <li>
+                            <input class="radio" type="radio" name="status" id="public" value="public" bind:group={collectionStatus} />
+                            <label for="public">public</label>
+                        </li>
+                        <li>
+                            <input class="radio" type="radio" name="status" id="private" value="private" bind:group={collectionStatus} />
+                            <label for="private">private</label>
+                        </li>
+                    </ul>
+                </fieldset>
+                {#if collectionStatus && collectionStatus != 'public'}
+                    <InfoBox
+                        mode="inline"
+                    >
+                        {infoBoxText[collectionStatus]}
+                    </InfoBox>
+                {/if}
+            {/if}
         </div>
         <div class="form-block">
             <label class="text-label" for="description">
@@ -153,15 +168,17 @@
                 spellcheck=true 
                 required
             >{descriptionText}</textarea>
-            <button 
+            <div class="collection-info-button-spacing">
+                <button 
                 class="double-border-top" 
                 formAction = '?/updateCollection'
                 disabled={!(collectionStatus && collectionTitle)}
             >
                 <div class="inner-border">
-                    submit
+                    edit collection
                 </div>
-            </button>
+                </button>
+            </div>
         </div>
     </form>
     <div class="search-bar">
@@ -173,6 +190,7 @@
 			searchButtonText={`add ${buttonTextLookup[collectionType]}`}
 			searchPlaceholder={placeholderText}
             mode="collection"
+            bind:imgPromise={imgPromise}
 		></MusicBrainzSearch>
     </div>
     {#key collectionItems?.length}
@@ -183,6 +201,7 @@
             collectionType={collectionType}
             layout="list"
             mode="edit"
+            bind:imgPromise={imgPromise}
         ></GridList>
     {/key}
 </div>
@@ -221,6 +240,9 @@
         display: flex;
         flex-direction: column;
         width: 100%;
+    }
+    .info-box-inline {
+        margin-bottom: 0;
     }
     .search-bar {
         border-top: 1px solid var(--freq-color-border-panel);

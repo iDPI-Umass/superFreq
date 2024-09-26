@@ -10,8 +10,8 @@
 	import InfoBox from 'src/lib/components/InfoBox.svelte';
 
 	export let data
-    let { sessionUserId } = data
-	$: ({ sessionUserId } = data)
+    let { sessionUserId, infoBoxText } = data
+	$: ({ sessionUserId, infoBoxText } = data)
 
 	let collectionTitle: string
 	let collectionType: string
@@ -183,6 +183,13 @@
                     </li>
                 </ul>
             </fieldset>
+            {#if collectionStatus && collectionStatus != 'public'}
+                <InfoBox
+                    mode="inline"
+                >
+                    {infoBoxText[collectionStatus]}
+                </InfoBox>
+            {/if}
         </div>
         <div class="form-column">
             <label 
@@ -199,7 +206,7 @@
                 spellcheck=true 
                 required
             ></textarea>
-            <div class="button-spacing">
+            <div class="collection-info-button-spacing">
                 <button 
                     class="double-border-top" 
                     type="submit"
@@ -242,9 +249,6 @@
         border-bottom: 1px solid var(--freq-color-border-panel);
         padding: var(--freq-height-spacer-half) var(--freq-width-spacer);
 		margin: var(--freq-spacing-3x-small) 0;
-    }
-    .button-spacing {
-        margin: auto 0 0 auto;
     }
     @media screen and (max-width: 600px) {
         form.horizontal {

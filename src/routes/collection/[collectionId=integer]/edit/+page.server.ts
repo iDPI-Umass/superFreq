@@ -17,7 +17,8 @@ export const load: PageServerLoad = async ({ parent, params, locals: { safeGetSe
       throw redirect(307, '/account/create-profile')
   }
 
-  const collectionId = parseInt(params.collectionId).toString()
+  // const collectionId = parseInt(params.collectionId).toString()
+  const collectionId = params.collectionId
 
   const sessionUserId = session.user?.id as string
 

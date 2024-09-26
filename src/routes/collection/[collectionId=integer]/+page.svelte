@@ -13,8 +13,8 @@
     // import { insertCollectionFollow, updateCollectionFollow } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions';
 	
 	export let data: PageData;
-    let { sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData } = data;
-    $: ({ sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData } = data);
+    let { sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData, infoBoxText } = data;
+    $: ({ sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData, infoBoxText } = data);
 
     const collectionType = collectionInfo?.type as string
     const collectionUpdatedAt = collectionInfo?.updated_at as Date
@@ -31,11 +31,6 @@
     const updatedAt = new Date(collectionUpdatedAt).toLocaleDateString()
 
     const collectionStatus = collectionInfo?.status as string
-
-    const infoBoxText = {
-        'open': 'This is an open collection. Anyone can edit it.',
-        'private': 'This is a private collection. Only you can see it.'
-    } as App.StringLookupObject
 
 </script>
 
@@ -104,33 +99,35 @@
                 </InfoBox>
                 {/if}
             </div>
-            <p>{collectionInfo?.description_text ?? ''}</p>
+            <p class="collection-description-text">{collectionInfo?.description_text ?? ''}</p>
         </div>
 
         <div class="sort">
             <p> sorting options </p>
-            <Toolbar.Root>
-                <Toolbar.Group
-                    bind:value={gridListSelect}
-                    type="single"
-                >
-                    <Toolbar.GroupItem
-                        aria-label="grid"
-                        value="grid"
+            <div class="sort-column">
+                <Toolbar.Root>
+                    <Toolbar.Group
+                        bind:value={gridListSelect}
+                        type="single"
+                    >
+                        <Toolbar.GroupItem
+                            aria-label="grid"
+                            value="grid"
+                            class="toolbar-item"
+                        >
+                            <LayoutGrid class="grid-list-icon"></LayoutGrid>
+                        </Toolbar.GroupItem>
+                        <Toolbar.GroupItem
+                        aria-label="list"
+                        value="list"
                         class="toolbar-item"
-                    >
-                        <LayoutGrid class="grid-list-icon"></LayoutGrid>
-                    </Toolbar.GroupItem>
-                    <Toolbar.GroupItem
-                    aria-label="list"
-                    value="list"
-                    class="toolbar-item"
-                    >
-                        <AlignJustify class="grid-list-icon"></AlignJustify>
-                    </Toolbar.GroupItem>
-                </Toolbar.Group>
-            </Toolbar.Root>
-            <p>{gridListSelect}</p>
+                        >
+                            <AlignJustify class="grid-list-icon"></AlignJustify>
+                        </Toolbar.GroupItem>
+                    </Toolbar.Group>
+                </Toolbar.Root>
+                <span>sort mode: {gridListSelect}</span>
+            </div>
         </div>
         <GridList
             collectionContents={collectionContents}
