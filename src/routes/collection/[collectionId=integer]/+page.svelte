@@ -47,29 +47,30 @@
                 <div class="collection-title-follow-top-row">
                     <h1>{collectionInfo?.title}</h1>
                     {#if 
-                        sessionUserId && !editPermission}
-                    <form
-                        method="POST"
-                        action="?/followCollection"
-                    >
-                        <input 
-                            type="hidden"
-                            name="collection-id" 
-                            id="collection-id"
-                            value={collectionId}
-                        />
-                        <button 
-                            class="standard" 
-                            formaction="?/followCollection"
+                        sessionUserId && ( sessionUserId != collectionInfo?.owner_id )}
+                        <form
+                            method="POST"
+                            action="?/followCollection"
                         >
-                        {#if followData && followData['follows_now'] == true}
-                            unfollow
-                        {:else}
-                            + follow
-                        {/if}
-                        </button>
-                    </form>
-                    {:else if sessionUserId && editPermission}
+                            <input 
+                                type="hidden"
+                                name="collection-id" 
+                                id="collection-id"
+                                value={collectionId}
+                            />
+                            <button 
+                                class="standard" 
+                                formaction="?/followCollection"
+                            >
+                            {#if followData && followData['follows_now'] == true}
+                                unfollow
+                            {:else}
+                                + follow
+                            {/if}
+                            </button>
+                        </form>
+                    {/if}
+                    {#if sessionUserId && editPermission}
                         <button 
                             class="standard"
                             on:click|preventDefault={() => goto($page.url.pathname + '/edit')}
