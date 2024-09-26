@@ -30,6 +30,13 @@
     
     const updatedAt = new Date(collectionUpdatedAt).toLocaleDateString()
 
+    const collectionStatus = collectionInfo?.status as string
+
+    const infoBoxText = {
+        'open': 'This is an open collection. Anyone can edit it.',
+        'private': 'This is a private collection. Only you can see it.'
+    } as App.StringLookupObject
+
 </script>
 
 <svelte:head>
@@ -42,55 +49,62 @@
 <div class="two-column">
     <div class="collection-container">
         <div class="collection-info">
-            <div class="collection-metadata">
-                <div class="collection-title-follow-top-row">
+                <div class="collection-info-row">
                     <h1>{collectionInfo?.title}</h1>
-                    {#if 
-                        sessionUserId && ( sessionUserId != collectionInfo?.owner_id )}
-                        <form
-                            method="POST"
-                            action="?/followCollection"
-                        >
-                            <input 
-                                type="hidden"
-                                name="collection-id" 
-                                id="collection-id"
-                                value={collectionId}
-                            />
-                            <button 
-                                class="standard" 
-                                formaction="?/followCollection"
+                    <div class="buttons-group">
+                        {#if 
+                            sessionUserId && ( sessionUserId != collectionInfo?.owner_id )}
+                            <form
+                                method="POST"
+                                action="?/followCollection"
                             >
-                            {#if followData && followData['follows_now'] == true}
-                                unfollow
-                            {:else}
-                                + follow
-                            {/if}
+                                <input 
+                                    type="hidden"
+                                    name="collection-id" 
+                                    id="collection-id"
+                                    value={collectionId}
+                                />
+                                <button 
+                                    class="standard" 
+                                    formaction="?/followCollection"
+                                >
+                                {#if followData && followData['follows_now'] == true}
+                                    unfollow
+                                {:else}
+                                    + follow
+                                {/if}
+                                </button>
+                            </form>
+                        {/if}
+                        {#if sessionUserId && editPermission}
+                            <button 
+                                class="standard"
+                                on:click|preventDefault={() => goto($page.url.pathname + '/edit')}
+                            >
+                            edit
                             </button>
-                        </form>
-                    {/if}
-                    {#if sessionUserId && editPermission}
-                        <button 
-                            class="standard"
-                            on:click|preventDefault={() => goto($page.url.pathname + '/edit')}
-                        >
-                        edit
-                        </button>
-                    {/if}
+                        {/if}
+                    </div>
                 </div>
-            </div>
-            <div class="frontmatter blurb-formatting">
-                <p class="frontmatter-info-text">
-                    Collection of {categories[collectionType]} by 
-                    <a href="/user/{collectionInfo?.username}">
-                        {collectionInfo?.display_name}
-                    </a>
-                </p>
-                <p class="frontmatter-date-text">Last updated on {updatedAt}</p>
-                {#if collectionInfo?.description_text}
-                    <p>{collectionInfo?.description_text}</p>
+            <div class="collection-info-row">
+                <div class="collection-info-attribution">
+                    <p class="collection-info-text">
+                        Collection of {categories[collectionType]} by 
+                        <a href="/user/{collectionInfo?.username}">
+                            {collectionInfo?.display_name}
+                        </a>
+                    </p>
+                    <p class="collection-date-text">Last updated on {updatedAt}</p>
+                </div>
+                {#if collectionInfo?.status != 'public'}
+                <InfoBox
+                    mode="inline"
+                >
+                    {infoBoxText[collectionStatus]}
+                </InfoBox>
                 {/if}
             </div>
+            <p>{collectionInfo?.description_text ?? ''}</p>
         </div>
 
         <div class="sort">
