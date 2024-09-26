@@ -21,6 +21,7 @@
     h1 {
         text-transform: uppercase;
         font-size: var(--freq-font-size-medium);
+        font-weight: var(--freq-font-weight-light);
         color: var(--freq-color-primary);
         padding: 0 var(--freq-width-spacer-half);
     }
