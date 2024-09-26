@@ -57,6 +57,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
 
             const selectSessionUserPosts = await trx
             .selectFrom('posts as post')
+            .innerJoin('profiles as profile', 'profile.id', 'post.user_id')
             .leftJoin(
                 'post_reactions as reactions',
                 (join) => join
@@ -78,6 +79,9 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'post.embed_id as embed_id',
                 'post.embed_source as embed_source',
                 'post.embed_account as embed_account',
+                'profile.username as username',
+                'profile.display_name as display_name',
+                'profile.avatar_url as avatar_url',
                 (eb) => eb.fn.count('reactions.id').as('reaction_count')
             ])
             .where('post.user_id', '=', sessionUserId)
@@ -86,7 +90,12 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             .where((eb) => eb.between('post.created_at', timestampStart, timestampEnd))
             .limit(batchSize)
             .offset(offset)
-            .groupBy('post.id')
+            .groupBy([
+                'post.id', 
+                'profile.display_name',
+                'profile.username',
+                'profile.avatar_url'
+            ])
             .orderBy('feed_item_timestamp', 'desc')
             .execute()
 
@@ -268,6 +277,11 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 .onRef('reaction.post_id', '=', 'post.id')
                 .on((eb) => eb('reaction.user_id', '=', sessionUserId))
             )
+            .leftJoin('post_reactions as all_reactions',
+                (join) => join
+                .onRef('all_reactions.post_id', '=', 'post.id')
+                .on('all_reactions.active', '=', true)
+            )
             .select([
                 'post.id as now_playing_post_id', 
                 'post.user_id as user_id', 
@@ -286,13 +300,20 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'post.embed_id as embed_id',
                 'post.embed_source as embed_source',
                 'post.embed_account as embed_account',
-                'reaction.reaction as reaction',
-                'reaction.active as active'
+                'reaction.active as reaction_active',
+                (eb) => eb.fn.count('all_reactions.id').as('reaction_count')
             ])
             .where('post.user_id', 'in', followingUserIds)
             .where('post.type', '=', 'now_playing')
             .where('post.status', '!=', 'deleted')
             .where((eb) => eb.between('post.created_at', timestampStart, timestampEnd))
+            .groupBy([
+                'post.id',
+                'profile.display_name',
+                'profile.username',
+                'profile.avatar_url',
+                'reaction.active'
+            ])
             .limit(batchSize)
             .offset(offset)
             .orderBy('feed_item_timestamp', 'desc')

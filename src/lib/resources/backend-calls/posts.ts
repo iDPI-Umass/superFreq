@@ -338,6 +338,17 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
             const post = await trx
             .selectFrom('posts')
             .innerJoin('profiles as profile', 'profile.id', 'posts.user_id')
+            .leftJoin('post_reactions as reaction',
+                (join) => join
+                .onRef('reaction.post_id', '=', 'posts.id')
+                .on('reaction.active', '=', true)
+                .on('reaction.user_id', '=', sessionUserId)
+            )
+            .leftJoin('post_reactions as all_reactions',
+                (join) => join
+                .onRef('reaction.post_id', '=', 'posts.id')
+                .on('reaction.active', '=', true)
+            )
             .select([
                 'posts.id as id', 
                 'posts.text as text', 
@@ -360,6 +371,8 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                 'profile.username as username', 
                 'profile.display_name as display_name', 
                 'profile.avatar_url as avatar_url', 
+                'reaction.active as reaction_active',
+                (eb) => eb.fn.count('all_reactions.id').as('reaction_count')
             ])
             .where(({ eb, and }) => and([
                 eb('posts.user_id', '=', eb
@@ -371,25 +384,16 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                 eb('posts.type', '=', postType),
                 eb('posts.created_at', '=', parseISO(timestampString))
             ]))
+            .groupBy([
+                'posts.id',
+                'profile.username',
+                'profile.display_name',
+                'profile.avatar_url',
+                'reaction.active'
+            ])
             .executeTakeFirst()
 
             const postId = post?.id as string
-
-            const postReactionActive = await trx
-            .selectFrom('post_reactions')
-            .select('active')
-            .where('post_id', '=', postId)
-            .where('user_id', '=', sessionUserId)
-            .executeTakeFirst()
-
-            const postReactionsCount = await trx
-                .selectFrom('post_reactions')
-                .select((eb) => eb.fn.count<number>('id').as('reaction_count'))
-                .where(({ eb }) => eb.and({
-                    post_id: postId,
-                    active: true
-                }))
-                .execute()
 
             const replies = await trx
             .selectFrom('posts as comments')
@@ -435,9 +439,7 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
             .orderBy('id', 'asc')
             .execute()
 
-            const reactionCount = postReactionsCount[0].reaction_count
-
-            return { post, postReactionActive, reactionCount, replies, permission: true}
+            return { post, replies, permission: true}
         }
     })
 
@@ -505,6 +507,12 @@ export const selectUserNowPlayingPosts = async function ( sessionUserId: string,
             const selectPosts = await trx
             .selectFrom('posts')
             .innerJoin('profiles', 'profiles.id', 'posts.user_id')
+            .leftJoin('post_reactions as reaction',
+                (join) => join
+                .onRef('reaction.post_id', '=', 'posts.id')
+                .on('reaction.active', '=', true)
+                .on('reaction.user_id', '=', sessionUserId)
+            )
             .select([
                 'posts.id as id',
                 'posts.text as text',
@@ -526,6 +534,7 @@ export const selectUserNowPlayingPosts = async function ( sessionUserId: string,
                 'profiles.username as username',
                 'profiles.display_name as display_name',
                 'profiles.avatar_url as avatar_url',
+                'reaction.active as reaction_active'
             ])
             .where('profiles.id', '=', profileUserId)
             .where('posts.parent_post_id', 'is', null)
@@ -574,6 +583,12 @@ export const selectUserPostsAndComments = async function ( sessionUserId: string
             const selectPosts = await trx
             .selectFrom('posts')
             .innerJoin('profiles', 'profiles.id', 'posts.user_id')
+            .leftJoin('post_reactions as reaction',
+                (join) => join
+                .onRef('reaction.post_id', '=', 'posts.id')
+                .on('reaction.active', '=', true)
+                .on('reaction.user_id', '=', sessionUserId)
+            )
             .select([
                 'posts.id as id',
                 'posts.text as text',
@@ -595,6 +610,7 @@ export const selectUserPostsAndComments = async function ( sessionUserId: string
                 'profiles.username as username',
                 'profiles.display_name as display_name',
                 'profiles.avatar_url as avatar_url',
+                'reaction.active as reaction_active'
             ])
             .where('profiles.id', '=', profileUserId)
             .where('posts.parent_post_id', 'is', null)
