@@ -37,6 +37,8 @@
     function toggleEditState() {
         editState = !editState
     }
+
+    const reactionCount = ( mode == "feed" ) ? 0 : post.reaction_count
 </script>
 
 <div class="box">
@@ -95,7 +97,8 @@
             <div class="row-group-icons">
                 <LikeReact
                 postId={post.id ?? post.now_playing_post_id}
-                reactionActive={reactionActive ?? post.reaction_active ?? false}
+                reactionActive={post.reaction_active ?? false}
+                reactionCount={reactionCount ?? 0}
                 ></LikeReact>
                 {#if mode == "feed"}
                     <a href={permalink}>

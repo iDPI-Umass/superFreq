@@ -3,7 +3,7 @@
     import Heart from 'lucide-svelte/icons/heart'
 
     export let postId: string
-    // export let reactionCount: number 
+    export let reactionCount: number = 0
     export let reactionActive: boolean
 </script>
 
@@ -40,8 +40,10 @@
             {/if}
 
         </div>
-        <!-- <span>
-            {reactionCount ?? 0}
-        </span> -->
+        {#if reactionCount > 0}
+            <span>
+                {reactionCount}
+            </span>
+        {/if}
     </button>
 </form>
