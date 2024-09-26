@@ -402,7 +402,7 @@ export const selectEditableCollectionContents = async function ( collectionId: s
         
         const selectCollectionInfo = await trx
         .selectFrom('collections_info as info')
-        .innerJoin('collections_social as social', 'social.collection_id', 'info.collection_id')
+        .leftJoin('collections_social as social', 'social.collection_id', 'info.collection_id')
         .select([
             'info.collection_id as collection_id',
             'info.title as title',
@@ -421,13 +421,18 @@ export const selectEditableCollectionContents = async function ( collectionId: s
                 eb('social.user_id', '=', sessionUserId),
                 or([
                     eb('social.user_role', '=', 'owner'),
-                    eb('social.user_role', '=', 'collaborator')
+                    eb('social.user_role', '=', 'collaborator'),
+                    eb('info.status', '=', 'open')
                 ])
             ])
         ]))
         .executeTakeFirst()
 
+        console.log(selectCollectionInfo)
+
         const collectionType = selectCollectionInfo?.type as string
+
+        console.log(collectionType)
 
         let selectCollectionContents
         if ( collectionType == 'artists' ) {
@@ -496,6 +501,7 @@ export const selectEditableCollectionContents = async function ( collectionId: s
         // create an array of deleted items and remove all items where 'item_position is null' from collectionContents
         let deletedCollectionContents = [] as App.RowData[]
         let filteredContents = collectionContents
+        console.log(collectionContents)
         for ( const item of collectionContents ) {
             if (item.item_position == null) {
                 deletedCollectionContents = [...deletedCollectionContents, item]
