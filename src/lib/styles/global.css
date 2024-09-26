@@ -68,7 +68,8 @@ body {
 }
 
 .info-box-compact {
-    width: 50%;
+    max-width: 50%;
+	height: fit-content;
     margin: var(--freq-spacing-large) auto;
     padding: var(--freq-spacing-small);
     background-color: var(--freq-color-info-box-background);

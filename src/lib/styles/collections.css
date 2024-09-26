@@ -1,3 +1,42 @@
+/* layout */
+.two-column {
+	display: flex;
+	flex-direction: row;
+	margin: 3vh 3vw;
+}
+.collection-container {
+	max-width: var(--freq-max-width-primary);
+	margin: var(--freq-spacing-large) auto;
+	border: var(--freq-border-panel);
+}
+.collection-info {
+	display: flex;
+	flex-direction: column;
+	padding: var(--freq-width-spacer-half);
+}
+.collection-metadata * {
+	margin: var(--freq-spacing-x-small) 0;
+}
+.collection-title-follow-top-row {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	margin-right: 2vw;
+}
+.sort {
+	display: flex;
+	flex-direction: row;
+	width: inherit;
+	padding: 0 var(--freq-width-spacer-half);
+	border-top: 1px solid var(--freq-color-background-badge);
+	border-bottom: 1px solid var(--freq-color-background-badge);
+	align-items: center;
+}
+.sort * {
+	padding: var(--freq-spacing-2x-small) var(--freq-spacing-small);
+}
+
 /* Metadata formatting classes */
 
 .metadata-blurb {

@@ -1,7 +1,6 @@
 <script lang="ts">
     import type { ActionData } from './$types'
     import { enhance } from '$app/forms'
-    import '$lib/styles/posts.css'
 	import PanelHeader from "$lib/components/PanelHeader.svelte"
     import NotificationModal from "src/lib/components/modals/NotificationModal.svelte"
 

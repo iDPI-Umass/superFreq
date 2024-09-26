@@ -6,9 +6,8 @@
     import LayoutGrid from 'lucide-svelte/icons/layout-grid'
     import AlignJustify from 'lucide-svelte/icons/align-justify'
 
-    import "$lib/styles/media-grid-list.css"
-    import "$lib/styles/metadata-formatting.css"
     import GridList from "$lib/components/GridList.svelte";
+    import InfoBox from '$lib/components/InfoBox.svelte'
 
 	import type { PageData } from './$types';
     // import { insertCollectionFollow, updateCollectionFollow } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions';
@@ -40,7 +39,7 @@
 </svelte:head>
 
 
-<body>
+<div class="two-column">
     <div class="collection-container">
         <div class="collection-info">
             <div class="collection-metadata">
@@ -129,39 +128,4 @@
         </GridList>
 
     </div>
-</body>
-
-<style>
-    .collection-container {
-        max-width: var(--freq-max-width-primary);
-        margin: 3vh 3vw;
-        border: var(--freq-border-panel);
-    }
-    .collection-info {
-        display: flex;
-        flex-direction: column;
-        padding: var(--freq-width-spacer-half);
-    }
-    .collection-metadata * {
-        margin: var(--freq-spacing-x-small) 0;
-    }
-    .collection-title-follow-top-row {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        margin-right: 2vw;
-    }
-    .sort {
-        display: flex;
-        flex-direction: row;
-        width: inherit;
-        padding: 0 var(--freq-width-spacer-half);
-        border-top: 1px solid var(--freq-color-background-badge);
-        border-bottom: 1px solid var(--freq-color-background-badge);
-        align-items: center;
-    }
-    .sort * {
-        padding: var(--freq-spacing-2x-small) var(--freq-spacing-small);
-    }
-</style>
+</div>

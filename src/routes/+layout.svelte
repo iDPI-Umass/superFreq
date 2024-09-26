@@ -1,14 +1,14 @@
 <script lang="ts">
-	import "$lib/styles/global.css";
-	import "$lib/styles/themes.css";
-	import "$lib/styles/freq-dark-theme.css";
+	import "$lib/styles/about.css";
+	import "$lib/styles/collections.css";
+	import "$lib/styles/feed.css";
 	import "$lib/styles/fonts.css";
-	import "$lib/styles/media-grid-list.css";
+	import "$lib/styles/freq-dark-theme.css";
+	import "$lib/styles/global.css";
 	import "$lib/styles/metadata-formatting.css";
 	import "$lib/styles/posts.css";
 	import "$lib/styles/profile.css";
-	import "$lib/styles/about.css";
-	import "$lib/styles/feed.css";
+	import "$lib/styles/themes.css";
 
 	import { goto, invalidate, invalidateAll } from '$app/navigation';
 	import { onMount, onDestroy } from 'svelte';
