@@ -95,7 +95,7 @@
             <div class="row-group-icons">
                 <LikeReact
                 postId={post.id ?? post.now_playing_post_id}
-                reactionActive={reactionActive ?? false}
+                reactionActive={reactionActive ?? post.reaction_active ?? false}
                 ></LikeReact>
                 {#if mode == "feed"}
                     <a href={permalink}>

@@ -245,6 +245,8 @@ export const actions = {
         const postId = data.get('post-id') as string
         const reactionType = data.get('reaction-type') as string
 
+        console.log(postId)
+
         const reaction = await insertUpdateReaction( sessionUserId, postId, reactionType )
 
         return reaction

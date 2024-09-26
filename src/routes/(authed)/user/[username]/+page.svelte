@@ -167,7 +167,6 @@
 <div class="content">
     {#if topAlbumsCollection && topAlbumsCollection.length > 0}
     <div class="panel-medium">
-        
         <PanelHeader>
             top albums
             {#if profileUserData?.id == sessionUserId}

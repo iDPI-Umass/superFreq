@@ -682,6 +682,7 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
         catch ( error ) {
             const selectPosts = await trx
             .selectFrom('posts')
+            .leftJoin('post_reactions as reaction', 'reaction.post_id', 'posts.id')
             .innerJoin('profiles', 'profiles.id', 'posts.user_id')
             .select([
                 'posts.id as id',
@@ -700,7 +701,8 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
                 'profiles.id as user_id',
                 'profiles.username as username',
                 'profiles.display_name as display_name',
-                'profiles.avatar_url as avatar_url'
+                'profiles.avatar_url as avatar_url',
+                'reaction.active as reaction_active'
             ])
             .where('posts.user_id', '=', profileUserId)
             .where('posts.parent_post_id', 'is', null)

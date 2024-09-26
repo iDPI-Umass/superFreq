@@ -7,6 +7,7 @@
     export let username: string
     export let displayName: string
     export let sessionUserId: string | null = null
+    
 </script>
 
 <div class="panel-medium">
