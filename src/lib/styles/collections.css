@@ -50,6 +50,10 @@
 	color: var(--freq-color-text-muted);
 }
 
+.collection-info-button-spacing {
+	margin: auto 0 0 auto;
+}
+
 /* Collection info text classes */
 
 .collection-info h1 {

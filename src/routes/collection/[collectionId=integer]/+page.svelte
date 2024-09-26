@@ -13,8 +13,8 @@
     // import { insertCollectionFollow, updateCollectionFollow } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions';
 	
 	export let data: PageData;
-    let { sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData } = data;
-    $: ({ sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData } = data);
+    let { sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData, infoBoxText } = data;
+    $: ({ sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData, infoBoxText } = data);
 
     const collectionType = collectionInfo?.type as string
     const collectionUpdatedAt = collectionInfo?.updated_at as Date
@@ -31,11 +31,6 @@
     const updatedAt = new Date(collectionUpdatedAt).toLocaleDateString()
 
     const collectionStatus = collectionInfo?.status as string
-
-    const infoBoxText = {
-        'open': 'This is an open collection. Anyone can edit it.',
-        'private': 'This is a private collection. Only you can see it.'
-    } as App.StringLookupObject
 
 </script>
 
