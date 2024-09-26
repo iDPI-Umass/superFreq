@@ -14,12 +14,16 @@
     import GridList from '$lib/components/GridList.svelte'
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
     import Tooltip from '$lib/components/Tooltip.svelte'
+    import InfoBox from '$lib/components/InfoBox.svelte'
 
 
 	export let data: PageData;
     let { collection, sessionUserId, collectionId } = data;
     $: ({ collection, sessionUserId, collectionId } = data);
 
+    let imgPromise
+    $: imgPromise
+    
 	/* 
 	Let's declare some variables for...
 	*/
@@ -173,6 +177,7 @@
 			searchButtonText={`add ${buttonTextLookup[collectionType]}`}
 			searchPlaceholder={placeholderText}
             mode="collection"
+            bind:imgPromise={imgPromise}
 		></MusicBrainzSearch>
     </div>
     {#key collectionItems?.length}
@@ -183,6 +188,7 @@
             collectionType={collectionType}
             layout="list"
             mode="edit"
+            bind:imgPromise={imgPromise}
         ></GridList>
     {/key}
 </div>
