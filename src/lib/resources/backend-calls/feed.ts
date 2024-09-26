@@ -57,7 +57,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
 
             const selectSessionUserPosts = await trx
             .selectFrom('posts as post')
-            .innerJoin(
+            .leftJoin(
                 'post_reactions as reactions',
                 (join) => join
                 .onRef('reactions.post_id', '=', 'post.id')
@@ -262,7 +262,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             const selectFollowingPosts = await trx
             .selectFrom('posts as post')
             .innerJoin('profiles as profile', 'post.user_id', 'profile.id')
-            .innerJoin(
+            .leftJoin(
                 'post_reactions as reaction',
                 (join) => join
                 .onRef('reaction.post_id', '=', 'post.id')
