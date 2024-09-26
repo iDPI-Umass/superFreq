@@ -202,7 +202,7 @@ export const selectListProfileUserFollowingCollections = async function ( userna
         const selectInfo = await trx
         .selectFrom('collections_info as info')
         .innerJoin('collections_social as social', 'social.collection_id', 'info.collection_id')
-        .innerJoin('profiles', 'profiles.id', 'social.user_id')
+        .innerJoin('profiles', 'profiles.id', 'info.owner_id')
         .select([
             'info.collection_id as id',
             'info.title as title',

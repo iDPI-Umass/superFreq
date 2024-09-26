@@ -1,7 +1,6 @@
 <script lang="ts">
     import { slide } from 'svelte/transition'
 
-    import '$lib/styles/posts.css'
     import PostReplyEditor from '$lib/components/Posts/PostReplyEditor.svelte'
     import PostMenuSessionUser from 'src/lib/components/menus/PostMenuSessionUser.svelte'
     import LikeReact from '$lib/components/Posts/LikeReact.svelte'

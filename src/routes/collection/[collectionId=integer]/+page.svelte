@@ -6,9 +6,8 @@
     import LayoutGrid from 'lucide-svelte/icons/layout-grid'
     import AlignJustify from 'lucide-svelte/icons/align-justify'
 
-    import "$lib/styles/media-grid-list.css"
-    import "$lib/styles/metadata-formatting.css"
     import GridList from "$lib/components/GridList.svelte";
+    import InfoBox from '$lib/components/InfoBox.svelte'
 
 	import type { PageData } from './$types';
     // import { insertCollectionFollow, updateCollectionFollow } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions';
@@ -31,6 +30,13 @@
     
     const updatedAt = new Date(collectionUpdatedAt).toLocaleDateString()
 
+    const collectionStatus = collectionInfo?.status as string
+
+    const infoBoxText = {
+        'open': 'This is an open collection. Anyone can edit it.',
+        'private': 'This is a private collection. Only you can see it.'
+    } as App.StringLookupObject
+
 </script>
 
 <svelte:head>
@@ -40,57 +46,65 @@
 </svelte:head>
 
 
-<body>
+<div class="two-column">
     <div class="collection-container">
         <div class="collection-info">
-            <div class="collection-metadata">
-                <div class="collection-title-follow-top-row">
+                <div class="collection-info-row">
                     <h1>{collectionInfo?.title}</h1>
-                    {#if 
-                        sessionUserId && !editPermission}
-                    <form
-                        method="POST"
-                        action="?/followCollection"
-                    >
-                        <input 
-                            type="hidden"
-                            name="collection-id" 
-                            id="collection-id"
-                            value={collectionId}
-                        />
-                        <button 
-                            class="standard" 
-                            formaction="?/followCollection"
-                        >
-                        {#if followData && followData['follows_now'] == true}
-                            unfollow
-                        {:else}
-                            + follow
+                    <div class="buttons-group">
+                        {#if 
+                            sessionUserId && ( sessionUserId != collectionInfo?.owner_id )}
+                            <form
+                                method="POST"
+                                action="?/followCollection"
+                            >
+                                <input 
+                                    type="hidden"
+                                    name="collection-id" 
+                                    id="collection-id"
+                                    value={collectionId}
+                                />
+                                <button 
+                                    class="standard" 
+                                    formaction="?/followCollection"
+                                >
+                                {#if followData && followData['follows_now'] == true}
+                                    unfollow
+                                {:else}
+                                    + follow
+                                {/if}
+                                </button>
+                            </form>
                         {/if}
-                        </button>
-                    </form>
-                    {:else if sessionUserId && editPermission}
-                        <button 
-                            class="standard"
-                            on:click|preventDefault={() => goto($page.url.pathname + '/edit')}
-                        >
-                        edit
-                        </button>
-                    {/if}
+                        {#if sessionUserId && editPermission}
+                            <button 
+                                class="standard"
+                                on:click|preventDefault={() => goto($page.url.pathname + '/edit')}
+                            >
+                            edit
+                            </button>
+                        {/if}
+                    </div>
                 </div>
-            </div>
-            <div class="frontmatter blurb-formatting">
-                <p class="frontmatter-info-text">
-                    Collection of {categories[collectionType]} by 
-                    <a href="/user/{collectionInfo?.username}">
-                        {collectionInfo?.display_name}
-                    </a>
-                </p>
-                <p class="frontmatter-date-text">Last updated on {updatedAt}</p>
-                {#if collectionInfo?.description_text}
-                    <p>{collectionInfo?.description_text}</p>
+            <div class="collection-info-row">
+                <div class="collection-info-attribution">
+                    <p class="collection-info-text">
+                        Collection of {categories[collectionType]} by 
+                        <a href="/user/{collectionInfo?.username}">
+                            {collectionInfo?.display_name}
+                        </a>
+                    </p>
+                    <p class="collection-date-text">Last updated on {updatedAt}</p>
+                </div>
+                {#if collectionInfo?.status != 'public'}
+                <InfoBox
+                    mode="inline"
+                >
+                    {infoBoxText[collectionStatus]}
+                </InfoBox>
                 {/if}
             </div>
+            <p>{collectionInfo?.description_text ?? ''}</p>
         </div>
 
         <div class="sort">
@@ -128,39 +142,4 @@
         </GridList>
 
     </div>
-</body>
-
-<style>
-    .collection-container {
-        max-width: var(--freq-max-width-primary);
-        margin: 3vh 3vw;
-        border: var(--freq-border-panel);
-    }
-    .collection-info {
-        display: flex;
-        flex-direction: column;
-        padding: var(--freq-width-spacer-half);
-    }
-    .collection-metadata * {
-        margin: var(--freq-spacing-x-small) 0;
-    }
-    .collection-title-follow-top-row {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        margin-right: 2vw;
-    }
-    .sort {
-        display: flex;
-        flex-direction: row;
-        width: inherit;
-        padding: 0 var(--freq-width-spacer-half);
-        border-top: 1px solid var(--freq-color-background-badge);
-        border-bottom: 1px solid var(--freq-color-background-badge);
-        align-items: center;
-    }
-    .sort * {
-        padding: var(--freq-spacing-2x-small) var(--freq-spacing-small);
-    }
-</style>
+</div>

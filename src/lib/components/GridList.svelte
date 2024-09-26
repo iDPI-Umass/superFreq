@@ -12,9 +12,6 @@
     import loadingImage from "$lib/assets/images/loading-image.png"
     import imgNotFound from "$lib/assets/images/image-not-found.png"
 
-    import "$lib/styles/media-grid-list.css"
-    import "$lib/styles/metadata-formatting.css"
-
     export let collectionContents: any
     export let deletedItems: any = []
     export let collectionReturned: boolean

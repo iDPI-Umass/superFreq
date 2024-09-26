@@ -1,6 +1,5 @@
 <script lang="ts">
     import { enhance } from '$app/forms'
-    import '$lib/styles/posts.css'
     import Heart from 'lucide-svelte/icons/heart'
 
     export let postId: string

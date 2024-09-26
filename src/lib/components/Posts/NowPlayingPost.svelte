@@ -1,5 +1,4 @@
 <script lang="ts">
-    import '$lib/styles/posts.css'
     import PostMenuSessionUser from 'src/lib/components/menus/PostMenuSessionUser.svelte'
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte'
     import EditPostBody from '$lib/components/Posts/EditPostBody.svelte'
