@@ -166,6 +166,12 @@
           <DropdownMenu.Item href={"/account"}>
             account
           </DropdownMenu.Item>
+          <DropdownMenu.Item href={`/user/${username}/collections`}>
+            my collections
+          </DropdownMenu.Item>
+          <DropdownMenu.Item href={`/user/${username}/now-playing-posts`}>
+            my posts
+          </DropdownMenu.Item>
           <DropdownMenu.Item href={"/sign-out"}>
             sign out
           </DropdownMenu.Item>
