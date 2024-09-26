@@ -154,7 +154,8 @@ form.reply {
 /* Inline styles */
 
 .post-text {
-    padding:  var(--freq-spacing-2x-small) 0;
+    padding:  var(--freq-spacing-medium) 0;
+    font-size: var(--freq-font-size-medium);
 }
 
 .status-badge {
