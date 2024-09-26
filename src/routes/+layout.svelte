@@ -10,12 +10,12 @@
 	import "$lib/styles/profile.css";
 	import "$lib/styles/themes.css";
 
-	import { goto, invalidate, invalidateAll } from '$app/navigation';
-	import { onMount, onDestroy } from 'svelte';
+	import { goto, invalidate, invalidateAll } from '$app/navigation'
+	import { onMount, onDestroy } from 'svelte'
 
 	import { profileStoresObject } from '$lib/stores.ts'
-	import PlainHeader from "$lib/components/headers/PlainHeader/page.svelte";
-	import type { LayoutData } from "./$types";
+	import PlainHeader from "$lib/components/headers/Header/page.svelte"
+	import type { LayoutData } from "./$types"
 	
 
 	export let data: LayoutData
