@@ -10,6 +10,7 @@
     
 </script>
 
+{#if posts && posts.length > 0}
 <div class="panel-medium">
     <PanelHeader>
         <a class="panel-header-link" href={`/user/${username}/now-playing-posts`}>
@@ -32,6 +33,13 @@
         </button>
     </div>
 </div>
+{:else if !posts || posts.length == 0}
+<div class="panel-medium">
+    <div class="panel-button-buffer">
+        <p>This user hasn't posted anything yet.</p>
+    </div>
+</div>
+{/if}
 
 <style>
     .posts-spacing {
@@ -49,5 +57,8 @@
     }
     .standard {
         margin: 0;
+    }
+    .panel-button-buffer p {
+        font-size: var(--freq-font-size-medium);
     }
 </style>
