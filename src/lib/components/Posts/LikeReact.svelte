@@ -3,7 +3,7 @@
     import Heart from 'lucide-svelte/icons/heart'
 
     export let postId: string
-    // export let reactionCount: number 
+    export let reactionCount: number = 0
     export let reactionActive: boolean
 </script>
 
@@ -25,19 +25,25 @@
         id="reaction-type"
         value="like"
     />
-    <button class="like" formaction="?/submitReaction">
+    <button class="like" formaction="?/submitReaction" on:click={() => { reactionActive = !reactionActive }}>
         <div class="row-group-icon-description">
             {#if !reactionActive}
                 <Heart class="icon" size="16" color="var(--freq-color-text-muted)"></Heart>
+                <span class="descriptor">
+                    like
+                </span>
             {:else}
                 <Heart class="icon" size="16" color="var(--freq-color-text-muted)" fill="var(--freq-color-text-muted)"></Heart>
+                <span class="descriptor">
+                    liked
+                </span>
             {/if}
-            <span class="descriptor">
-                like
-            </span>
+
         </div>
-        <!-- <span>
-            {reactionCount ?? 0}
-        </span> -->
+        {#if reactionCount > 0}
+            <span>
+                {reactionCount}
+            </span>
+        {/if}
     </button>
 </form>
