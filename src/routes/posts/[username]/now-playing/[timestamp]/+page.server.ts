@@ -66,7 +66,10 @@ export const actions = {
 
         const { username, createdAt} = await insertPost( postData )
 
-        const permalink = `/posts/${postUsername}/now-playing/${postCreatedAt}#${username.concat(createdAt.toISOString())}`
+        const postTimestamp = Date.parse(postCreatedAt).toString()
+        const commentTimestampSlug = createdAt.toString()
+        const commentTimestamp = Date.parse(commentTimestampSlug).toString()
+        const permalink = `/posts/${postUsername}/now-playing/${postTimestamp}#${username.concat(commentTimestamp)}`
 
         if (createdAt) {
             throw redirect(303, permalink)
