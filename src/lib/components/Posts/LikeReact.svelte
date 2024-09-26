@@ -29,12 +29,16 @@
         <div class="row-group-icon-description">
             {#if !reactionActive}
                 <Heart class="icon" size="16" color="var(--freq-color-text-muted)"></Heart>
+                <span class="descriptor">
+                    like
+                </span>
             {:else}
                 <Heart class="icon" size="16" color="var(--freq-color-text-muted)" fill="var(--freq-color-text-muted)"></Heart>
+                <span class="descriptor">
+                    liked
+                </span>
             {/if}
-            <span class="descriptor">
-                like
-            </span>
+
         </div>
         <!-- <span>
             {reactionCount ?? 0}
