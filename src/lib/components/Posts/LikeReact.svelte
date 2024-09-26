@@ -43,7 +43,6 @@
                     liked
                 </span>
             {/if}
-
         </div>
     </button>
 </form>
