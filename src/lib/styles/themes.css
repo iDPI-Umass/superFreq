@@ -9,6 +9,10 @@ html {
     --freq-border-panel-light: 1px solid #ebeef4;
     --freq-border-hr: 1px solid #9EACC8;
     --freq-border-mellow: 1px solid #5e6678;
+    --freq-border-primary: 1px solid var(--freq-color-primary);
+    --freq-border-button: 1px solid #454C6C;
+    --freq-border-button-disabled: 1px solid #5e6678;
+    --freq-border-button-active: 1px solid #FFFFFF;
     --freq-color-border-hr: #9EACC8;
     --freq-color-primary: #9b40fc;
     --freq-color-text: #FFFFFF;
@@ -22,10 +26,11 @@ html {
     --freq-color-background-badge-medium: #28282a;
     --freq-color-background-badge-light: #313751;
     --freq-color-badge: #313751;
-    --freq-color-button-lens: #454C6C;
+    --freq-color-button-lens-disabled: #454C6C;
     --freq-color-button-lens-active: #7F90A2;
 
     --freq-color-panel-background: #000000;
+    --freq-color-button-background: #000000;
     --freq-color-info-box-background: #2d2d2d;
     --freq-color-grid-1: #313751;
     --freq-color-grid-2: #5a6490;

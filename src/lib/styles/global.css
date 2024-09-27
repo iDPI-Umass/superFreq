@@ -208,62 +208,55 @@ h3 {
 //	
 */
 
-button {
-	width: fit-content;
-	height: fit-content;
-	background: var(--freq-color-panel-background);
-	border: 1px solid var(--freq-color-border-panel);
-	padding: 0;
-	color: var(--freq-color-text-muted);
-  }
+
+button a {
+	color: var(--freq-color-text); 
+}
 
 button.standard {
 	text-transform: uppercase;
 	padding: var(--freq-height-spacer-quarter) var(--freq-width-spacer);
 	width: fit-content;
 	height: fit-content;
-	font-size: var(--freq-button-font-size-small);
 	align-items: center;
 	text-justify: center;
+	border: var(--freq-border-button);
+	background: var(--freq-color-button-background);
+	color: var(--freq-color-text-muted);
+	font-size: var(--freq-button-font-size-small);
+
 }
 
 button.standard:hover, :focus {
-	border-color: var(--freq-color-primary);
+	border: var(--freq-border-primary);
 	color: var(--freq-color-text);
 }
 
-button.standard *:hover, :focus {
-	border-color: var(--freq-color-primary);
+button.standard *:hover, *:focus {
+	border: var(--freq-border-primary);
 }
 
 button.standard:active {
 	scale: 98%;
 	background: var(--freq-color-button-lens-active);
+	border: var(--freq-border-button-active);
 	transition: all;
 }
 
 button.standard:disabled {
-	border: none;
-	background: var(--freq-color-button-lens);
+	background: var(--freq-color-button-lens-disabled);
+	border: var(--freq-border-button-disabled);
 }
 
-button.standard:disabled:hover {
-	border: none;
-	color: var(--freq-color-text-muted);
-}
-
-button.standard:disabled:focus {
-	border: none;
+button.standard:disabled:hover, :disabled:focus {
+	border: var(--freq-border-button-disabled);
 	color: var(--freq-color-text-muted);
 }
 
 button.standard:disabled:active {
-	background: var(--freq-color-button-lens);
-
-}
-
-button a {
-	color: var(--freq-color-text); 
+	background: var(--freq-color-button-lens-disabled);
+	border: var(--freq-border-button-disabled);
+	scale: 100%;
 }
 
 button.popover-item {
@@ -289,13 +282,46 @@ Styles to create button with second top border, intended for tag format
 
 
 button.double-border-top {
+	width: fit-content;
+	height: fit-content;
+	padding: 0;
+	background: var(--freq-color-button-background);
+	border: var(--freq-border-button);
+	color: var(--freq-color-text-muted);
 	text-transform: uppercase;
 }
 
 
+button.double-border-top:hover, :focus {
+	border: var(--freq-border-primary);
+	color: var(--freq-color-text);
+}
+
+button.double-border-top:active {
+	scale: 98%;
+	background: var(--freq-color-button-lens-active);
+	border: var(--freq-border-button-active);
+	transition: all;
+}
+
+button.double-border-top:disabled {
+	background: var(--freq-color-button-lens-disabled);
+	border: var(--freq-border-button-disabled);
+}
+
+button.double-border-top:disabled:hover, :disabled:focus {
+	border: var(--freq-border-button-disabled);
+}
+
+button.double-border-top:disabled:active {
+	background: var(--freq-color-button-lens-disabled);
+	border: var(--freq-border-button-disabled);
+	scale: 100%;
+}
+
 button.double-border-top .inner-border {
 	display: flex;
-	border-top: 1px solid var(--freq-color-button-lens);
+	border-top: var(--freq-border-button);
 	margin: var(--freq-spacing-3x-small) 0;
 	padding: var(--freq-height-spacer-quarter) var(--freq-width-spacer);
 	align-items: center;
@@ -303,43 +329,32 @@ button.double-border-top .inner-border {
 
 button.double-border-top .inner-border-condensed {
 	display: flex;
-	border-top: 1px solid var(--freq-color-button-lens);
+	border-top: var(--freq-border-button);
 	margin: var(--freq-spacing-3x-small) 0;
 	padding: 6px 5px 4px 5px;
 	align-items: center;
 	font-size: var(--freq-font-size-2x-small);
 }
 
-button.double-border-top:hover > *   {
-	border-color: var(--freq-color-primary);
-}
-
-button.double-border-top:focus > *   {
-	border-color: var(--freq-color-primary);
-}
-
-button.double-border-top.disabled {
-	background: var(--freq-color-text-medium-dark);
-	border: var(--freq-border-panel);
-}
-
-button.double-border-top:disabled:hover > * {
-	border-top: var(--freq-border-panel);
-}
-
-button.double-border-top:disabled *:focus {
-	border-top: var(--freq-border-panel);
-}
-
-button.double-border-top:active {
-	scale: 98%;
-	background: var(--freq-color-button-lens-active);
-	border-color: white;
-	transition: all;
+button.double-border-top:hover > *, :focus > *   {
+	border-top: var(--freq-border-primary);
 }
 
 button.double-border-top:active > *   {
-	border-color: white;
+	border-top: var(--freq-border-button-active);
+}
+
+button.double-border-top:disabled > * {
+	border-top: var(--freq-border-button-disabled);
+}
+
+button.double-border-top:disabled:hover > *, :disabled:focus > *  {
+	border-top: var(--freq-border-button-disabled);
+	color: var(--freq-color-text-muted);
+}
+
+button.double-border-top:disabled:active > *   {
+	border-top: var(--freq-border-button-disabled);
 }
 
 /* Buttons layout */
