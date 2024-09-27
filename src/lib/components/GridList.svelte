@@ -130,7 +130,12 @@
                 animate:flip="{{duration: flipDurationMs}}" 
                 class={format[layout][1]}
             >
-                <img src={contentItem["img_url"] ?? wave}  alt={contentItem["recording_name"]} />
+                {#await imgPromise then}
+                    <img 
+                        src={contentItem["img_url"] ?? wave} 
+                        alt="{contentItem["img_url"] ? contentItem["recording_name"] : 'no available'} cover art"
+                    />
+                {/await}
                 <div class="metadata-blurb">
                     <h2>{contentItem["recording_name"]}</h2>
                     <p>{contentItem["artist_name"]}</p>
