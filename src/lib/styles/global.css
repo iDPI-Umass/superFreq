@@ -117,7 +117,8 @@ img.thumbnail {
 
 p {
 	color: var(--freq-color-text);
-	font-size: var(--freq-font-size-small);
+	font-size: var(--freq-font-size-medium);
+	line-height: var(--freq-line-height-dense);
 }
 
 .data-muted {
@@ -179,6 +180,7 @@ h2,
 h3,
 h4{
 	font-family: 'Krona_One', monospace;
+	font-weight: var(--freq-font-weight-light);
 }
 
 h5,
@@ -225,37 +227,37 @@ button.standard {
 	text-justify: center;
 }
 
-button:hover, :focus {
+button.standard:hover, :focus {
 	border-color: var(--freq-color-primary);
 	color: var(--freq-color-text);
 }
 
-button *:hover, :focus {
+button.standard *:hover, :focus {
 	border-color: var(--freq-color-primary);
 }
 
-button:active {
+button.standard:active {
 	scale: 98%;
 	background: var(--freq-color-button-lens-active);
 	transition: all;
 }
 
-button:disabled {
+button.standard:disabled {
 	border: none;
 	background: var(--freq-color-button-lens);
 }
 
-button:disabled:hover {
+button.standard:disabled:hover {
 	border: none;
 	color: var(--freq-color-text-muted);
 }
 
-button:disabled:focus {
+button.standard:disabled:focus {
 	border: none;
 	color: var(--freq-color-text-muted);
 }
 
-button:disabled:active {
+button.standard:disabled:active {
 	background: var(--freq-color-button-lens);
 
 }
@@ -316,12 +318,17 @@ button.double-border-top:focus > *   {
 	border-color: var(--freq-color-primary);
 }
 
+button.double-border-top.disabled {
+	background: var(--freq-color-text-medium-dark);
+	border: var(--freq-border-panel);
+}
+
 button.double-border-top:disabled:hover > * {
-	border: nonr;
+	border-top: var(--freq-border-panel);
 }
 
 button.double-border-top:disabled *:focus {
-	border:none;
+	border-top: var(--freq-border-panel);
 }
 
 button.double-border-top:active {
