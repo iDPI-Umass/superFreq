@@ -39,7 +39,7 @@
         </label>
         <input
             class="text"
-            type="text"
+            type="email"
             name="current-email"
             id="current-email"
             form="account-data"
