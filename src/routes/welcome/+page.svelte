@@ -11,6 +11,8 @@
     $: form
 
     onMount(() => invalidateAll())
+
+    let email: string | null = null
 </script>
 
 <svelte:head>
@@ -45,10 +47,15 @@
                 class="text" 
                 id="email" 
                 name="email"
-                type="text"
+                type="email"
                 placeholder="enter your email..." 
+                bind:value={email}
             />
-            <button class="double-border-top" type="submit"> 
+            <button
+                class="double-border-top" 
+                type="submit"
+                disabled={!email}
+            > 
                 <div class="inner-border">
                     submit
                 </div>

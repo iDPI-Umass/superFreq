@@ -104,7 +104,7 @@ export const actions = {
 
         const data = await request.formData()
         const editedText = data.get('edited-text') as string
-        const postData = data.get('post-data') as App.RowData
+        const postData = JSON.parse(data.get('post-data') as string) as App.RowData
 
         const submitEdit = await updatePost( sessionUserId, postData, editedText )
 
