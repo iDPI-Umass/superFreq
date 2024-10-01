@@ -98,6 +98,11 @@
                 type="hidden"
                 name="collection-type"
                 value={collectionType}
+            />            
+            <input 
+                type="hidden"
+                name="status"
+                value={collectionStatus}
             />
             {#key collectionItems?.length}
             <input 
