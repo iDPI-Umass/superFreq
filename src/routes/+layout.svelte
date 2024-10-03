@@ -1,5 +1,6 @@
 <script lang="ts">
 	import "$lib/styles/about.css";
+	import "$lib/styles/bits-ui.css";
 	import "$lib/styles/collections.css";
 	import "$lib/styles/feed.css";
 	import "$lib/styles/fonts.css";
