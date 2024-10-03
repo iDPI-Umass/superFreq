@@ -59,6 +59,26 @@
             deletedItems.push(item)
         }
 	}
+
+    const undersizedCollection = (( layout == 'grid' && collectionContents.length < 6 ) || ( layout == 'condensed-grid' && collectionContents.length < 4 )) ? true : false
+
+    function getGridSpacers ( items: any ) {
+        const spacesArray = [] as number[]
+        if ( !undersizedCollection || layout == 'list' ) {
+            return spacesArray
+        }
+
+        const remainingSpaces = ( layout == 'grid' ) ? 6 % items.length : 4 % items.length
+        let n = 0
+        while ( n < remainingSpaces ) {
+            spacesArray.push(n)
+            n++
+        }
+        return spacesArray
+    }
+
+    const gridSpacers = getGridSpacers(items)
+
 </script>
 
 {#if ( collectionReturned || collectionContents.length > 0 ) && mode == "edit"}
@@ -162,6 +182,11 @@
                 </div>
             </a>
             {/each}
+            {#if undersizedCollection}
+                {#each gridSpacers as spacer}
+                    <div class='media-grid-item'></div>
+                {/each}
+            {/if}
         </div>
     {:else if collectionType == "release_groups"}
         <div class={format[layout][0]}>
@@ -179,6 +204,11 @@
                     </div>
             </div>
             {/each}
+            {#if undersizedCollection}
+                {#each gridSpacers as spacer}
+                    <div class='media-grid-item'></div>
+                {/each}
+            {/if}
         </div>
     {:else if collectionType == "recordings"}
         <div class={format[layout][0]}>
@@ -195,6 +225,11 @@
                     </div>
             </div>
             {/each}
+            {#if undersizedCollection}
+                {#each gridSpacers as spacer}
+                    <div class='media-grid-item'></div>
+                {/each}
+            {/if}
         </div>
     {/if}
 {/if}
