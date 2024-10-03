@@ -120,6 +120,7 @@
 	/* margin: 5% 10%; */
 	font-family: var(--freq-font-family);
 	font-size: var(--freq-font-size-small);
+	font-weight: var(--freq-font-weight-bold);
 	text-transform: uppercase;
 }
 .metadata-blurb p {
@@ -161,8 +162,8 @@
 }
 
 .media-grid-item .metadata-blurb {
-	margin-top: 0;
-	margin-bottom: auto; 
+	width: 80%;
+	margin: 0 auto auto auto; 
 }
 
 .media-grid-item .metadata-blurb h2 {
@@ -178,9 +179,6 @@
 	flex-direction: column;
 	width: 1fr;
 	height: 100%;
-	/* margin: auto; */
-	/* padding: 0 5%; */
-	/* background-color: black; */
 	align-items: top;
 	justify-content: center;
 	margin-left: -1px;
