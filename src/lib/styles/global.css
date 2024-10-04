@@ -573,6 +573,7 @@ input.radio:checked {
 input.search {
 	display: flex;
 	/* height: calc( var(--freq-input-height-small) + var(--freq-spacing-3x-small)); */
+	width: 100%;
 	height: var(--freq-input-height-search-bar);
 	background: var(--freq-color-panel-background);
 	border: 1px solid var(--freq-color-border-panel);
