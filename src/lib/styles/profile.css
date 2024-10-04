@@ -4,7 +4,8 @@
     max-width: var(--freq-desktop-width);
 }
 
-.profile-info .profile-info-box-left, .profile-info-box-right {
+.profile-info .profile-info-box-left, 
+.profile-info .profile-info-box-right {
     width: calc(var(--freq-desktop-width) * 0.5)
 }
 
@@ -95,7 +96,8 @@
         flex-direction: column;
         max-width: var(--freq-tablet-width);
     }
-    .profile-info .profile-info-box-left, .profile-info-box-right {
+    .profile-info .profile-info-box-left, 
+    .profile-info .profile-info-box-right {
         width: 100%;
     }
     .profile-info-box-left {

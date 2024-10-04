@@ -6,7 +6,6 @@
 	import "$lib/styles/fonts.css";
 	import "$lib/styles/freq-dark-theme.css";
 	import "$lib/styles/global.css";
-	import "$lib/styles/metadata-formatting.css";
 	import "$lib/styles/posts.css";
 	import "$lib/styles/profile.css";
 	import "$lib/styles/themes.css";
@@ -15,7 +14,7 @@
 	import { onMount, onDestroy } from 'svelte'
 
 	import { profileStoresObject } from '$lib/stores.ts'
-	import PlainHeader from "$lib/components/headers/Header/page.svelte"
+	import Header from "$lib/components/headers/Header/page.svelte"
 	import type { LayoutData } from "./$types"
 	
 
@@ -46,12 +45,12 @@
 	});
 </script>
 
-<PlainHeader
+<Header
 	sessionUserId={sessionUserId}
 	username={username}
 	displayName={displayName}
 	avatarUrl={avatarUrl}
-></PlainHeader>
+></Header>
 
 <div class="double-border-full-vw"></div>
 <body>

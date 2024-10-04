@@ -6,6 +6,11 @@
 
 /* Dropdown Menu */
 
+
+[data-menu-root] {
+    background: none;
+}
+
 [data-menu-trigger] {
 	display: flex;
 	flex-direction: row;
@@ -16,11 +21,13 @@
 	align-items: center;
 	justify-content: center;
 	text-decoration: none;
+    text-transform: uppercase;
 }
 
-[data-menu-trigger]:hover, :focus {
+[data-menu-trigger]:is(:hover, :focus) {
 	background: var(--freq-color-button-lens);
 	border: none;
+    background: var(--freq-color-button-lens-active);
 	color: var(--freq-color-text-dark);
 }
 
@@ -28,7 +35,7 @@
 	scale: 98%;
 	background: var(--freq-color-button-lens-active);
 	border: none;
-	color: var(--freq-color-text-dark);
+	color: var(--freq-color-text);
 }
 
 [data-menu-content] {
@@ -41,8 +48,8 @@
 	padding: var(--freq-spacing-small);
 	line-height: var(--freq-line-height-normal);
 	text-decoration: none;
-	/* border: none;
-	overflow: visible; */
+	border: none;
+	overflow: visible;
 }
 
 [data-menu-content] a {
@@ -56,15 +63,19 @@
 	text-decoration: none;
 }
 
-[data-menu-item]:hover {
-	background: var(--freq-color-button-lens);
-	color: var(--freq-color-text-dark);
+[data-menu-item]:is(:hover, :focus) {
+	background: var(--freq-color-button-lens-active);
+	color: var(--freq-color-text);
 }
 
 [data-menu-item]:active {
 	scale: 98%;
 	background: var(--freq-color-button-lens-active);
 	color: var(--freq-color-text-dark);
+}
+
+[data-menu-item]:enabled > * {
+    border: none;
 }
 
 /* Toolbar */
@@ -110,7 +121,7 @@
 	background: transparent;
 }
 
-[data-popover-trigger]:hover, :focus {
+[data-popover-trigger]:is(:hover, :focus) {
 	background: var(--freq-color-button-lens);
 	color: var(--freq-color-text-dark);
 }
@@ -163,7 +174,7 @@
 	background: transparent;
 }
 
-[data-collapsible-trigger]:hover, :focus {
+[data-collapsible-trigger]:is(:hover, :focus) {
 	background: var(--freq-color-button-lens);
 	color: var(--freq-color-text-dark);
 }
@@ -205,7 +216,7 @@
 	text-transform: uppercase;
 }
 
-[data-tabs-trigger]:hover, :focus {
+[data-tabs-trigger]:is(:hover, :focus) {
 	background: var(--freq-color-panel);
 	border-color: var(--freq-color-border-panel-light);
 	/* border-bottom: 1px solid var(--freq-color-panel-background); */

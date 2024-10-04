@@ -146,8 +146,7 @@ a {
 	text-decoration: none;
 }
 
-a:hover,
-:focus {
+a:is(:hover, :focus) {
 	text-decoration: underline;
 }
 
@@ -155,7 +154,7 @@ a.label-link {
 	text-decoration: underline;
 }
 
-a.label-link:hover, :focus {
+a.label-link:is(:hover, :focus) {
 	color: var(--freq-color-text);
 	text-decoration: none;
 }
@@ -165,7 +164,7 @@ a.panel-header-link {
 	text-decoration: underline;
 }
 
-a.panel-header-link:hover, :focus {
+a.panel-header-link:is(:hover, :focus) {
 	color: var(--freq-color-text);
 }
 
@@ -237,12 +236,12 @@ button.standard {
 
 }
 
-button.standard:hover, :focus {
+button.standard:is(:hover, :focus) {
 	border: var(--freq-border-primary);
 	color: var(--freq-color-text);
 }
 
-button.standard *:hover, *:focus {
+button.standard *:is(:hover, :focus) {
 	border: var(--freq-border-primary);
 }
 
@@ -258,7 +257,7 @@ button.standard:disabled {
 	border: var(--freq-border-button-disabled);
 }
 
-button.standard:disabled:hover, :disabled:focus {
+button.standard:disabled:is(:hover, :focus) {
 	border: var(--freq-border-button-disabled);
 	color: var(--freq-color-text-muted);
 }
@@ -302,7 +301,7 @@ button.double-border-top {
 }
 
 
-button.double-border-top:hover, :focus {
+button.double-border-top:is(:hover, :focus) {
 	border: var(--freq-border-primary);
 	color: var(--freq-color-text);
 }
@@ -319,7 +318,7 @@ button.double-border-top:disabled {
 	border: var(--freq-border-button-disabled);
 }
 
-button.double-border-top:disabled:hover, :disabled:focus {
+button.double-border-top:disabled:is(:hover, :focus) {
 	border: var(--freq-border-button-disabled);
 }
 
@@ -346,7 +345,7 @@ button.double-border-top .inner-border-condensed {
 	font-size: var(--freq-font-size-2x-small);
 }
 
-button.double-border-top:hover > *, :focus > *   {
+button.double-border-top:is(:hover > *, :focus > *) {
 	border-top: var(--freq-border-primary);
 }
 
@@ -358,7 +357,7 @@ button.double-border-top:disabled > * {
 	border-top: var(--freq-border-button-disabled);
 }
 
-button.double-border-top:disabled:hover > *, :disabled:focus > *  {
+button.double-border-top:disabled:is(:hover > *, :disabled:focus > * ) {
 	border-top: var(--freq-border-button-disabled);
 	color: var(--freq-color-text-muted);
 }
@@ -410,7 +409,7 @@ nav {
 	gap: var(--freq-spacer-gap);
 }
 
-nav button {
+nav button.nav {
 	display: flex;
 	flex-direction: row;
 	color: var( --freq-color-text-muted);
@@ -423,15 +422,21 @@ nav button {
 	text-transform: uppercase;
 }
 
-nav button:hover, :focus {
-	background: var(--freq-color-button-lens);
-	color: var(--freq-color-text-dark);
+nav button.nav a {
+	text-decoration: none;
 }
 
-nav button:active {
+nav button.nav:is(:hover, :focus),
+nav button.nav a:is(:hover, :focus) {
+	color: var(--freq-color-text-dark);
+	background: var(--freq-color-button-lens-active);
+}
+
+nav button.nav:active {
 	scale: 98%;
 	background: var(--freq-color-button-lens-active);
-	color: var(--freq-color-text-dark);
+	color: var(--freq-color-text);
+	transition: all;
 }
 
 nav img {
@@ -624,21 +629,24 @@ fieldset label {
 	color: var(--freq-color-text)
 }
 
-fieldset ul, ol {
+fieldset ul, 
+fieldset ol {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
 	text-transform: capitalize;
 }
 
-fieldset ul li, ol li {
+fieldset ul li, 
+fieldset ol li {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	gap: var(--freq-inline-gap);
 }
 
-fieldset ul li label, ol li label {
+fieldset ul li label, 
+fieldset ol li label {
 	margin-top: 2px;
 }
 

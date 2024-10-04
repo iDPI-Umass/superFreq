@@ -264,7 +264,7 @@ button.like {
     font-size: var(--freq-font-size-small);
 }
 
-button.like:hover, :focus {
+button.like:is(:hover, :focus) {
     background: var(--freq-color-button-lens-active);
     transition: 0.5s cubic;
 }
