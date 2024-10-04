@@ -32,7 +32,9 @@
 
 <div class="feed-panel">
     <PanelHeader>
-        feed
+        <span slot="text">
+            feed
+        </span>
     </PanelHeader>
     {#if feedItems.length == 0}
     <div class="feed-item-one-liner">
