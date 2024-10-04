@@ -21,7 +21,9 @@
 
 <div class="border">
     <PanelHeader>
-        what are you listening to?
+        <span slot="text">
+            what are you listening to?
+        </span>
     </PanelHeader>
     <Tabs.Root>
         <Tabs.List>

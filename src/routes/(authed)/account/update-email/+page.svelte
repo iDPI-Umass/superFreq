@@ -22,7 +22,9 @@
 
 <div class="panel" id="profile-info">
     <PanelHeader>
-		update email address
+        <span slot="text">
+            update email address
+        </span>
 	</PanelHeader>
 	<form
 		class="horizontal"

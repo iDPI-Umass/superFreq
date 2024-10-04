@@ -22,7 +22,9 @@
 
 <div class="panel-medium">
     <PanelHeader>
-        {posts[0]['display_name']}'s Now Playing posts
+        <span slot="text">
+            {posts[0]['display_name']}'s Now Playing posts
+        </span>
     </PanelHeader>
     <div class="posts-spacing">
     {#each posts as post}

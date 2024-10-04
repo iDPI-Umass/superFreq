@@ -50,7 +50,9 @@
 
 <div class="panel">
     <PanelHeader>
-        my top albums
+		<span slot="text">
+			my top albums
+		</span>
     </PanelHeader>
     <form class="horizontal" method="POST" action='?/submitCollection'>
 		<p>Pick your top 8 albums to display on your profile.</p>

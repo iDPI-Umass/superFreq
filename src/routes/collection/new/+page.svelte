@@ -52,7 +52,9 @@
 
 <div class="panel">
     <PanelHeader>
-        new collection
+        <span slot="text">
+            new collection
+        </span>
     </PanelHeader>
     <form
         class="horizontal"
