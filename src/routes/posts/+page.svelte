@@ -20,7 +20,9 @@
 
 <div class="panel-medium">
     <PanelHeader>
-        Some anonymized Now Playing posts
+        <span slot="text">
+            Some anonymized Now Playing posts
+        </span>
     </PanelHeader>
     <div class="posts-spacing">
     {#each displayPosts as post}
