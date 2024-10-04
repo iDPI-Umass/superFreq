@@ -6,6 +6,7 @@
     import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
+    export let sessionUserId: string
     export let feedItems: App.RowData[]
     export let batchSize = 0
     export let offset = 0
@@ -48,12 +49,12 @@
             <a href={`/posts/${item.username}/now-playing/${parseTimestamp(item.feed_item_timestamp)}`}>
                 <div class="feed-item-user-data">
                     <img src={item.avatar_url ?? wave} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
-                    {item.display_name}
+                    {item.user_id == sessionUserId ? 'You' : item.display_name}
                     posted: 
                 </div>
             </a>
-            <div class="feed-item-row">
-                <img class="feed-item-ornament" src={decoration} alt="decoration" />
+            <div class="feed-post-spacer">
+                <!-- <img class="feed-item-ornament" src={decoration} alt="decoration" /> -->
                 <div class="feed-item-now-playing">
                     <NowPlayingPost
                         post={item}
