@@ -37,7 +37,7 @@
     <nav class="wide">
       {#if sessionUserId}
       <a href="/feed">
-        <button>
+        <button class="nav">
           feed
         </button>
       </a>
@@ -70,7 +70,7 @@
         </DropdownMenu.Content>
       </DropdownMenu.Root>
       <a href="/about">
-        <button>
+        <button class="nav">
           about
         </button>
       </a>
@@ -114,12 +114,12 @@
           </DropdownMenu.Content>
         </DropdownMenu.Root>
         <a href="/about">
-          <button>
+          <button class="nav">
             about
           </button>
         </a>
         <a href="/welcome">
-          <button>
+          <button class="nav">
             log in/sign up
           </button>
         </a>
@@ -196,7 +196,7 @@
           </DropdownMenu.Content>
         </DropdownMenu.Root>
         <a href="/welcome">
-          <button>
+          <button class="nav">
             log in/sign up
           </button>
         </a>
