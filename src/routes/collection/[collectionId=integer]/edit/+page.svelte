@@ -15,6 +15,7 @@
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
     import Tooltip from '$lib/components/Tooltip.svelte'
     import InfoBox from '$lib/components/InfoBox.svelte'
+	import PanelHeader from 'src/lib/components/PanelHeader.svelte';
 
 
 	export let data: PageData;
@@ -69,14 +70,18 @@
 </svelte:head>
 
 
-<div class="collection-builder">
-    <div class="builder-header">
-        <h1>
+<div class="collection-container">
+    <PanelHeader>
+        <span slot="text">
             edit collection
-        </h1>
-    </div>
-    <form class="form-box" method="POST" action ="?/updateCollection">
-        <div class="form-block">
+        </span>
+    </PanelHeader>
+    <form 
+        class="horizontal" 
+        method="POST" 
+        action ="?/updateCollection"
+    >
+        <div class="form-column">
             <div class="label-group">
                 <label 
                     class="text-label" 
@@ -161,7 +166,7 @@
                 {/if}
             {/if}
         </div>
-        <div class="form-block">
+        <div class="form-column">
             <label class="text-label" for="description">
                 Collection Description
             </label>
@@ -186,7 +191,7 @@
             </div>
         </div>
     </form>
-    <div class="search-bar">
+    <div class="collection-search-bar" >
 		<MusicBrainzSearch 
             searchCategory={collectionType}
 			bind:addedItems={collectionItems}
@@ -212,49 +217,6 @@
 </div>
 
 <style>
-    .collection-builder {
-        width: var(--freq-max-width-primary);
-        margin: 3vh 3vw;
-        border: var(--freq-border-panel);
-    }
-    .builder-header {
-        border-top: 1px solid var(--freq-color-border-panel);
-        border-bottom: 1px solid var(--freq-color-border-panel);
-        margin: var(--freq-spacing-3x-small) 0;
-        align-items: center;
-    }
-    .builder-header h1 {
-        text-transform: uppercase;
-        font-size: var(--freq-font-size-medium);
-        color: var(--freq-color-primary);
-        padding: 0 var(--freq-width-spacer);
-    }
-    form {
-        display: flex;
-        flex-direction: row;
-        gap: var(--freq-width-spacer);
-        padding: var(--freq-width-spacer);
-    }
-    form label.text-label {
-        text-transform: uppercase;
-    }
-    form input {
-        width: auto;
-    }
-    .form-block {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-    }
-    .info-box-inline {
-        margin-bottom: 0;
-    }
-    .search-bar {
-        border-top: 1px solid var(--freq-color-border-panel);
-        border-bottom: 1px solid var(--freq-color-border-panel);
-        padding: var(--freq-height-spacer-half) var(--freq-width-spacer);
-		margin: var(--freq-spacing-3x-small) 0;
-    }
     @media screen and (max-width: 600px) {
         form.horizontal {
             flex-direction: column;
