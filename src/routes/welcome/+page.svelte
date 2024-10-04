@@ -24,7 +24,9 @@
 
 <div class="panel-medium">
     <PanelHeader>
-        welcome
+        <span slot="text">
+            welcome
+        </span>
     </PanelHeader>
     <div class="post-body">
         <p class="post-text">
