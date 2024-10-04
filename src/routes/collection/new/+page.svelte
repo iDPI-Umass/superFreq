@@ -50,7 +50,7 @@
     A collection is a list of albums, tracks, or artists. Among many other things, you can make a colleciton to keep track of music you want to listen to or create a resource for other people who might want to learn more about music you love.
 </InfoBox>
 
-<div class="panel">
+<div class="collection-container">
     <PanelHeader>
         <span slot="text">
             new collection

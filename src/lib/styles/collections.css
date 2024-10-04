@@ -1,7 +1,7 @@
 /* layout */
 .collection-container {
 	max-width: var(--freq-max-width-primary);
-	margin: var(--freq-spacing-large) auto;
+	margin: var(--freq-spacing-large);
 	border: var(--freq-border-panel);
 }
 
