@@ -38,7 +38,9 @@
 
 <div class="panel" id="profile-info">
 	<PanelHeader>
-		create profile
+		<span slot="text">
+			create profile
+		</span>
 	</PanelHeader>
 	<div class="form-wrapper">
 		<form

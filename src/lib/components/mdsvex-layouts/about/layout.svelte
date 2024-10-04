@@ -5,7 +5,9 @@
 
 <div class="panel">
     <PanelHeader>
-        {title}
+        <span slot="text">
+            {title}
+        </span>
     </PanelHeader>
     <div class="about-text">
         <slot></slot>

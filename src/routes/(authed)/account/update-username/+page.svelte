@@ -25,7 +25,9 @@
 
 <div class="panel" id="profile-info">
     <PanelHeader>
-		update username
+        <span slot="text">
+            update username
+        </span>
 	</PanelHeader>
 	<form
 		class="horizontal"
