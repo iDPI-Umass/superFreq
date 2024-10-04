@@ -291,7 +291,6 @@ Styles to create button with second top border, intended for tag format
 
 
 button.double-border-top {
-	width: fit-content;
 	height: fit-content;
 	padding: 0;
 	background: var(--freq-color-button-background);
@@ -329,7 +328,6 @@ button.double-border-top:disabled:active {
 }
 
 button.double-border-top .inner-border {
-	display: flex;
 	border-top: var(--freq-border-button);
 	margin: var(--freq-spacing-3x-small) 0;
 	padding: var(--freq-height-spacer-quarter) var(--freq-width-spacer);

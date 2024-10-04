@@ -147,7 +147,8 @@
 				{searchButtonText}
 			</div>
 		</button>
-		<input
+		<div class="input-sizing">
+			<input
 			class="search" 
 			type="search" 
 			id="searchQuery" 
@@ -157,6 +158,7 @@
 			size="40" 
 			bind:value={query}
 		/>
+		</div>
 	</form>
 </div>
 
@@ -165,15 +167,14 @@
         display: flex;
         flex-direction: row;
 		height: fit-content;
-		width: inherit;
         gap: 0;
         align-items: center;
     }
-    .search-bar button{
-        width: auto;
-    }
 	span.dialog-header {
 		text-transform: uppercase;
+	}
+	.input-sizing {
+		max-width: 100%;
 	}
 	button.standard {
 		width: 60px;
