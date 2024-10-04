@@ -210,6 +210,7 @@
 
 [data-tabs-trigger] {
 	display: flex;
+	align-items: center;
 	padding: var(--freq-spacing-small);
 	background: var(--freq-color-inactive);
     border: var(--freq-border-panel);

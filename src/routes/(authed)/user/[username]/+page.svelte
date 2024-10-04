@@ -202,6 +202,7 @@
     {#if profileUserData?.id == sessionUserId}
         <NewNowPlayingPost></NewNowPlayingPost>
         <Feed
+            sessionUserId={sessionUserId}
             feedItems={feedItems?.feedData}
             mode="mini"
         ></Feed>

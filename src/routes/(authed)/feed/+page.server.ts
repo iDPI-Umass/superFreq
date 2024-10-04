@@ -16,7 +16,7 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
 
     const remaining = remainingCount as number
 
-    return { feedData, totalRowCount, remaining, timestampStart, timestampEnd, batchSize, options }
+    return { sessionUserId, feedData, totalRowCount, remaining, timestampStart, timestampEnd, batchSize, options }
 }
 
 export const actions = {
