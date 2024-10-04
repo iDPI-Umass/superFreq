@@ -2,16 +2,18 @@
       import decoration from "$lib/assets/images/panel-header-decoration.svg";
 </script>
 
-<div>
+<div class="panel-header">
     <img src={decoration} alt="decoration" />
     <h1>
-        <slot name="title"></slot>
+        <slot name="text"></slot>
     </h1>
-    <slot name="button"></slot>
+    <div class="button-spacing">
+        <slot name="button"></slot>
+    </div>
 </div>
 
 <style>
-    div {
+    .panel-header {
         display: flex;
         flex-direction: row;
         border-top: 1px solid var(--freq-color-border-panel);
@@ -25,5 +27,9 @@
         font-weight: var(--freq-font-weight-light);
         color: var(--freq-color-primary);
         padding: 0 var(--freq-width-spacer-half);
+    }
+    .button-spacing {
+        margin-left: auto;
+        margin-right: var(--freq-width-spacer-half);
     }
 </style>
