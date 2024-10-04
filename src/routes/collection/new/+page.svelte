@@ -222,7 +222,7 @@
             </div>
         </div>
     </form>
-    <div class="search-bar">
+    <div class="collection-search-bar">
 		<MusicBrainzSearch 
             searchCategory={collectionType}
 			bind:addedItems={collectionItems}
@@ -246,12 +246,6 @@
 </div>
 
 <style>
-    .search-bar {
-        border-top: 1px solid var(--freq-color-border-panel);
-        border-bottom: 1px solid var(--freq-color-border-panel);
-        padding: var(--freq-height-spacer-half) var(--freq-width-spacer);
-		margin: var(--freq-spacing-3x-small) 0;
-    }
     @media screen and (max-width: 600px) {
         form.horizontal {
             flex-direction: column;

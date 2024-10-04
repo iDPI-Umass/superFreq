@@ -63,6 +63,13 @@
 	margin: auto 0 0 auto;
 }
 
+.collection-search-bar {
+	border-top: 1px solid var(--freq-color-border-panel);
+	border-bottom: 1px solid var(--freq-color-border-panel);
+	padding: var(--freq-height-spacer-half) var(--freq-width-spacer);
+	margin: var(--freq-spacing-3x-small) 0;
+}
+
 /* Collection info text classes */
 
 .collection-info h1 {
@@ -121,6 +128,7 @@
 	font-family: var(--freq-font-family);
 	font-size: var(--freq-font-size-small);
 	font-weight: var(--freq-font-weight-bold);
+	line-height: var(--freq-line-height-denser);
 	text-transform: uppercase;
 }
 .metadata-blurb p {
