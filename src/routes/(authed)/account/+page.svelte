@@ -33,7 +33,9 @@
  
 <div class="panel" id="profile-info">
 	<PanelHeader>
-		profile info
+		<span slot="text">
+			profile info
+		</span>
 	</PanelHeader>
 	<div class="form-wrapper">
 		<form
