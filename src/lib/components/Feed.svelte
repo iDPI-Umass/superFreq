@@ -116,10 +116,12 @@
             <a href={`/collection/${item.collection_id}`}>
                 <div class="feed-item-one-liner">
                     <img src={item.avatar_url ?? wave} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
-                    {item.display_name}
-                    followed your collection: 
-                    <span class="feed-item-subject">
-                        {item.title}
+                    <span class="blurb">
+                        {item.display_name}
+                        followed your collection: 
+                        <span class="feed-item-subject">
+                            {item.title}
+                        </span>
                     </span>
                 </div>
             </a>
@@ -128,10 +130,12 @@
             <a href={`/collection/${item.collection_id}`}>
                 <div class="feed-item-one-liner">
                     <img src={item.avatar_url ?? wave} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
-                    {item.display_name}
-                    followed a collection: 
-                    <span class="feed-item-subject">
-                        {item.title}
+                    <span class="blurb">
+                        {item.display_name}
+                        followed a collection: 
+                        <span class="feed-item-subject">
+                            {item.title}
+                        </span>
                     </span>
                 </div>
             </a>
@@ -140,10 +144,12 @@
             <a href={`/collection/${item.collection_id}`}>
                 <div class="feed-item-one-liner">
                     <img src={item.avatar_url ?? wave} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
-                    {item.display_name}
-                    edited the collection: 
-                    <span class="feed-item-subject">
-                        {item.title}
+                    <span class="blurb">
+                        {item.display_name}
+                        edited the collection: 
+                        <span class="feed-item-subject">
+                            {item.title}
+                        </span>
                     </span>
                 </div>
             </a>
