@@ -420,6 +420,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'react_user.display_name as display_name', 
                 'react_user.avatar_url as avatar_url', 
                 'original_post.user_id as original_post_id', 
+                'original_post.created_at as original_post_created_at', 
                 'original_poster.display_name as original_poster_display_name', 
                 'original_poster.username as original_poster_username'
             ])

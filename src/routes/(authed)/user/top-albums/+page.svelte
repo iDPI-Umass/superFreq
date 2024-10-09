@@ -12,24 +12,23 @@
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
 
 	export let data
-	let { collection } =  data
-	$: ({ collection } =  data)
+	let { collectionContents, deletedCollectionContents } =  data
+	$: ({ collectionContents, deletedCollectionContents } =  data)
 
-	let collectionId: string
-	let collectionTitle: string = `${username}'s' top albums`
 	let collectionType = "release_groups"
-	let collectionStatus = "public"
-	let descriptionText = ""
 
-	// collections_contents
-	interface collectionItemObject {
-		[index: string]: string
-	}
+	let imgPromise
+    $: imgPromise
 
-	let collectionItems: object[] = []
+
+	let collectionItems = collectionContents ? collectionContents : [] as App.RowData[]
 	$: collectionItems
+
+	let deletedItems = deletedCollectionContents ? deletedCollectionContents : [] as App.RowData[]
+	$: deletedItems
+
+	console.log(deletedItems)
 	let itemAdded = false
-    let collectionItemCount = collectionItems.length
 
 	const buttonTextLookup: {[index: string]: string} = {
 		"": "...",
@@ -56,12 +55,21 @@
     </PanelHeader>
     <form class="horizontal" method="POST" action='?/submitCollection'>
 		<p>Pick your top 8 albums to display on your profile.</p>
+		{#key collectionItems?.length}
 		<input 
 			type="hidden"
 			name="collection-items"
 			id="collection=items"
 			value={JSON.stringify(collectionItems)}
 		/>
+		{/key}
+		{#key deletedItems?.length}
+		<input 
+			type="hidden"
+			name="deleted-items"
+			value={JSON.stringify(deletedItems)}
+		/>
+		{/key}
         <button 
             class="double-border-top" 
             type="submit"
@@ -80,15 +88,18 @@
 			searchPlaceholder={placeholderText}
             mode="collection"
             limit="8"
+			bind:imgPromise={imgPromise}
 		></MusicBrainzSearch>
     </div>
     {#key collectionItems.length}
         <GridList 
             bind:collectionContents={collectionItems}
+			bind:deletedItems={deletedItems}
             collectionReturned={itemAdded}
             collectionType={collectionType}
             layout="list"
             mode="edit"
+			bind:imgPromise={imgPromise}
         ></GridList>
     {/key}
 </div>

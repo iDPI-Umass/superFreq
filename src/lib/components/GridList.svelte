@@ -53,6 +53,7 @@
 			i["id"] = items.indexOf(i) + 1;
 		}
         collectionContents = items
+        console.log(collectionContents)
 
         if ( item.inserted_at ){
             item.item_position = null
