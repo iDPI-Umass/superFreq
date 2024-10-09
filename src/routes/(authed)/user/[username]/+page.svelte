@@ -171,7 +171,7 @@
             <span slot="text">top albums</span>
             <span slot="button">   
                 {#if profileUserData?.id == sessionUserId}
-                    <button class="standard" on:click={() => goto(`./${username}/top-albums`)}>
+                    <button class="standard" on:click={() => goto(`/user/top-albums`)}>
                         edit
                     </button>
                 {/if}

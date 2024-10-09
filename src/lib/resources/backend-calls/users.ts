@@ -165,12 +165,13 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
                 'collections_contents.collection_id as collection_id', 
                 'collections_contents.artist_mbid as artist_mbid', 
                 'collections_contents.release_group_mbid as release_group_mbid', 
-                'item_position', 
+                'collections_contents.item_position as item_position', 
                 'artists.artist_name as artist_name', 
                 'release_groups.release_group_name as release_group_name', 
                 'release_groups.img_url as img_url'
             ])
             .where('collection_id', '=', profileUserData?.top_albums_collection_id as string)
+            .where('collections_contents.item_position', 'is not', null)
             .execute()
 
         

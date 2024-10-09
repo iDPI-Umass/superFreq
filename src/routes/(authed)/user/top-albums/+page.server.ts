@@ -6,8 +6,8 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
   const session = await safeGetSession()
   const sessionUserId = session.user?.id as string
 
-  const collection = await selectEditableTopAlbumsCollection( sessionUserId )
-  return { collection }
+  const { collectionContents, deletedCollectionContents } = await selectEditableTopAlbumsCollection( sessionUserId )
+  return { collectionContents, deletedCollectionContents }
 }
 
 export const actions = {
@@ -15,10 +15,14 @@ export const actions = {
     const session = await safeGetSession()
     const sessionUserId = session.user?.id as string
 
-    const formData = await request.formData()
-    const collectionItems = JSON.parse(formData.get('collection-items') as string)
+    const data = await request.formData()
+    const collectionItems = JSON.parse(data.get('collection-items') as string)
+    const deletedCollectionItems = JSON.parse( data.get('deleted-items') as string) 
 
-    const insertUpdate = await insertUpdateTopAlbumsCollection( sessionUserId, collectionItems )
+    const activeAndDeletedCollectionItems = collectionItems.concat(deletedCollectionItems)
+
+
+    const insertUpdate = await insertUpdateTopAlbumsCollection( sessionUserId, activeAndDeletedCollectionItems )
 
     const username = insertUpdate?.username as string
 
