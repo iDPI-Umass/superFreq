@@ -105,7 +105,7 @@
             </a>
         <!-- Followed user reacted to another user's post -->
         {:else if Object.keys(item).includes( 'reaction_id' )}
-            <a href={`/posts/${item.original_poster_username}/now-playing/${parseTimestamp(item.feed_item_timestamp)}`}>
+            <a href={`/posts/${item.original_poster_username}/now-playing/${parseTimestamp(item.original_post_created_at)}`}>
                 <div class="feed-item-one-liner">
                     <img src={item.avatar_url} alt={`${item.display_name}'s avatar`} class="feed-avatar" />
                     {item.display_name} liked {item.original_poster_display_name}'s post
