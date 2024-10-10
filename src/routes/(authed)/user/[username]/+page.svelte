@@ -2,15 +2,12 @@
     import type { ActionData, PageData } from './$types.js'
     import { goto } from '$app/navigation'
     import { enhance } from '$app/forms'
-    import { username } from '$lib/resources/localStorage'
-    import Settings from 'lucide-svelte/icons/settings'
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte';
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import GridList from "$lib/components/GridList.svelte"
-	import { Info } from 'lucide-svelte';
 	import NewNowPlayingPost from '$lib/components/Posts/NewNowPlayingPost.svelte'
     import Feed from '$lib/components/Feed.svelte'
-	import NowPlayingPostsSample from 'src/lib/components/Posts/NowPlayingPostsSample.svelte';
+	import NowPlayingPostsSample from '$lib/components/Posts/NowPlayingPostsSample.svelte'
 
     export let data: PageData
     export let form: ActionData
