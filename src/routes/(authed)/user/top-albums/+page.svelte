@@ -5,11 +5,7 @@
 -->
 
 <script lang="ts">
-    import { goto } from '$app/navigation'
-    import { username } from '$lib/resources/localStorage.ts'
     import PanelHeader from '$lib/components/PanelHeader.svelte'
-    import GridList from '$lib/components/GridList.svelte'
-    import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
 	import CollectionEditor from '$lib/components/CollectionEditor.svelte'
 
 	export let data
