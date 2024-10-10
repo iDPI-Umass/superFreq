@@ -38,12 +38,7 @@
 	let descriptionText = collectionInfo["description_text"] 
 
     $: collectionStatus
-
-	// collections_contents
-	interface collectionObject {
-		[index: string]: string
-	}
-
+    
 	let collectionItems = collection?.collectionContents as App.RowData[]
 	$: collectionItems
 	let itemAdded = false
