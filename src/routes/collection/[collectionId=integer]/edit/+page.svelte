@@ -11,11 +11,10 @@
 <script lang="ts">
     import type { PageData } from './$types';
 
-    import GridList from '$lib/components/GridList.svelte'
-    import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
+    import CollectionEditor from '$lib/components/CollectionEditor.svelte'
     import Tooltip from '$lib/components/Tooltip.svelte'
     import InfoBox from '$lib/components/InfoBox.svelte'
-	import PanelHeader from 'src/lib/components/PanelHeader.svelte';
+	import PanelHeader from '$lib/components/PanelHeader.svelte'
 
 
 	export let data: PageData;
@@ -38,7 +37,7 @@
 	let descriptionText = collectionInfo["description_text"] 
 
     $: collectionStatus
-    
+
 	let collectionItems = collection?.collectionContents as App.RowData[]
 	$: collectionItems
 	let itemAdded = false
@@ -46,15 +45,6 @@
     let deletedItems = collection?.deletedCollectionContents as App.RowData[]
     $: deletedItems
 
-	// UI
-	const buttonTextLookup: {[index: string]: string} = {
-		"": "...",
-		"artists": "artists",
-		"release_groups": "albums",
-		"recordings": "tracks"
-	}
-
-	let placeholderText = "Search for items to add to your collection"
     const isOwner = ( sessionUserId == collectionInfo.owner_id ) ? true : false
 </script>
 
@@ -186,29 +176,13 @@
             </div>
         </div>
     </form>
-    <div class="collection-search-bar" >
-		<MusicBrainzSearch 
-            searchCategory={collectionType}
-			bind:addedItems={collectionItems}
-            bind:deletedItems={deletedItems}
-			bind:newItemAdded={itemAdded}
-			searchButtonText={`add ${buttonTextLookup[collectionType]}`}
-			searchPlaceholder={placeholderText}
-            mode="collection"
-            bind:imgPromise={imgPromise}
-		></MusicBrainzSearch>
-    </div>
-    {#key collectionItems?.length}
-        <GridList 
-            bind:collectionContents={collectionItems}
-            bind:deletedItems={deletedItems}
-            collectionReturned={itemAdded}
-            collectionType={collectionType}
-            layout="list"
-            mode="edit"
-            bind:imgPromise={imgPromise}
-        ></GridList>
-    {/key}
+	<CollectionEditor
+		bind:collectionItems={collectionItems}
+		bind:deletedItems={deletedItems}
+		collectionType={collectionType}
+		itemAdded={itemAdded}
+		bind:imgPromise={imgPromise}
+	></CollectionEditor>
 </div>
 
 <style>
