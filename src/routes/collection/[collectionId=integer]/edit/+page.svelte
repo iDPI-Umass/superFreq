@@ -1,13 +1,3 @@
-<!--
-	Retrieve existing collection if user has edit permission.
-    
-    Search MusicBrainz database, populate an object with collection items, and insert rows into tables collections_info, collections_contents, and collections_social to create new collection in database.
-
-    Upsert updates.
-
-	All of this is done on the client side.
--->
-
 <script lang="ts">
     import type { PageData } from './$types';
 
