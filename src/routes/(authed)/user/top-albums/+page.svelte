@@ -1,9 +1,3 @@
-<!--
-	Search MusicBrainz database, populate an object with collection items, and insert rows into tables collections_info, collections_contents, and collections_social to create new collection in database.
-
-	All of this is done on the client side.
--->
-
 <script lang="ts">
     import PanelHeader from '$lib/components/PanelHeader.svelte'
 	import CollectionEditor from '$lib/components/CollectionEditor.svelte'
@@ -25,15 +19,6 @@
 	$: deletedItems
 
 	let itemAdded = false
-
-	const buttonTextLookup: {[index: string]: string} = {
-		"": "...",
-		"artists": "artists",
-		"release_groups": "albums",
-		"recordings": "tracks"
-	}
-
-	let placeholderText = "Search for items to add to your collection"
 </script>
 
 <svelte:head>
