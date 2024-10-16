@@ -7,6 +7,7 @@
     import {dragHandleZone, dndzone, dragHandle} from "svelte-dnd-action";
     import Grip from 'lucide-svelte/icons/grip';
     import { imgPromiseStore } from '$lib/stores'
+    import { checkFetchedCoverArt } from "$lib/resources/musicbrainz";
 
     import wave from "$lib/assets/images/logo/freq-wave.svg"
     import loadingImage from "$lib/assets/images/loading-image.png"
@@ -78,7 +79,7 @@
     }
 
     const gridSpacers = getGridSpacers(items)
-
+    
 </script>
 
 {#if ( collectionReturned || collectionContents.length > 0 ) && mode == "edit"}
@@ -118,7 +119,12 @@
                 animate:flip="{{duration: flipDurationMs}}" 
                 class={format[layout][1]} 
             >
-            {#await imgPromise then}
+            {#await imgPromise}
+            <img 
+                src={wave} 
+                alt="loading cover art"
+            />
+            {:then}
                 <img 
                     src={contentItem["img_url"] ?? wave} 
                     alt="{contentItem["img_url"] ? contentItem["release_group_name"] : 'no available'} cover art"
@@ -150,7 +156,12 @@
                 animate:flip="{{duration: flipDurationMs}}" 
                 class={format[layout][1]}
             >
-                {#await imgPromise then}
+                {#await imgPromise}
+                    <img 
+                        src={wave} 
+                        alt="loading cover art"
+                    />
+                {:then}
                     <img 
                         src={contentItem["img_url"] ?? wave} 
                         alt="{contentItem["img_url"] ? contentItem["recording_name"] : 'no available'} cover art"
@@ -192,8 +203,16 @@
         <div class={format[layout][0]}>
             {#each collectionContents as contentItem}
             <div class={format[layout][1]}>
-                    <img src={contentItem['img_url'] ?? wave} 
-                        alt={contentItem['release_group_name']} />
+                    {#await checkFetchedCoverArt(contentItem)}
+                        <img src={wave} 
+                            alt="loading" />
+                    {:then result}
+                        <img src={result} 
+                            alt={contentItem['release_group_name']} />
+                    {:catch error}
+                        <img src={wave} 
+                            alt="not found" />
+                    {/await}
                     <div class="metadata-blurb">
                         <a href={`https://musicbrainz.org/release-group/${contentItem["release_group_mbid"]}`}>
                             <h2>{contentItem["release_group_name"]}</h2>

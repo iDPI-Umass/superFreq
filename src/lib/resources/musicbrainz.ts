@@ -56,29 +56,61 @@ export const getLabel = async function( item: App.RowData ) {
     }
 }
 
-// find "mega" image in Last.fm JSON response
-function getMega(img) {
+// get cover art from Cover Art Archive or Last.fm
+
+function getMegaImage(img: App.Lookup) {
     return img.size == "mega"
 }
 
-// API call to Cover Art Archive and Last.fm using album mbid 
+export const getLastFmCoverArt = async function ( releaseGroup: App.Lookup ) {
+    const lastFmEndpoint = `http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=${lastFmApiKey}&artist=${releaseGroup.artistName}&album=${releaseGroup.releaseGroupName}&format=json`
+    const lastFmRes = await fetch(lastFmEndpoint)
+    const lastFmData = await lastFmRes.json()
+    const imgArray = lastFmData["album"]["image"]
+    const megaImg = imgArray.find(getMegaImage)
+    const coverArtUrl = megaImg["#text"]
+    return coverArtUrl
+}
+
 export const getCoverArt = async function ( releaseGroup: App.Lookup ) {
     console.log(releaseGroup.mbid)
     const coverArtArchiveEndpoint = `https://coverartarchive.org/release-group/${releaseGroup.mbid}/front`
-    const lastFmEndpoint = `http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=${lastFmApiKey}&artist=${releaseGroup.artistName}&album=${releaseGroup.releaseGroupName}&format=json`
 
     try {
-        const coverArtArchiveRes = await fetch(coverArtArchiveEndpoint)
+        const coverArtArchiveRes = await fetch(coverArtArchiveEndpoint, { signal: AbortSignal.timeout(5000) })
         const coverArtUrl = coverArtArchiveRes["url"]
-        return  coverArtUrl
+        return  { coverArtUrl, success: true }
     }
     catch ( error ) {
-        const lastFmRes = await fetch(lastFmEndpoint)
-        const lastFmData = await lastFmRes.json()
-        const imgArray = lastFmData["album"]["image"]
-        const megaImg = imgArray.find(getMega)
-        const coverArtUrl = megaImg["#text"]
-        return coverArtUrl
+        const coverArtUrl = await getLastFmCoverArt( releaseGroup )
+        if ( coverArtUrl ) {
+            return { coverArtUrl, success: true }
+        }
+        else {
+            return { coverArtUrl: null, success: false }
+        }
+    }
+}
+
+export const checkFetchedCoverArt = async function( contentItem ){
+    try {
+        const coverArt = await fetch( contentItem["img_url"], { signal: AbortSignal.timeout(5000)} )
+        console.log(coverArt)
+        return coverArt
+    }
+    catch ( error ) {
+        const releaseGroup = {
+            artistName: contentItem["artist_name"],
+            releaseGroupName: contentItem["release_group_name"]
+        }
+        const coverArt = await getLastFmCoverArt(releaseGroup)
+        console.log(coverArt)
+        if (coverArt) {
+            return coverArt
+        }
+        else {
+            throw new Error('request failed')
+        }
     }
 }
 
