@@ -2,6 +2,8 @@ import { categoriesTable, mbidCategoryTable } from "$lib/resources/parseData"
 
 import { PUBLIC_LAST_FM_API_KEY } from '$env/static/public'
 
+const apiKey = PUBLIC_LAST_FM_API_KEY ?? process.env.LAST_FM_API_KEY
+
 export const mbSearch = async function ( query: string, searchCategory: string, limit: string ) {
     if ( !query ) {
         return { mbData: null, searchComplete: false }
