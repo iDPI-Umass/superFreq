@@ -21,8 +21,6 @@
         const timestamp = Date.parse(timestampString).toString()
         return timestamp
     }
-
-    console.log(timestampStart)
 </script>
 
 <svelte:head>

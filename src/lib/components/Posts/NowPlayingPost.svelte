@@ -37,8 +37,6 @@
     }
 
     const reactionCount = ( mode == "feed" ) ? 0 : post.reaction_count
-
-    console.log(post.text)
     
 </script>
 

@@ -428,11 +428,7 @@ export const selectEditableCollectionContents = async function ( collectionId: s
         ]))
         .executeTakeFirst()
 
-        console.log(selectCollectionInfo)
-
         const collectionType = selectCollectionInfo?.type as string
-
-        console.log(collectionType)
 
         let selectCollectionContents
         if ( collectionType == 'artists' ) {
@@ -501,7 +497,7 @@ export const selectEditableCollectionContents = async function ( collectionId: s
         // create an array of deleted items and remove all items where 'item_position is null' from collectionContents
         let deletedCollectionContents = [] as App.RowData[]
         let filteredContents = collectionContents
-        console.log(collectionContents)
+
         for ( const item of collectionContents ) {
             if (item.item_position == null) {
                 deletedCollectionContents = [...deletedCollectionContents, item]

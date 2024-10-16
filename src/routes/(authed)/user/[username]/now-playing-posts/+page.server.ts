@@ -30,7 +30,6 @@ export const actions = {
         const editedText = data.get('edited-text') as string
         const postData = JSON.parse(data.get('post-data') as string) as App.RowData
 
-        console.log(postData)
         const submitEdit = await updatePost( sessionUserId, postData, editedText )
 
         if ( submitEdit ) {

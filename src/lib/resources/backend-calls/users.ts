@@ -219,8 +219,6 @@ export const newSessionProfile = async function ( sessionUserId: string, profile
     let artistsMetadata = []
     let releaseGroupsMetadata = []
 
-    console.log(hasAvatar)
-
     if ( hasAvatar ) {
         const preparedMetadata = prepareAvatarMetadataInsert(avatarItem)
         artistsMetadata = preparedMetadata.artistsMetadata

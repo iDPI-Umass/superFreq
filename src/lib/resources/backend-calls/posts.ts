@@ -662,7 +662,7 @@ export const selectUserPostsAndComments = async function ( sessionUserId: string
     let postsAndComments = [] as object[]
     postsAndComments = postsAndComments.concat( posts, comments )
     postsAndComments.sort(( a: App.RowData, b: App.RowData ) => b.created_at - a.created_at )
-    console.log(postsAndComments)
+
     return {permission, postsAndComments}
 }
 
