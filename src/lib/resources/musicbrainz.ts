@@ -2,7 +2,7 @@ import { categoriesTable, mbidCategoryTable } from "$lib/resources/parseData"
 
 import { PUBLIC_LAST_FM_API_KEY } from '$env/static/public'
 
-const apiKey = PUBLIC_LAST_FM_API_KEY ?? process.env.LAST_FM_API_KEY
+const lastFmApiKey = PUBLIC_LAST_FM_API_KEY ?? process.env.LAST_FM_API_KEY
 
 export const mbSearch = async function ( query: string, searchCategory: string, limit: string ) {
     if ( !query ) {
@@ -65,7 +65,7 @@ function getMega(img) {
 export const getCoverArt = async function ( releaseGroup: App.Lookup ) {
     console.log(releaseGroup.mbid)
     const coverArtArchiveEndpoint = `https://coverartarchive.org/release-group/${releaseGroup.mbid}/front`
-    const lastFmEndpoint = `http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=${PUBLIC_LAST_FM_API_KEY}&artist=${releaseGroup.artistName}&album=${releaseGroup.releaseGroupName}&format=json`
+    const lastFmEndpoint = `http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=${lastFmApiKey}&artist=${releaseGroup.artistName}&album=${releaseGroup.releaseGroupName}&format=json`
 
     try {
         const coverArtArchiveRes = await fetch(coverArtArchiveEndpoint)
