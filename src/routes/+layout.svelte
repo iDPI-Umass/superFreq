@@ -22,17 +22,29 @@
 	let { session, sessionUserId, user, profile, supabase } = data
 	$: ({ session, sessionUserId, user, profile, supabase } = data)
 
+	let username: string
 	let displayName: string
 	let avatarUrl: string
-	let username: string
-	$: displayName, avatarUrl, username
+	let avatarArtist: string
+	let avatarReleaseGroup: string
+	let avatarItem = {}
+	$: username, displayName, avatarUrl, avatarArtist, avatarReleaseGroup, avatarItem
 
 
 	if (typeof window !== 'undefined') {   
 		username = profile?.username as string
 		displayName = profile?.display_name as string
 		avatarUrl = profile?.avatar_url as string
+		avatarArtist = profile?.avatar_artist_name as string
+		avatarReleaseGroup = profile?.avatar_release_group_name as string
+		avatarItem = {
+			'img_url': avatarUrl,
+			'artist_name': avatarArtist,
+			'release_group_name': avatarReleaseGroup
+		}
 	}
+
+	console.log(avatarItem)
 
 	onMount(() => {
 		const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
@@ -49,7 +61,7 @@
 	sessionUserId={sessionUserId}
 	username={username}
 	displayName={displayName}
-	avatarUrl={avatarUrl}
+	avatarItem={avatarItem}
 ></Header>
 
 <div class="double-border-full-vw"></div>

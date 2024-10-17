@@ -24,13 +24,17 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     if (!profileData.profileUserData) {
         throw redirect(303, '/')
     }
+    else if ( sessionUserId == profileData.profileUserData.id) {
+        const feedItems = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
+        return { sessionUserId, profileData, feedItems, profileUsername, posts: null }
+    }
+    else if ( sessionUserId != profileData.profileUserData.id ) {
+        const selectPosts = await selectUserPostsSample( sessionUserId, profileUsername, batchSize )
 
-    const feedItems = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
-    const selectPosts = await selectUserPostsSample( sessionUserId, profileUsername, batchSize )
+        const { posts } = selectPosts as App.NestedObject
 
-    const { posts } = selectPosts as App.NestedObject
-
-    return { sessionUserId, profileData, feedItems, profileUsername, posts }
+        return { sessionUserId, profileData, feedItems: null, profileUsername, posts }
+    }    
 }
 
 export const actions = { 

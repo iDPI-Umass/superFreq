@@ -31,6 +31,8 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
     const selectProfileData = await db.transaction().execute(async (trx) => {
         const profileUserData = await trx
         .selectFrom('profiles')
+        .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profiles.avatar_mbid')
+        .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
         .select([
             'id', 
             'username', 
@@ -38,7 +40,9 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
             'avatar_url', 
             'website', 
             'about', 
-            'top_albums_collection_id'
+            'top_albums_collection_id',
+            'release_groups.release_group_name as avatar_release_group_name',
+            'artists.artist_name as avatar_artist_name'
         ])
         .where('username', '=', profileUsername)
         .executeTakeFirst()

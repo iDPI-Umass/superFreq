@@ -92,19 +92,17 @@ export const getCoverArt = async function ( releaseGroup: App.Lookup ) {
     }
 }
 
-export const checkFetchedCoverArt = async function( contentItem ){
+export const checkFetchedCoverArt = async function( item ){
     try {
-        const coverArt = await fetch( contentItem["img_url"], { signal: AbortSignal.timeout(5000)} )
-        console.log(coverArt)
+        const coverArt = await fetch( item["img_url"], { signal: AbortSignal.timeout(5000)} )
         return coverArt
     }
     catch ( error ) {
         const releaseGroup = {
-            artistName: contentItem["artist_name"],
-            releaseGroupName: contentItem["release_group_name"]
+            artistName: item["artist_name"],
+            releaseGroupName: item["release_group_name"]
         }
         const coverArt = await getLastFmCoverArt(releaseGroup)
-        console.log(coverArt)
         if (coverArt) {
             return coverArt
         }

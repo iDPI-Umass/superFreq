@@ -5,13 +5,15 @@
 <script lang="ts">
     import {flip} from "svelte/animate";
     import {dragHandleZone, dndzone, dragHandle} from "svelte-dnd-action";
-    import Grip from 'lucide-svelte/icons/grip';
+    import Grip from 'lucide-svelte/icons/grip'
     import { imgPromiseStore } from '$lib/stores'
-    import { checkFetchedCoverArt } from "$lib/resources/musicbrainz";
+    import { checkFetchedCoverArt } from "$lib/resources/musicbrainz"
 
     import wave from "$lib/assets/images/logo/freq-wave.svg"
     import loadingImage from "$lib/assets/images/loading-image.png"
     import imgNotFound from "$lib/assets/images/image-not-found.png"
+
+    import CoverArtFallback from "$lib/components/CoverArtFallback.svelte"
 
     export let collectionContents: any
     export let deletedItems: any = []
@@ -203,24 +205,18 @@
         <div class={format[layout][0]}>
             {#each collectionContents as contentItem}
             <div class={format[layout][1]}>
-                    {#await checkFetchedCoverArt(contentItem)}
-                        <img src={wave} 
-                            alt="loading" />
-                    {:then result}
-                        <img src={result} 
-                            alt={contentItem['release_group_name']} />
-                    {:catch error}
-                        <img src={wave} 
-                            alt="not found" />
-                    {/await}
-                    <div class="metadata-blurb">
-                        <a href={`https://musicbrainz.org/release-group/${contentItem["release_group_mbid"]}`}>
-                            <h2>{contentItem["release_group_name"]}</h2>
-                        </a>
-                        <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
-                            <p>{contentItem["artist_name"]}</p>
-                        </a>
-                    </div>
+                <CoverArtFallback
+                    item={contentItem}
+                    altText={contentItem['release_group_name']}
+                ></CoverArtFallback>
+                <div class="metadata-blurb">
+                    <a href={`https://musicbrainz.org/release-group/${contentItem["release_group_mbid"]}`}>
+                        <h2>{contentItem["release_group_name"]}</h2>
+                    </a>
+                    <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
+                        <p>{contentItem["artist_name"]}</p>
+                    </a>
+                </div>
             </div>
             {/each}
             {#if undersizedCollection}
@@ -233,15 +229,18 @@
         <div class={format[layout][0]}>
             {#each collectionContents as contentItem}
             <div class={format[layout][1]}>
-                    <img src={contentItem["img_url"] ?? wave}  alt={contentItem["recording_name"]} />
-                    <div class="metadata-blurb">
-                        <a href={`https://musicbrainz.org/recording/${contentItem["recording_mbid"]}`}>
-                            <h2>{contentItem["recording_name"]}</h2>
-                        </a>
-                        <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
-                            <p>{contentItem["artist_name"]}</p>
-                        </a>
-                    </div>
+                <CoverArtFallback
+                    item={contentItem}
+                    altText={contentItem["recording_name"]}
+                ></CoverArtFallback>
+                <div class="metadata-blurb">
+                    <a href={`https://musicbrainz.org/recording/${contentItem["recording_mbid"]}`}>
+                        <h2>{contentItem["recording_name"]}</h2>
+                    </a>
+                    <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
+                        <p>{contentItem["artist_name"]}</p>
+                    </a>
+                </div>
             </div>
             {/each}
             {#if undersizedCollection}
