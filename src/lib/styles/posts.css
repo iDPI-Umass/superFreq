@@ -226,7 +226,7 @@ form.reply {
 	border-radius: var(--freq-border-radius-circle);
 }
 
-.avatar {
+.avatar, .avatar > img{
 	max-width: var(--freq-image-thumbnail-2x-small);
 	border-radius: var(--freq-border-radius-circle);
 }
@@ -236,7 +236,7 @@ form.reply {
 	border-radius: var(--freq-border-radius-circle);
 }
 
-.feed-avatar {
+.feed-avatar, .feed-avatar > img {
     max-width: var(--freq-image-thumbnail-4x-small);
     border-radius: var(--freq-border-radius-circle);
 }

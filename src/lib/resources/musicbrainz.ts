@@ -1,8 +1,8 @@
-/*
-Search MusicBrainz db
-*/
-
 import { categoriesTable, mbidCategoryTable } from "$lib/resources/parseData"
+
+import { PUBLIC_LAST_FM_API_KEY } from '$env/static/public'
+
+const lastFmApiKey = PUBLIC_LAST_FM_API_KEY
 
 export const mbSearch = async function ( query: string, searchCategory: string, limit: string ) {
     if ( !query ) {
@@ -56,13 +56,60 @@ export const getLabel = async function( item: App.RowData ) {
     }
 }
 
-// API call to Cover Art Archive using releaseMbid returned by getLabel()
-export const getCoverArt = async function ( release_group_mbid: string ) {
-    const endpoint = `https://coverartarchive.org/release-group/${release_group_mbid}/front`;
+// get cover art from Cover Art Archive or Last.fm
 
-    const res = await fetch(endpoint)
-    const coverArtUrl = res["url"]
-    return  coverArtUrl
+function getMegaImage(img: App.Lookup) {
+    return img.size == "mega"
+}
+
+export const getLastFmCoverArt = async function ( releaseGroup: App.Lookup ) {
+    const lastFmEndpoint = `http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=${lastFmApiKey}&artist=${releaseGroup.artistName}&album=${releaseGroup.releaseGroupName}&format=json`
+    const lastFmRes = await fetch(lastFmEndpoint)
+    const lastFmData = await lastFmRes.json()
+    const imgArray = lastFmData["album"]["image"]
+    const megaImg = imgArray.find(getMegaImage)
+    const coverArtUrl = megaImg["#text"]
+    return coverArtUrl
+}
+
+export const getCoverArt = async function ( releaseGroup: App.Lookup ) {
+    const coverArtArchiveEndpoint = `https://coverartarchive.org/release-group/${releaseGroup.mbid}/front`
+
+    try {
+        const coverArtArchiveRes = await fetch(coverArtArchiveEndpoint, { signal: AbortSignal.timeout(5000) })
+        const coverArtUrl = coverArtArchiveRes["url"]
+        return  { coverArtUrl, success: true }
+    }
+    catch ( error ) {
+        const coverArtUrl = await getLastFmCoverArt( releaseGroup )
+        if ( coverArtUrl ) {
+            return { coverArtUrl, success: true }
+        }
+        else {
+            return { coverArtUrl: null, success: false }
+        }
+    }
+}
+
+export const checkFetchedCoverArt = async function( item: App.Lookup ){
+    try {
+        const imgUrl =  item["img_url"] as string
+        const coverArt = await fetch( imgUrl, { signal: AbortSignal.timeout(5000)} )
+        return coverArt
+    }
+    catch ( error ) {
+        const releaseGroup = {
+            artistName: item["artist_name"],
+            releaseGroupName: item["release_group_name"]
+        }
+        const coverArt = await getLastFmCoverArt(releaseGroup)
+        if (coverArt) {
+            return coverArt
+        }
+        else {
+            throw new Error('request failed')
+        }
+    }
 }
 
 // Get MBID category
@@ -167,12 +214,14 @@ export const addCollectionItem = async function (
     else if ( searchCategory == "release_groups" ) {
         const releaseGroup = {
             mbid: item["id"],
-            releaseDate: item["first-release-date"] 
+            releaseDate: item["first-release-date"],
+            artistName: item["artist-credit"][0]["artist"]["name"],
+            releaseGroupName: item["title"]
         }
         const label = await getLabel(releaseGroup);
         labelName = label?.labelName ?? null
         labelMbid = label?.labelMbid ?? null
-        const coverArt = await getCoverArt( releaseGroup.mbid );
+        const coverArt = await getCoverArt( releaseGroup );
         addedItems = [...addedItems, {
             "original_id": originalId ?? null,
             "item_position": addedItems.length,
@@ -196,10 +245,14 @@ export const addCollectionItem = async function (
         if ( item["relations"] && item["relations"][0]["artist"]["type"] == "remixer" ) {
             remixerMbid = item["relations"][0]["artist"]["id"];
         }
-        const releaseGroup = item["releases"][0]["release-group"]["id"];
+        const releaseGroup = {
+            mbid: item["releases"][0]["release-group"]["id"],
+            artistName: item["artist-credit"][0]["artist"]["name"],
+            releaseGroupName: item["releases"][0]["release-group"]["title"]
+        }
         const releaseDate = item["first-release-date"]
         const labelObject = {
-            'mbid': releaseGroup,
+            'mbid': releaseGroup.mbid,
             'releaseDate': releaseDate
         }
         const label = await getLabel(labelObject);
@@ -302,7 +355,9 @@ export const addCollectionItemNoImg = async function (
     else if ( searchCategory == "release_groups" ) {
         const releaseGroup = {
             mbid: item["id"],
-            releaseDate: item["first-release-date"] 
+            releaseDate: item["first-release-date"],
+            artistName: item["artist-credit"][0]["artist"]["name"],
+            releaseGroupName: item["title"]
         }
         const label = await getLabel(releaseGroup);
         labelName = label?.labelName ?? null
@@ -330,10 +385,14 @@ export const addCollectionItemNoImg = async function (
         if ( item["relations"] && item["relations"][0]["artist"]["type"] == "remixer" ) {
             remixerMbid = item["relations"][0]["artist"]["id"];
         }
-        const releaseGroup = item["releases"][0]["release-group"]["id"];
+        const releaseGroup = {
+            mbid: item["releases"][0]["release-group"]["id"],
+            artistName: item["artist-credit"][0]["artist"]["name"],
+            releaseGroupName: item["releases"][0]["release-group"]["title"]
+        }
         const releaseDate = item["first-release-date"]
         const labelObject = {
-            'mbid': releaseGroup,
+            'mbid': releaseGroup.mbid,
             'releaseDate': releaseDate
         }
         const label = await getLabel(labelObject);
@@ -390,12 +449,14 @@ export const addSingleItem = async function  (
     else if ( searchCategory == "release_groups" ) {
         const releaseGroup = {
             mbid: item["id"],
-            releaseDate: item["first-release-date"] 
+            releaseDate: item["first-release-date"],
+            artistName: item["artist-credit"][0]["artist"]["name"],
+            releaseGroupName: item["title"]
         }
         const label = await getLabel(releaseGroup);
         labelName = label?.labelName ?? null
         labelMbid = label?.labelMbid ?? null
-        const coverArt = await getCoverArt( releaseGroup.mbid );
+        const coverArt = await getCoverArt( releaseGroup );
         addedItems = {
             "artist_mbid": item["artist-credit"][0]["artist"]["id"],
             "artist_name": item["artist-credit"][0]["artist"]["name"],
@@ -416,10 +477,14 @@ export const addSingleItem = async function  (
         if ( item["releations"] && item["relations"][0]["artist"]["type"] == "remixer" ) {
             remixerMbid = item["relations"][0]["artist"]["id"];
         }
-        const releaseGroup = item["releases"][0]["release-group"]["id"];
+        const releaseGroup = {
+            mbid: item["releases"][0]["release-group"]["id"],
+            artistName: item["artist-credit"][0]["artist"]["name"],
+            releaseGroupName: item["releases"][0]["release-group"]["title"]
+        }
         const releaseDate = item["first-release-date"]
         const labelObject = {
-            'mbid': releaseGroup,
+            'mbid': releaseGroup.mbid,
             'releaseDate': releaseDate
         }
         const label = await getLabel(labelObject);

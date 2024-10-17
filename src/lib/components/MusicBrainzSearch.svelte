@@ -2,7 +2,7 @@
 
 <script lang="ts">
 	import ListModal from 'src/lib/components/modals/ListModal.svelte'
-	import { mbSearch, addCollectionItem, addCollectionItemNoImg, addSingleItem, mbidCateogory } from '$lib/resources/musicbrainz'
+	import { mbSearch, addCollectionItem, addCollectionItemNoImg, getCoverArt, addSingleItem, mbidCateogory } from '$lib/resources/musicbrainz'
 	import { imgPromiseStore } from '$lib/stores'
 	import imgNotFound from "$lib/assets/images/image-not-found.png"
 
@@ -58,33 +58,20 @@
 			newItemAdded = collectionItems.newItemAdded
 			showModal = false
 
-			// let coverImg: string | null = null
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
-				const release_group_mbid = item["id"] ?? item["releases"][0]["release-group"]["id"]
-				const { success, coverArtUrl } = await getCoverArt(release_group_mbid)
-				const thisItemIndex = addedItems.findIndex((item) => item['release_group_mbid'] == release_group_mbid)
+				const releaseGroup = {
+					mbid: item["id"] ?? item["releases"][0]["release-group"]["id"],
+					artistName: item["artist-credit"][0]["artist"]["name"] ?? item["artist-credit"][0]["artist"]["name"],
+					releaseGroupName: item["title"] ?? item["releases"][0]["release-group"]["title"]
+				}
+				const { success, coverArtUrl } = await getCoverArt(releaseGroup)
+				const thisItemIndex = addedItems.findIndex((item) => item['release_group_mbid'] == releaseGroup.mbid)
 				addedItems[thisItemIndex]["img_url"] = success ? coverArtUrl : null
 				imgPromise = new Promise ((resolve) => resolve(coverArtUrl)) 
 			}
 			return { addedItems, deletedItems, query, searchComplete, newItemAdded, showModal, imgPromise }
 		}
 	}
-
-    // API call to Cover Art Archive using releaseMbid returned by getLabel()
-    async function getCoverArt ( release_group_mbid: string ) {
-		try {
-			const endpoint = `https://coverartarchive.org/release-group/${release_group_mbid}/front`;
-
-			const res = await fetch(endpoint);
-			const coverArtUrl = res["url"]
-			return  { coverArtUrl, success: true }
-		}
-		catch ( error ) {
-			return { coverArtUrl: null, success: false }
-		}
-
-
-    }
 </script>
 
 <div class="search-bar">

@@ -1,10 +1,9 @@
 <script lang="ts">
     import { enhance } from '$app/forms'
-    import type { ActionData } from '../../../routes/$types'
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
     import Tooltip from '$lib/components/Tooltip.svelte'
-    import { username } from '$lib/resources/localStorage.ts'
+
 
     import { Tabs } from "bits-ui";
 

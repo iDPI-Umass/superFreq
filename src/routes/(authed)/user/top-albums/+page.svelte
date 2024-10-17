@@ -1,15 +1,6 @@
-<!--
-	Search MusicBrainz database, populate an object with collection items, and insert rows into tables collections_info, collections_contents, and collections_social to create new collection in database.
-
-	All of this is done on the client side.
--->
-
 <script lang="ts">
-    import { goto } from '$app/navigation'
-    import { username } from '$lib/resources/localStorage.ts'
     import PanelHeader from '$lib/components/PanelHeader.svelte'
-    import GridList from '$lib/components/GridList.svelte'
-    import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
+	import CollectionEditor from '$lib/components/CollectionEditor.svelte'
 
 	export let data
 	let { collectionContents, deletedCollectionContents } =  data
@@ -27,17 +18,7 @@
 	let deletedItems = deletedCollectionContents ? deletedCollectionContents : [] as App.RowData[]
 	$: deletedItems
 
-	console.log(deletedItems)
 	let itemAdded = false
-
-	const buttonTextLookup: {[index: string]: string} = {
-		"": "...",
-		"artists": "artists",
-		"release_groups": "albums",
-		"recordings": "tracks"
-	}
-
-	let placeholderText = "Search for items to add to your collection"
 </script>
 
 <svelte:head>
@@ -79,29 +60,13 @@
             </div>
         </button>
     </form>
-    <div class="search-bar">
-		<MusicBrainzSearch 
-            searchCategory={collectionType}
-			bind:addedItems={collectionItems}
-			bind:newItemAdded={itemAdded}
-			searchButtonText={`add ${buttonTextLookup[collectionType]}`}
-			searchPlaceholder={placeholderText}
-            mode="collection"
-            limit="8"
-			bind:imgPromise={imgPromise}
-		></MusicBrainzSearch>
-    </div>
-    {#key collectionItems.length}
-        <GridList 
-            bind:collectionContents={collectionItems}
-			bind:deletedItems={deletedItems}
-            collectionReturned={itemAdded}
-            collectionType={collectionType}
-            layout="list"
-            mode="edit"
-			bind:imgPromise={imgPromise}
-        ></GridList>
-    {/key}
+	<CollectionEditor
+		bind:collectionItems={collectionItems}
+		bind:deletedItems={deletedItems}
+		collectionType={collectionType}
+		itemAdded={itemAdded}
+		bind:imgPromise={imgPromise}
+	></CollectionEditor>
 </div>
 
 <style>
