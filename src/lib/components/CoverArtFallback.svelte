@@ -12,8 +12,9 @@
     export let artistName: string | null = null
     export let releaseGroupName: string | null = null
     export let altText: string
+    export let imgClass: string | null = null
 
-    const coverArtItem = item ? item : {
+    const coverArtItem = ( item != null ) ? item : {
         'img_url': imgUrl,
         'artist_name': artistName,
         'release_group_name': releaseGroupName
@@ -21,9 +22,9 @@
 </script>
 
 {#await checkFetchedCoverArt(coverArtItem)}
-    <img src={wave} alt="loading" />
+    <img src={wave} alt="loading" class={imgClass} />
 {:then result}
-    <img src={result} alt={altText} />
+    <img src={result} alt={altText} class={imgClass}  />
 {:catch}
-    <img src={wave} alt="not found" />
+    <img src={wave} alt="not found" class={imgClass}  />
 {/await}

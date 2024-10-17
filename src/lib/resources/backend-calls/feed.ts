@@ -58,6 +58,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             const selectSessionUserPosts = await trx
             .selectFrom('posts as post')
             .innerJoin('profiles as profile', 'profile.id', 'post.user_id')
+            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profile.avatar_mbid')
+            .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
             .leftJoin(
                 'post_reactions as reactions',
                 (join) => join
@@ -82,6 +84,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'profile.username as username',
                 'profile.display_name as display_name',
                 'profile.avatar_url as avatar_url',
+                'release_groups.release_group_name as avatar_release_group_name',
+                'artists.artist_name as avatar_artist_name',
                 (eb) => eb.fn.count('reactions.id').as('reaction_count')
             ])
             .where('post.user_id', '=', sessionUserId)
@@ -94,7 +98,9 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'post.id', 
                 'profile.display_name',
                 'profile.username',
-                'profile.avatar_url'
+                'profile.avatar_url',
+                'artists.artist_name',
+                'release_groups.release_group_name'
             ])
             .orderBy('feed_item_timestamp', 'desc')
             .execute()
@@ -120,6 +126,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             const selectSessionUserComments = await trx
             .selectFrom('posts as comments')
             .innerJoin('profiles as profile', 'profile.id', 'comments.user_id')
+            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profile.avatar_mbid')
+            .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
             .innerJoin('posts as original_post', 'original_post.id', 'comments.parent_post_id')
             .innerJoin('profiles as original_poster', 'original_poster.id', 'original_post.user_id')
             .select([
@@ -140,6 +148,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'profile.username as username',
                 'profile.display_name as display_name',
                 'profile.avatar_url as avatar_url',
+                'release_groups.release_group_name as avatar_release_group_name',
+                'artists.artist_name as avatar_artist_name',
                 'original_poster.username as original_poster_username',
                 'original_poster.display_name as original_poster_display_name','original_post.created_at as original_post_created_at'
             ])
@@ -171,6 +181,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             const selectCommentsSessionUserPost = await trx
             .selectFrom('posts as comments')
             .innerJoin('profiles as commenter', 'commenter.id', 'comments.user_id')
+            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'commenter.avatar_mbid')
+            .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
             .innerJoin('posts as user_posts', 'user_posts.id', 'comments.parent_post_id')
             .innerJoin('profiles as user', 'user.id', 'user_posts.user_id')
             .select([
@@ -178,6 +190,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'commenter.display_name as session_user_post_commenter_display_name', 
                 'commenter.username as username',
                 'commenter.avatar_url as session_user_post_commenter_avatar_url',
+                'release_groups.release_group_name as avatar_release_group_name',
+                'artists.artist_name as avatar_artist_name',
                 'comments.created_at as feed_item_timestamp',
                 'user_posts.id as post_id',
                 'user_posts.created_at as original_post_created_at',
@@ -206,6 +220,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             const selectReactionsSessionUserPost = await trx
             .selectFrom('post_reactions')
             .innerJoin('profiles as react_user', 'react_user.id', 'post_reactions.user_id')
+            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'react_user.avatar_mbid')
+            .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
             .innerJoin('posts as user_posts', 'user_posts.id', 'post_reactions.post_id')
             .innerJoin('profiles as user', 'user.id', 'user_posts.user_id')
             .select([
@@ -213,6 +229,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'react_user.display_name as session_user_post_react_user_display_name', 
                 'react_user.username as session_user_post_react_user_username',
                 'react_user.avatar_url as session_user_post_react_user_avatar_url',
+                'release_groups.release_group_name as avatar_release_group_name',
+                'artists.artist_name as avatar_artist_name',
                 'post_reactions.updated_at as feed_item_timestamp',
                 'user_posts.id as post_id',
                 'user_posts.created_at as post_created_at',
@@ -271,6 +289,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             const selectFollowingPosts = await trx
             .selectFrom('posts as post')
             .innerJoin('profiles as profile', 'post.user_id', 'profile.id')
+            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profile.avatar_mbid')
+            .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
             .leftJoin(
                 'post_reactions as reaction',
                 (join) => join
@@ -288,6 +308,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'profile.display_name as display_name', 
                 'profile.username as username', 
                 'profile.avatar_url as avatar_url', 
+                'release_groups.release_group_name as avatar_release_group_name',
+                'artists.artist_name as avatar_artist_name',
                 'post.text as text', 
                 'post.item_type as item_type', 
                 'post.artist_name as artist_name', 
@@ -312,7 +334,9 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'profile.display_name',
                 'profile.username',
                 'profile.avatar_url',
-                'reaction.active'
+                'reaction.active',
+                'artists.artist_name',
+                'release_groups.release_group_name'
             ])
             .limit(batchSize)
             .offset(offset)
@@ -346,6 +370,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             const selectFollowingComments = await trx
             .selectFrom('posts as comments')
             .innerJoin('profiles as commenter', 'commenter.id', 'comments.user_id')
+            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'commenter.avatar_mbid')
+            .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
             .innerJoin('posts as original_post', 'comments.parent_post_id', 'original_post.id')
             .innerJoin('profiles as original_poster', 'original_post.user_id', 'original_poster.id')
             .select([
@@ -354,6 +380,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'commenter.username as username',
                 'commenter.display_name as display_name', 
                 'commenter.avatar_url as avatar_url', 
+                'release_groups.release_group_name as avatar_release_group_name',
+                'artists.artist_name as avatar_artist_name',
                 'comments.text as comment_text', 'comments.parent_post_id', 
                 'original_post.user_id as original_poster_user_id', 
                 'original_poster.display_name as original_poster_display_name', 
@@ -410,6 +438,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             .selectFrom('post_reactions as reaction')
             .innerJoin('posts as original_post', 'original_post.id', 'reaction.post_id')
             .innerJoin('profiles as react_user', 'react_user.id', 'reaction.user_id')
+            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'react_user.avatar_mbid')
+            .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
             .innerJoin('profiles as original_poster', 'original_post.user_id', 'original_poster.id')
             .select([
                 'reaction.id as reaction_id', 
@@ -419,6 +449,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'reaction.updated_at as feed_item_timestamp', 
                 'react_user.display_name as display_name', 
                 'react_user.avatar_url as avatar_url', 
+                'release_groups.release_group_name as avatar_release_group_name',
+                'artists.artist_name as avatar_artist_name',
                 'original_post.user_id as original_post_id', 
                 'original_post.created_at as original_post_created_at', 
                 'original_poster.display_name as original_poster_display_name', 
@@ -481,6 +513,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             .selectFrom('collections_social')
             .innerJoin('collections_info as info', 'info.collection_id', 'collections_social.collection_id')
             .innerJoin('profiles as profile', 'collections_social.user_id', 'profile.id')
+            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profile.avatar_mbid')
+            .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
             .select([
                 'collections_social.id as session_user_owned_collection_follow_id', 
                 'collections_social.collection_id as collection_id', 
@@ -488,6 +522,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'collections_social.updated_at as feed_item_timestamp', 
                 'profile.display_name as display_name', 
                 'profile.avatar_url as avatar_url', 
+                'release_groups.release_group_name as avatar_release_group_name',
+                'artists.artist_name as avatar_artist_name',
                 'info.title as title'
             ])
             .where(({eb, and}) => and ([
@@ -509,6 +545,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             .selectFrom('collections_social')
             .innerJoin('collections_info as info', 'info.collection_id', 'collections_social.collection_id')
             .innerJoin('profiles as profile', 'collections_social.user_id', 'profile.id')
+            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profile.avatar_mbid')
+            .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
             .select([
                 'collections_social.id as followed_user_collection_follow_id', 
                 'collections_social.collection_id as collection_id', 
@@ -516,6 +554,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'collections_social.updated_at as feed_item_timestamp', 
                 'profile.display_name as display_name', 
                 'profile.avatar_url as avatar_url', 
+                'release_groups.release_group_name as avatar_release_group_name',
+                'artists.artist_name as avatar_artist_name',
                 'info.title as title'
             ])
             .where(({eb, and}) => and ([
@@ -557,6 +597,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             .selectFrom('collections_updates')
             .innerJoin('collections_info as info', 'info.collection_id', 'collections_updates.collection_id')
             .innerJoin('profiles as profile', 'profile.id', 'collections_updates.updated_by')
+            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profile.avatar_mbid')
+            .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
             .select([
                 'collections_updates.id as collection_edit_id', 
                 'collections_updates.collection_id as collection_id', 
@@ -564,7 +606,9 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'collections_updates.updated_by as updated_by',
                 'info.title as title',  
                 'profile.display_name as display_name', 
-                'profile.avatar_url as avatar_url'
+                'profile.avatar_url as avatar_url',
+                'release_groups.release_group_name as avatar_release_group_name',
+                'artists.artist_name as avatar_artist_name'
             ])
             .where('info.status', '!=', 'deleted')
             .where('collections_updates.updated_by', 'in', followingUserIds)
@@ -596,12 +640,16 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
         const selectNewFollows = await trx
         .selectFrom('social_graph')
         .innerJoin('profiles as follower', 'follower.id', 'social_graph.user_id')
+        .leftJoin('release_groups', 'release_groups.release_group_mbid', 'follower.avatar_mbid')
+        .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
         .select([
             'social_graph.id as new_follow_id',
             'social_graph.updated_at as feed_item_timestamp',
             'follower.username as username',
             'follower.display_name as display_name',
-            'follower.avatar_url as avatar_url'
+            'follower.avatar_url as avatar_url',
+            'release_groups.release_group_name as avatar_release_group_name',
+            'artists.artist_name as avatar_artist_name'
         ])
         .where('target_user_id', '=', sessionUserId)
         .where('follows_now', '=', true)

@@ -73,7 +73,6 @@ export const getLastFmCoverArt = async function ( releaseGroup: App.Lookup ) {
 }
 
 export const getCoverArt = async function ( releaseGroup: App.Lookup ) {
-    console.log(releaseGroup.mbid)
     const coverArtArchiveEndpoint = `https://coverartarchive.org/release-group/${releaseGroup.mbid}/front`
 
     try {
@@ -92,9 +91,10 @@ export const getCoverArt = async function ( releaseGroup: App.Lookup ) {
     }
 }
 
-export const checkFetchedCoverArt = async function( item ){
+export const checkFetchedCoverArt = async function( item: App.Lookup ){
     try {
-        const coverArt = await fetch( item["img_url"], { signal: AbortSignal.timeout(5000)} )
+        const imgUrl =  item["img_url"] as string
+        const coverArt = await fetch( imgUrl, { signal: AbortSignal.timeout(5000)} )
         return coverArt
     }
     catch ( error ) {
@@ -447,7 +447,6 @@ export const addSingleItem = async function  (
         }
     }
     else if ( searchCategory == "release_groups" ) {
-        console.log(item)
         const releaseGroup = {
             mbid: item["id"],
             releaseDate: item["first-release-date"],

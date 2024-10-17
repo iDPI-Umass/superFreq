@@ -8,6 +8,7 @@
     import Link from 'lucide-svelte/icons/link-2'
 	import ListenEmbed from './ListenEmbed.svelte'
     import NowPlayingTag from './NowPlayingTag.svelte'
+    import CoverArtFallback from '../CoverArtFallback.svelte'
 
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
@@ -38,13 +39,20 @@
 
     const reactionCount = ( mode == "feed" ) ? 0 : post.reaction_count
     
+    console.log(post)
 </script>
 
 <div class="box">
     <div class="double-border">
         <div class="post-row">
             <div class="row-group-user-data">
-                <img class="avatar" src={post.avatar_url ?? wave} alt={`${post.display_name}'s avatar`}/>
+                <CoverArtFallback
+                    imgUrl={post.avatar_url}
+                    artistName={post.avatar_artist_name}
+                    releaseGroupName={post.avatar_release_group_name}
+                    altText={`${post.display_name}'s avatar`}
+                    imgClass="avatar"
+                ></CoverArtFallback>
                 <div class="row-group-column">
                     <a href="/user/{post.username}">
                         <span class="display-name">

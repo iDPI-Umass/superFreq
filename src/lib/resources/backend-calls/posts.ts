@@ -338,6 +338,8 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
             const post = await trx
             .selectFrom('posts')
             .innerJoin('profiles as profile', 'profile.id', 'posts.user_id')
+            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profile.avatar_mbid')
+            .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
             .leftJoin('post_reactions as reaction',
                 (join) => join
                 .onRef('reaction.post_id', '=', 'posts.id')
@@ -371,6 +373,8 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                 'profile.username as username', 
                 'profile.display_name as display_name', 
                 'profile.avatar_url as avatar_url', 
+                'release_groups.release_group_name as avatar_release_group_name',
+                'artists.artist_name as avatar_artist_name',
                 'reaction.active as reaction_active',
                 (eb) => eb.fn.count('all_reactions.id').as('reaction_count')
             ])
@@ -389,7 +393,9 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                 'profile.username',
                 'profile.display_name',
                 'profile.avatar_url',
-                'reaction.active'
+                'reaction.active',
+                'artists.artist_name',
+                'release_groups.release_group_name'
             ])
             .executeTakeFirst()
 
@@ -398,6 +404,8 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
             const replies = await trx
             .selectFrom('posts as comments')
             .innerJoin('profiles as commenter', 'commenter.id', 'comments.user_id')
+            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'commenter.avatar_mbid')
+            .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
             .innerJoin('posts as original_post', 'comments.parent_post_id', 'original_post.id')
             .innerJoin('profiles as original_poster', 'original_post.user_id', 'original_poster.id')
             // .innerJoin(
@@ -419,6 +427,8 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                 'commenter.username as username', 
                 'commenter.display_name as display_name', 
                 'commenter.avatar_url as avatar_url', 
+                'release_groups.release_group_name as avatar_release_group_name',
+                'artists.artist_name as avatar_artist_name',
                 'original_post.created_at as original_post_date', 
                 'original_post.user_id as original_poster_user_id', 
                 'original_poster.username as original_poster_username', 
