@@ -1,5 +1,4 @@
 <script lang="ts">
-    import PostMenuSessionUser from 'src/lib/components/menus/PostMenuSessionUser.svelte'
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte'
     import EditPostBody from '$lib/components/Posts/EditPostBody.svelte'
     import LikeReact from '$lib/components/Posts/LikeReact.svelte'
@@ -7,11 +6,11 @@
 
     import Reply from 'lucide-svelte/icons/reply'
     import Link from 'lucide-svelte/icons/link-2'
-    import Music from 'lucide-svelte/icons/music'
 	import ListenEmbed from './ListenEmbed.svelte'
+    import NowPlayingTag from './NowPlayingTag.svelte'
+    import CoverArtFallback from '../CoverArtFallback.svelte'
 
     import wave from "$lib/assets/images/logo/freq-wave.svg"
-	import { parseISO } from 'date-fns';
 
     export let sessionUserId: string | null = null
     export let post: any
@@ -39,13 +38,21 @@
     }
 
     const reactionCount = ( mode == "feed" ) ? 0 : post.reaction_count
+    
+    console.log(post)
 </script>
 
 <div class="box">
     <div class="double-border">
         <div class="post-row">
             <div class="row-group-user-data">
-                <img class="avatar" src={post.avatar_url ?? wave} alt={`${post.display_name}'s avatar`}/>
+                <CoverArtFallback
+                    imgUrl={post.avatar_url}
+                    artistName={post.avatar_artist_name}
+                    releaseGroupName={post.avatar_release_group_name}
+                    altText={`${post.display_name}'s avatar`}
+                    imgClass="avatar"
+                ></CoverArtFallback>
                 <div class="row-group-column">
                     <a href="/user/{post.username}">
                         <span class="display-name">
@@ -69,13 +76,14 @@
             </div>
         </div>
         <div class="post-body">
-            <span class="now-playing-text">
-                <Music size="16" color="var(--freq-color-text-medium-dark)"></Music>
-                {post.artist_name} • {post.recording_name ?? post.release_group_name ?? post.episode_title}
-                <Music size="16" color="var(--freq-color-text-medium-dark)"></Music>
-            </span>
+            <NowPlayingTag
+                artistName={post.artist_name}
+                itemTitle={post.recording_name ?? post.release_group_name ?? post.episode_title}
+                itemType={post.item_type}
+            >
+            </NowPlayingTag>
             {#if !editState}
-                <p class="post-text">
+                <p>
                     {post.text}
                 </p>
             {:else}

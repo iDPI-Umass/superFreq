@@ -31,6 +31,8 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
     const selectProfileData = await db.transaction().execute(async (trx) => {
         const profileUserData = await trx
         .selectFrom('profiles')
+        .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profiles.avatar_mbid')
+        .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
         .select([
             'id', 
             'username', 
@@ -38,7 +40,9 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
             'avatar_url', 
             'website', 
             'about', 
-            'top_albums_collection_id'
+            'top_albums_collection_id',
+            'release_groups.release_group_name as avatar_release_group_name',
+            'artists.artist_name as avatar_artist_name'
         ])
         .where('username', '=', profileUsername)
         .executeTakeFirst()
@@ -165,12 +169,13 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
                 'collections_contents.collection_id as collection_id', 
                 'collections_contents.artist_mbid as artist_mbid', 
                 'collections_contents.release_group_mbid as release_group_mbid', 
-                'item_position', 
+                'collections_contents.item_position as item_position', 
                 'artists.artist_name as artist_name', 
                 'release_groups.release_group_name as release_group_name', 
                 'release_groups.img_url as img_url'
             ])
             .where('collection_id', '=', profileUserData?.top_albums_collection_id as string)
+            .where('collections_contents.item_position', 'is not', null)
             .execute()
 
         
@@ -217,8 +222,6 @@ export const newSessionProfile = async function ( sessionUserId: string, profile
     const hasAvatar = profileData.avatar_url ? true : false
     let artistsMetadata = []
     let releaseGroupsMetadata = []
-
-    console.log(hasAvatar)
 
     if ( hasAvatar ) {
         const preparedMetadata = prepareAvatarMetadataInsert(avatarItem)

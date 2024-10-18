@@ -428,11 +428,7 @@ export const selectEditableCollectionContents = async function ( collectionId: s
         ]))
         .executeTakeFirst()
 
-        console.log(selectCollectionInfo)
-
         const collectionType = selectCollectionInfo?.type as string
-
-        console.log(collectionType)
 
         let selectCollectionContents
         if ( collectionType == 'artists' ) {
@@ -501,7 +497,7 @@ export const selectEditableCollectionContents = async function ( collectionId: s
         // create an array of deleted items and remove all items where 'item_position is null' from collectionContents
         let deletedCollectionContents = [] as App.RowData[]
         let filteredContents = collectionContents
-        console.log(collectionContents)
+
         for ( const item of collectionContents ) {
             if (item.item_position == null) {
                 deletedCollectionContents = [...deletedCollectionContents, item]
@@ -549,6 +545,7 @@ export const selectEditableTopAlbumsCollection = async function ( sessionUserId:
                 'info.collection_id as collection_id',
                 'contents.id as original_id',
                 'contents.item_position',
+                'contents.inserted_at',
                 'contents.release_group_mbid',
                 'contents.artist_mbid',
                 'release_groups.release_group_name',
@@ -556,17 +553,37 @@ export const selectEditableTopAlbumsCollection = async function ( sessionUserId:
                 'artists.artist_name'
             ])
             .where('info.collection_id', '=', collectionId)
-            .executeTakeFirstOrThrow()
+            .execute()
 
-            const collection = selectCollection
-            return collection
+            let collectionContents = selectCollection as App.RowData[]
+
+            // create an array of deleted items and remove all items where 'item_position is null' from collectionContents
+            let deletedCollectionContents = [] as App.RowData[]
+            let filteredContents = collectionContents
+            for ( const item of collectionContents ) {
+                if (item.item_position == null) {
+                    deletedCollectionContents = [...deletedCollectionContents, item]
+                    filteredContents = filteredContents.filter((element) => element != item)
+                }
+            }
+
+            collectionContents = filteredContents
+
+            // create ID for each item for svelte-dnd component in colleciton editor
+            let counter = 0
+            for ( const item of collectionContents) {
+                item['id'] = counter
+                counter += 1
+            }
+
+            return { collectionContents, deletedCollectionContents }
         }
         catch( error ) {
-            return { collection: null }
+            return { collectionContents: null, deletedCollectionContents: null }
         }
     })
-    const collection = await selectCollection
-    return collection
+    const { collectionContents, deletedCollectionContents } = await selectCollection
+    return { collectionContents, deletedCollectionContents } 
 }
 
 /*

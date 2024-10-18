@@ -6,6 +6,8 @@
   import wave from "$lib/assets/images/logo/freq-wave.svg"
   import { profileStoresObject } from "src/lib/stores"
 
+  import CoverArtFallback from "$lib/components/CoverArtFallback.svelte";
+
   let profileObject: App.ProfileObject
   $: profileObject
 
@@ -15,12 +17,7 @@
   export let username: string = profileObject?.username as string
   export let displayName: string = profileObject?.display_name as string
   export let avatarUrl: string = profileObject?.avatar_url as string
-
-  let accountMenuItems = [
-    { url: `/${username}`, text: 'profile' },
-    { url: '/account', text: 'account settings' },
-    { url: `/api/auth/signout`, text: 'sign out'}
-	]
+  export let avatarItem: any = null
 
 </script>
 
@@ -76,7 +73,10 @@
       </a>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
-          <img src={avatarUrl ?? wave} alt="{displayName}'s avatar" />
+          <CoverArtFallback
+            item={avatarItem}
+            altText={avatarItem['release_group_name']}
+          ></CoverArtFallback>
           {displayName ?? 'display name'} 
           <ChevronDown></ChevronDown>
         </DropdownMenu.Trigger>

@@ -26,8 +26,6 @@ export const actions = {
         const avatarMbid = formData.get('avatarMbid')
         const email = formData.get('email') as string
 
-        console.log(avatarUrl, avatarMbid)
-
         const profileData = {
             'username': username,
             'display_name': displayName ?? username,

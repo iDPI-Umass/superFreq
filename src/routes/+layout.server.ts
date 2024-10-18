@@ -9,8 +9,17 @@ export const load: LayoutServerLoad = async ({ locals: { safeGetSession }, cooki
     const sessionUserId = user?.id as string
     const select = await db
       .selectFrom('profiles')
-      .select(['username', 'display_name', 'website', 'avatar_url'])
-      .where('id', '=', user?.id as string)
+      .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profiles.avatar_mbid')
+      .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
+      .select([
+        'username', 
+        'display_name', 
+        'website', 
+        'avatar_url',
+        'release_groups.release_group_name as avatar_release_group_name',
+        'artists.artist_name as avatar_artist_name'
+      ])
+      .where('profiles.id', '=', user?.id as string)
       .executeTakeFirst()
 
     const profile = await select as App.ProfileObject
@@ -21,6 +30,8 @@ export const load: LayoutServerLoad = async ({ locals: { safeGetSession }, cooki
     'username': null,
     'display_name': null,
     'avatar_url': wave,
+    'avatar_artist_name': null,
+    'avatar_release_group_name': null,
     'website': 'https://freq.social'
   }
 

@@ -2,15 +2,13 @@
     import type { ActionData, PageData } from './$types.js'
     import { goto } from '$app/navigation'
     import { enhance } from '$app/forms'
-    import { username } from '$lib/resources/localStorage'
-    import Settings from 'lucide-svelte/icons/settings'
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte';
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import GridList from "$lib/components/GridList.svelte"
-	import { Info } from 'lucide-svelte';
 	import NewNowPlayingPost from '$lib/components/Posts/NewNowPlayingPost.svelte'
     import Feed from '$lib/components/Feed.svelte'
-	import NowPlayingPostsSample from 'src/lib/components/Posts/NowPlayingPostsSample.svelte';
+	import NowPlayingPostsSample from '$lib/components/Posts/NowPlayingPostsSample.svelte'
+    import CoverArtFallback from '$lib/components/CoverArtFallback.svelte'
 
     export let data: PageData
     export let form: ActionData
@@ -40,6 +38,10 @@
     $: profileUserFlagged = form?.flagStatus ?? profileUserFlagInfo?.active ?? false
 
     $: displayName = profileUserData?.display_name as string
+
+    $: imgUrl = profileUserData?.avatar_url as string
+    $: artistName = profileUserData?.avatar_artist_name as string
+    $: releaseGroupName = profileUserData?.avatar_release_group_name as string
 </script>
 
 <svelte:head>
@@ -51,7 +53,12 @@
 
 <div class="profile-info">
     <div class="profile-info-box-left">
-        <img src={profileUserData?.avatar_url} alt="${profileUserData?.display_name}'s avatar" />
+        <CoverArtFallback
+            imgUrl={imgUrl}
+            artistName={artistName}
+            releaseGroupName={releaseGroupName}
+            altText="{profileUserData?.display_name}'s avatar"
+        ></CoverArtFallback>
         <div class="profile-info-box-column">
             <div class="profile-username-buttons-row">
                 <div class="profile-displayname-username-column">
@@ -171,7 +178,7 @@
             <span slot="text">top albums</span>
             <span slot="button">   
                 {#if profileUserData?.id == sessionUserId}
-                    <button class="standard" on:click={() => goto(`./${username}/top-albums`)}>
+                    <button class="standard" on:click={() => goto(`/user/top-albums`)}>
                         edit
                     </button>
                 {/if}
