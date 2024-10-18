@@ -15,6 +15,7 @@
     padding: var(--freq-spacing-small) var(--freq-spacing-medium);
     border-top: var(--freq-border-panel);
     border-bottom: var(--freq-border-panel);
+    word-wrap: break-word;
 }
 
 .post-row {

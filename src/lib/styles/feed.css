@@ -31,6 +31,18 @@
     gap: var(--freq-inline-gap-double);
 }
 
+@media screen and (max-width: 600px) {
+    .feed-item-one-liner {
+        align-items: start;
+    }
+	.feed-item-one-liner .blurb {
+        display: flex;
+		flex-direction: column;
+        gap: var(--freq-spacer-gap-quarter);
+	}
+}
+
+
 .feed-post-spacer {
     display: flex;
     flex-direction: row;

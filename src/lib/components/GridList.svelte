@@ -262,9 +262,8 @@
     button.standard {
         display: flex;
         flex-direction: row;
-        flex-wrap: none;
+        width: auto;
         border-style: none;
-        margin: auto;
     }
     .item-data {
         display: flex;
@@ -275,5 +274,15 @@
         width: 200px;
         align-items: center;
         margin-right: 0;
+    }
+    @media screen and (max-width: 600px) {
+        .editor-interactions {
+            justify-content:right;
+            gap: var(--freq-width-spacer-half);
+        }
+        button.standard  {
+           padding: 0;
+           font-size: var(--freq-font-size-2x-small);
+        }
     }
 </style>
