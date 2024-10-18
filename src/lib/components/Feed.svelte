@@ -156,17 +156,19 @@
             {:else if Object.keys(item).includes( 'session_user_owned_collection_follow_id' )}
             <a href={`/collection/${item.collection_id}`}>
                 <div class="feed-item-one-liner">
-                        <CoverArtFallback
-                            imgUrl={item.avatar_url}
-                            artistName={item.avatar_artist_name}
-                            releaseGroupName={item.avatar_release_group_name}
-                            altText={`${item.display_name}'s avatar`}
-                            imgClass='feed-avatar'
-                        ></CoverArtFallback>
-                    {item.display_name}
-                    followed your collection: 
-                    <span class="feed-item-subject">
-                        {item.title}
+                    <CoverArtFallback
+                        imgUrl={item.avatar_url}
+                        artistName={item.avatar_artist_name}
+                        releaseGroupName={item.avatar_release_group_name}
+                        altText={`${item.display_name}'s avatar`}
+                        imgClass='feed-avatar'
+                    ></CoverArtFallback>
+                    <span class="blurb">
+                      {item.display_name}
+                      followed your collection: 
+                      <span class="feed-item-subject">
+                          {item.title}
+                      </span>
                     </span>
                 </div>
             </a>
@@ -174,17 +176,19 @@
         {:else if Object.keys(item).includes( 'followed_user_collection_follow_id' )}
             <a href={`/collection/${item.collection_id}`}>
                 <div class="feed-item-one-liner">
-                        <CoverArtFallback
-                            imgUrl={item.avatar_url}
-                            artistName={item.avatar_artist_name}
-                            releaseGroupName={item.avatar_release_group_name}
-                            altText={`${item.display_name}'s avatar`}
-                            imgClass='feed-avatar'
-                        ></CoverArtFallback>
-                    {item.display_name}
-                    followed a collection: 
-                    <span class="feed-item-subject">
-                        {item.title}
+                    <CoverArtFallback
+                        imgUrl={item.avatar_url}
+                        artistName={item.avatar_artist_name}
+                        releaseGroupName={item.avatar_release_group_name}
+                        altText={`${item.display_name}'s avatar`}
+                        imgClass='feed-avatar'
+                    ></CoverArtFallback>
+                    <span class="blurb">
+                      {item.display_name}
+                      followed a collection: 
+                      <span class="feed-item-subject">
+                          {item.title}
+                      </span>
                     </span>
                 </div>
             </a>
@@ -192,17 +196,19 @@
         {:else if Object.keys(item).includes( 'collection_edit_id' )}
             <a href={`/collection/${item.collection_id}`}>
                 <div class="feed-item-one-liner">
-                        <CoverArtFallback
-                            imgUrl={item.avatar_url}
-                            artistName={item.avatar_artist_name}
-                            releaseGroupName={item.avatar_release_group_name}
-                            altText={`${item.display_name}'s avatar`}
-                            imgClass='feed-avatar'
-                        ></CoverArtFallback>
-                    {item.display_name}
-                    edited the collection: 
-                    <span class="feed-item-subject">
-                        {item.title}
+                    <CoverArtFallback
+                        imgUrl={item.avatar_url}
+                        artistName={item.avatar_artist_name}
+                        releaseGroupName={item.avatar_release_group_name}
+                        altText={`${item.display_name}'s avatar`}
+                        imgClass='feed-avatar'
+                    ></CoverArtFallback>
+                    <span class="blurb">
+                      {item.display_name}
+                      edited the collection: 
+                      <span class="feed-item-subject">
+                          {item.title}
+                      </span>
                     </span>
                 </div>
             </a>
