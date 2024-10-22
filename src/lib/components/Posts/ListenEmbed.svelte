@@ -9,7 +9,7 @@
 
 
 {#if source == 'bandcamp'}
-    <iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/{id}/size=small/bgcol=333333/linkcol=ffffff/transparent=true/" title="Bandcamp player" seamless><a href={url}>{title} by {artist}</a></iframe>
+    <iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/{id}/size=small/bgcol=333333/linkcol=ffffff/transparent=true/" title="Bandcamp player" seamless></iframe>
 {:else if source == 'soundcloud'}
     <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/{id}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true" title="Soundcloud player"></iframe>
 {:else if source == 'youtube'}
