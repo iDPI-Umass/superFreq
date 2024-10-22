@@ -8,11 +8,11 @@
     import PenLine from 'lucide-svelte/icons/pen-line'
     import Trash2 from 'lucide-svelte/icons/trash-2'
 
-    export let editState: boolean = false
+    let { editState = $bindable(false) }: { editState: boolean } = $props()
 
-    let popOverOpenState: boolean
-    let showModal: boolean = false
-    let dialog: any
+    let popOverOpenState: boolean = $state()
+    let showModal: boolean = $state(false)
+    let dialog: any = $state()
 
 	$: if (dialog && ( showModal == true )) dialog.showModal()
 	$: if (dialog && !showModal) dialog.close()
@@ -30,7 +30,7 @@
         showModal = false
     }
 
-    onMount(() => {
+    $effect(() => {
 		dialog.addEventListener("click", e => {
 			const dialogDimensions = dialog.getBoundingClientRect()
 			if (
@@ -49,7 +49,7 @@
 </script>
 
 <svelte:window
-	on:keydown={(e) => {
+	onkeydown={(e) => {
 		if (e.key === 'Escape') {
 			dispatch(dialog.close());
 		}
@@ -73,8 +73,10 @@
         </button>
         <button
             class="popover-item" 
-            on:click|preventDefault={() => deletePost()} 
-            on:click|preventDefault={() => ( showModal = true )}
+            onclick={() => {preventDefault(
+                    deletePost()
+                    showModal = true
+                )}}
         >
             <Trash2 size="16" color="var(--freq-color-text-muted)"></Trash2>
             <span class="descriptor">
@@ -87,21 +89,21 @@
 <dialog
     aria-label="modal"
     bind:this={dialog}
-	on:close={() => (showModal = false)}
+	onclose={() => (showModal = false)}
 >
     Are you sure you want to delete this post?
     <div class="delete-submit-options">
         <button 
             aria-label="close modal" 
             formmethod="dialog" 
-            on:click={closeDialog}
+            onclick={closeDialog}
         >
             cancel
         </button>
         <button 
             aria-label="close modal" 
             formmethod="dialog" 
-            on:click={closeDialog}
+            onclick={closeDialog}
         >
             delete
         </button>

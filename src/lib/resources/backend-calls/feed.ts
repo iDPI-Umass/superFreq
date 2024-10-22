@@ -81,6 +81,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'post.embed_id as embed_id',
                 'post.embed_source as embed_source',
                 'post.embed_account as embed_account',
+                'post.listen_url as listen_url',
                 'profile.username as username',
                 'profile.display_name as display_name',
                 'profile.avatar_url as avatar_url',
@@ -145,6 +146,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'comments.embed_id as embed_id',
                 'comments.embed_source as embed_source',
                 'comments.embed_account as embed_account',
+                'comments.listen_url as listen_url',
                 'profile.username as username',
                 'profile.display_name as display_name',
                 'profile.avatar_url as avatar_url',
@@ -322,6 +324,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'post.embed_id as embed_id',
                 'post.embed_source as embed_source',
                 'post.embed_account as embed_account',
+                'post.listen_url as listen_url',
                 'reaction.active as reaction_active',
                 (eb) => eb.fn.count('all_reactions.id').as('reaction_count')
             ])

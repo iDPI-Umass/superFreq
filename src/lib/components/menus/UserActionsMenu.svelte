@@ -12,16 +12,27 @@
     import PenLine from 'lucide-svelte/icons/pen-line'
     import Trash2 from 'lucide-svelte/icons/trash-2'
 
-    export let editState: boolean | null | undefined = false
-    export let mode: 'profileMenu' | 'postMenu' | 'sessionUserPostMenu'
-    export let profileUserId: string | null =  null
-    export let blocked: boolean = false
-    export let flagged: boolean = false
-    export let postId: string | null =  null
-    export let success: boolean | null = null
+    interface ComponentProps {
+        editState: boolean | null | undefined
+        mode: 'profileMenu' | 'postMenu' | 'sessionUserPostMenu'
+        profileUserId: string | null
+        blocked: boolean
+        flagged: boolean
+        postId: sting | null
+        success: boolean | null
+    }
 
-    let popOverOpenState: boolean
-    let showModal: boolean = false
+    let {
+        editState = $bindable(false),
+        mode,
+        profileUserId = null,
+        flagged = false,
+        postId = null
+        success = null
+    }: ComponentProps = $props()
+
+    let popOverOpenState: boolean = $state()
+    let showModal: boolean = $state(false)
     let dialog: any
     
     const diaglogTitleOptions: App.Lookup = {
@@ -87,7 +98,7 @@
         showModal = false
     }
 
-    onMount(() => {
+    $effect(() => {
 		dialog.addEventListener("click", e => {
 			const dialogDimensions = dialog.getBoundingClientRect()
 			if (
@@ -105,7 +116,7 @@
 </script>
 
 <svelte:window
-	on:keydown={(e) => {
+	onkeydown={(e) => {
 		if (e.key === 'Escape') {
 			dispatch(dialog.close());
 		}
@@ -125,7 +136,7 @@
             {#if !blocked}
                 <button 
                     class="popover-item" 
-                    on:click|preventDefault={() => openDialog('blockUser')}
+                    onclick|preventDefault={() => openDialog('blockUser')}
                 >
                     <Ban 
                         size="16" 
@@ -138,7 +149,7 @@
             {:else if blocked}
                 <button 
                     class="popover-item" 
-                    on:click|preventDefault={() => openDialog('unblockUser')}
+                    onclick={preventDefault(() => openDialog('unblockUser'))}
                 >
                     <Circle 
                         size="16" 
@@ -152,7 +163,7 @@
             {#if !flagged}
                 <button
                     class="popover-item" 
-                    on:click|preventDefault={() => openDialog('reportUser')} 
+                    onclick={preventDefault(() => openDialog('reportUser'))} 
                 >
                     <Flag 
                         size="16" 
@@ -165,7 +176,7 @@
             {:else if flagged}
             <button
                 class="popover-item" 
-                on:click|preventDefault={() => openDialog('reportUser')} 
+                onclick={preventDefault(() => openDialog('reportUser'))} 
                 disabled
             >
                 <Flag 
@@ -180,7 +191,7 @@
         {:else if mode == 'sessionUserPostMenu'}
             <button 
                 class="popover-item" 
-                on:click|preventDefault={toggleEditState}
+                onclick={preventDefault(toggleEditState)}
             >
                 <PenLine 
                     size="16" 
@@ -192,7 +203,7 @@
             </button>
             <button
                 class="popover-item" 
-                on:click|preventDefault={() => openDialog('deletePost')} 
+                onclick={preventDefault(() => openDialog('deletePost'))} 
             >
                 <Trash2 
                     size="16" 
@@ -205,7 +216,7 @@
         {:else if mode = 'postMenu'}
             <button
                 class="popover-item" 
-                on:click|preventDefault={() => openDialog('flagPost')} 
+                onclick={preventDefault(() => openDialog('flagPost'))} 
             >
                 <Flag 
                     size="16" 
@@ -222,7 +233,7 @@
 <dialog
     aria-label="modal"
     bind:this={dialog}
-	on:close={() => (showModal = false)}
+	onclose={() => (showModal = false)}
 >
     <form 
         method="POST" 
@@ -251,7 +262,7 @@
             <button 
                 aria-label="close modal" 
                 formmethod="dialog" 
-                on:click={closeDialog}
+                onclick={closeDialog}
             >
                 cancel
             </button>
@@ -271,7 +282,7 @@
             <button 
                 aria-label="close modal" 
                 formmethod="dialog" 
-                on:click={closeDialog}
+                onclick={closeDialog}
             >
                 close
             </button>
@@ -284,7 +295,7 @@
             <button 
                 aria-label="close modal" 
                 formmethod="dialog" 
-                on:click={closeDialog}
+                onclick={closeDialog}
             >
                 close
             </button>

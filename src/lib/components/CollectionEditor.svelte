@@ -2,15 +2,25 @@
     import GridList from '$lib/components/GridList.svelte'
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
 
-    export let collectionType: string
-    export let collectionItems: App.RowData[]
-    export let deletedItems: App.RowData[] = []
-    export let itemAdded: boolean
-    export let imgPromise: any
+    interface ComponentProps {
+        collectionType: string
+        collectionItems: App.RowData[]
+        deletedItems?: App.RowData[]
+        itemAdded: boolean
+        imgPromise?: any
+    }
 
-    $: imgPromise
-    $: collectionItems
-    $: deletedItems
+    let {
+        collectionType,
+        collectionItems = $bindable(),
+        deletedItems = $bindable([]),
+        itemAdded = $bindable(),
+        imgPromise = $bindable()
+    }: ComponentProps = $props()
+
+    // $: imgPromise
+    // $: collectionItems
+    // $: deletedItems
 
     const buttonTextLookup: {[index: string]: string} = {
 		"": "...",
@@ -26,7 +36,7 @@
         else return lookup
     }
 
-    let placeholderText = "Search for items to add to your collection"
+    const placeholderText = "Search for items to add to your collection"
 </script>
 
 <div class="collection-search-bar" >

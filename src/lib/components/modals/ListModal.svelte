@@ -17,13 +17,24 @@
 <script lang="ts">
     import { onMount, createEventDispatcher } from 'svelte'
 
-	export let showModal: boolean
-    let dialog: any
+	interface ComponentProps {
+        showModal: boolean
+        headerText: Snippet,
+        list: Snippet
+    }
+
+	let {         
+		showModal = $bindable(),
+        headerText,
+        list 
+	}: ComponentProps = $props()
+
+    let dialog: any = $state()
 
 	$: if (dialog && showModal) dialog.showModal()
 	$: if (dialog && !showModal) dialog.close()
 
-    onMount(() => {
+    $effect(() => {
 		dialog.addEventListener("click", e => {
 			const dialogDimensions = dialog.getBoundingClientRect()
 			if (
@@ -43,7 +54,7 @@
 <svelte:window
 	on:keydown={(e) => {
 		if (e.key === 'Escape') {
-			dispatch(dialog.close());
+			() => dialog.close();
 		}
 	}}
 />
@@ -51,21 +62,21 @@
 <dialog
     aria-label="modal"
     bind:this={dialog}
-	on:close={() => (showModal = false)}
+	onclose={() => (showModal = false)}
 >
 	<div class="dialog-header">
 		<h1>
-			<slot name="header-text" />
+			{@render headerText()}
 		</h1>
 		<button 
 			aria-label="close modal" 
 			formmethod="dialog" 
-			on:click={() => dialog.close()}
+			onclick={() => dialog.close()}
 		>
 			x
 		</button>
 	</div>
-    <slot name="list" />
+    {@render list()}
 </dialog>
 
 <style>

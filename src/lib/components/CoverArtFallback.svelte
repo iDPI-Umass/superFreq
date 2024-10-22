@@ -7,12 +7,23 @@
     import { checkFetchedCoverArt } from "$lib/resources/musicbrainz"
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
-    export let item: any = null
-    export let imgUrl: string | null = null
-    export let artistName: string | null = null
-    export let releaseGroupName: string | null = null
-    export let altText: string
-    export let imgClass: string | null = null
+    interface ComponentProps {
+        item: any
+        imgUrl?: string | null
+        artistName?: string | null
+        releaseGroupName?: string | null
+        altText: string
+        imgClass?: string | null
+    }
+
+    let {
+        item = null,
+        imgUrl = null,
+        artistName =  null,
+        releaseGroupName = null,
+        altText,
+        imgClass = null
+    }: ComponentProps = $props()
 
     const coverArtItem = ( item != null ) ? item : {
         'img_url': imgUrl,

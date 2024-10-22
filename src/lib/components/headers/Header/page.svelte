@@ -8,16 +8,25 @@
 
   import CoverArtFallback from "$lib/components/CoverArtFallback.svelte";
 
-  let profileObject: App.ProfileObject
-  $: profileObject
+  let profileObject: App.ProfileObject = $state()
 
   profileObject = $profileStoresObject
 
-  export let sessionUserId: string | null
-  export let username: string = profileObject?.username as string
-  export let displayName: string = profileObject?.display_name as string
-  export let avatarUrl: string = profileObject?.avatar_url as string
-  export let avatarItem: any = null
+  interface ComponentProps {
+    sessionUserId: string | null
+    username: string
+    displayName: string
+    avatarUrl: string
+    avatarItem: any
+  }
+
+  let {
+    sessionUserId,
+    username = profileObject?.username as string,
+    displayName = profileObject?.display_name as string
+    avatarUrl = profileObject?.avatar_url as string
+    avatarItem = null
+  }: ComponentProps = $props()
 
 </script>
 

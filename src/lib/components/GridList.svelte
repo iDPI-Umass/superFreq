@@ -15,13 +15,25 @@
 
     import CoverArtFallback from "$lib/components/CoverArtFallback.svelte"
 
-    export let collectionContents: any
-    export let deletedItems: any = []
-    export let collectionReturned: boolean
-    export let collectionType: string // "artists" | "release_groups" | "recordings" | "labels"
-    export let layout: string // "grid" | "condensed-grid" | "list"
-    export let mode: string //"view" | "edit"
-    export let imgPromise: any = null
+    interface ComponentProps {
+        collectionContents: any
+        deletedItems?: any
+        collectionReturned: boolean
+        collectionType: string
+        layout: string
+        mode: string
+        imgPromise?: any
+    }
+
+    let {
+        collectionContents = $bindable(),
+        deletedItems = $bindable([]),
+        collectionReturned,
+        collectionType, // "artists" | "release_groups" | "recordings" | "labels"
+        layout, // "grid" | "condensed-grid" | "list"
+        mode, //"view" | "edit"
+        imgPromise = $bindable(null)
+    }: ComponentProps = $props()
     
     const format: App.NestedObject = {
         "grid": ["media-grid", "media-grid-item"],
@@ -29,7 +41,7 @@
         "condensed-grid": ["media-grid-condensed", "media-grid-item"],
     }
 
-    let items = collectionContents
+    let items = $derived(collectionContents)
 
     const flipDurationMs = 300;
 

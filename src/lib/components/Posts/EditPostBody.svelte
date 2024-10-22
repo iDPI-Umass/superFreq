@@ -1,7 +1,14 @@
 <script lang="ts">
     import type { Posts } from './$types'
-    export let postData: Posts
-    export let editState: boolean = false
+
+    interface ComponentProps {
+        postData: Posts
+        editState?: boolean
+    }
+    let { 
+        postData,
+        editState = $bindable(false)
+    }: ComponentProps = $props()
 
     function toggleEditState() {
         editState = !editState

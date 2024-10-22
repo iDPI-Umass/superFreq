@@ -2,9 +2,17 @@
     import { enhance } from '$app/forms'
     import Heart from 'lucide-svelte/icons/heart'
 
-    export let postId: string
-    export let reactionCount: number = 0
-    export let reactionActive: boolean
+    interface ComponentProps {
+        postId: string
+        reactionCount?: number
+        reactionActive: boolean
+    }
+    
+    let { 
+        postId,
+        reactionCount = 0,
+        reactionActive
+    }: ComponentProps = $props()
 </script>
 
 <form 

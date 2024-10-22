@@ -1,12 +1,12 @@
+<svelte:options runes={true} />
 <script lang="ts">
     import type { PageData, ActionData } from './$types'
     import Feed from '$lib/components/Feed.svelte'
 
-    export let data: PageData
-    export let form: ActionData
-    $: form
-    let { sessionUserId, feedData, remaining, timestampStart, timestampEnd, batchSize, options } = data
-    $: ({ sessionUserId, feedData, remaining, totalRowCount, timestampStart, timestampEnd, batchSize, options } = data)
+    // export let data: PageData
+    // export let form: ActionData
+    let { data, form } = $props()
+    let { sessionUserId, feedData, remaining, timestampStart, timestampEnd, batchSize, batchIterator, options } = $derived(data)
 
 </script>
 

@@ -6,26 +6,38 @@
 	import { imgPromiseStore } from '$lib/stores'
 	import imgNotFound from "$lib/assets/images/image-not-found.png"
 
-	export let searchCategory: string // "artists" | "release_groups" | "releases" | "recordings" | "labels"
-    export let searchButtonText: string
-    export let searchPlaceholder: string
-    export let addedItems: any
-	export let deletedItems: App.RowData[] = []
-    export let newItemAdded = false
-	export let mode: string // "single" | "collection"
-	export let limit = '25'
-	export let query = ''
-	export let avatarSearch = false
-	export let imgPromise: any = null
+	interface ComponentProps {
+		searchCategory: string
+		searchButtonText: string
+		searchPlaceholder: string
+		addedItems: any
+		deletedItems?: App.RowData[]
+		newItemAdded: boolean,
+		mode: string,
+		limit?: string,
+		query: string,
+		avatarSearch?: false,
+		imgPromise?: any
+	}
 
-	$: imgPromise
+	let {
+		searchCategory, // "artists" | "release_groups" | "releases" | "recordings" | "labels"
+		searchButtonText,
+		searchPlaceholder,
+		addedItems = $bindable(),
+		deletedItems = $bindable([]),
+		newItemAdded = $bindable(false),
+		mode, // "single" | "collection"
+		limit = '25',
+		query = '',
+		avatarSearch = false,
+		imgPromise = null
+	}
 
-	let showModal = false
+	let showModal = $state(false)
 
-	$: deletedItems
-	$: addedItems
-	let mbData = [] as any[]
-	let searchComplete = false
+	let mbData = $state([]) as any[]
+	let searchComplete = $state(false)
 
 	const mbidCategory = mbidCateogory( searchCategory )
 

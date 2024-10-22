@@ -3,10 +3,20 @@
     import PanelHeader from "$lib/components/PanelHeader.svelte"
     import NowPlayingPost from "./NowPlayingPost.svelte"
     import PostReply from "./PostReply.svelte"
-    export let posts: any
-    export let username: string
-    export let displayName: string
-    export let sessionUserId: string | null = null
+
+    interface ComponentProps {
+        posts: any
+        username: string
+        displayName: string
+        sessionUserId?: string | null
+    }
+    
+    let {
+        posts,
+        username,
+        displayName,
+        sessionUserId = null
+    }: ComponentProps = $props()
     
 </script>
 

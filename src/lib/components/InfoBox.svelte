@@ -1,5 +1,12 @@
 <script lang="ts">
-    export let mode: string = "compact" // "standard", "compact", "inline"
+    import type { Snippet } from 'svelte'
+    let { 
+        mode = "compact", // "standard", "compact", "inline"
+        children
+    } : { 
+        mode: string 
+        children: Snippet
+    } = $props() 
 
     const boxStyle = {
         'standard': 'info-box',
@@ -10,6 +17,6 @@
 
 <div class={boxStyle[mode]} aria-label="hint">
     <p>
-        <slot />
+        {@render children()}
     </p>
 </div>

@@ -1,15 +1,28 @@
 <script lang="ts">
-    import { beforeUpdate, tick } from 'svelte'
+    import { tick } from 'svelte'
+    import type { Snippet } from 'svelte'
     import { goto } from '$app/navigation'
 
-    export let showModal: boolean 
-    export let redirectPath: string // expects format '/route'
-    let dialog: any
+    interface ComponentProps {
+        showModal: boolean
+        redirectPath: string,
+        headerText: Snippet,
+        message: Snippet
+    }
+
+    let { 
+        showModal = $bindable(),
+        redirectPath, // expects format '/route'
+        headerText,
+        message
+    }: ComponentProps = $props()
+
+    let dialog: any = $state()
 
 	$: if (dialog && showModal) dialog.showModal()
 	$: if (dialog && !showModal) dialog.close()
 
-    beforeUpdate ( async () => {
+    $effect.pre ( async () => {
         await tick
         if ( showModal == true ) {
             setTimeout(() => goto(redirectPath), 5000)
@@ -20,16 +33,16 @@
 <dialog class="notification"
     aria-label="redirect-modal"
     bind:this={dialog}
-    on:close={() => (showModal = false)}
+    onclose={() => (showModal = false)}
 >
     <div class="dialog-column">
         <div class="dialog-header">
             <h1 class="notification">
-                <slot name="header-text" />
+                {@render headerText()}
             </h1>
         </div>
-        <slot name="message" />
-        <button class="standard" on:click={() => goto(redirectPath)}>
+        {@render message()}
+        <button class="standard" onclick={() => goto(redirectPath)}>
             Go now
         </button>
     </div>

@@ -1,3 +1,4 @@
+<svelte:options runes={true} />
 <script lang="ts">
 	import "$lib/styles/about.css";
 	import "$lib/styles/bits-ui.css";
@@ -18,17 +19,28 @@
 	import type { LayoutData } from "./$types"
 	
 
-	export let data: LayoutData
-	let { session, sessionUserId, user, profile, supabase } = data
-	$: ({ session, sessionUserId, user, profile, supabase } = data)
+	let { data, children } = $props()
+	let { session, sessionUserId, user, profile, supabase } = $derived(data)
+	// export let data: LayoutData
+	// let { session, sessionUserId, user, profile, supabase } = data
+	// $: ({ session, sessionUserId, user, profile, supabase } = data)
 
-	let username: string
-	let displayName: string
-	let avatarUrl: string
-	let avatarArtist: string
-	let avatarReleaseGroup: string
-	let avatarItem = {}
-	$: username, displayName, avatarUrl, avatarArtist, avatarReleaseGroup, avatarItem
+	// let { children } = $props()
+
+	// let username: string
+	// let displayName: string
+	// let avatarUrl: string
+	// let avatarArtist: string
+	// let avatarReleaseGroup: string
+	// let avatarItem = {}
+	// $: username, displayName, avatarUrl, avatarArtist, avatarReleaseGroup, avatarItem
+
+	let username = $state() as string
+	let displayName: string = $state() as string
+	let avatarUrl: string = $state() as string
+	let avatarArtist: string = $state() as string
+	let avatarReleaseGroup: string = $state() as string
+	let avatarItem = $state({}) as App.Lookup
 
 
 	if (typeof window !== 'undefined') {   
@@ -44,15 +56,14 @@
 		}
 	}
 
-	onMount(() => {
+	$effect(() => {
 		const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
 			if (newSession?.expires_at !== session?.expires_at) {
 				invalidate('supabase:auth');
 			}
-		});
-
-		return () => data.subscription.unsubscribe();
-	});
+		})
+		return () => data.subscription.unsubscribe()
+	})
 </script>
 
 <Header
@@ -63,7 +74,6 @@
 ></Header>
 
 <div class="double-border-full-vw"></div>
-<body>
-	<slot />
-</body>
-<!-- <Footer /> -->
+{@render children()}
+
+<!-- {@debug} -->

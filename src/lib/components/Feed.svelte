@@ -1,3 +1,4 @@
+<svelte:options runes={true} />
 <script lang="ts">
     import { enhance } from '$app/forms'
     import { goto } from '$app/navigation'
@@ -7,15 +8,29 @@
     import CoverArtFallback from '$lib/components/CoverArtFallback.svelte'
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
-    export let sessionUserId: string
-    export let feedItems: App.RowData[]
-    export let batchSize = 0
-    export let offset = 0
-    export let timestampStart: Date | null = null
-    export let timestampEnd: Date | null = null
-    export let options: App.Lookup = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
-    export let mode: string // "full", "mini"
-    export let remaining = 0
+    interface ComponentProps {
+        sessionUserId: string
+        feedItems: App.RowData[]
+        batchSize?: number
+        offset?: number
+        timestampStart?: Date | null
+        timestampEnd?: Date | null
+        options: App.Lookup
+        mode: string
+        remaining?: number
+    }
+
+    let { 
+        sessionUserId, 
+        feedItems, 
+        batchSize = 0,
+        offset = 0,
+        timestampStart = null,
+        timestampEnd = null,
+        options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']},
+        mode,
+        remaining = 0
+    }: ComponentProps = $props()
 
     function parseTimestamp ( itemTimestamp: Date ) {
         const timestampString = itemTimestamp.toISOString()
@@ -62,9 +77,9 @@
                 <!-- <img class="feed-item-ornament" src={decoration} alt="decoration" /> -->
                 <div class="feed-item-now-playing">
                     <NowPlayingPost
+                        sessionUserId={sessionUserId}
                         post={item}
                         mode="feed"
-                        reactionActive={item.active}
                     ></NowPlayingPost>
                 </div>
             </div>

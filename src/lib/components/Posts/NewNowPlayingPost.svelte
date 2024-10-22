@@ -4,17 +4,21 @@
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
     import Tooltip from '$lib/components/Tooltip.svelte'
 
-
     import { Tabs } from "bits-ui";
 
-    // export let form: ActionData | null = null
-    let addedItem: any
-    let newItemAdded: boolean
-    let type: string
-    let listenUrl: string
-    $: listenUrl
+    interface ComponentProps {
+        addedItem: any
+        newItemAdded: boolean
+        type: string
+        listenUrl: string
+    }
 
-    // const listenLinkQuery = form?.success ? `${form?.embedInfo.title} ${form?.embedInfo.artist}` : ''
+    let {
+        addedItem,
+        newItemAdded = $bindable(),
+        type,
+        listenUrl = $bindable()
+    }: ComponentProps = $props()
 </script>
 
 
