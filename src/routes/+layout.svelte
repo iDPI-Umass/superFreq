@@ -63,7 +63,7 @@
 ></Header>
 
 <div class="double-border-full-vw"></div>
-<body>
+
 	<slot />
-</body>
+
 <!-- <Footer /> -->
