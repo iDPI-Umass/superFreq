@@ -63,7 +63,7 @@ function getMegaImage(img: App.Lookup) {
 }
 
 export const getLastFmCoverArt = async function ( releaseGroup: App.Lookup ) {
-    const lastFmEndpoint = `http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=${lastFmApiKey}&artist=${releaseGroup.artistName}&album=${releaseGroup.releaseGroupName}&format=json`
+    const lastFmEndpoint = `https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=${lastFmApiKey}&artist=${releaseGroup.artistName}&album=${releaseGroup.releaseGroupName}&format=json`
     const lastFmRes = await fetch(lastFmEndpoint)
     const lastFmData = await lastFmRes.json()
     const imgArray = lastFmData["album"]["image"]
