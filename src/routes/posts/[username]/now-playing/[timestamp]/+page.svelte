@@ -1,16 +1,26 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     import type { PageData, ActionData } from './$types'
     import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
     import PostReply from '$lib/components/Posts/PostReply.svelte'
     import PostReplyEditor from '$lib/components/Posts/PostReplyEditor.svelte'
 
-    export let data: PageData
-    export let form: ActionData
-    let { sessionUserId, post, postReactionActive } = data
-    $: ({ sessionUserId, post, postReactionActive } = data)
+    interface Props {
+        data: PageData;
+        form: ActionData;
+    }
+
+    let { data, form }: Props = $props();
+    let { sessionUserId, post, postReactionActive } = $state(data)
+    run(() => {
+        ({ sessionUserId, post, postReactionActive } = data)
+    });
 
     let replies = data?.replies as App.RowData[]
-    $: replies
+    run(() => {
+        replies
+    });
 
     const postId = post?.id as string
 

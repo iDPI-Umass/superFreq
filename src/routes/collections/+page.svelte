@@ -1,11 +1,19 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     import type { PageData, ActionData } from './$types'
     import { enhance } from '$app/forms'
-    export let form: ActionData
-    export let data: PageData
+    interface Props {
+        form: ActionData;
+        data: PageData;
+    }
 
-    let { collections, remaining, totalCollections, batchSize, batchIterator } = data
-    $: ({ collections, remaining, totalCollections, batchSize, batchIterator } = data )
+    let { form, data }: Props = $props();
+
+    let { collections, remaining, totalCollections, batchSize, batchIterator } = $state(data)
+    run(() => {
+        ({ collections, remaining, totalCollections, batchSize, batchIterator } = data )
+    });
 </script>
 
 <div class="wrapper">

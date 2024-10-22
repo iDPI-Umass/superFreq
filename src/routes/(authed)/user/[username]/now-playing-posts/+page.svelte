@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     import type { PageData, ActionData } from './$types'
     import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
     import PostReply from '$lib/components/Posts/PostReply.svelte'
@@ -6,12 +8,20 @@
     import RedirectModal from '$lib/components/modals/RedirectModal.svelte'
     import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
 
-    export let data: PageData
-    export let form: ActionData
-    $: form
+    interface Props {
+        data: PageData;
+        form: ActionData;
+    }
 
-    let { posts, username, sessionUserId } =  data
-    $: ({ posts, username, sessionUserId } =  data)
+    let { data, form }: Props = $props();
+    run(() => {
+        form
+    });
+
+    let { posts, username, sessionUserId } =  $state(data)
+    run(() => {
+        ({ posts, username, sessionUserId } =  data)
+    });
 </script>
 
 <svelte:head>
@@ -22,9 +32,11 @@
 
 <div class="panel-medium">
     <PanelHeader>
-        <span slot="text">
-            {posts[0]['display_name']}'s Now Playing posts
-        </span>
+        {#snippet text()}
+                <span >
+                {posts[0]['display_name']}'s Now Playing posts
+            </span>
+            {/snippet}
     </PanelHeader>
     <div class="posts-spacing">
     {#each posts as post}
@@ -85,9 +97,11 @@
 <NotificationModal
     showModal={form?.success}
 >
-    <span slot="header-text">
-        success!
-    </span>
+    {#snippet header-text()}
+                <span >
+            success!
+        </span>
+            {/snippet}
 </NotificationModal>
 {/if}
 

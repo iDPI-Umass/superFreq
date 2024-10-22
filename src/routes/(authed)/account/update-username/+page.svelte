@@ -1,15 +1,23 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     import type { PageData, ActionData } from './$types'
     import PanelHeader from "$lib/components/PanelHeader.svelte"
     import Tooltip from '$lib/components/Tooltip.svelte'
     import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
 	import RedirectModal from '$lib/components/modals/RedirectModal.svelte'
 
-    export let data: PageData
-	export let form: ActionData
+    interface Props {
+        data: PageData;
+        form: ActionData;
+    }
 
-	let { profile } = data
-	$: ({ profile } = data)
+    let { data, form }: Props = $props();
+
+	let { profile } = $state(data)
+	run(() => {
+        ({ profile } = data)
+    });
 
     let loading = false
     let username = profile?.username as string
@@ -25,9 +33,11 @@
 
 <div class="panel" id="profile-info">
     <PanelHeader>
-        <span slot="text">
-            update username
-        </span>
+        {#snippet text()}
+                <span >
+                update username
+            </span>
+            {/snippet}
 	</PanelHeader>
 	<form
 		class="horizontal"
@@ -81,8 +91,12 @@
     <NotificationModal
         showModal={(form?.success ? !form?.success : false)}
     >
-        <span slot="header-text">Username taken</span>
-        <span slot="message">Please try another username.</span>
+        {#snippet header-text()}
+                <span >Username taken</span>
+            {/snippet}
+        {#snippet message()}
+                <span >Please try another username.</span>
+            {/snippet}
     </NotificationModal>
 </div>
 

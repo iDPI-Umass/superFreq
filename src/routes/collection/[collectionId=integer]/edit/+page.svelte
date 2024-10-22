@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     import type { PageData } from './$types';
 
     import CollectionEditor from '$lib/components/CollectionEditor.svelte'
@@ -7,12 +9,20 @@
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
 
 
-	export let data: PageData;
-    let { collection, sessionUserId, collectionId, infoBoxText } = data;
-    $: ({ collection, sessionUserId, collectionId, infoBoxText } = data);
+    interface Props {
+        data: PageData;
+    }
 
-    let imgPromise
-    $: imgPromise
+    let { data }: Props = $props();
+    let { collection, sessionUserId, collectionId, infoBoxText } = $state(data);
+    run(() => {
+        ({ collection, sessionUserId, collectionId, infoBoxText } = data);
+    });
+
+    let imgPromise = $state()
+    run(() => {
+        imgPromise
+    });
 
 	/* 
 	Let's declare some variables for...
@@ -21,19 +31,25 @@
     const collectionInfo = collection?.info as App.RowData
 
 	// collections_info
-	let collectionTitle = collectionInfo["title"] 
+	let collectionTitle = $state(collectionInfo["title"]) 
 	let collectionType = collectionInfo["type"] 
-	let collectionStatus = collectionInfo["status"] 
+	let collectionStatus = $state(collectionInfo["status"]) 
 	let descriptionText = collectionInfo["description_text"] 
 
-    $: collectionStatus
+    run(() => {
+        collectionStatus
+    });
 
-	let collectionItems = collection?.collectionContents as App.RowData[]
-	$: collectionItems
+	let collectionItems = $state(collection?.collectionContents as App.RowData[])
+	run(() => {
+        collectionItems
+    });
 	let itemAdded = false
 	
-    let deletedItems = collection?.deletedCollectionContents as App.RowData[]
-    $: deletedItems
+    let deletedItems = $state(collection?.deletedCollectionContents as App.RowData[])
+    run(() => {
+        deletedItems
+    });
 
     const isOwner = ( sessionUserId == collectionInfo.owner_id ) ? true : false
 </script>
@@ -47,9 +63,11 @@
 
 <div class="collection-container">
     <PanelHeader>
-        <span slot="text">
-            edit collection
-        </span>
+        {#snippet text()}
+                <span >
+                edit collection
+            </span>
+            {/snippet}
     </PanelHeader>
     <form 
         class="horizontal" 

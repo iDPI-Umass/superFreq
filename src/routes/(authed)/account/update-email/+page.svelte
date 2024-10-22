@@ -1,15 +1,23 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     import type { PageData, ActionData } from './$types';
     import PanelHeader from "$lib/components/PanelHeader.svelte"
 
-    export let data: PageData
-	export let form: ActionData
+    interface Props {
+        data: PageData;
+        form: ActionData;
+    }
 
-    let newEmail = ''
-    let confirmEmail = ''
+    let { data, form }: Props = $props();
 
-	let { sessionUserId, sessionUserEmail } = data
-	$: ({ sessionUserId, sessionUserEmail } = data)
+    let newEmail = $state('')
+    let confirmEmail = $state('')
+
+	let { sessionUserId, sessionUserEmail } = $state(data)
+	run(() => {
+        ({ sessionUserId, sessionUserEmail } = data)
+    });
 
 </script>
 
@@ -22,9 +30,11 @@
 
 <div class="panel" id="profile-info">
     <PanelHeader>
-        <span slot="text">
-            update email address
-        </span>
+        {#snippet text()}
+                <span >
+                update email address
+            </span>
+            {/snippet}
 	</PanelHeader>
 	<form
 		class="horizontal"

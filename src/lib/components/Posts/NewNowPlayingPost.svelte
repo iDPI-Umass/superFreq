@@ -24,9 +24,11 @@
 
 <div class="border">
     <PanelHeader>
-        <span slot="text">
-            what are you listening to?
-        </span>
+        {#snippet text()}
+                <span >
+                what are you listening to?
+            </span>
+            {/snippet}
     </PanelHeader>
     <Tabs.Root>
         <Tabs.List>
@@ -161,7 +163,7 @@
                     name="post-text"
                     spellcheck=true 
                     placeholder="Some prompts: What do you like about this? Does it remind you of something? Are you looking for more like it?"
-                />
+></textarea>
                 <button class="standard" formaction="?/postAlbum" type="submit">
                     submit
                 </button>
@@ -301,7 +303,7 @@
                     name="post-text"
                     spellcheck=true 
                     placeholder="Some prompts: What do you like about this? Does it remind you of something? Are you looking for more like it?"
-                />
+></textarea>
                 <button class="standard" formaction="?/postTrack" type="submit">
                     submit
                 </button>
@@ -418,7 +420,7 @@
                     name="post-text"
                     spellcheck=true 
                     placeholder="Some prompts: What do you like about this? Does it remind you of something? Are you looking for more like it?"
-                />
+></textarea>
                 <button class="standard" formaction="?/postMix" type="submit">
                     submit
                 </button>

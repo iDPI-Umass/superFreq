@@ -1,25 +1,35 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import type { ActionData, PageData } from './$types'
 	import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
 	import NotificationModal from 'src/lib/components/modals/NotificationModal.svelte'
-	export let data: PageData;
-	export let form: ActionData;
-	$: form
+	interface Props {
+		data: PageData;
+		form: ActionData;
+	}
 
-	let { user, profile } = data
-	$: ({ user, profile } = data)
+	let { data, form }: Props = $props();
+	run(() => {
+		form
+	});
 
-	$: success = form?.success ?? false
+	let { user, profile } = $state(data)
+	run(() => {
+		({ user, profile } = data)
+	});
 
-	let avatarItem = {} as App.RowData
-	let newItemAdded: boolean
-	let profileForm: HTMLFormElement
+	let success = $derived(form?.success ?? false)
+
+	let avatarItem = $state({} as App.RowData)
+	let newItemAdded: boolean = $state()
+	let profileForm: HTMLFormElement = $state()
 	let loading = false
 	let displayName: string = profile?.display_name ?? ''
 	let username: string = profile?.username ?? ''
 	let website: string = profile?.website ?? ''
-	$: avatarMbid = avatarItem?.release_group_mbid ??profile?.avatar_mbid ?? ''
+	let avatarMbid = $derived(avatarItem?.release_group_mbid ??profile?.avatar_mbid ?? '')
 	let avatarUrl: string = avatarItem?.avatar_url ?? profile?.avatar_url ?? ''
 	let about: string = profile?.about ?? ''
 	let email: string = user?.email as string
@@ -33,9 +43,11 @@
  
 <div class="panel" id="profile-info">
 	<PanelHeader>
-		<span slot="text">
-			profile info
-		</span>
+		{#snippet text()}
+				<span >
+				profile info
+			</span>
+			{/snippet}
 	</PanelHeader>
 	<div class="form-wrapper">
 		<form
@@ -227,12 +239,16 @@
 <NotificationModal
 	showModal={success}
 >
-	<span slot="header-text">
-		Success!
-	</span>
-	<span slot="message">
-		Your profile has been updated.
-	</span>
+	{#snippet header-text()}
+		<span >
+			Success!
+		</span>
+	{/snippet}
+	{#snippet message()}
+		<span >
+			Your profile has been updated.
+		</span>
+	{/snippet}
 </NotificationModal>
 
 <style>

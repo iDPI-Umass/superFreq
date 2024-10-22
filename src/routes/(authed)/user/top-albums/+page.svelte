@@ -1,22 +1,36 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
     import PanelHeader from '$lib/components/PanelHeader.svelte'
 	import CollectionEditor from '$lib/components/CollectionEditor.svelte'
 
-	export let data
-	let { collectionContents, deletedCollectionContents } =  data
-	$: ({ collectionContents, deletedCollectionContents } =  data)
+	interface Props {
+		data: any;
+	}
+
+	let { data }: Props = $props();
+	let { collectionContents, deletedCollectionContents } =  $state(data)
+	run(() => {
+		({ collectionContents, deletedCollectionContents } =  data)
+	});
 
 	let collectionType = "release_groups"
 
-	let imgPromise
-    $: imgPromise
+	let imgPromise = $state()
+    run(() => {
+		imgPromise
+	});
 
 
-	let collectionItems = collectionContents ? collectionContents : [] as App.RowData[]
-	$: collectionItems
+	let collectionItems = $state(collectionContents ? collectionContents : [] as App.RowData[])
+	run(() => {
+		collectionItems
+	});
 
-	let deletedItems = deletedCollectionContents ? deletedCollectionContents : [] as App.RowData[]
-	$: deletedItems
+	let deletedItems = $state(deletedCollectionContents ? deletedCollectionContents : [] as App.RowData[])
+	run(() => {
+		deletedItems
+	});
 
 	let itemAdded = false
 </script>
@@ -30,9 +44,11 @@
 
 <div class="panel">
     <PanelHeader>
-		<span slot="text">
-			my top albums
-		</span>
+		{#snippet text()}
+				<span >
+				my top albums
+			</span>
+			{/snippet}
     </PanelHeader>
     <form class="horizontal" method="POST" action='?/submitCollection'>
 		<p>Pick your top 8 albums to display on your profile.</p>

@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { preventDefault } from 'svelte/legacy';
+
     import type { Posts } from './$types'
 
     interface ComponentProps {
@@ -31,7 +33,7 @@
         required
     >{postData.text}</textarea>
     <div class="edit-submit-options">
-        <button class="standard" on:click|preventDefault={toggleEditState}>
+        <button class="standard" onclick={preventDefault(toggleEditState)}>
             cancel
         </button>
         <button class="standard" formaction="?/editPost">

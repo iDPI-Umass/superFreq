@@ -1,11 +1,19 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     import type { ActionData } from './$types'
     import { enhance } from '$app/forms'
 	import PanelHeader from "$lib/components/PanelHeader.svelte"
     import NotificationModal from "src/lib/components/modals/NotificationModal.svelte"
 
-    export let form: ActionData
-    $: form
+    interface Props {
+        form: ActionData;
+    }
+
+    let { form }: Props = $props();
+    run(() => {
+        form
+    });
 </script>
 
 <svelte:head>
@@ -56,23 +64,31 @@
 <NotificationModal
     showModal={form?.showModal ?? false}
 >
-    <span slot="header-text">
-        { form?.success ? 'Success' : 'Error'}
-    </span>
-    <span slot="message">
-        <p>{ form?.success ? 'Check your inbox!' : 'Something went wrong. Please try again.' }</p>
-    </span>
+    {#snippet header-text()}
+                <span >
+            { form?.success ? 'Success' : 'Error'}
+        </span>
+            {/snippet}
+    {#snippet message()}
+                <span >
+            <p>{ form?.success ? 'Check your inbox!' : 'Something went wrong. Please try again.' }</p>
+        </span>
+            {/snippet}
 </NotificationModal>
 {:else if form?.permission == false}
 <NotificationModal
     showModal={form?.showModal ?? false}
 >
-    <span slot="header-text">
-        Not approved
-    </span>
-    <span slot="message">
-        <p>You are not yet approved to sign up for Freq. You can <a href="https://forms.gle/sGF4yjkubeorrBRH9">request an invite.</a></p>
-    </span>
+    {#snippet header-text()}
+                        <span >
+            Not approved
+        </span>
+                    {/snippet}
+    {#snippet message()}
+                        <span >
+            <p>You are not yet approved to sign up for Freq. You can <a href="https://forms.gle/sGF4yjkubeorrBRH9">request an invite.</a></p>
+        </span>
+                    {/snippet}
 </NotificationModal>
 {/if}
 

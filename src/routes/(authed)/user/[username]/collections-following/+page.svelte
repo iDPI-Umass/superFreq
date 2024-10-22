@@ -1,8 +1,16 @@
 <script lang="ts">
-    export let data
+    import { run } from 'svelte/legacy';
 
-    let { collections, username } = data
-    $: ({ collections, username } = data)
+    interface Props {
+        data: any;
+    }
+
+    let { data }: Props = $props();
+
+    let { collections, username } = $state(data)
+    run(() => {
+        ({ collections, username } = data)
+    });
 </script>
 
 <svelte:head>

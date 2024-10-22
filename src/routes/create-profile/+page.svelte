@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
     import type { PageData,  ActionData } from "../$types"
     import { beforeUpdate, tick } from "svelte"
     import { enhance } from "$app/forms"
@@ -9,23 +11,37 @@
     import NotificationModal from "src/lib/components/modals/NotificationModal.svelte"
     import RedirectModal from "$lib/components/modals/RedirectModal.svelte"
 
-    export let data
-    export let form: ActionData
+	interface Props {
+		data: any;
+		form: ActionData;
+	}
 
-    let { email } = data
-    $: ({ email } =  data)
-    $: form
+	let { data, form }: Props = $props();
 
-    let username = ''
-    let displayName = ''
+    let { email } = $state(data)
+    run(() => {
+		({ email } =  data)
+	});
+    run(() => {
+		form
+	});
+
+    let username = $state('')
+    let displayName = $state('')
     let about = ''
     let website = ''
-    let newItemAdded = false
-    let avatarItem = {} as App.RowData
+    let newItemAdded = $state(false)
+    let avatarItem = $state({} as App.RowData)
 
-	$: username
-	$: displayName
-	$: avatarItem
+	run(() => {
+		username
+	});
+	run(() => {
+		displayName
+	});
+	run(() => {
+		avatarItem
+	});
 
 </script>
 
@@ -38,9 +54,11 @@
 
 <div class="panel" id="profile-info">
 	<PanelHeader>
-		<span slot="text">
-			create profile
-		</span>
+		{#snippet text()}
+				<span >
+				create profile
+			</span>
+			{/snippet}
 	</PanelHeader>
 	<div class="form-wrapper">
 		<form
@@ -204,27 +222,35 @@
 <NotificationModal
     showModal = {( form?.success ? !form?.success : false )}
 >
-<span slot="header-text">
-    Try Another Username
-</span>
-<span slot="message">
-    That Username is already taken, but you can use it for your Display Name.
-    <br />
-    <br />
-    Your Display Name is what other people on the site will actually see.
-</span>
+{#snippet header-text()}
+		<span >
+	    Try Another Username
+	</span>
+	{/snippet}
+{#snippet message()}
+		<span >
+	    That Username is already taken, but you can use it for your Display Name.
+	    <br />
+	    <br />
+	    Your Display Name is what other people on the site will actually see.
+	</span>
+	{/snippet}
 </NotificationModal>
 
 <RedirectModal
     showModal={ form?.success ? form?.success : false }
     redirectPath={'/about#guidelines'}
 >
-    <span slot="header-text">
-        Profiled created!
-    </span>
-    <span slot="message">
-        Automatically redirecting to our Community Guidelines in 5 seconds.
-    </span>
+    {#snippet header-text()}
+		<span >
+	        Profiled created!
+	    </span>
+	{/snippet}
+    {#snippet message()}
+		<span >
+	        Automatically redirecting to our Community Guidelines in 5 seconds.
+	    </span>
+	{/snippet}
 </RedirectModal>
 
 <style>

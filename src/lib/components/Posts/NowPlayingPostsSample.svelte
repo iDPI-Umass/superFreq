@@ -38,7 +38,7 @@
     {/each}
     </div>
     <div class="button-spacer">
-        <button class="standard" on:click={() => goto(`/user/${username}/now-playing-posts`)}>
+        <button class="standard" onclick={() => goto(`/user/${username}/now-playing-posts`)}>
             see more
         </button>
     </div>

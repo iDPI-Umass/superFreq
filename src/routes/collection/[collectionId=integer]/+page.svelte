@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { run, preventDefault } from 'svelte/legacy';
+
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
     
@@ -12,14 +14,20 @@
 	import type { PageData } from './$types';
     // import { insertCollectionFollow, updateCollectionFollow } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions';
 	
-	export let data: PageData;
-    let { sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData, infoBoxText } = data;
-    $: ({ sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData, infoBoxText } = data);
+    interface Props {
+        data: PageData;
+    }
+
+    let { data }: Props = $props();
+    let { sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData, infoBoxText } = $state(data);
+    run(() => {
+        ({ sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData, infoBoxText } = data);
+    });
 
     const collectionType = collectionInfo?.type as string
     const collectionUpdatedAt = collectionInfo?.updated_at as Date
 
-    let gridListSelect = "grid"
+    let gridListSelect = $state("grid")
 
     const categories: App.Lookup = {
         "artists": "artists",
@@ -74,7 +82,7 @@
                         {#if sessionUserId && editPermission}
                             <button 
                                 class="standard"
-                                on:click|preventDefault={() => goto($page.url.pathname + '/edit')}
+                                onclick={preventDefault(() => goto($page.url.pathname + '/edit'))}
                             >
                             edit
                             </button>

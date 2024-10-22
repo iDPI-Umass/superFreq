@@ -1,9 +1,17 @@
 <script lang="ts">
-    import wave from "$lib/assets/images/logo/freq-wave.svg"
-    export let data
+    import { run } from 'svelte/legacy';
 
-    let { profiles, profileDisplayName, username } = data
-    $: ({ profiles, profileDisplayName, username } = data)
+    import wave from "$lib/assets/images/logo/freq-wave.svg"
+    interface Props {
+        data: any;
+    }
+
+    let { data }: Props = $props();
+
+    let { profiles, profileDisplayName, username } = $state(data)
+    run(() => {
+        ({ profiles, profileDisplayName, username } = data)
+    });
 </script>
 
 <svelte:head>

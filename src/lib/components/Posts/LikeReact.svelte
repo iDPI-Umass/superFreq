@@ -33,7 +33,7 @@
         id="reaction-type"
         value="like"
     />
-    <button class="like" formaction="?/submitReaction" on:click={() => { reactionActive = !reactionActive }}>
+    <button class="like" formaction="?/submitReaction" onclick={() => { reactionActive = !reactionActive }}>
         <div class="row-group-icon-description">
             {#if reactionCount > 0}
                 <span>

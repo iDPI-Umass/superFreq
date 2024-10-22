@@ -47,9 +47,11 @@
 
 <div class="feed-panel">
     <PanelHeader>
-        <span slot="text">
-            feed
-        </span>
+        {#snippet text()}
+                <span >
+                feed
+            </span>
+            {/snippet}
     </PanelHeader>
     {#if feedItems.length == 0}
     <div class="feed-item-one-liner">
@@ -278,7 +280,7 @@
     </form>
     {#if mode == 'mini'}
         <div class="button-spacer">
-            <button class="standard" on:click={() => goto('/feed')}>
+            <button class="standard" onclick={() => goto('/feed')}>
                 see more
             </button>
         </div>

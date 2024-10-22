@@ -3,25 +3,37 @@
 -->
 
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import GridList from '$lib/components/GridList.svelte'
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
     import Tooltip from '$lib/components/Tooltip.svelte'
 	import InfoBox from 'src/lib/components/InfoBox.svelte';
 
-	export let data
-    let { sessionUserId, infoBoxText } = data
-	$: ({ sessionUserId, infoBoxText } = data)
+    interface Props {
+        data: any;
+    }
 
-	let collectionTitle: string
-	let collectionType: string
-	let collectionStatus: string
+    let { data }: Props = $props();
+    let { sessionUserId, infoBoxText } = $state(data)
+	run(() => {
+        ({ sessionUserId, infoBoxText } = data)
+    });
 
-	let collectionItems: object[] = []
-	$: collectionItems
-	let itemAdded = false
-    let imgPromise
-    $: imgPromise
+	let collectionTitle: string = $state()
+	let collectionType: string = $state()
+	let collectionStatus: string = $state()
+
+	let collectionItems: object[] = $state([])
+	run(() => {
+        collectionItems
+    });
+	let itemAdded = $state(false)
+    let imgPromise = $state()
+    run(() => {
+        imgPromise
+    });
 
 	// UI
 	const buttonTextLookup: {[index: string]: string} = {
@@ -52,9 +64,11 @@
 
 <div class="collection-container">
     <PanelHeader>
-        <span slot="text">
-            new collection
-        </span>
+        {#snippet text()}
+                <span >
+                new collection
+            </span>
+            {/snippet}
     </PanelHeader>
     <form
         class="horizontal"
