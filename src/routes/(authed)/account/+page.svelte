@@ -2,7 +2,8 @@
 	import type { ActionData, PageData } from './$types'
 	import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
-	import NotificationModal from 'src/lib/components/modals/NotificationModal.svelte'
+	import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
+	import CoverArtFallback from '$lib/components/CoverArtFallback.svelte'
 	export let data: PageData;
 	export let form: ActionData;
 	$: form
@@ -19,10 +20,19 @@
 	let displayName: string = profile?.display_name ?? ''
 	let username: string = profile?.username ?? ''
 	let website: string = profile?.website ?? ''
-	$: avatarMbid = avatarItem?.release_group_mbid ??profile?.avatar_mbid ?? ''
+	$: avatarMbid = avatarItem?.release_group_mbid ?? profile?.avatar_mbid ?? ''
 	let avatarUrl: string = avatarItem?.avatar_url ?? profile?.avatar_url ?? ''
+	let avatarArtist: string = profile?.avatar_artist_name 
+	let avatarReleaseGroup: string = profile?.avatar_release_group_name
 	let about: string = profile?.about ?? ''
 	let email: string = user?.email as string
+
+	const avatarInfo = {
+		'img_url': avatarUrl,
+		'artist_name': avatarArtist,
+		'release_group_name': avatarReleaseGroup
+	}
+
 </script>
 
 <svelte:head>
@@ -189,7 +199,11 @@
 				</MusicBrainzSearch>
 			</div>
 			{#if avatarUrl && !newItemAdded}
-				<img src={avatarUrl} alt="user avatar"/>
+				<CoverArtFallback
+					item={avatarInfo}
+					altText="user avatar"
+				></CoverArtFallback>
+				<!-- <img src={avatarUrl} alt="user avatar"/> -->
 			{:else if avatarItem && newItemAdded}
 				<img src={avatarItem.img_url} alt="user avatar"/>
 			{/if}
