@@ -40,6 +40,21 @@
 
 <svelte:options runes={true} />
 
+<input 
+    type="hidden"
+    name="post-reply-id" 
+    id="post-reply-id"
+    form="delete"
+    value={reply.id}
+/>
+<input 
+    type="hidden"
+    name="post-reply-id" 
+    id="post-reply-id"
+    form="flagPost"
+    value={reply.id}
+/>
+
 <div class="comment-panel">    
     <div class="comment">
         <div class="comment-metadata">

@@ -80,7 +80,6 @@ export const getCoverArt = async function ( releaseGroup: App.Lookup ) {
         const coverArtArchiveRes = await fetch(coverArtArchiveEndpoint, { signal: AbortSignal.timeout(5000) })
         const coverArtArchiveUrl = coverArtArchiveRes["url"]
         const lastFmCoverArtUrl = await getLastFmCoverArt( releaseGroup )
-        console.log(coverArtArchiveUrl, lastFmCoverArtUrl)
         return  { coverArtArchiveUrl, lastFmCoverArtUrl, success: true }
     }
     catch ( error ) {

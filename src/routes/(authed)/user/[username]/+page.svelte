@@ -39,7 +39,7 @@
     let nowPlayingPostsCount = $derived(permission ? profileData?.nowPlayingPostsCount as number : null)
     let topAlbumsCollection = $derived(permission ? profileData?.topAlbumsCollection as App.ProfileObject[] : null)
 
-    let topAlbumsReturned = $state( topAlbumsCollection ? true : false)
+    let topAlbumsReturned = $derived( topAlbumsCollection ? true : false)
     
     let followingNow = $derived(form?.followStatus ?? followInfo?.follows_now ?? false)
     let profileUserBlocked = $derived(form?.blockStatus ?? profileUserBlockInfo?.active ?? false)

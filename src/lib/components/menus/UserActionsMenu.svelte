@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { onMount, createEventDispatcher } from 'svelte'
     import { enhance } from '$app/forms'
 
     import { Popover } from "bits-ui";
@@ -29,14 +28,12 @@
         blocked = false,
         flagged = false,
         postId = null,
-        success,
+        success
     }: ComponentProps = $props()
-
-    console.log(postId)
 
     const actionSuccess = $derived(success)
 
-    $effect(() => console.log(actionSuccess))
+    $effect(() => console.log('userActionMenu ', actionSuccess))
 
     let popOverOpenState: boolean = $state(false)
     let showModal: boolean = $state(false)
@@ -245,67 +242,71 @@
         action={formActions[dialogMode]}
         use:enhance
     >
-    <input
-        type="hidden"
-        id="profile-user-id"
-        name="profile-user-id"
-        value={profileUserId}
-    />
-    <input
-        type="hidden"
-        id="post-id"
-        name="post-id"
-        value={postId}
-        form={formIDs[dialogMode]} 
-    />
-    {#if actionSuccess == null}
-        <h2>{diaglogTitleOptions[dialogMode]}</h2>
-        <p>
-            {dialogTextOptions[dialogMode]}
-        </p>
-        <div class="dialog-options">
-            <button 
-                aria-label="close modal" 
-                formmethod="dialog" 
-                onclick={closeDialog}
-            >
-                cancel
-            </button>
-            <button 
-                aria-label="submit" 
-                type="submit"
-                formaction={formActions[dialogMode]}
-            >
-                {dialogConfirmButtonOptions[dialogMode]}
-            </button>
-        </div>
-    {:else if actionSuccess == true}
-        <p>
-            {successTextOptions[dialogMode]}
-        </p>
-        <div class="dialog-options">
-            <button 
-                aria-label="close modal" 
-                formmethod="dialog" 
-                onclick={closeDialog}
-            >
-                close
-            </button>
-        </div>
-    {:else if actionSuccess == false}
-        <p>
-            Something went wrong
-        </p>
-        <div class="dialog-options">
-            <button 
-                aria-label="close modal" 
-                formmethod="dialog" 
-                onclick={closeDialog}
-            >
-                close
-            </button>
-        </div>
-    {/if}
+        <input
+            type="hidden"
+            id="profile-user-id"
+            name="profile-user-id"
+            value={profileUserId}
+        />
+        <input
+            type="hidden"
+            id="post-id"
+            name="post-id"
+            value={postId}
+            form={formIDs[dialogMode]} 
+        />
+        {#if actionSuccess == null}
+            <h2>{diaglogTitleOptions[dialogMode]}</h2>
+            <p>
+                {dialogTextOptions[dialogMode]}
+            </p>
+            <div class="dialog-options">
+                <button 
+                    aria-label="close modal" 
+                    formmethod="dialog" 
+                    class="standard"
+                    onclick={closeDialog}
+                >
+                    cancel
+                </button>
+                <button 
+                    aria-label="submit" 
+                    type="submit"
+                    class="standard"
+                    formaction={formActions[dialogMode]}
+                >
+                    {dialogConfirmButtonOptions[dialogMode]}
+                </button>
+            </div>
+        {:else if actionSuccess == true}
+            <p>
+                {successTextOptions[dialogMode]}
+            </p>
+            <div class="dialog-options">
+                <button 
+                    aria-label="close modal" 
+                    formmethod="dialog" 
+                    class="standard"
+                    onclick={closeDialog}
+                >
+                    close
+                </button>
+            </div>
+        {:else if actionSuccess == false}
+            <p>
+                Something went wrong
+            </p>
+            <div class="dialog-options">
+                <button 
+                    aria-label="close modal" 
+                    formmethod="dialog" 
+                    class="standard"
+                    onclick={closeDialog}
+                >
+                    close
+                </button>
+            </div>
+        {/if}
     </form>
 </dialog>
 

@@ -25,8 +25,10 @@
         post,
         editState = $bindable(false),
         mode = null,
-        userActionSuccess = null
+        userActionSuccess
     }: ComponentProps = $props()
+
+    let actionSuccess = $derived(userActionSuccess)
 
     const permalinkTimestampString = (post?.created_at ?? post?.feed_item_timestamp).toISOString()
     const permalinkTimestamp = Date.parse(permalinkTimestampString).toString()
@@ -46,7 +48,7 @@
         editState = !editState
     }
 
-    console.log(post.id)
+    $effect(() => console.log('now playing post ', actionSuccess))
 
     const reactionCount = ( mode == "feed" ) ? 0 : post.reaction_count
 </script>
@@ -136,13 +138,13 @@
                         mode='sessionUserPostMenu'
                         postId={post.id ?? post.now_playing_post_id}
                         bind:editState={editState}
-                        success={userActionSuccess}
+                        success={actionSuccess}
                     ></UserActionsMenu>
                 {:else if sessionUserId}
                     <UserActionsMenu
                         mode='postMenu'
                         postId={post.id ?? post.now_playing_post_id}
-                        success={userActionSuccess}
+                        success={actionSuccess}
                     ></UserActionsMenu>
                 {/if}
             </div>

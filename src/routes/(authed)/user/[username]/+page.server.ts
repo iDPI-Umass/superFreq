@@ -22,12 +22,10 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     const profileData = await selectProfilePageData( sessionUserId, profileUsername )
 
     if (!profileData.profileUserData) {
-        console.log('no user found')
         throw redirect(303, '/')
     }
     else if ( sessionUserId == profileData.profileUserData.id) {
         const feedItems = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
-        console.log('session user')
         return { sessionUserId, profileData, feedItems, profileUsername, posts: null }
     }
     else if ( sessionUserId != profileData.profileUserData.id ) {
@@ -35,7 +33,6 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
 
         const { posts } = selectPosts as App.NestedObject
 
-        console.log('not session user, ', profileData)
         return { sessionUserId, profileData, feedItems: null, profileUsername, posts }
     }    
 }
@@ -241,12 +238,9 @@ export const actions = {
         const data = await request.formData()
         const postId = data.get('post-id') as string
 
-        console.log(postId)
-
         const flag = await insertPostFlag( sessionUserId, postId )
 
         const success = flag ? true : false
-        console.log(success)
         return success
     },
     submitReaction: async ({ request, locals: { safeGetSession }}) => {

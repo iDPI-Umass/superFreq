@@ -16,6 +16,8 @@
 
     let replies = $state(data?.replies as App.RowData[])
 
+    let actionSuccess = $derived(form?.success ?? null)
+    $effect(() => console.log(form))
     const postId = post?.id as string
 
     function replyId ( username: string, createdAt: Date ) {
@@ -34,35 +36,27 @@
 	</title>
 </svelte:head>
 
-
-<div class="post-panel">
+{#snippet formInputs(formName: string)}
     <input 
         type="hidden"
         name="post-id" 
         id="post-id"
-        form="submitReply"
+        form={formName}
         value={postId}
     />
-    <input 
+    <input
         type="hidden"
-        name="post-username" 
+        name="post-username"
         id="post-username"
-        form="submitReply"
+        form={formName}
         value={post?.username}
     />
-    <input 
+    <input
         type="hidden"
-        name="post-created-at" 
+        name="post-created-at"
         id="post-created-at"
-        form="submitReply"
+        form={formName}
         value={post?.created_at.toISOString()}
-    />
-    <input 
-        type="hidden"
-        name="post-id" 
-        id="post-id"
-        form="submitReaction"
-        value={postId}
     />
     <input
         type="hidden"
@@ -71,69 +65,21 @@
         form="submitReaction"
         value="like"
     />
-    <input
-        type="hidden"
-        name="post-username"
-        id="post-username"
-        form="submitReaction"
-        value={post?.username}
-    />
-    <input
-        type="hidden"
-        name="post-created-at"
-        id="post-created-at"
-        form="submitReaction"
-        value={post?.created_at.toISOString()}
-    />
-    <input 
-        type="hidden"
-        name="post-id" 
-        id="post-id"
-        form="delete"
-        value={postId}
-    />
-    <input 
-        type="hidden"
-        name="post-username" 
-        id="post-username"
-        form="delete"
-        value={post?.username}
-    />
-    <input 
-        type="hidden"
-        name="post-created-at" 
-        id="post-created-at"
-        form="delete"
-        value={post?.created_at.toISOString()}
-    />
-    <input 
-        type="hidden"
-        name="post-id" 
-        id="post-id"
-        form="flagPost"
-        value={postId}
-    />
+{/snippet}
+
+<div class="post-panel">
+    {@render formInputs("submitReply")}
+    {@render formInputs("submitReaction")}
+    {@render formInputs("delete")}
+    {@render formInputs("flagPost")}
     <NowPlayingPost
         sessionUserId={sessionUserId}
         post={post}
         editState={form?.editState ?? false}
+        userActionSuccess={actionSuccess}
     ></NowPlayingPost>
     <PostReplyEditor></PostReplyEditor>
     {#each replies as reply}
-        <input 
-            type="hidden"
-            name="post-id" 
-            id="post-id"
-            form="delete"
-            value={reply.id}
-        />
-        <input 
-            type="hidden"
-            name="post-id" 
-            id="post-id"
-            form="flagPost"
-            value={reply.id}
-        />
         <div id={ replyId( reply.username, reply.created_at )}>
             <PostReply
                 reply={reply}
