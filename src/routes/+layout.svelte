@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 <script lang="ts">
 	import "$lib/styles/about.css";
 	import "$lib/styles/bits-ui.css";
@@ -65,6 +64,8 @@
 		return () => data.subscription.unsubscribe()
 	})
 </script>
+
+<svelte:options runes={true} />
 
 <Header
 	sessionUserId={sessionUserId}

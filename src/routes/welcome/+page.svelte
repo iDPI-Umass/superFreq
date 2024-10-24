@@ -23,6 +23,8 @@
     let email: string | null = $state(null)
 </script>
 
+<svelte:options runes={true} />
+
 <svelte:head>
 	<title>
 		Welcome to Freq
@@ -32,11 +34,11 @@
 
 <div class="panel-medium">
     <PanelHeader>
-        {#snippet text()}
-                <span >
+        {#snippet headerText()}
+            <span >
                 welcome
             </span>
-            {/snippet}
+        {/snippet}
     </PanelHeader>
     <div class="post-body">
         <p class="post-text">

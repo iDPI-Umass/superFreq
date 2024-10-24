@@ -17,6 +17,8 @@
     }
 </script>
 
+<svelte:options runes={true} />
+
 <form method="POST" name="editPostText" class="vertical" action="?/editPost">
     <input 
         id="post-data"

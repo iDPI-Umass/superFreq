@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 <script lang="ts">
     import type { PageData, ActionData } from './$types'
     import Feed from '$lib/components/Feed.svelte'
@@ -9,6 +8,8 @@
     let { sessionUserId, feedData, remaining, timestampStart, timestampEnd, batchSize, batchIterator, options } = $derived(data)
 
 </script>
+
+<svelte:options runes={true} />
 
 <svelte:head>
 	<title>

@@ -15,8 +15,7 @@
 		newItemAdded: boolean,
 		mode: string,
 		limit?: string,
-		query: string,
-		avatarSearch?: false,
+		query?: string,
 		imgPromise?: any
 	}
 
@@ -26,13 +25,12 @@
 		searchPlaceholder,
 		addedItems = $bindable(),
 		deletedItems = $bindable([]),
-		newItemAdded = $bindable(false),
+		newItemAdded = $bindable(),
 		mode, // "single" | "collection"
 		limit = '25',
 		query = '',
-		avatarSearch = false,
-		imgPromise = null
-	}
+		imgPromise = $bindable(null)
+	}: ComponentProps = $props()
 
 	let showModal = $state(false)
 
@@ -59,6 +57,17 @@
 			searchComplete = false
 			newItemAdded = true
 			showModal = false
+			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
+				const releaseGroup = {
+					mbid: item["id"] ?? item["releases"][0]["release-group"]["id"],
+					artistName: item["artist-credit"][0]["artist"]["name"] ?? item["artist-credit"][0]["artist"]["name"],
+					releaseGroupName: item["title"] ?? item["releases"][0]["release-group"]["title"]
+				}
+				const { success, coverArtArchiveUrl, lastFmCoverArtUrl } = await getCoverArt(releaseGroup)
+				addedItems["img_url"] = success ? coverArtArchiveUrl : null
+				addedItems["last_fm_img_url"] = success ? lastFmCoverArtUrl : null
+				imgPromise = new Promise ((resolve) => resolve(lastFmCoverArtUrl)) 
+			}
 			return { addedItems, query, searchComplete, newItemAdded, showModal }
 		}
 		if ( mode == 'collection' ) {
@@ -76,19 +85,23 @@
 					artistName: item["artist-credit"][0]["artist"]["name"] ?? item["artist-credit"][0]["artist"]["name"],
 					releaseGroupName: item["title"] ?? item["releases"][0]["release-group"]["title"]
 				}
-				const { success, coverArtUrl } = await getCoverArt(releaseGroup)
+				const { success, coverArtArchiveUrl, lastFmCoverArtUrl } = await getCoverArt(releaseGroup)
 				const thisItemIndex = addedItems.findIndex((item) => item['release_group_mbid'] == releaseGroup.mbid)
-				addedItems[thisItemIndex]["img_url"] = success ? coverArtUrl : null
-				imgPromise = new Promise ((resolve) => resolve(coverArtUrl)) 
+				addedItems[thisItemIndex]["img_url"] = success ? coverArtArchiveUrl : null
+				addedItems[thisItemIndex]["last_fm_img_url"] = success ? lastFmCoverArtUrl : null
+				console.log(lastFmCoverArtUrl)
+				imgPromise = new Promise ((resolve) => resolve(lastFmCoverArtUrl)) 
 			}
 			return { addedItems, deletedItems, query, searchComplete, newItemAdded, showModal, imgPromise }
 		}
 	}
 </script>
 
+<svelte:options runes={true} />
+
 <div class="search-bar">
 	<ListModal bind:showModal>
-		<h1 slot="header-text">
+		{#snippet headerText()}
 			{#if !query}
 			Please enter valid input in the search bar.
 			{:else if query && !searchComplete}
@@ -96,8 +109,9 @@
 			{:else if query && searchComplete}
 			Results for <span class="dialog-header">{query}</span>
 			{/if}
-		</h1>
-		<div slot="list">
+		{/snippet}
+		{#snippet list()}
+		<div>
 			{#if searchComplete}
 				<ol>
 					{#each mbData as item}
@@ -105,13 +119,13 @@
 						<button 
 							class="standard"
 							aria-label="add item"
-							on:click|preventDefault={() => addItem(mode, item)}
+							onclick={() => addItem(mode, item)}
 		
 						>
 							+ add
 						</button>
 						<p>
-							{#if searchCategory == "artists"}
+						{#if searchCategory == "artists"}
 							<span>{item["name"] ?? ''}</span>
 							({item["area"] ? item["area"]["name"] : ''}, 
 							{item["life-span"] ? item["life-span"]["begin"] : ''})
@@ -134,11 +148,12 @@
 				</ol>
 			{/if}
 		</div>
+		{/snippet}
 	</ListModal>
 	<form class="search">
 		<button 
 			class="double-border-top"
-			on:click={() => search(query, searchCategory, limit)} 
+			onclick={() => search(query, searchCategory, limit)} 
 			
 			disabled={!(searchCategory)}
 		>

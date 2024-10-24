@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 <script lang="ts">
     import { enhance } from '$app/forms'
     import { goto } from '$app/navigation'
@@ -12,7 +11,7 @@
         sessionUserId: string
         feedItems: App.RowData[]
         batchSize?: number
-        offset?: number
+        batchIterator?: number
         timestampStart?: Date | null
         timestampEnd?: Date | null
         options: App.Lookup
@@ -24,7 +23,7 @@
         sessionUserId, 
         feedItems, 
         batchSize = 0,
-        offset = 0,
+        batchIterator = 0,
         timestampStart = null,
         timestampEnd = null,
         options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']},
@@ -39,6 +38,7 @@
     }
 </script>
 
+<svelte:options runes={true} />
 <svelte:head>
 	<title>
 		Feed
@@ -47,11 +47,11 @@
 
 <div class="feed-panel">
     <PanelHeader>
-        {#snippet text()}
-                <span >
+        {#snippet headerText()}
+            <span>
                 feed
             </span>
-            {/snippet}
+        {/snippet}
     </PanelHeader>
     {#if feedItems.length == 0}
     <div class="feed-item-one-liner">

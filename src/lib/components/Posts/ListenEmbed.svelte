@@ -1,10 +1,11 @@
-<svelte:options runes={true} />
 <script lang="ts">
     // export let embedInfo: App.Embed
     interface ComponentProps { embedInfo: App.Embed }
     let { embedInfo }: ComponentProps = $props()
     let { id, source } = $derived( embedInfo )
 </script>
+
+<svelte:options runes={true} />
 
 {#if source == 'bandcamp'}
     <div>

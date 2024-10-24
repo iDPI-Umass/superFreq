@@ -17,23 +17,15 @@
 
     let { data }: Props = $props();
     let { sessionUserId, infoBoxText } = $state(data)
-	run(() => {
-        ({ sessionUserId, infoBoxText } = data)
-    });
 
-	let collectionTitle: string = $state()
-	let collectionType: string = $state()
-	let collectionStatus: string = $state()
+	let collectionTitle = $state() as string
+	let collectionType = $state() as string
+	let collectionStatus = $state() as string
 
-	let collectionItems: object[] = $state([])
-	run(() => {
-        collectionItems
-    });
+	let collectionItems = $state([]) as object[]
+
 	let itemAdded = $state(false)
-    let imgPromise = $state()
-    run(() => {
-        imgPromise
-    });
+    let imgPromise = $state(null)
 
 	// UI
 	const buttonTextLookup: {[index: string]: string} = {
@@ -52,6 +44,7 @@
 	let placeholderText = "Search for items to add to your collection"
 </script>
 
+<svelte:options runes={true} />
 <svelte:head>
 	<title>
 		New Collection
@@ -64,11 +57,11 @@
 
 <div class="collection-container">
     <PanelHeader>
-        {#snippet text()}
-                <span >
+        {#snippet headerText()}
+            <span >
                 new collection
             </span>
-            {/snippet}
+        {/snippet}
     </PanelHeader>
     <form
         class="horizontal"

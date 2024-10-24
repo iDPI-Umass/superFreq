@@ -27,14 +27,15 @@
 	</title>
 </svelte:head>
 
+<svelte:options runes={true} />
 
 <div class="panel" id="profile-info">
     <PanelHeader>
-        {#snippet text()}
-                <span >
+        {#snippet headerText()}
+            <span >
                 update email address
             </span>
-            {/snippet}
+        {/snippet}
 	</PanelHeader>
 	<form
 		class="horizontal"
@@ -98,21 +99,17 @@
 
         {#if form?.success == true}
         <dialog open>
-            <form method="dialog">
             <button class="standard">
                 x
             </button>
             <p>Check your inbox to confirm your new email address</p>
-            </form>
         </dialog>
         {:else if form?.success == false}
         <dialog open>
-            <form method="dialog">
             <button class="standard">
                 x
             </button>
             <p>Something went wrong, please reload this page and try again.</p>
-            </form>
         </dialog>
         {/if}
     </div>

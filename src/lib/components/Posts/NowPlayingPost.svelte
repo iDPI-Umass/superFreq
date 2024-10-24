@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 <script lang="ts">
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte'
     import EditPostBody from '$lib/components/Posts/EditPostBody.svelte'
@@ -48,6 +47,8 @@
 
     const reactionCount = ( mode == "feed" ) ? 0 : post.reaction_count
 </script>
+
+<svelte:options runes={true} />
 
 <div class="box">
     <div class="double-border">

@@ -45,12 +45,13 @@
 
 </script>
 
+<svelte:options runes={true} />
+
 <svelte:head>
 	<title>
 		Create Profile
 	</title>
 </svelte:head>
-
 
 <div class="panel" id="profile-info">
 	<PanelHeader>

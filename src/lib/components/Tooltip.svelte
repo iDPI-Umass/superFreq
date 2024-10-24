@@ -4,6 +4,7 @@
 
     let { children } = $props()
 </script>
+<svelte:options runes={true} />
 
 <Popover.Root>
     <Popover.Trigger>

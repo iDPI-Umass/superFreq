@@ -23,13 +23,14 @@
   let {
     sessionUserId,
     username = profileObject?.username as string,
-    displayName = profileObject?.display_name as string
-    avatarUrl = profileObject?.avatar_url as string
+    displayName = profileObject?.display_name as string,
+    avatarUrl = profileObject?.avatar_url as string,
     avatarItem = null
   }: ComponentProps = $props()
 
 </script>
 
+<svelte:options runes={true} />
 <svelte:head>
   <title>Freq</title>
 </svelte:head>

@@ -15,8 +15,8 @@
 
     let dialog: any = $state()
 
-	$: if (dialog && showModal) dialog.showModal()
-	$: if (dialog && !showModal) dialog.close()
+	// $: if (dialog && showModal) dialog.showModal()
+	// $: if (dialog && !showModal) dialog.close()
 
     $effect(() => {
 		dialog.addEventListener("click", e => {
@@ -30,10 +30,13 @@
 				dialog.close()
 			}
 		})
-	})
 
-	const dispatch = createEventDispatcher();
+		if ( dialog && showModal ) dialog.showModal()
+		if ( dialog && !showModal ) dialog.close()
+	})
 </script>
+
+<svelte:options runes={true} />
 
 <dialog class="notification"
     aria-label="notification modal"

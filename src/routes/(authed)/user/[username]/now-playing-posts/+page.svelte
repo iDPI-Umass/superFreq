@@ -14,16 +14,11 @@
     }
 
     let { data, form }: Props = $props();
-    run(() => {
-        form
-    });
 
-    let { posts, username, sessionUserId } =  $state(data)
-    run(() => {
-        ({ posts, username, sessionUserId } =  data)
-    });
+    let { posts, username, sessionUserId } =  $derived(data)
 </script>
 
+<svelte:options runes={true} />
 <svelte:head>
 	<title>
 		{username}'s' Now Playing posts
@@ -32,11 +27,11 @@
 
 <div class="panel-medium">
     <PanelHeader>
-        {#snippet text()}
-                <span >
+        {#snippet headerText()}
+            <span >
                 {posts[0]['display_name']}'s Now Playing posts
             </span>
-            {/snippet}
+        {/snippet}
     </PanelHeader>
     <div class="posts-spacing">
     {#each posts as post}

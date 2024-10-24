@@ -1,17 +1,19 @@
 <script lang="ts">
+    import type { Snippet } from 'svelte'
     import PanelHeader from "$lib/components/PanelHeader.svelte"
-    export let title
 
-    let { title }: { title: string } = $props()
+    let { title, content }: { title: Snippet, content: Snippet } = $props()
 </script>
+
+<svelte:options runes={true} />
 
 <div class="panel">
     <PanelHeader>
-        <span slot="text">
-            {title}
-        </span>
+        {#snippet headerText()}
+            {@render title()}
+        {/snippet}
     </PanelHeader>
     <div class="about-text">
-        <slot></slot>
+        {@render content()}
     </div>
 </div>

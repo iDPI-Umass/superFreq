@@ -16,6 +16,8 @@
     });
 </script>
 
+<svelte:options runes={true} />
+
 <div class="wrapper">
     <h1>collections</h1>
     <ul>

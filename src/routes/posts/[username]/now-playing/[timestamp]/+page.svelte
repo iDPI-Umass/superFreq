@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { run } from 'svelte/legacy';
-
     import type { PageData, ActionData } from './$types'
     import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
     import PostReply from '$lib/components/Posts/PostReply.svelte'
@@ -12,15 +10,11 @@
     }
 
     let { data, form }: Props = $props();
-    let { sessionUserId, post, postReactionActive } = $state(data)
-    run(() => {
-        ({ sessionUserId, post, postReactionActive } = data)
-    });
+    let { post, postReactionActive } = $state(data)
 
-    let replies = data?.replies as App.RowData[]
-    run(() => {
-        replies
-    });
+    let sessionUserId = data?.sessionUserId as string
+
+    let replies = $state(data?.replies as App.RowData[])
 
     const postId = post?.id as string
 
@@ -31,6 +25,8 @@
         return slug
     }
 </script>
+
+<svelte:options runes={true} />
 
 <svelte:head>
 	<title>
@@ -87,7 +83,7 @@
         name="post-created-at"
         id="post-created-at"
         form="submitReaction"
-        value={post?.created_at.toISOString()}}
+        value={post?.created_at.toISOString()}
     />
     <input 
         type="hidden"
@@ -108,7 +104,7 @@
         name="post-created-at" 
         id="post-created-at"
         form="delete"
-        value={post?.created_at.toISOString()}}
+        value={post?.created_at.toISOString()}
     />
     <input 
         type="hidden"
@@ -121,7 +117,6 @@
         sessionUserId={sessionUserId}
         post={post}
         editState={form?.editState ?? false}
-        reactionActive={postReactionActive ?? false} 
     ></NowPlayingPost>
     <PostReplyEditor></PostReplyEditor>
     {#each replies as reply}

@@ -20,23 +20,16 @@
     let { data, form }: Props = $props();
 
     let { sessionUserId, profileData, feedItems, profileUsername, posts } = $state(data)
-    run(() => {
-        ({ sessionUserId, profileData, feedItems, profileUsername, posts } = data)
-    }); 
 
     let { profileUserData, followInfo, permission, profileUserBlockInfo, profileUserFlagInfo } = $state(profileData)
 
-    run(() => {
-        ({ profileUserData, followInfo, permission, profileUserBlockInfo, profileUserFlagInfo } = profileData)
-    });
-
     const profileUserId = profileUserData?.id as string
 
-    let collectionCount = $derived(permission ? profileData.collectionCount as number : null)
-    let collectionFollowingCount = $derived(permission ? profileData.collectionFollowingCount as number : null)
-    let userFollowingCount = $derived(permission ? profileData.userFollowingCount as number : null)
-    let nowPlayingPostsCount = $derived(permission ? profileData.nowPlayingPostsCount as number : null)
-    let topAlbumsCollection = $derived(permission ? profileData.topAlbumsCollection as App.ProfileObject[] : null)
+    let collectionCount = $state(permission ? profileData?.collectionCount as number : null)
+    let collectionFollowingCount = $state(permission ? profileData?.collectionFollowingCount as number : null)
+    let userFollowingCount = $state(permission ? profileData?.userFollowingCount as number : null)
+    let nowPlayingPostsCount = $state(permission ? profileData?.nowPlayingPostsCount as number : null)
+    let topAlbumsCollection = $state(permission ? profileData?.topAlbumsCollection as App.ProfileObject[] : null)
 
     let topAlbumsReturned = $state(false);
     
@@ -44,17 +37,18 @@
         topAlbumsReturned = true
     }
     
-    let followingNow = $derived(form?.followStatus ?? followInfo?.follows_now ?? false)
-    let profileUserBlocked = $derived(form?.blockStatus ?? profileUserBlockInfo?.active ?? false)
-    let profileUserFlagged = $derived(form?.flagStatus ?? profileUserFlagInfo?.active ?? false)
+    let followingNow = $state(form?.followStatus ?? followInfo?.follows_now ?? false)
+    let profileUserBlocked = $state(form?.blockStatus ?? profileUserBlockInfo?.active ?? false)
+    let profileUserFlagged = $state(form?.flagStatus ?? profileUserFlagInfo?.active ?? false)
 
-    let displayName = $derived(profileUserData?.display_name as string)
+    let displayName = $state(profileUserData?.display_name as string)
 
-    let imgUrl = $derived(profileUserData?.avatar_url as string)
-    let artistName = $derived(profileUserData?.avatar_artist_name as string)
-    let releaseGroupName = $derived(profileUserData?.avatar_release_group_name as string)
+    let imgUrl = $state(profileUserData?.avatar_url as string)
+    let artistName = $state(profileUserData?.avatar_artist_name as string)
+    let releaseGroupName = $state(profileUserData?.avatar_release_group_name as string)
 </script>
 
+<svelte:options runes={true} />
 <svelte:head>
 	<title>
 		{displayName}'s Profile
@@ -186,18 +180,18 @@
     {#if topAlbumsCollection && topAlbumsCollection.length > 0}
     <div class="panel-medium">
         <PanelHeader>
-            {#snippet text()}
-                                <span >top albums</span>
-                            {/snippet}
+            {#snippet headerText()}
+                <span >top albums</span>
+            {/snippet}
             {#snippet button()}
-                                <span >   
+                <span >   
                     {#if profileUserData?.id == sessionUserId}
                         <button class="standard" onclick={() => goto(`/user/top-albums`)}>
                             edit
                         </button>
                     {/if}
                 </span>
-                            {/snippet}
+            {/snippet}
         </PanelHeader>
         <GridList
             collectionContents={topAlbumsCollection}

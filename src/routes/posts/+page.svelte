@@ -20,6 +20,7 @@
     let displayPosts = [...posts]
 </script>
 
+<svelte:options runes={true} />
 <svelte:head>
 	<title>
 		Anonymous Posts
@@ -28,11 +29,11 @@
 
 <div class="panel-medium">
     <PanelHeader>
-        {#snippet text()}
-                <span >
+        {#snippet headerText()}
+            <span >
                 Some anonymized Now Playing posts
             </span>
-            {/snippet}
+        {/snippet}
     </PanelHeader>
     <div class="posts-spacing">
     {#each displayPosts as post}

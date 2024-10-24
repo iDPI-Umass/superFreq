@@ -7,24 +7,20 @@
     import { Tabs } from "bits-ui";
 
     interface ComponentProps {
-        addedItem: any
-        newItemAdded: boolean
-        type: string
-        listenUrl: string
+        addedItem?: any
+        newItemAdded?: boolean
     }
 
     let {
         addedItem,
-        newItemAdded = $bindable(),
-        type,
-        listenUrl = $bindable()
+        newItemAdded = $bindable() as boolean,
     }: ComponentProps = $props()
 </script>
-
+<svelte:options runes={true} />
 
 <div class="border">
     <PanelHeader>
-        {#snippet text()}
+        {#snippet headerText()}
                 <span >
                 what are you listening to?
             </span>
@@ -70,12 +66,6 @@
                     type="hidden" 
                     value={addedItem?.releaseGroupMbid ?? null} 
                 />
-                <!-- <input
-                    id="listen-url" 
-                    name="listen-url" 
-                    type="hidden" 
-                    value={form?.embedInfo.url ?? null}
-                /> -->
                 <div class="tooltip-group">
                     <label 
                         class="text-label" 
@@ -87,19 +77,13 @@
                         A link from Bandcamp, Soundcloud, or YouTube can be embedded in your post. 
                     </Tooltip>
                 </div>
-                <!-- <form method="POST" action="?/parseListenUrl"> -->
-                    <input 
-                        class="text" 
-                        id="listen-url" 
-                        name="listen-url" 
-                        type="url"
-                        placeholder="paste link" 
-                    />
-<!-- 
-                    <button formaction="?/parseListenUrl">
-                        get data
-                    </button>
-                </form> -->
+                <input 
+                    class="text" 
+                    id="listen-url" 
+                    name="listen-url" 
+                    type="url"
+                    placeholder="paste link" 
+                />
                 <div class="label-group">
                     <label 
                         class="text-label" 
@@ -163,7 +147,7 @@
                     name="post-text"
                     spellcheck=true 
                     placeholder="Some prompts: What do you like about this? Does it remind you of something? Are you looking for more like it?"
-></textarea>
+                ></textarea>
                 <button class="standard" formaction="?/postAlbum" type="submit">
                     submit
                 </button>
@@ -303,21 +287,13 @@
                     name="post-text"
                     spellcheck=true 
                     placeholder="Some prompts: What do you like about this? Does it remind you of something? Are you looking for more like it?"
-></textarea>
+                ></textarea>
                 <button class="standard" formaction="?/postTrack" type="submit">
                     submit
                 </button>
             </form>
         </Tabs.Content>
         <Tabs.Content value="mix">
-            <!-- <MusicBrainzSearch
-                searchCategory="artists"
-                searchButtonText="search"
-                searchPlaceholder="look it up"
-                bind:addedItems={addedItem}
-                bind:newItemAdded={newItemAdded}
-                mode="single"
-            ></MusicBrainzSearch> -->
             <form method="POST" name="mix" class="vertical" action="?/postMix" use:enhance>
                 <input
                     id="item-type" 
@@ -420,7 +396,7 @@
                     name="post-text"
                     spellcheck=true 
                     placeholder="Some prompts: What do you like about this? Does it remind you of something? Are you looking for more like it?"
-></textarea>
+                ></textarea>
                 <button class="standard" formaction="?/postMix" type="submit">
                     submit
                 </button>

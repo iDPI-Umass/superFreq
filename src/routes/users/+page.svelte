@@ -15,6 +15,8 @@
     });
 </script>
 
+<svelte:options runes={true} />
+
 <svelte:head>
 	<title>
 		Explore Users

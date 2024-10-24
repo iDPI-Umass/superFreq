@@ -38,6 +38,8 @@
 
 </script>
 
+<svelte:options runes={true} />
+
 <div class="comment-panel">    
     <div class="comment">
         <div class="comment-metadata">

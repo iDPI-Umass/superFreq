@@ -15,6 +15,8 @@
     }: ComponentProps = $props()
 </script>
 
+<svelte:options runes={true} />
+
 <form 
     method="POST" 
     id="submitReaction"

@@ -8,12 +8,10 @@
     }
 
     let { data }: Props = $props();
-    run(() => {
-        data
-    });
 
     const urlString = data?.urlString as string
 </script>
+<svelte:options runes={true} />
 
 <form class="horizontal" method="POST" action="?/confirm">
     <input

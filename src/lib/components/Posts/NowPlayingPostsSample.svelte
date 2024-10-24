@@ -20,12 +20,16 @@
     
 </script>
 
+<svelte:options runes={true} />
+
 {#if posts && posts.length > 0}
 <div class="panel-medium">
     <PanelHeader>
-        <a class="panel-header-link" href={`/user/${username}/now-playing-posts`}>
-            {displayName}'s Now Playing posts
-        </a>
+        {#snippet headerText()}
+            <a class="panel-header-link" href={`/user/${username}/now-playing-posts`}>
+                {displayName}'s Now Playing posts
+            </a>
+        {/snippet}
     </PanelHeader>
     <div class="posts-spacing">
     {#each posts as post}

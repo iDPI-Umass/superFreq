@@ -15,7 +15,7 @@
         collectionItems = $bindable(),
         deletedItems = $bindable([]),
         itemAdded = $bindable(),
-        imgPromise = $bindable()
+        imgPromise = $bindable(null)
     }: ComponentProps = $props()
 
     // $: imgPromise
@@ -39,6 +39,8 @@
     const placeholderText = "Search for items to add to your collection"
 </script>
 
+<svelte:options runes={true} />
+
 <div class="collection-search-bar" >
     <MusicBrainzSearch 
         searchCategory={collectionType}
@@ -51,14 +53,12 @@
         bind:imgPromise={imgPromise}
     ></MusicBrainzSearch>
 </div>
-{#key collectionItems?.length}
-    <GridList 
-        bind:collectionContents={collectionItems}
-        bind:deletedItems={deletedItems}
-        collectionReturned={itemAdded}
-        collectionType={collectionType}
-        layout="list"
-        mode="edit"
-        bind:imgPromise={imgPromise}
-    ></GridList>
-{/key}
+<GridList 
+    bind:collectionContents={collectionItems}
+    bind:deletedItems={deletedItems}
+    collectionReturned={itemAdded}
+    collectionType={collectionType}
+    layout="list"
+    mode="edit"
+    bind:imgPromise={imgPromise}
+></GridList>

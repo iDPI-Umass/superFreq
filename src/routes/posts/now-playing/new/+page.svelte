@@ -6,6 +6,8 @@
 	// $: form
 </script>
 
+<svelte:options runes={true} />
+
 <svelte:head>
 	<title>
 		New Now Playing Post

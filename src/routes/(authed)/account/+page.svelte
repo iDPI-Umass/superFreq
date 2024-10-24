@@ -5,49 +5,67 @@
 	import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
 	import NotificationModal from 'src/lib/components/modals/NotificationModal.svelte'
+
+	import wave from "$lib/assets/images/logo/freq-wave.svg"
+
 	interface Props {
 		data: PageData;
 		form: ActionData;
 	}
 
 	let { data, form }: Props = $props();
-	run(() => {
-		form
-	});
 
 	let { user, profile } = $state(data)
-	run(() => {
-		({ user, profile } = data)
-	});
 
 	let success = $derived(form?.success ?? false)
 
-	let avatarItem = $state({} as App.RowData)
-	let newItemAdded: boolean = $state()
-	let profileForm: HTMLFormElement = $state()
+	let newItemAdded = $state(false) as boolean
+	let profileForm = $state() as HTMLFormElement
 	let loading = false
 	let displayName: string = profile?.display_name ?? ''
 	let username: string = profile?.username ?? ''
 	let website: string = profile?.website ?? ''
-	let avatarMbid = $derived(avatarItem?.release_group_mbid ??profile?.avatar_mbid ?? '')
-	let avatarUrl: string = avatarItem?.avatar_url ?? profile?.avatar_url ?? ''
+
 	let about: string = profile?.about ?? ''
 	let email: string = user?.email as string
+
+	let avatarItem = $state({}) as App.RowData
+	let avatarMbid = $derived(avatarItem?.release_group_mbid ?? profile?.avatar_mbid ?? '')
+	let avatarUrl: string = $derived(avatarItem?.avatar_url ?? profile?.avatar_url ?? '')
+
+	let imgPromise = $state()
 </script>
+
+<svelte:options runes={true} />
 
 <svelte:head>
 	<title>
 		Account
 	</title>
 </svelte:head>
+
+{#snippet editorItemImage(avatarItem: any, altText: string)}
+    {#await imgPromise}
+    <img 
+        src={wave} 
+        alt="loading cover art"
+    />
+	<p>Loading cover art.</p>
+    {:then}
+        <img 
+            src={(avatarItem["img_url"] ?? avatarItem["last_fm_img_url"]) ?? wave } 
+            alt="{(avatarItem["img_url"] ?? avatarItem["last_fm_img_url"]) ? altText : 'no available'} cover art"
+        />
+    {/await}
+{/snippet}
  
 <div class="panel" id="profile-info">
 	<PanelHeader>
-		{#snippet text()}
+		{#snippet headerText()}
 				<span >
 				profile info
 			</span>
-			{/snippet}
+		{/snippet}
 	</PanelHeader>
 	<div class="form-wrapper">
 		<form
@@ -159,7 +177,7 @@
 				type="hidden" 
 				name="newAvatarUrl" 
 				id="newAvatarUrl" 
-				value={avatarItem?.img_url ?? null} 
+				value={avatarItem?.img_url ?? avatarItem?.last_fm_img_url ?? null} 
 			/>
 			<input 
 				type="hidden" 
@@ -196,14 +214,14 @@
 					bind:newItemAdded={newItemAdded}
 					mode="single"
 					limit="10"
-					avatarSearch={true}
+					bind:imgPromise={imgPromise}
 				>
 				</MusicBrainzSearch>
 			</div>
 			{#if avatarUrl && !newItemAdded}
 				<img src={avatarUrl} alt="user avatar"/>
 			{:else if avatarItem && newItemAdded}
-				<img src={avatarItem.img_url} alt="user avatar"/>
+				{@render editorItemImage(avatarItem, avatarItem["release_group_name"])}
 			{/if}
 			<div class="actions">
 				<button
@@ -239,7 +257,7 @@
 <NotificationModal
 	showModal={success}
 >
-	{#snippet header-text()}
+	{#snippet headerText()}
 		<span >
 			Success!
 		</span>

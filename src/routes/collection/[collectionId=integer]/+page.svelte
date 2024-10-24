@@ -42,6 +42,7 @@
 
 </script>
 
+<svelte:options runes={true} />
 <svelte:head>
 	<title>
 		{collectionInfo?.title}

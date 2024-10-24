@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { run } from 'svelte/legacy';
-
     import type { PageData } from './$types';
 
     import CollectionEditor from '$lib/components/CollectionEditor.svelte'
@@ -9,50 +7,39 @@
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
 
 
-    interface Props {
-        data: PageData;
-    }
+    let { data }:  {data: PageData} = $props()
+    let { collection } = $state(data)
 
-    let { data }: Props = $props();
-    let { collection, sessionUserId, collectionId, infoBoxText } = $state(data);
-    run(() => {
-        ({ collection, sessionUserId, collectionId, infoBoxText } = data);
-    });
+    const { sessionUserId, collectionId, infoBoxText }: 
+    {
+        sessionUserId: string
+        collectionId: string
+        infoBoxText: App.StringLookupObject
+    } = data
 
-    let imgPromise = $state()
-    run(() => {
-        imgPromise
-    });
+    let imgPromise = $state(null)
 
 	/* 
 	Let's declare some variables for...
 	*/
 
-    const collectionInfo = collection?.info as App.RowData
+    const collectionInfo = $state(collection?.info as App.RowData)
 
 	// collections_info
 	let collectionTitle = $state(collectionInfo["title"]) 
 	let collectionType = collectionInfo["type"] 
 	let collectionStatus = $state(collectionInfo["status"]) 
-	let descriptionText = collectionInfo["description_text"] 
-
-    run(() => {
-        collectionStatus
-    });
+	let descriptionText = $state(collectionInfo["description_text"] )
 
 	let collectionItems = $state(collection?.collectionContents as App.RowData[])
-	run(() => {
-        collectionItems
-    });
-	let itemAdded = false
+
+	let itemAdded = $state(false)
 	
     let deletedItems = $state(collection?.deletedCollectionContents as App.RowData[])
-    run(() => {
-        deletedItems
-    });
 
-    const isOwner = ( sessionUserId == collectionInfo.owner_id ) ? true : false
+    const isOwner = $derived(( sessionUserId == collectionInfo.owner_id ) ? true : false)
 </script>
+<svelte:options runes={true} />
 
 <svelte:head>
 	<title>
@@ -63,11 +50,11 @@
 
 <div class="collection-container">
     <PanelHeader>
-        {#snippet text()}
-                <span >
+        {#snippet headerText()}
+            <span >
                 edit collection
             </span>
-            {/snippet}
+        {/snippet}
     </PanelHeader>
     <form 
         class="horizontal" 

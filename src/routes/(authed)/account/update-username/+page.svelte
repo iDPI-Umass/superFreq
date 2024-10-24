@@ -24,6 +24,8 @@
 
 </script>
 
+<svelte:options runes={true} />
+
 <svelte:head>
 	<title>
 		Update Username
@@ -33,11 +35,11 @@
 
 <div class="panel" id="profile-info">
     <PanelHeader>
-        {#snippet text()}
-                <span >
+        {#snippet headerText()}
+            <span >
                 update username
             </span>
-            {/snippet}
+        {/snippet}
 	</PanelHeader>
 	<form
 		class="horizontal"
@@ -91,12 +93,12 @@
     <NotificationModal
         showModal={(form?.success ? !form?.success : false)}
     >
-        {#snippet header-text()}
-                <span >Username taken</span>
-            {/snippet}
+        {#snippet headerText()}
+            <span >Username taken</span>
+        {/snippet}
         {#snippet message()}
-                <span >Please try another username.</span>
-            {/snippet}
+            <span >Please try another username.</span>
+        {/snippet}
     </NotificationModal>
 </div>
 
@@ -104,7 +106,11 @@
     showModal={form?.success ?? false}
     redirectPath='/account'
 >
-Username updated successfully. Redirecting to your account page in 5 seconds.
+    {#snippet message()}
+        <span>
+            Username updated successfully. Redirecting to your account page in 5 seconds.
+        </span>
+    {/snippet}
 </RedirectModal>
 
 <style>

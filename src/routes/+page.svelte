@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { run } from 'svelte/legacy';
-
     import type { ActionData } from './$types'
     import { enhance } from '$app/forms'
 	import PanelHeader from "$lib/components/PanelHeader.svelte"
@@ -11,11 +9,9 @@
     }
 
     let { form }: Props = $props();
-    run(() => {
-        form
-    });
 </script>
 
+<svelte:options runes={true} />
 <svelte:head>
 	<title>
 		Welcome to Freq
@@ -25,7 +21,9 @@
 
 <div class="panel-medium">
     <PanelHeader>
-        welcome
+        {#snippet headerText()}
+            welcome
+        {/snippet}
     </PanelHeader>
     <div class="post-body">
         <p class="post-text">
@@ -64,7 +62,7 @@
 <NotificationModal
     showModal={form?.showModal ?? false}
 >
-    {#snippet header-text()}
+    {#snippet headerText()}
                 <span >
             { form?.success ? 'Success' : 'Error'}
         </span>
@@ -79,16 +77,16 @@
 <NotificationModal
     showModal={form?.showModal ?? false}
 >
-    {#snippet header-text()}
-                        <span >
+    {#snippet headerText()}
+        <span >
             Not approved
         </span>
-                    {/snippet}
+    {/snippet}
     {#snippet message()}
-                        <span >
+        <span >
             <p>You are not yet approved to sign up for Freq. You can <a href="https://forms.gle/sGF4yjkubeorrBRH9">request an invite.</a></p>
         </span>
-                    {/snippet}
+    {/snippet}
 </NotificationModal>
 {/if}
 

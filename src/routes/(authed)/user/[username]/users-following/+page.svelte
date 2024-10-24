@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { run } from 'svelte/legacy';
-
     import wave from "$lib/assets/images/logo/freq-wave.svg"
     interface Props {
         data: any;
@@ -8,12 +6,10 @@
 
     let { data }: Props = $props();
 
-    let { profiles, profileDisplayName, username } = $state(data)
-    run(() => {
-        ({ profiles, profileDisplayName, username } = data)
-    });
+    let { profiles, profileDisplayName, username } = $derived(data)
 </script>
 
+<svelte:options runes={true} />
 <svelte:head>
 	<title>
 		Users {username} follows

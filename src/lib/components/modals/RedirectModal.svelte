@@ -6,8 +6,8 @@
     interface ComponentProps {
         showModal: boolean
         redirectPath: string,
-        headerText: Snippet,
-        message: Snippet
+        headerText?: Snippet,
+        message?: Snippet
     }
 
     let { 
@@ -19,16 +19,24 @@
 
     let dialog: any = $state()
 
-	$: if (dialog && showModal) dialog.showModal()
-	$: if (dialog && !showModal) dialog.close()
+	// $: if (dialog && showModal) dialog.showModal()
+	// $: if (dialog && !showModal) dialog.close()
 
-    $effect.pre ( async () => {
-        await tick
+    $effect.pre ( () => {
         if ( showModal == true ) {
-            setTimeout(() => goto(redirectPath), 5000)
+            tick().then(() => {
+                setTimeout(() => goto(redirectPath), 5000)
+            })
         }
     })
+
+    $effect (() => {
+        if ( dialog && showModal ) dialog.showModal()
+		if ( dialog && !showModal ) dialog.close()
+    })
 </script>
+
+<svelte:options runes={true} />
 
 <dialog class="notification"
     aria-label="redirect-modal"
@@ -38,10 +46,10 @@
     <div class="dialog-column">
         <div class="dialog-header">
             <h1 class="notification">
-                {@render headerText()}
+                {@render headerText?.()}
             </h1>
         </div>
-        {@render message()}
+        {@render message?.()}
         <button class="standard" onclick={() => goto(redirectPath)}>
             Go now
         </button>

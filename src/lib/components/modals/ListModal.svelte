@@ -15,6 +15,7 @@
 -->
 
 <script lang="ts">
+	import type { Snippet } from 'svelte'
     import { onMount, createEventDispatcher } from 'svelte'
 
 	interface ComponentProps {
@@ -31,8 +32,8 @@
 
     let dialog: any = $state()
 
-	$: if (dialog && showModal) dialog.showModal()
-	$: if (dialog && !showModal) dialog.close()
+	// $: if (dialog && showModal) dialog.showModal()
+	// $: if (dialog && !showModal) dialog.close()
 
     $effect(() => {
 		dialog.addEventListener("click", e => {
@@ -46,10 +47,13 @@
 				dialog.close()
 			}
 		})
-	})
 
-	const dispatch = createEventDispatcher();
+		if ( dialog && showModal ) dialog.showModal()
+		if ( dialog && !showModal ) dialog.close()
+	})
 </script>
+
+<svelte:options runes={true} />
 
 <svelte:window
 	on:keydown={(e) => {
@@ -66,7 +70,7 @@
 >
 	<div class="dialog-header">
 		<h1>
-			{@render headerText()}
+			{@render headerText?.()}
 		</h1>
 		<button 
 			aria-label="close modal" 
@@ -76,7 +80,7 @@
 			x
 		</button>
 	</div>
-    {@render list()}
+    {@render list?.()}
 </dialog>
 
 <style>

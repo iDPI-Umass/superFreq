@@ -16,22 +16,23 @@
         editState: boolean | null | undefined
         mode: 'profileMenu' | 'postMenu' | 'sessionUserPostMenu'
         profileUserId: string | null
-        blocked: boolean
-        flagged: boolean
-        postId: sting | null
-        success: boolean | null
+        blocked?: boolean
+        flagged?: boolean
+        postId?: string | null
+        success?: boolean | null
     }
 
     let {
         editState = $bindable(false),
         mode,
         profileUserId = null,
+        blocked = false,
         flagged = false,
-        postId = null
-        success = null
+        postId = null,
+        success = null,
     }: ComponentProps = $props()
 
-    let popOverOpenState: boolean = $state()
+    let popOverOpenState: boolean = $state(false)
     let showModal: boolean = $state(false)
     let dialog: any
     
@@ -78,10 +79,7 @@
         unblockUser: '?/blockUser'
     }
 
-    let dialogMode: string
-
-	$: if (dialog && ( showModal == true )) dialog.showModal()
-	$: if (dialog && !showModal) dialog.close()
+    let dialogMode = $state() as string
 
     function toggleEditState() {
         editState = !editState
@@ -110,22 +108,22 @@
 				dialog.close()
 			}
 		})
-	})
 
-	const dispatch = createEventDispatcher();
+        if (dialog && ( showModal == true )) dialog.showModal()
+	    if (dialog && !showModal) dialog.close()
+	})
 </script>
+<svelte:options runes={true} />
 
 <svelte:window
 	onkeydown={(e) => {
 		if (e.key === 'Escape') {
-			dispatch(dialog.close());
+			dialog.close()
 		}
 	}}
 />
 
 <Popover.Root
-    closeOnEscape={true}
-    closeOnOutsideClick={true}
     bind:open={popOverOpenState}
 >
     <Popover.Trigger>
@@ -136,7 +134,7 @@
             {#if !blocked}
                 <button 
                     class="popover-item" 
-                    onclick|preventDefault={() => openDialog('blockUser')}
+                    onclick={() => openDialog('blockUser')}
                 >
                     <Ban 
                         size="16" 
@@ -149,7 +147,7 @@
             {:else if blocked}
                 <button 
                     class="popover-item" 
-                    onclick={preventDefault(() => openDialog('unblockUser'))}
+                    onclick={() => openDialog('unblockUser')}
                 >
                     <Circle 
                         size="16" 
@@ -163,7 +161,7 @@
             {#if !flagged}
                 <button
                     class="popover-item" 
-                    onclick={preventDefault(() => openDialog('reportUser'))} 
+                    onclick={() => openDialog('reportUser')} 
                 >
                     <Flag 
                         size="16" 
@@ -176,7 +174,7 @@
             {:else if flagged}
             <button
                 class="popover-item" 
-                onclick={preventDefault(() => openDialog('reportUser'))} 
+                onclick={() => openDialog('reportUser')} 
                 disabled
             >
                 <Flag 
@@ -191,7 +189,7 @@
         {:else if mode == 'sessionUserPostMenu'}
             <button 
                 class="popover-item" 
-                onclick={preventDefault(toggleEditState)}
+                onclick={toggleEditState}
             >
                 <PenLine 
                     size="16" 
@@ -203,7 +201,7 @@
             </button>
             <button
                 class="popover-item" 
-                onclick={preventDefault(() => openDialog('deletePost'))} 
+                onclick={() => openDialog('deletePost')} 
             >
                 <Trash2 
                     size="16" 
@@ -216,7 +214,7 @@
         {:else if mode = 'postMenu'}
             <button
                 class="popover-item" 
-                onclick={preventDefault(() => openDialog('flagPost'))} 
+                onclick={() => openDialog('flagPost')} 
             >
                 <Flag 
                     size="16" 

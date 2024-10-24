@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { onMount, createEventDispatcher } from 'svelte'
-
     import { Popover } from "bits-ui";
     import { flyAndScale } from "$lib/utils/transitions.ts"
 
@@ -10,12 +8,9 @@
 
     let { editState = $bindable(false) }: { editState: boolean } = $props()
 
-    let popOverOpenState: boolean = $state()
-    let showModal: boolean = $state(false)
+    let popOverOpenState = $state(false)
+    let showModal = $state(false)
     let dialog: any = $state()
-
-	$: if (dialog && ( showModal == true )) dialog.showModal()
-	$: if (dialog && !showModal) dialog.close()
 
     function toggleEditState() {
         editState = !editState
@@ -24,6 +19,7 @@
 
     function deletePost() {
         popOverOpenState = !popOverOpenState
+        showModal = true
     }
 
     function closeDialog() {
@@ -42,16 +38,17 @@
 				dialog.close()
 			}
 		})
+
+        if (dialog && ( showModal == true )) dialog.showModal()
+        if (dialog && !showModal) dialog.close()
 	})
-
-	const dispatch = createEventDispatcher();
-
 </script>
 
+<svelte:options runes={true} />
 <svelte:window
 	onkeydown={(e) => {
 		if (e.key === 'Escape') {
-			dispatch(dialog.close());
+		    dialog.close()
 		}
 	}}
 />
@@ -65,7 +62,7 @@
         <Ellipsis size="16" color="var(--freq-color-text-muted)"></Ellipsis>
     </Popover.Trigger>
     <Popover.Content transition={flyAndScale}>
-        <button class="popover-item" on:click|preventDefault={toggleEditState}>
+        <button class="popover-item" onclick={toggleEditState}>
             <PenLine size="16" color="var(--freq-color-text-muted)"></PenLine>
             <span class="descriptor">
                 edit
@@ -73,10 +70,7 @@
         </button>
         <button
             class="popover-item" 
-            onclick={() => {preventDefault(
-                    deletePost()
-                    showModal = true
-                )}}
+            onclick={() => {deletePost()}}
         >
             <Trash2 size="16" color="var(--freq-color-text-muted)"></Trash2>
             <span class="descriptor">

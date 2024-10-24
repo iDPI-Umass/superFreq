@@ -1,18 +1,15 @@
 <script lang="ts">
-    import { run } from 'svelte/legacy';
-
     interface Props {
         data: any;
     }
 
     let { data }: Props = $props();
 
-    let { collections, username } = $state(data)
-    run(() => {
-        ({ collections, username } = data)
-    });
+    let { collections, username } = $derived(data)
+
 </script>
 
+<svelte:options runes={true} />
 <svelte:head>
 	<title>
 		${username}'s collections

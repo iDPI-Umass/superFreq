@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
     import PanelHeader from '$lib/components/PanelHeader.svelte'
 	import CollectionEditor from '$lib/components/CollectionEditor.svelte'
 
@@ -10,31 +8,18 @@
 
 	let { data }: Props = $props();
 	let { collectionContents, deletedCollectionContents } =  $state(data)
-	run(() => {
-		({ collectionContents, deletedCollectionContents } =  data)
-	});
 
 	let collectionType = "release_groups"
 
 	let imgPromise = $state()
-    run(() => {
-		imgPromise
-	});
-
 
 	let collectionItems = $state(collectionContents ? collectionContents : [] as App.RowData[])
-	run(() => {
-		collectionItems
-	});
 
 	let deletedItems = $state(deletedCollectionContents ? deletedCollectionContents : [] as App.RowData[])
-	run(() => {
-		deletedItems
-	});
-
 	let itemAdded = false
 </script>
 
+<svelte:options runes={true} />
 <svelte:head>
 	<title>
 		Choose Top Albums
@@ -44,11 +29,11 @@
 
 <div class="panel">
     <PanelHeader>
-		{#snippet text()}
-				<span >
+		{#snippet headerText()}
+			<span >
 				my top albums
 			</span>
-			{/snippet}
+		{/snippet}
     </PanelHeader>
     <form class="horizontal" method="POST" action='?/submitCollection'>
 		<p>Pick your top 8 albums to display on your profile.</p>
