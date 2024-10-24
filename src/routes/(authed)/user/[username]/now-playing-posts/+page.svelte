@@ -15,7 +15,7 @@
 
     let { data, form }: Props = $props();
 
-    let { posts, username, sessionUserId } =  $derived(data)
+    let { posts, username, sessionUserId } =  $state(data)
 </script>
 
 <svelte:options runes={true} />
@@ -92,11 +92,11 @@
 <NotificationModal
     showModal={form?.success}
 >
-    {#snippet header-text()}
-                <span >
+    {#snippet headerText()}
+        <span >
             success!
         </span>
-            {/snippet}
+    {/snippet}
 </NotificationModal>
 {/if}
 

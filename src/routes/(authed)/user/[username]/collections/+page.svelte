@@ -5,7 +5,7 @@
 
     let { data }: Props = $props();
 
-    let { collections, username } = $derived(data)
+    let { collections, username } = $state(data)
 
 </script>
 

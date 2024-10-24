@@ -17,7 +17,7 @@
     interface ComponentProps {
         reply: any
         sessionUserId?: string | null
-        editState: boolean
+        editState?: boolean
         userActionSuccess?: boolean | null
     }
 
@@ -28,7 +28,7 @@
         userActionSuccess = $bindable(null)
     }: ComponentProps = $props()
 
-    let openState: boolean = $state()
+    let openState = $state() as boolean
 
     const originalPostTimestampString = reply?.original_post_date.toISOString()
     const originalPostTimestamp = Date.parse(originalPostTimestampString).toString()

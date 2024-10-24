@@ -19,6 +19,7 @@
         mode?: string | null
         userActionSuccess?: boolean | null
     }
+
     let {
         sessionUserId = null,
         post,
@@ -44,6 +45,8 @@
     function toggleEditState() {
         editState = !editState
     }
+
+    console.log(post.id)
 
     const reactionCount = ( mode == "feed" ) ? 0 : post.reaction_count
 </script>
@@ -131,13 +134,14 @@
                 {#if post.user_id == sessionUserId }
                     <UserActionsMenu
                         mode='sessionUserPostMenu'
-                        postId={post.id}
+                        postId={post.id ?? post.now_playing_post_id}
                         bind:editState={editState}
                         success={userActionSuccess}
                     ></UserActionsMenu>
                 {:else if sessionUserId}
                     <UserActionsMenu
                         mode='postMenu'
+                        postId={post.id ?? post.now_playing_post_id}
                         success={userActionSuccess}
                     ></UserActionsMenu>
                 {/if}

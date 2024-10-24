@@ -13,9 +13,9 @@
     import Trash2 from 'lucide-svelte/icons/trash-2'
 
     interface ComponentProps {
-        editState: boolean | null | undefined
+        editState?: boolean | null | undefined
         mode: 'profileMenu' | 'postMenu' | 'sessionUserPostMenu'
-        profileUserId: string | null
+        profileUserId?: string | null
         blocked?: boolean
         flagged?: boolean
         postId?: string | null
@@ -29,8 +29,14 @@
         blocked = false,
         flagged = false,
         postId = null,
-        success = null,
+        success,
     }: ComponentProps = $props()
+
+    console.log(postId)
+
+    const actionSuccess = $derived(success)
+
+    $effect(() => console.log(actionSuccess))
 
     let popOverOpenState: boolean = $state(false)
     let showModal: boolean = $state(false)
@@ -237,6 +243,7 @@
         method="POST" 
         id={formIDs[dialogMode]} 
         action={formActions[dialogMode]}
+        use:enhance
     >
     <input
         type="hidden"
@@ -251,7 +258,7 @@
         value={postId}
         form={formIDs[dialogMode]} 
     />
-    {#if success == null}
+    {#if actionSuccess == null}
         <h2>{diaglogTitleOptions[dialogMode]}</h2>
         <p>
             {dialogTextOptions[dialogMode]}
@@ -272,7 +279,7 @@
                 {dialogConfirmButtonOptions[dialogMode]}
             </button>
         </div>
-    {:else if success == true}
+    {:else if actionSuccess == true}
         <p>
             {successTextOptions[dialogMode]}
         </p>
@@ -285,7 +292,7 @@
                 close
             </button>
         </div>
-    {:else if success == false}
+    {:else if actionSuccess == false}
         <p>
             Something went wrong
         </p>

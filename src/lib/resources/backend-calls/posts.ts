@@ -517,6 +517,8 @@ export const selectUserNowPlayingPosts = async function ( sessionUserId: string,
             const selectPosts = await trx
             .selectFrom('posts')
             .innerJoin('profiles', 'profiles.id', 'posts.user_id')
+            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profiles.avatar_mbid')
+            .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
             .leftJoin('post_reactions as reaction',
                 (join) => join
                 .onRef('reaction.post_id', '=', 'posts.id')
@@ -544,6 +546,8 @@ export const selectUserNowPlayingPosts = async function ( sessionUserId: string,
                 'profiles.username as username',
                 'profiles.display_name as display_name',
                 'profiles.avatar_url as avatar_url',
+                'release_groups.release_group_name as avatar_release_group_name',
+                'artists.artist_name as avatar_artist_name',
                 'reaction.active as reaction_active'
             ])
             .where('profiles.id', '=', profileUserId)

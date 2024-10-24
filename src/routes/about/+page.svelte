@@ -12,8 +12,6 @@
 
 <svelte:options runes={true} />
 
-<!-- <About /> -->
-
 <div class="panel">
 	<PanelHeader>
 		{#snippet headerText()}

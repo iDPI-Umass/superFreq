@@ -3,20 +3,17 @@
 
 	interface ComponentProps {
         showModal: boolean
-        headerText: Snippet,
-        message: Snippet
+        headerText: Snippet
+        message?: Snippet
     }
 
 	let {         
 		showModal = $bindable(),
         headerText,
-        message 
+        message
 	}: ComponentProps = $props()
 
     let dialog: any = $state()
-
-	// $: if (dialog && showModal) dialog.showModal()
-	// $: if (dialog && !showModal) dialog.close()
 
     $effect(() => {
 		dialog.addEventListener("click", e => {
@@ -56,7 +53,7 @@
 		</button>
 	</div>
 	<p class="notification">
-		{@render message()}
+		{@render message?.()}
 	</p>
 </dialog>
 

@@ -14,9 +14,10 @@
         batchIterator?: number
         timestampStart?: Date | null
         timestampEnd?: Date | null
-        options: App.Lookup
+        options?: App.Lookup
         mode: string
         remaining?: number
+        userActionSuccess?: boolean | null
     }
 
     let { 
@@ -28,8 +29,11 @@
         timestampEnd = null,
         options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']},
         mode,
-        remaining = 0
+        remaining = 0,
+        userActionSuccess = null
     }: ComponentProps = $props()
+
+    $effect(() => console.log(userActionSuccess))
 
     function parseTimestamp ( itemTimestamp: Date ) {
         const timestampString = itemTimestamp.toISOString()
@@ -82,6 +86,7 @@
                         sessionUserId={sessionUserId}
                         post={item}
                         mode="feed"
+                        userActionSuccess={userActionSuccess}
                     ></NowPlayingPost>
                 </div>
             </div>

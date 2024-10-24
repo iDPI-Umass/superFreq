@@ -596,7 +596,8 @@ export const insertPostFlag = async function ( sessionUserId: string, postId: st
         .executeTakeFirst()
 
     const flag = await insertFlag
-    return flag
+    const success = flag ? true : false
+    return success
 } 
 
 /* Flag a user */
