@@ -33,7 +33,7 @@
 	let avatarMbid = $derived(avatarItem?.release_group_mbid ?? profile?.avatar_mbid ?? '')
 	let avatarUrl: string = $derived(avatarItem?.avatar_url ?? profile?.avatar_url ?? '')
 
-	let imgPromise = $state()
+	let imgPromise = $state(null)
 </script>
 
 <svelte:options runes={true} />

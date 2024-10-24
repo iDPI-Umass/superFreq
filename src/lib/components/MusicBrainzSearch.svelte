@@ -66,7 +66,7 @@
 				const { success, coverArtArchiveUrl, lastFmCoverArtUrl } = await getCoverArt(releaseGroup)
 				addedItems["img_url"] = success ? coverArtArchiveUrl : null
 				addedItems["last_fm_img_url"] = success ? lastFmCoverArtUrl : null
-				imgPromise = new Promise ((resolve) => resolve(lastFmCoverArtUrl)) 
+				imgPromise = new Promise ((resolve) => resolve(success)) 
 			}
 			return { addedItems, query, searchComplete, newItemAdded, showModal }
 		}
@@ -89,8 +89,7 @@
 				const thisItemIndex = addedItems.findIndex((item) => item['release_group_mbid'] == releaseGroup.mbid)
 				addedItems[thisItemIndex]["img_url"] = success ? coverArtArchiveUrl : null
 				addedItems[thisItemIndex]["last_fm_img_url"] = success ? lastFmCoverArtUrl : null
-				console.log(lastFmCoverArtUrl)
-				imgPromise = new Promise ((resolve) => resolve(lastFmCoverArtUrl)) 
+				imgPromise = new Promise ((resolve) => resolve(success))
 			}
 			return { addedItems, deletedItems, query, searchComplete, newItemAdded, showModal, imgPromise }
 		}

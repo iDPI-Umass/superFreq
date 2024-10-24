@@ -32,7 +32,7 @@
         collectionType, // "artists" | "release_groups" | "recordings" | "labels"
         layout, // "grid" | "condensed-grid" | "list"
         mode, //"view" | "edit"
-        imgPromise = $bindable()
+        imgPromise = $bindable(null)
     }: ComponentProps = $props()
     
     const format: App.NestedObject = {
