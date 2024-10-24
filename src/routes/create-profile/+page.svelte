@@ -1,10 +1,5 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
     import type { PageData,  ActionData } from "../$types"
-    import { beforeUpdate, tick } from "svelte"
-    import { enhance } from "$app/forms"
-    import { goto } from "$app/navigation"
 
     import PanelHeader from "$lib/components/PanelHeader.svelte"
     import MusicBrainzSearch from "$lib/components/MusicBrainzSearch.svelte"
@@ -18,13 +13,7 @@
 
 	let { data, form }: Props = $props();
 
-    let { email } = $state(data)
-    run(() => {
-		({ email } =  data)
-	});
-    run(() => {
-		form
-	});
+    const email = data.email as string
 
     let username = $state('')
     let displayName = $state('')
@@ -33,15 +22,7 @@
     let newItemAdded = $state(false)
     let avatarItem = $state({} as App.RowData)
 
-	run(() => {
-		username
-	});
-	run(() => {
-		displayName
-	});
-	run(() => {
-		avatarItem
-	});
+	let imgPromise = $state(null)
 
 </script>
 
@@ -55,11 +36,11 @@
 
 <div class="panel" id="profile-info">
 	<PanelHeader>
-		{#snippet text()}
-				<span >
+		{#snippet headerText()}
+			<span >
 				create profile
 			</span>
-			{/snippet}
+		{/snippet}
 	</PanelHeader>
 	<div class="form-wrapper">
 		<form
@@ -193,6 +174,7 @@
 					bind:addedItems={avatarItem}
 					bind:newItemAdded={newItemAdded}
 					mode="single"
+					bind:imgPromise={imgPromise}
 				>
 				</MusicBrainzSearch>
 			</div>
@@ -223,18 +205,18 @@
 <NotificationModal
     showModal = {( form?.success ? !form?.success : false )}
 >
-{#snippet header-text()}
+	{#snippet headerText()}
 		<span >
-	    Try Another Username
-	</span>
+			Try Another Username
+		</span>
 	{/snippet}
-{#snippet message()}
+	{#snippet message()}
 		<span >
-	    That Username is already taken, but you can use it for your Display Name.
-	    <br />
-	    <br />
-	    Your Display Name is what other people on the site will actually see.
-	</span>
+			That Username is already taken, but you can use it for your Display Name.
+			<br />
+			<br />
+			Your Display Name is what other people on the site will actually see.
+		</span>
 	{/snippet}
 </NotificationModal>
 
@@ -242,7 +224,7 @@
     showModal={ form?.success ? form?.success : false }
     redirectPath={'/about#guidelines'}
 >
-    {#snippet header-text()}
+    {#snippet headerText()}
 		<span >
 	        Profiled created!
 	    </span>

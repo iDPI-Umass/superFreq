@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import type { ActionData, PageData } from './$types'
 	import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
