@@ -29,7 +29,7 @@
 
     let { profileUserData, followInfo, permission, profileUserBlockInfo, profileUserFlagInfo } = $derived(profileData)
 
-    let success = $derived(form?.success ?? false)
+    let success = $derived(form?.success ?? null)
 
     const profileUserId = $derived(profileUserData?.id as string)
 

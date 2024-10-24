@@ -17,7 +17,7 @@
     let replies = $state(data?.replies as App.RowData[])
 
     let actionSuccess = $derived(form?.success ?? null)
-    $effect(() => console.log(form))
+
     const postId = post?.id as string
 
     function replyId ( username: string, createdAt: Date ) {

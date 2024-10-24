@@ -31,9 +31,7 @@
         success
     }: ComponentProps = $props()
 
-    const actionSuccess = $derived(success)
-
-    $effect(() => console.log('userActionMenu ', actionSuccess))
+    // let actionSuccess = $derived(success)
 
     let popOverOpenState: boolean = $state(false)
     let showModal: boolean = $state(false)
@@ -97,7 +95,19 @@
 
     function closeDialog() {
         showModal = false
+        success = null
     }
+
+    let buttonsInactive = $state(false)
+
+    function runningAction () {
+        buttonsInactive = true
+        Promise.resolve(success).then(() => {
+            buttonsInactive = false
+            return
+        })
+    }
+
 
     $effect(() => {
 		dialog.addEventListener("click", e => {
@@ -255,7 +265,7 @@
             value={postId}
             form={formIDs[dialogMode]} 
         />
-        {#if actionSuccess == null}
+        {#if success == null}
             <h2>{diaglogTitleOptions[dialogMode]}</h2>
             <p>
                 {dialogTextOptions[dialogMode]}
@@ -266,6 +276,7 @@
                     formmethod="dialog" 
                     class="standard"
                     onclick={closeDialog}
+                    disabled={buttonsInactive}
                 >
                     cancel
                 </button>
@@ -274,11 +285,13 @@
                     type="submit"
                     class="standard"
                     formaction={formActions[dialogMode]}
+                    onclick={runningAction}
+                    disabled={buttonsInactive}
                 >
                     {dialogConfirmButtonOptions[dialogMode]}
                 </button>
             </div>
-        {:else if actionSuccess == true}
+        {:else if success == true}
             <p>
                 {successTextOptions[dialogMode]}
             </p>
@@ -292,7 +305,7 @@
                     close
                 </button>
             </div>
-        {:else if actionSuccess == false}
+        {:else if success == false}
             <p>
                 Something went wrong
             </p>
