@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { onMount, createEventDispatcher } from 'svelte'
-
     import { Popover } from "bits-ui";
     import { flyAndScale } from "$lib/utils/transitions.ts"
 
@@ -8,14 +6,11 @@
     import PenLine from 'lucide-svelte/icons/pen-line'
     import Trash2 from 'lucide-svelte/icons/trash-2'
 
-    export let editState: boolean = false
+    let { editState = $bindable(false) }: { editState: boolean } = $props()
 
-    let popOverOpenState: boolean
-    let showModal: boolean = false
-    let dialog: any
-
-	$: if (dialog && ( showModal == true )) dialog.showModal()
-	$: if (dialog && !showModal) dialog.close()
+    let popOverOpenState = $state(false)
+    let showModal = $state(false)
+    let dialog: any = $state()
 
     function toggleEditState() {
         editState = !editState
@@ -24,13 +19,14 @@
 
     function deletePost() {
         popOverOpenState = !popOverOpenState
+        showModal = true
     }
 
     function closeDialog() {
         showModal = false
     }
 
-    onMount(() => {
+    $effect(() => {
 		dialog.addEventListener("click", e => {
 			const dialogDimensions = dialog.getBoundingClientRect()
 			if (
@@ -42,16 +38,17 @@
 				dialog.close()
 			}
 		})
+
+        if (dialog && ( showModal == true )) dialog.showModal()
+        if (dialog && !showModal) dialog.close()
 	})
-
-	const dispatch = createEventDispatcher();
-
 </script>
 
+<svelte:options runes={true} />
 <svelte:window
-	on:keydown={(e) => {
+	onkeydown={(e) => {
 		if (e.key === 'Escape') {
-			dispatch(dialog.close());
+		    dialog.close()
 		}
 	}}
 />
@@ -65,7 +62,7 @@
         <Ellipsis size="16" color="var(--freq-color-text-muted)"></Ellipsis>
     </Popover.Trigger>
     <Popover.Content transition={flyAndScale}>
-        <button class="popover-item" on:click|preventDefault={toggleEditState}>
+        <button class="popover-item" onclick={toggleEditState}>
             <PenLine size="16" color="var(--freq-color-text-muted)"></PenLine>
             <span class="descriptor">
                 edit
@@ -73,8 +70,7 @@
         </button>
         <button
             class="popover-item" 
-            on:click|preventDefault={() => deletePost()} 
-            on:click|preventDefault={() => ( showModal = true )}
+            onclick={() => {deletePost()}}
         >
             <Trash2 size="16" color="var(--freq-color-text-muted)"></Trash2>
             <span class="descriptor">
@@ -87,21 +83,21 @@
 <dialog
     aria-label="modal"
     bind:this={dialog}
-	on:close={() => (showModal = false)}
+	onclose={() => (showModal = false)}
 >
     Are you sure you want to delete this post?
     <div class="delete-submit-options">
         <button 
             aria-label="close modal" 
             formmethod="dialog" 
-            on:click={closeDialog}
+            onclick={closeDialog}
         >
             cancel
         </button>
         <button 
             aria-label="close modal" 
             formmethod="dialog" 
-            on:click={closeDialog}
+            onclick={closeDialog}
         >
             delete
         </button>

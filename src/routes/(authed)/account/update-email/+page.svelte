@@ -2,14 +2,17 @@
     import type { PageData, ActionData } from './$types';
     import PanelHeader from "$lib/components/PanelHeader.svelte"
 
-    export let data: PageData
-	export let form: ActionData
+    interface Props {
+        data: PageData;
+        form: ActionData;
+    }
 
-    let newEmail = ''
-    let confirmEmail = ''
+    let { data, form }: Props = $props();
 
-	let { sessionUserId, sessionUserEmail } = data
-	$: ({ sessionUserId, sessionUserEmail } = data)
+    let newEmail = $state('')
+    let confirmEmail = $state('')
+
+	let { sessionUserId, sessionUserEmail } = $derived(data)
 
 </script>
 
@@ -19,12 +22,15 @@
 	</title>
 </svelte:head>
 
+<svelte:options runes={true} />
 
 <div class="panel" id="profile-info">
     <PanelHeader>
-        <span slot="text">
-            update email address
-        </span>
+        {#snippet headerText()}
+            <span >
+                update email address
+            </span>
+        {/snippet}
 	</PanelHeader>
 	<form
 		class="horizontal"
@@ -88,21 +94,17 @@
 
         {#if form?.success == true}
         <dialog open>
-            <form method="dialog">
             <button class="standard">
                 x
             </button>
             <p>Check your inbox to confirm your new email address</p>
-            </form>
         </dialog>
         {:else if form?.success == false}
         <dialog open>
-            <form method="dialog">
             <button class="standard">
                 x
             </button>
             <p>Something went wrong, please reload this page and try again.</p>
-            </form>
         </dialog>
         {/if}
     </div>

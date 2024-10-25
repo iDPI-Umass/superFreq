@@ -7,36 +7,39 @@
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
 
 
-	export let data: PageData;
-    let { collection, sessionUserId, collectionId, infoBoxText } = data;
-    $: ({ collection, sessionUserId, collectionId, infoBoxText } = data);
+    let { data }:  {data: PageData} = $props()
+    let { collection } = $state(data)
 
-    let imgPromise
-    $: imgPromise
+    const { sessionUserId, collectionId, infoBoxText }: 
+    {
+        sessionUserId: string
+        collectionId: string
+        infoBoxText: App.StringLookupObject
+    } = data
+
+    let imgPromise = $state(null)
 
 	/* 
 	Let's declare some variables for...
 	*/
 
-    const collectionInfo = collection?.info as App.RowData
+    const collectionInfo = $state(collection?.info as App.RowData)
 
 	// collections_info
-	let collectionTitle = collectionInfo["title"] 
+	let collectionTitle = $state(collectionInfo["title"]) 
 	let collectionType = collectionInfo["type"] 
-	let collectionStatus = collectionInfo["status"] 
-	let descriptionText = collectionInfo["description_text"] 
+	let collectionStatus = $state(collectionInfo["status"]) 
+	let descriptionText = $state(collectionInfo["description_text"] )
 
-    $: collectionStatus
+	let collectionItems = $state(collection?.collectionContents as App.RowData[])
 
-	let collectionItems = collection?.collectionContents as App.RowData[]
-	$: collectionItems
-	let itemAdded = false
+	let itemAdded = $state(false)
 	
-    let deletedItems = collection?.deletedCollectionContents as App.RowData[]
-    $: deletedItems
+    let deletedItems = $state(collection?.deletedCollectionContents as App.RowData[])
 
-    const isOwner = ( sessionUserId == collectionInfo.owner_id ) ? true : false
+    const isOwner = $derived(( sessionUserId == collectionInfo.owner_id ) ? true : false)
 </script>
+<svelte:options runes={true} />
 
 <svelte:head>
 	<title>
@@ -47,9 +50,11 @@
 
 <div class="collection-container">
     <PanelHeader>
-        <span slot="text">
-            edit collection
-        </span>
+        {#snippet headerText()}
+            <span >
+                edit collection
+            </span>
+        {/snippet}
     </PanelHeader>
     <form 
         class="horizontal" 

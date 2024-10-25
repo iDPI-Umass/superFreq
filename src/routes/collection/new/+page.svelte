@@ -9,19 +9,21 @@
     import Tooltip from '$lib/components/Tooltip.svelte'
 	import InfoBox from 'src/lib/components/InfoBox.svelte';
 
-	export let data
-    let { sessionUserId, infoBoxText } = data
-	$: ({ sessionUserId, infoBoxText } = data)
+    interface Props {
+        data: any;
+    }
 
-	let collectionTitle: string
-	let collectionType: string
-	let collectionStatus: string
+    let { data }: Props = $props();
+    let { sessionUserId, infoBoxText } = $state(data)
 
-	let collectionItems: object[] = []
-	$: collectionItems
-	let itemAdded = false
-    let imgPromise
-    $: imgPromise
+	let collectionTitle = $state() as string
+	let collectionType = $state() as string
+	let collectionStatus = $state() as string
+
+	let collectionItems = $state([]) as object[]
+
+	let itemAdded = $state(false)
+    let imgPromise = $state(null)
 
 	// UI
 	const buttonTextLookup: {[index: string]: string} = {
@@ -40,6 +42,7 @@
 	let placeholderText = "Search for items to add to your collection"
 </script>
 
+<svelte:options runes={true} />
 <svelte:head>
 	<title>
 		New Collection
@@ -52,9 +55,11 @@
 
 <div class="collection-container">
     <PanelHeader>
-        <span slot="text">
-            new collection
-        </span>
+        {#snippet headerText()}
+            <span >
+                new collection
+            </span>
+        {/snippet}
     </PanelHeader>
     <form
         class="horizontal"

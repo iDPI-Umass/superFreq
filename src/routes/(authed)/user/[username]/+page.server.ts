@@ -240,7 +240,8 @@ export const actions = {
 
         const flag = await insertPostFlag( sessionUserId, postId )
 
-        return flag
+        const success = flag ? true : false
+        return { success }
     },
     submitReaction: async ({ request, locals: { safeGetSession }}) => {
         const session = await safeGetSession()
@@ -251,6 +252,7 @@ export const actions = {
 
         const reaction = await insertUpdateReaction( sessionUserId, postId, reactionType )
 
-        return reaction
+        const success = reaction ? true : false
+        return { success }
     }
 } satisfies Actions

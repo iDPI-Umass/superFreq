@@ -1,12 +1,23 @@
 <script lang="ts">
+    import { preventDefault } from 'svelte/legacy';
+
     import type { Posts } from './$types'
-    export let postData: Posts
-    export let editState: boolean = false
+
+    interface ComponentProps {
+        postData: Posts
+        editState?: boolean
+    }
+    let { 
+        postData,
+        editState = $bindable(false)
+    }: ComponentProps = $props()
 
     function toggleEditState() {
         editState = !editState
     }
 </script>
+
+<svelte:options runes={true} />
 
 <form method="POST" name="editPostText" class="vertical" action="?/editPost">
     <input 
@@ -24,7 +35,7 @@
         required
     >{postData.text}</textarea>
     <div class="edit-submit-options">
-        <button class="standard" on:click|preventDefault={toggleEditState}>
+        <button class="standard" onclick={preventDefault(toggleEditState)}>
             cancel
         </button>
         <button class="standard" formaction="?/editPost">

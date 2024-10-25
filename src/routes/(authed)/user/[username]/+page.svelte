@@ -8,42 +8,58 @@
 	import NewNowPlayingPost from '$lib/components/Posts/NewNowPlayingPost.svelte'
     import Feed from '$lib/components/Feed.svelte'
 	import NowPlayingPostsSample from '$lib/components/Posts/NowPlayingPostsSample.svelte'
-    import CoverArtFallback from '$lib/components/CoverArtFallback.svelte'
+    import CoverArt from 'src/lib/components/CoverArt.svelte'
 
-    export let data: PageData
-    export let form: ActionData
-
-    let { sessionUserId, profileData, feedItems, profileUsername, posts } = data
-    $: ({ sessionUserId, profileData, feedItems, profileUsername, posts } = data) 
-
-    let { profileUserData, followInfo, permission, profileUserBlockInfo, profileUserFlagInfo } = profileData
-
-    $: ({ profileUserData, followInfo, permission, profileUserBlockInfo, profileUserFlagInfo } = profileData)
-
-    const profileUserId = profileUserData?.id as string
-
-    $: collectionCount = permission ? profileData.collectionCount as number : null
-    $: collectionFollowingCount = permission ? profileData.collectionFollowingCount as number : null
-    $: userFollowingCount = permission ? profileData.userFollowingCount as number : null
-    $: nowPlayingPostsCount = permission ? profileData.nowPlayingPostsCount as number : null
-    $: topAlbumsCollection = permission ? profileData.topAlbumsCollection as App.ProfileObject[] : null
-
-    $: topAlbumsReturned = false
-    if ( topAlbumsCollection ) {
-        topAlbumsReturned = true
+    interface Props {
+        data: any;
+        form: ActionData;
     }
+
+    let { data, form }: Props = $props();
+
+    let { sessionUserId, profileData, feedItems, profileUsername, posts }: {
+        sessionUserId: string
+        profileData: any
+        feedItems: any
+        profileUsername: string
+        posts: App.RowData[]
+    } = $derived(data)
+
+    let { profileUserData, followInfo, permission, profileUserBlockInfo, profileUserFlagInfo } = $derived(profileData)
+
+    let success = $derived(form?.success ?? null)
+
+    const profileUserId = $derived(profileUserData?.id as string)
+
+    let collectionCount = $derived(permission ? profileData?.collectionCount as number : null)
+    let collectionFollowingCount = $derived(permission ? profileData?.collectionFollowingCount as number : null)
+    let userFollowingCount = $derived(permission ? profileData?.userFollowingCount as number : null)
+    let nowPlayingPostsCount = $derived(permission ? profileData?.nowPlayingPostsCount as number : null)
+    let topAlbumsCollection = $derived(permission ? profileData?.topAlbumsCollection as App.ProfileObject[] : null)
+
+    let topAlbumsReturned = $derived( topAlbumsCollection ? true : false)
     
-    $: followingNow = form?.followStatus ?? followInfo?.follows_now ?? false
-    $: profileUserBlocked = form?.blockStatus ?? profileUserBlockInfo?.active ?? false
-    $: profileUserFlagged = form?.flagStatus ?? profileUserFlagInfo?.active ?? false
+    let followingNow = $derived(form?.followStatus ?? followInfo?.follows_now ?? false)
+    let profileUserBlocked = $derived(form?.blockStatus ?? profileUserBlockInfo?.active ?? false)
+    let profileUserFlagged = $derived(form?.flagStatus ?? profileUserFlagInfo?.active ?? false)
 
-    $: displayName = profileUserData?.display_name as string
+    let displayName = $derived(profileUserData?.display_name as string)
 
-    $: imgUrl = profileUserData?.avatar_url as string
-    $: artistName = profileUserData?.avatar_artist_name as string
-    $: releaseGroupName = profileUserData?.avatar_release_group_name as string
+    let imgUrl = $derived(profileUserData?.avatar_url as string)
+    let lastFmImgUrl = $derived(profileUserData?.last_fm_img_url as string)
+    let avatarArtistName = $derived(profileUserData?.avatar_artist_name as string)
+    let avatarReleaseGroupName = $derived(profileUserData?.avatar_release_group_name as string)
+
+    let avatarItem = $derived({
+        'img_url': imgUrl,
+        'last_fm_img_url': lastFmImgUrl,
+        'artist_name': avatarArtistName,
+        'release_group_name': avatarReleaseGroupName
+    })
+
 </script>
 
+<svelte:options runes={true} />
 <svelte:head>
 	<title>
 		{displayName}'s Profile
@@ -53,12 +69,12 @@
 
 <div class="profile-info">
     <div class="profile-info-box-left">
-        <CoverArtFallback
+        <CoverArt
             imgUrl={imgUrl}
-            artistName={artistName}
-            releaseGroupName={releaseGroupName}
-            altText="{profileUserData?.display_name}'s avatar"
-        ></CoverArtFallback>
+            artistName={avatarArtistName}
+            releaseGroupName={avatarReleaseGroupName}
+            altText={`${displayName}'s avatar: ${avatarReleaseGroupName} by ${avatarArtistName}`}
+        ></CoverArt>
         <div class="profile-info-box-column">
             <div class="profile-username-buttons-row">
                 <div class="profile-displayname-username-column">
@@ -67,7 +83,7 @@
                 </div>
                 <div class="profile-buttons-group">
                 {#if profileUserData?.id == sessionUserId }
-                    <button class="double-border-top" on:click={() => goto('/account')}>
+                    <button class="double-border-top" onclick={() => goto('/account')}>
                         <div class="inner-border-condensed">
                             edit profile
                         </div>
@@ -108,7 +124,7 @@
                         blocked={profileUserBlocked}
                         flagged={profileUserFlagged}
                         profileUserId={profileUserId}
-                        success={form?.success}
+                        success={success}
                     ></UserActionsMenu>
                 {/if}
                 </div>
@@ -175,14 +191,18 @@
     {#if topAlbumsCollection && topAlbumsCollection.length > 0}
     <div class="panel-medium">
         <PanelHeader>
-            <span slot="text">top albums</span>
-            <span slot="button">   
-                {#if profileUserData?.id == sessionUserId}
-                    <button class="standard" on:click={() => goto(`/user/top-albums`)}>
-                        edit
-                    </button>
-                {/if}
-            </span>
+            {#snippet headerText()}
+                <span >top albums</span>
+            {/snippet}
+            {#snippet button()}
+                <span >   
+                    {#if profileUserData?.id == sessionUserId}
+                        <button class="standard" onclick={() => goto(`/user/top-albums`)}>
+                            edit
+                        </button>
+                    {/if}
+                </span>
+            {/snippet}
         </PanelHeader>
         <GridList
             collectionContents={topAlbumsCollection}
@@ -196,10 +216,12 @@
     {:else if topAlbumsCollection?.length == 0 && profileUserData?.id == sessionUserId}
     <div class="panel-medium">
         <PanelHeader>
-            <span slot="text">top albums</span>
+            {#snippet headerText()}
+                <span >top albums</span>
+            {/snippet}
         </PanelHeader>
         <div class="panel-button-buffer">
-            <button class="standard" on:click={() => goto(`/user/top-albums`)}>
+            <button class="standard" onclick={() => goto(`/user/top-albums`)}>
                 choose your top albums
             </button>
         </div>
@@ -212,6 +234,7 @@
             sessionUserId={sessionUserId}
             feedItems={feedItems?.feedData}
             mode="mini"
+            userActionSuccess={form?.success}
         ></Feed>
     {:else}
         <NowPlayingPostsSample

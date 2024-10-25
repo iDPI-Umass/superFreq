@@ -1,10 +1,14 @@
 <script lang="ts">
-    export let data
+    interface Props {
+        data: any;
+    }
 
-    let { collections, username } = data
-    $: ({ collections, username } = data)
+    let { data }: Props = $props();
+
+    let { collections, username } = $derived(data)
 </script>
 
+<svelte:options runes={true} />
 <svelte:head>
 	<title>
 		Collections ${username} follows

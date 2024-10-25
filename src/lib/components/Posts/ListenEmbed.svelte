@@ -1,12 +1,11 @@
 <script lang="ts">
-    export let embedInfo: App.Embed
-    const url = embedInfo.listen_url as string
-    const id = embedInfo.id
-    const source = embedInfo.source
-    const title = embedInfo.title
-    const artist = embedInfo.artist
+    // export let embedInfo: App.Embed
+    interface ComponentProps { embedInfo: App.Embed }
+    let { embedInfo }: ComponentProps = $props()
+    let { id, source } = $derived( embedInfo )
 </script>
 
+<svelte:options runes={true} />
 
 {#if source == 'bandcamp'}
     <iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/{id}/size=small/bgcol=333333/linkcol=ffffff/transparent=true/" title="Bandcamp player" seamless></iframe>
@@ -19,6 +18,7 @@
 {:else if source == 'mixcloud'}
     <iframe width="100%" height="120" src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&feed={id}" frameborder="0" title="Mixcloud player" ></iframe>
 {/if}
+<!-- {@debug} -->
 
 <style>
     .youtube {

@@ -38,6 +38,7 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
             'username', 
             'display_name', 
             'avatar_url', 
+            'release_groups.last_fm_img_url as last_fm_img_url',
             'website', 
             'about', 
             'top_albums_collection_id',
@@ -213,6 +214,7 @@ export const selectSessionProfile = async function ( sessionUserId: string ) {
         'profiles.about as about',
         'profiles.top_albums_collection_id as top_albums_collection_id',
         'profiles.avatar_url as avatar_url',
+        'release_groups.last_fm_img_url as last_fm_img_url',
         'profiles.avatar_mbid as avatar_mbid',
         'release_groups.release_group_name as avatar_release_group_name',
         'artists.artist_name as avatar_artist_name'
@@ -608,7 +610,8 @@ export const insertPostFlag = async function ( sessionUserId: string, postId: st
         .executeTakeFirst()
 
     const flag = await insertFlag
-    return flag
+    const success = flag ? true : false
+    return success
 } 
 
 /* Flag a user */

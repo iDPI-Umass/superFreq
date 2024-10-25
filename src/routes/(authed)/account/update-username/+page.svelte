@@ -5,16 +5,21 @@
     import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
 	import RedirectModal from '$lib/components/modals/RedirectModal.svelte'
 
-    export let data: PageData
-	export let form: ActionData
+    interface Props {
+        data: PageData;
+        form: ActionData;
+    }
 
-	let { profile } = data
-	$: ({ profile } = data)
+    let { data, form }: Props = $props();
+
+	let { profile } = $derived(data)
 
     let loading = false
-    let username = profile?.username as string
+    let username = $derived(profile?.username as string)
 
 </script>
+
+<svelte:options runes={true} />
 
 <svelte:head>
 	<title>
@@ -25,9 +30,11 @@
 
 <div class="panel" id="profile-info">
     <PanelHeader>
-        <span slot="text">
-            update username
-        </span>
+        {#snippet headerText()}
+            <span >
+                update username
+            </span>
+        {/snippet}
 	</PanelHeader>
 	<form
 		class="horizontal"
@@ -48,7 +55,7 @@
             name="current-username"
             id="current-username"
             form="account-data"
-            value={profile?.username} 
+            value={username} 
             disabled
         />
         <label 
@@ -64,7 +71,7 @@
             name="new-username"
             id="new-username"
             form="account-data"
-            value={profile?.username} 
+            value={username} 
         />
         <button
             type="submit"
@@ -81,8 +88,12 @@
     <NotificationModal
         showModal={(form?.success ? !form?.success : false)}
     >
-        <span slot="header-text">Username taken</span>
-        <span slot="message">Please try another username.</span>
+        {#snippet headerText()}
+            <span >Username taken</span>
+        {/snippet}
+        {#snippet message()}
+            <span >Please try another username.</span>
+        {/snippet}
     </NotificationModal>
 </div>
 
@@ -90,7 +101,11 @@
     showModal={form?.success ?? false}
     redirectPath='/account'
 >
-Username updated successfully. Redirecting to your account page in 5 seconds.
+    {#snippet message()}
+        <span>
+            Username updated successfully. Redirecting to your account page in 5 seconds.
+        </span>
+    {/snippet}
 </RedirectModal>
 
 <style>

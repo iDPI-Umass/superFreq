@@ -1,11 +1,15 @@
 <script lang="ts">
     import type { PageData } from "./$types"
 
-    export let data: PageData
-    $: data
+    interface Props {
+        data: PageData;
+    }
+
+    let { data }: Props = $props();
 
     const urlString = data?.urlString as string
 </script>
+<svelte:options runes={true} />
 
 <form class="horizontal" method="POST" action="?/confirm">
     <input

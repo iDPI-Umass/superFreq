@@ -2,25 +2,24 @@
     import PanelHeader from '$lib/components/PanelHeader.svelte'
 	import CollectionEditor from '$lib/components/CollectionEditor.svelte'
 
-	export let data
-	let { collectionContents, deletedCollectionContents } =  data
-	$: ({ collectionContents, deletedCollectionContents } =  data)
+	interface Props {
+		data: any;
+	}
+
+	let { data }: Props = $props();
+	let { collectionContents, deletedCollectionContents } =  $state(data)
 
 	let collectionType = "release_groups"
 
-	let imgPromise
-    $: imgPromise
+	let imgPromise = $state()
 
+	let collectionItems = $state(collectionContents ? collectionContents : [] as App.RowData[])
 
-	let collectionItems = collectionContents ? collectionContents : [] as App.RowData[]
-	$: collectionItems
-
-	let deletedItems = deletedCollectionContents ? deletedCollectionContents : [] as App.RowData[]
-	$: deletedItems
-
+	let deletedItems = $state(deletedCollectionContents ? deletedCollectionContents : [] as App.RowData[])
 	let itemAdded = false
 </script>
 
+<svelte:options runes={true} />
 <svelte:head>
 	<title>
 		Choose Top Albums
@@ -30,9 +29,11 @@
 
 <div class="panel">
     <PanelHeader>
-		<span slot="text">
-			my top albums
-		</span>
+		{#snippet headerText()}
+			<span >
+				my top albums
+			</span>
+		{/snippet}
     </PanelHeader>
     <form class="horizontal" method="POST" action='?/submitCollection'>
 		<p>Pick your top 8 albums to display on your profile.</p>
@@ -74,10 +75,4 @@
 		justify-content: space-between;
 		align-items: center;
 	}
-    .search-bar {
-        border-top: 1px solid var(--freq-color-border-panel);
-        border-bottom: 1px solid var(--freq-color-border-panel);
-        padding: var(--freq-height-spacer-half) var(--freq-width-spacer);
-		margin: var(--freq-spacing-3x-small) 0;
-    }
 </style>

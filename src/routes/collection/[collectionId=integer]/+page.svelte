@@ -9,17 +9,17 @@
     import GridList from "$lib/components/GridList.svelte";
     import InfoBox from '$lib/components/InfoBox.svelte'
 
-	import type { PageData } from './$types';
     // import { insertCollectionFollow, updateCollectionFollow } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions';
-	
-	export let data: PageData;
-    let { sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData, infoBoxText } = data;
-    $: ({ sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData, infoBoxText } = data);
 
-    const collectionType = collectionInfo?.type as string
-    const collectionUpdatedAt = collectionInfo?.updated_at as Date
 
-    let gridListSelect = "grid"
+    let { data } = $props();
+    let { sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData, infoBoxText } = $derived(data);
+
+
+    const collectionType = $derived(collectionInfo?.type as string)
+    const collectionUpdatedAt = $derived(collectionInfo?.updated_at as Date)
+
+    let gridListSelect = $state("grid")
 
     const categories: App.Lookup = {
         "artists": "artists",
@@ -28,12 +28,13 @@
     }
 
     
-    const updatedAt = new Date(collectionUpdatedAt).toLocaleDateString()
+    const updatedAt = $derived(new Date(collectionUpdatedAt).toLocaleDateString())
 
-    const collectionStatus = collectionInfo?.status as string
+    const collectionStatus = $derived(collectionInfo?.status as string)
 
 </script>
 
+<svelte:options runes={true} />
 <svelte:head>
 	<title>
 		{collectionInfo?.title}
@@ -74,7 +75,7 @@
                         {#if sessionUserId && editPermission}
                             <button 
                                 class="standard"
-                                on:click|preventDefault={() => goto($page.url.pathname + '/edit')}
+                                onclick={() => goto($page.url.pathname + '/edit')}
                             >
                             edit
                             </button>

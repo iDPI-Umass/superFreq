@@ -1,12 +1,17 @@
 <script lang="ts">
     import type { PageData, ActionData } from './$types'
     import { enhance } from '$app/forms'
-    export let form: ActionData
-    export let data: PageData
+    interface Props {
+        form: ActionData;
+        data: PageData;
+    }
 
-    let { collections, remaining, totalCollections, batchSize, batchIterator } = data
-    $: ({ collections, remaining, totalCollections, batchSize, batchIterator } = data )
+    let { form, data }: Props = $props();
+
+    let { collections, remaining, totalCollections, batchSize, batchIterator } = $derived(data)
 </script>
+
+<svelte:options runes={true} />
 
 <div class="wrapper">
     <h1>collections</h1>

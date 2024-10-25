@@ -3,11 +3,19 @@
     import Disc from 'lucide-svelte/icons/disc-2'
     import BoomBox from 'lucide-svelte/icons/boom-box'
 
-    export let artistName: string
-    export let itemTitle: string
-    export let itemType: string
+    interface ComponentProps {
+        artistName: string
+        itemTitle: string
+        itemType: string
+    }
+    
+    let {
+        artistName,
+        itemTitle,
+        itemType
+    }: ComponentProps = $props()
 </script>
-
+<svelte:options runes={true} />
 
 {#if itemType == "release_group"}
     <span 

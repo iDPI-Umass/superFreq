@@ -1,5 +1,12 @@
+<script>
+    /** @type {{children?: import('svelte').Snippet}} */
+    let { children } = $props();
+</script>
+
+<svelte:options runes={true} />
+
 <main>
-    <slot></slot>
+    {@render children?.()}
 </main>
 
 <style>

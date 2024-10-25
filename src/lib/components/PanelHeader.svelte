@@ -1,14 +1,18 @@
 <script lang="ts">
-      import decoration from "$lib/assets/images/panel-header-decoration.svg";
+    import type { Snippet } from 'svelte'
+    import decoration from "$lib/assets/images/panel-header-decoration.svg"
+
+    let { headerText, button }: { headerText: Snippet, button?: Snippet } = $props()
 </script>
+<svelte:options runes={true} />
 
 <div class="panel-header">
     <img src={decoration} alt="decoration" />
     <h1>
-        <slot name="text"></slot>
+        {@render headerText()}
     </h1>
     <div class="button-spacing">
-        <slot name="button"></slot>
+        {@render button?.()}
     </div>
 </div>
 

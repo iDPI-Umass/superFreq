@@ -1,11 +1,11 @@
 <script lang="ts">
-    import type { PageData } from "./$types"
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
-    export let data: PageData
-    let { users } = data
-    $: ({ users } = data)
+    let { data } = $props();
+    let { users } = $derived(data)
 </script>
+
+<svelte:options runes={true} />
 
 <svelte:head>
 	<title>

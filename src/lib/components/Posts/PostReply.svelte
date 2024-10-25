@@ -12,14 +12,23 @@
     import Flag from 'lucide-svelte/icons/flag'
     import Link from 'lucide-svelte/icons/link-2'
 
-    import { Collapsible } from "bits-ui";
+    import { Collapsible } from "bits-ui"
 
-    export let reply: any
-    export let sessionUserId: string | null
-    export let editState = false
-    export let userActionSuccess: boolean | null = null
+    interface ComponentProps {
+        reply: any
+        sessionUserId?: string | null
+        editState?: boolean
+        userActionSuccess?: boolean | null
+    }
 
-    let openState: boolean
+    let {
+        reply,
+        sessionUserId,
+        editState = $bindable(false),
+        userActionSuccess = $bindable(null)
+    }: ComponentProps = $props()
+
+    let openState = $state() as boolean
 
     const originalPostTimestampString = reply?.original_post_date.toISOString()
     const originalPostTimestamp = Date.parse(originalPostTimestampString).toString()
@@ -28,6 +37,23 @@
     const permalink = `/posts/${reply.original_poster_username}/now-playing/${originalPostTimestamp}#${reply.username?.concat(permalinkTimestamp)}`
 
 </script>
+
+<svelte:options runes={true} />
+
+<input 
+    type="hidden"
+    name="post-reply-id" 
+    id="post-reply-id"
+    form="delete"
+    value={reply.id}
+/>
+<input 
+    type="hidden"
+    name="post-reply-id" 
+    id="post-reply-id"
+    form="flagPost"
+    value={reply.id}
+/>
 
 <div class="comment-panel">    
     <div class="comment">

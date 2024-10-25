@@ -13,15 +13,27 @@
     import loadingImage from "$lib/assets/images/loading-image.png"
     import imgNotFound from "$lib/assets/images/image-not-found.png"
 
-    import CoverArtFallback from "$lib/components/CoverArtFallback.svelte"
+    import CoverArt from "src/lib/components/CoverArt.svelte"
 
-    export let collectionContents: any
-    export let deletedItems: any = []
-    export let collectionReturned: boolean
-    export let collectionType: string // "artists" | "release_groups" | "recordings" | "labels"
-    export let layout: string // "grid" | "condensed-grid" | "list"
-    export let mode: string //"view" | "edit"
-    export let imgPromise: any = null
+    interface ComponentProps {
+        collectionContents: any
+        deletedItems?: any
+        collectionReturned: boolean
+        collectionType: string
+        layout: string
+        mode: string
+        imgPromise?: any
+    }
+
+    let {
+        collectionContents = $bindable(),
+        deletedItems = $bindable([]),
+        collectionReturned,
+        collectionType, // "artists" | "release_groups" | "recordings" | "labels"
+        layout, // "grid" | "condensed-grid" | "list"
+        mode, //"view" | "edit"
+        imgPromise = $bindable(null)
+    }: ComponentProps = $props()
     
     const format: App.NestedObject = {
         "grid": ["media-grid", "media-grid-item"],
@@ -29,7 +41,7 @@
         "condensed-grid": ["media-grid-condensed", "media-grid-item"],
     }
 
-    let items = collectionContents
+    let items = $state(collectionContents)
 
     const flipDurationMs = 300;
 
@@ -63,7 +75,7 @@
         }
 	}
 
-    const undersizedCollection = (( layout == 'grid' && collectionContents.length < 6 ) || ( layout == 'condensed-grid' && collectionContents.length < 4 )) ? true : false
+    const undersizedCollection = ( mode == 'view' && ( layout == 'grid' && collectionContents.length < 6 ) || ( layout == 'condensed-grid' && collectionContents.length < 4 )) ? true : false
 
     function getGridSpacers ( items: any ) {
         const spacesArray = [] as number[]
@@ -80,17 +92,52 @@
         return spacesArray
     }
 
-    const gridSpacers = getGridSpacers(items)
+    const gridSpacers = $derived(getGridSpacers(items))
     
 </script>
+
+<svelte:options runes={true} />
+
+{#snippet editorInteractions(item: any, labelText: string)}
+    <div class="editor-interactions">
+        <button class="standard" onclick={() => deleteItem(item)}>
+            x remove
+        </button>
+        <div use:dragHandle aria-label="drag-handle for {labelText}" class="handle">
+            <Grip size="20" color=var(--freq-color-text-muted)></Grip>
+        </div>
+    </div>
+{/snippet}
+
+{#snippet editorItemImage(item: any, altText: string)}
+    {#await imgPromise}
+    <img 
+        src={wave} 
+        alt="loading cover art"
+    />
+    {:then}
+        <img 
+            src={item["img_url"] ?? wave} 
+            alt="{item["img_url"] ? altText : 'no available'} cover art"
+        />
+    {/await}
+{/snippet}
+
+{#snippet underSizedCollection()}
+    {#if undersizedCollection}
+        {#each gridSpacers as spacer}
+            <div class='media-grid-item'></div>
+        {/each}
+    {/if}
+{/snippet}
 
 {#if ( collectionReturned || collectionContents.length > 0 ) && mode == "edit"}
     <ul 
     aria-label="collection items" 
     class={format[layout][0]}
     use:dragHandleZone={{items, flipDurationMs}} 
-    on:consider={handleSort} 
-    on:finalize={handleFinalize}>
+    onconsider={handleSort} 
+    onfinalize={handleFinalize}>
         {#if collectionType == "artists"}
             {#each items as contentItem, index(contentItem.id)}
             <li
@@ -98,19 +145,12 @@
                 animate:flip="{{duration: flipDurationMs}}" 
                 class={format[layout][1]} 
             >
-            <div class="metadata-blurb">
-                <p>
-                    {contentItem["artist_name"]}
-                </p>
-            </div>
-                <div class="editor-interactions">
-                    <button class="standard" on:click|preventDefault={() => deleteItem(contentItem)}>
-                        x remove
-                    </button>
-                    <div use:dragHandle aria-label="drag-handle for {contentItem["artist_name"]}" class="handle">
-                        <Grip size="20" color=var(--freq-color-text-muted)></Grip>
-                    </div>
+                <div class="metadata-blurb">
+                    <p>
+                        {contentItem["artist_name"]}
+                    </p>
                 </div>
+                {@render editorInteractions(contentItem, contentItem["artist_name"])}
             </li>
             {/each}
         {:else if collectionType == "release_groups" }
@@ -121,17 +161,7 @@
                 animate:flip="{{duration: flipDurationMs}}" 
                 class={format[layout][1]} 
             >
-            {#await imgPromise}
-            <img 
-                src={wave} 
-                alt="loading cover art"
-            />
-            {:then}
-                <img 
-                    src={contentItem["img_url"] ?? wave} 
-                    alt="{contentItem["img_url"] ? contentItem["release_group_name"] : 'no available'} cover art"
-                />
-            {/await}
+                {@render editorItemImage(contentItem, contentItem["release_group_name"])}
                 <div class="metadata-blurb">
                     <h2>
                         {contentItem["release_group_name"]}
@@ -140,16 +170,8 @@
                         {contentItem["artist_name"]}
                     </p>
                 </div>
-                <div class="editor-interactions">
-                    <button class="standard" on:click|preventDefault={() => deleteItem(contentItem)}>
-                        x remove
-                    </button>
-                    <div use:dragHandle aria-label="drag-handle for {contentItem["release_group_name"]}" class="handle">
-                        <Grip size="20" color=var(--freq-color-text-muted)></Grip>
-                    </div>
-                </div>
+                {@render editorInteractions(contentItem, contentItem["release_group_name"])} 
             </li>
-
             {/each}
         {:else if collectionType == "recordings" }
             {#each items as contentItem, index(contentItem.id)}
@@ -158,29 +180,12 @@
                 animate:flip="{{duration: flipDurationMs}}" 
                 class={format[layout][1]}
             >
-                {#await imgPromise}
-                    <img 
-                        src={wave} 
-                        alt="loading cover art"
-                    />
-                {:then}
-                    <img 
-                        src={contentItem["img_url"] ?? wave} 
-                        alt="{contentItem["img_url"] ? contentItem["recording_name"] : 'no available'} cover art"
-                    />
-                {/await}
+                {@render editorItemImage(contentItem, contentItem["recording_name"])}
                 <div class="metadata-blurb">
                     <h2>{contentItem["recording_name"]}</h2>
                     <p>{contentItem["artist_name"]}</p>
                 </div>
-                <div class="editor-interactions">
-                    <button class="standard" on:click|preventDefault={() => deleteItem(contentItem)}>
-                        x remove
-                    </button>
-                    <div use:dragHandle aria-label="drag-handle for {contentItem["recording_name"]}" class="handle">
-                        <Grip size="20" color=var(--freq-color-text-muted)></Grip>
-                    </div>
-                </div>
+                {@render editorInteractions(contentItem, contentItem["recording_name"])}
             </li>
             {/each}
         {/if}
@@ -189,65 +194,64 @@
     {#if collectionType == "artists"}
         <div class={format[layout][0]}>
             {#each collectionContents as contentItem}
-            <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
-                <div class={format[layout][1]}>
-                    <p>{contentItem["artists"]["artist_name"]}</p>
-                </div>
-            </a>
+            <div class={format[layout][1]}>
+                <p>
+                    <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
+                        
+                            {contentItem["artists"]["artist_name"]}
+                    </a>
+                </p>
+            </div>
             {/each}
-            {#if undersizedCollection}
-                {#each gridSpacers as spacer}
-                    <div class='media-grid-item'></div>
-                {/each}
-            {/if}
+            {@render underSizedCollection()}
         </div>
     {:else if collectionType == "release_groups"}
         <div class={format[layout][0]}>
             {#each collectionContents as contentItem}
             <div class={format[layout][1]}>
-                <CoverArtFallback
+                <CoverArt
                     item={contentItem}
                     altText={contentItem['release_group_name']}
-                ></CoverArtFallback>
+                ></CoverArt>
                 <div class="metadata-blurb">
-                    <a href={`https://musicbrainz.org/release-group/${contentItem["release_group_mbid"]}`}>
-                        <h2>{contentItem["release_group_name"]}</h2>
-                    </a>
-                    <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
-                        <p>{contentItem["artist_name"]}</p>
-                    </a>
+                    <h2>
+                        <a href={`https://musicbrainz.org/release-group/${contentItem["release_group_mbid"]}`}>
+                            {contentItem["release_group_name"]}
+                        </a>
+                    </h2>
+                    <p>
+                        <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
+                            {contentItem["artist_name"]}
+                        </a>
+                    </p>
                 </div>
             </div>
             {/each}
-            {#if undersizedCollection}
-                {#each gridSpacers as spacer}
-                    <div class='media-grid-item'></div>
-                {/each}
-            {/if}
+            {@render underSizedCollection()}
         </div>
     {:else if collectionType == "recordings"}
         <div class={format[layout][0]}>
             {#each collectionContents as contentItem}
             <div class={format[layout][1]}>
-                <CoverArtFallback
+                <CoverArt
                     item={contentItem}
                     altText={contentItem["recording_name"]}
-                ></CoverArtFallback>
+                ></CoverArt>
                 <div class="metadata-blurb">
-                    <a href={`https://musicbrainz.org/recording/${contentItem["recording_mbid"]}`}>
-                        <h2>{contentItem["recording_name"]}</h2>
-                    </a>
-                    <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
-                        <p>{contentItem["artist_name"]}</p>
-                    </a>
+                    <h2>
+                        <a href={`https://musicbrainz.org/recording/${contentItem["recording_mbid"]}`}>
+                            {contentItem["recording_name"]}
+                        </a>
+                    </h2>
+                    <p>
+                        <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
+                            {contentItem["artist_name"]}
+                        </a>
+                    </p>
                 </div>
             </div>
             {/each}
-            {#if undersizedCollection}
-                {#each gridSpacers as spacer}
-                    <div class='media-grid-item'></div>
-                {/each}
-            {/if}
+            {@render underSizedCollection()}
         </div>
     {/if}
 {/if}

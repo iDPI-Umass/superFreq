@@ -1,17 +1,15 @@
 <script lang="ts">
-    import type { PageData, ActionData } from './$types'
     import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
     import PanelHeader from '$lib/components/PanelHeader.svelte'
 
-    export let data
-    export let form
+    let { data, form } = $props()
 
-    let { posts, postCount } = data
-    $: ({ posts, postCount } = data)
+    let { posts, postCount } = $derived(data)
 
-    let displayPosts = [...posts]
+    let displayPosts = $derived([...posts])
 </script>
 
+<svelte:options runes={true} />
 <svelte:head>
 	<title>
 		Anonymous Posts
@@ -20,9 +18,11 @@
 
 <div class="panel-medium">
     <PanelHeader>
-        <span slot="text">
-            Some anonymized Now Playing posts
-        </span>
+        {#snippet headerText()}
+            <span >
+                Some anonymized Now Playing posts
+            </span>
+        {/snippet}
     </PanelHeader>
     <div class="posts-spacing">
     {#each displayPosts as post}

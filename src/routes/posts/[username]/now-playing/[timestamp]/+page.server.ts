@@ -89,12 +89,8 @@ export const actions = {
 
         const reaction = await insertUpdateReaction( sessionUserId, postId, reactionType )
 
-        const permalink = `/posts/${postUsername}/now-playing/${postCreatedAt}`
-        
-        if ( reaction ) {
-            throw redirect(303, permalink)
-        }
-        else { return { success: false }}
+        const success = reaction ? true : false
+        return { success }
 
     },
     editPost: async ({ request, locals: { safeGetSession } }) => {
@@ -120,7 +116,7 @@ export const actions = {
         const sessionUserId = session.user?.id as string
 
         const data = await request.formData()
-        const postId = data.get('post-id') as string
+        const postId = data.get('post-reply-id') as string ?? data.get('post-id') as string
         const postUsername = data.get('post-username') as string
         const postCreatedAt = data.get('post-created-at') as string
 
@@ -133,7 +129,7 @@ export const actions = {
             throw redirect(303, permalink)
         }
         else { 
-            return { falied: true }
+            return { success: false }
         }
 
     },
@@ -142,10 +138,11 @@ export const actions = {
         const sessionUserId = session.user?.id as string
 
         const data = await request.formData()
-        const postId = data.get('post-id') as string
+        const postId = data.get('post-reply-id') as string ?? data.get('post-id') as string
 
         const flag = await insertPostFlag( sessionUserId, postId )
 
-        return flag
+        const success = flag ? true : false
+        return { success }
     }
 } satisfies Actions

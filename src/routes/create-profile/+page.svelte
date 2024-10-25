@@ -1,33 +1,34 @@
 <script lang="ts">
     import type { PageData,  ActionData } from "../$types"
-    import { beforeUpdate, tick } from "svelte"
-    import { enhance } from "$app/forms"
-    import { goto } from "$app/navigation"
 
     import PanelHeader from "$lib/components/PanelHeader.svelte"
     import MusicBrainzSearch from "$lib/components/MusicBrainzSearch.svelte"
     import NotificationModal from "src/lib/components/modals/NotificationModal.svelte"
     import RedirectModal from "$lib/components/modals/RedirectModal.svelte"
 
-    export let data
-    export let form: ActionData
+	import wave from "$lib/assets/images/logo/freq-wave.svg"
 
-    let { email } = data
-    $: ({ email } =  data)
-    $: form
+	interface Props {
+		data: any;
+		form: ActionData;
+	}
 
-    let username = ''
-    let displayName = ''
+	let { data, form }: Props = $props();
+
+    const email = data.email as string
+
+    let username = $state('')
+    let displayName = $state('')
     let about = ''
     let website = ''
-    let newItemAdded = false
-    let avatarItem = {} as App.RowData
+    let newItemAdded = $state(false)
+    let avatarItem = $state({} as App.RowData)
 
-	$: username
-	$: displayName
-	$: avatarItem
+	let imgPromise = $state(null)
 
 </script>
+
+<svelte:options runes={true} />
 
 <svelte:head>
 	<title>
@@ -35,12 +36,28 @@
 	</title>
 </svelte:head>
 
+{#snippet editorItemImage(avatarItem: any, altText: string)}
+    {#await imgPromise}
+    <img 
+        src={wave} 
+        alt="loading cover art"
+    />
+	<p>Loading cover art.</p>
+    {:then}
+        <img 
+            src={(avatarItem["img_url"] ?? avatarItem["last_fm_img_url"]) ?? wave } 
+            alt="{(avatarItem["img_url"] ?? avatarItem["last_fm_img_url"]) ? altText : 'no available'} cover art"
+        />
+    {/await}
+{/snippet}
 
 <div class="panel" id="profile-info">
 	<PanelHeader>
-		<span slot="text">
-			create profile
-		</span>
+		{#snippet headerText()}
+			<span >
+				create profile
+			</span>
+		{/snippet}
 	</PanelHeader>
 	<div class="form-wrapper">
 		<form
@@ -174,12 +191,13 @@
 					bind:addedItems={avatarItem}
 					bind:newItemAdded={newItemAdded}
 					mode="single"
+					bind:imgPromise={imgPromise}
 				>
 				</MusicBrainzSearch>
 			</div>
 			<!-- add alt text and change column in postgres -->
 			{#if avatarItem.img_url && avatarItem.img_url.length > 0}
-				<img src={avatarItem.img_url} alt="user avatar"/>
+				{@render editorItemImage(avatarItem, avatarItem["release_group_name"])}
 			{/if}
 			{#if form?.success}
 				<p>update submitted</p>
@@ -204,27 +222,35 @@
 <NotificationModal
     showModal = {( form?.success ? !form?.success : false )}
 >
-<span slot="header-text">
-    Try Another Username
-</span>
-<span slot="message">
-    That Username is already taken, but you can use it for your Display Name.
-    <br />
-    <br />
-    Your Display Name is what other people on the site will actually see.
-</span>
+	{#snippet headerText()}
+		<span >
+			Try Another Username
+		</span>
+	{/snippet}
+	{#snippet message()}
+		<span >
+			That Username is already taken, but you can use it for your Display Name.
+			<br />
+			<br />
+			Your Display Name is what other people on the site will actually see.
+		</span>
+	{/snippet}
 </NotificationModal>
 
 <RedirectModal
     showModal={ form?.success ? form?.success : false }
     redirectPath={'/about#guidelines'}
 >
-    <span slot="header-text">
-        Profiled created!
-    </span>
-    <span slot="message">
-        Automatically redirecting to our Community Guidelines in 5 seconds.
-    </span>
+    {#snippet headerText()}
+		<span >
+	        Profiled created!
+	    </span>
+	{/snippet}
+    {#snippet message()}
+		<span >
+	        Automatically redirecting to our Community Guidelines in 5 seconds.
+	    </span>
+	{/snippet}
 </RedirectModal>
 
 <style>

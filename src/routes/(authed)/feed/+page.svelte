@@ -2,13 +2,15 @@
     import type { PageData, ActionData } from './$types'
     import Feed from '$lib/components/Feed.svelte'
 
-    export let data: PageData
-    export let form: ActionData
-    $: form
-    let { sessionUserId, feedData, remaining, timestampStart, timestampEnd, batchSize, options } = data
-    $: ({ sessionUserId, feedData, remaining, totalRowCount, timestampStart, timestampEnd, batchSize, options } = data)
+    // export let data: PageData
+    // export let form: ActionData
+    let { data, form } = $props()
+    let { sessionUserId, feedData, remaining, timestampStart, timestampEnd, batchSize, batchIterator, options } = $derived(data)
 
+    let offset = $derived(form?.batchIterator ? (batchSize * form?.batchIterator) : 0)
 </script>
+
+<svelte:options runes={true} />
 
 <svelte:head>
 	<title>
@@ -21,6 +23,7 @@
     feedItems={form?.feedItems ?? feedData}
     batchSize={batchSize}
     batchIterator={form?.batchIterator ?? 0}
+    offset={offset}
     timestampStart={timestampStart}
     timestampEnd={timestampEnd}
     options={options}

@@ -2,10 +2,20 @@
     import { enhance } from '$app/forms'
     import Heart from 'lucide-svelte/icons/heart'
 
-    export let postId: string
-    export let reactionCount: number = 0
-    export let reactionActive: boolean
+    interface ComponentProps {
+        postId: string
+        reactionCount?: number
+        reactionActive: boolean
+    }
+    
+    let { 
+        postId,
+        reactionCount = 0,
+        reactionActive
+    }: ComponentProps = $props()
 </script>
+
+<svelte:options runes={true} />
 
 <form 
     method="POST" 
@@ -25,7 +35,7 @@
         id="reaction-type"
         value="like"
     />
-    <button class="like" formaction="?/submitReaction" on:click={() => { reactionActive = !reactionActive }}>
+    <button class="like" formaction="?/submitReaction" onclick={() => { reactionActive = !reactionActive }}>
         <div class="row-group-icon-description">
             {#if reactionCount > 0}
                 <span>

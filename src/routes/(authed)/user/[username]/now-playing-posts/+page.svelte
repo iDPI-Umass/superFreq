@@ -6,14 +6,17 @@
     import RedirectModal from '$lib/components/modals/RedirectModal.svelte'
     import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
 
-    export let data: PageData
-    export let form: ActionData
-    $: form
+    interface Props {
+        data: PageData;
+        form: ActionData;
+    }
 
-    let { posts, username, sessionUserId } =  data
-    $: ({ posts, username, sessionUserId } =  data)
+    let { data, form }: Props = $props();
+
+    let { posts, username, sessionUserId } =  $state(data)
 </script>
 
+<svelte:options runes={true} />
 <svelte:head>
 	<title>
 		{username}'s' Now Playing posts
@@ -22,9 +25,11 @@
 
 <div class="panel-medium">
     <PanelHeader>
-        <span slot="text">
-            {posts[0]['display_name']}'s Now Playing posts
-        </span>
+        {#snippet headerText()}
+            <span >
+                {posts[0]['display_name']}'s Now Playing posts
+            </span>
+        {/snippet}
     </PanelHeader>
     <div class="posts-spacing">
     {#each posts as post}
@@ -85,9 +90,11 @@
 <NotificationModal
     showModal={form?.success}
 >
-    <span slot="header-text">
-        success!
-    </span>
+    {#snippet headerText()}
+        <span >
+            success!
+        </span>
+    {/snippet}
 </NotificationModal>
 {/if}
 

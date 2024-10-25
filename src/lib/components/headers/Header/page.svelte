@@ -6,21 +6,32 @@
   import wave from "$lib/assets/images/logo/freq-wave.svg"
   import { profileStoresObject } from "src/lib/stores"
 
-  import CoverArtFallback from "$lib/components/CoverArtFallback.svelte";
+  import CoverArt from "src/lib/components/CoverArt.svelte";
 
-  let profileObject: App.ProfileObject
-  $: profileObject
+  interface ComponentProps {
+    sessionUserId: string | null
+    username: string
+    displayName: string
+    avatarUrl: string
+    avatarItem: App.StringLookupObject
+  }
 
-  profileObject = $profileStoresObject
+  let {
+    sessionUserId,
+    username,
+    displayName,
+    avatarUrl,
+    avatarItem
+  }: ComponentProps = $props()
 
-  export let sessionUserId: string | null
-  export let username: string = profileObject?.username as string
-  export let displayName: string = profileObject?.display_name as string
-  export let avatarUrl: string = profileObject?.avatar_url as string
-  export let avatarItem: any = null
+  // let profileObject = $state() as App.ProfileObject
+
+  // let profileObject = $derived($profileStoresObject)
+  // let storesUsername = $derived(profileObject.username) as string
 
 </script>
 
+<svelte:options runes={true} />
 <svelte:head>
   <title>Freq</title>
 </svelte:head>
@@ -73,10 +84,10 @@
       </a>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
-          <CoverArtFallback
+          <CoverArt
             item={avatarItem}
             altText={avatarItem['release_group_name']}
-          ></CoverArtFallback>
+          ></CoverArt>
           {displayName ?? 'display name'} 
           <ChevronDown></ChevronDown>
         </DropdownMenu.Trigger>

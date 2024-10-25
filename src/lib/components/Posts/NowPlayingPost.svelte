@@ -8,17 +8,25 @@
     import Link from 'lucide-svelte/icons/link-2'
 	import ListenEmbed from './ListenEmbed.svelte'
     import NowPlayingTag from './NowPlayingTag.svelte'
-    import CoverArtFallback from '../CoverArtFallback.svelte'
+    import CoverArt from '../CoverArt.svelte'
 
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
-    export let sessionUserId: string | null = null
-    export let post: any
-    export let reactionActive: boolean | null =  null
-    export let editState: boolean | null | undefined = null
-    export let mode: string | null = null
-    export let userActionSuccess: boolean | null = null
-    $: editState
+    interface ComponentProps {
+        sessionUserId?: string | null
+        post: any
+        editState?: boolean
+        mode?: string | null
+        userActionSuccess?: boolean | null
+    }
+
+    let {
+        sessionUserId = null,
+        post,
+        editState = $bindable(false),
+        mode = null,
+        userActionSuccess
+    }: ComponentProps = $props()
 
     const permalinkTimestampString = (post?.created_at ?? post?.feed_item_timestamp).toISOString()
     const permalinkTimestamp = Date.parse(permalinkTimestampString).toString()
@@ -30,7 +38,8 @@
                 'source': post?.embed_source,
                 'title': post?.release_group_name ?? post?.recording_name ?? post?.episode_title,
                 'artist': post?.artist_name,
-                'account': post?.embed_account
+                'account': post?.embed_account,
+                'url': post?.listen_url
             } as App.Embed
 
     function toggleEditState() {
@@ -38,21 +47,21 @@
     }
 
     const reactionCount = ( mode == "feed" ) ? 0 : post.reaction_count
-    
-    console.log(post)
 </script>
+
+<svelte:options runes={true} />
 
 <div class="box">
     <div class="double-border">
         <div class="post-row">
             <div class="row-group-user-data">
-                <CoverArtFallback
+                <CoverArt
                     imgUrl={post.avatar_url}
                     artistName={post.avatar_artist_name}
                     releaseGroupName={post.avatar_release_group_name}
                     altText={`${post.display_name}'s avatar`}
                     imgClass="avatar"
-                ></CoverArtFallback>
+                ></CoverArt>
                 <div class="row-group-column">
                     <a href="/user/{post.username}">
                         <span class="display-name">
@@ -97,9 +106,11 @@
             {:else if formData == false}
                 <p>edit failed</p>
             {/if} -->
+            {#if embedInfo?.id != null}
             <ListenEmbed
                 embedInfo={embedInfo}
             ></ListenEmbed>
+            {/if}
         </div>
         <div class="post-row">
             <div class="row-group-icons">
@@ -121,13 +132,14 @@
                 {#if post.user_id == sessionUserId }
                     <UserActionsMenu
                         mode='sessionUserPostMenu'
-                        postId={post.id}
+                        postId={post.id ?? post.now_playing_post_id}
                         bind:editState={editState}
                         success={userActionSuccess}
                     ></UserActionsMenu>
                 {:else if sessionUserId}
                     <UserActionsMenu
                         mode='postMenu'
+                        postId={post.id ?? post.now_playing_post_id}
                         success={userActionSuccess}
                     ></UserActionsMenu>
                 {/if}

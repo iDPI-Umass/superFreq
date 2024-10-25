@@ -3,49 +3,71 @@
 	import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
 	import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
-	import CoverArtFallback from '$lib/components/CoverArtFallback.svelte'
-	export let data: PageData;
-	export let form: ActionData;
-	$: form
+	import CoverArt from '$lib/components/CoverArt.svelte'
 
-	let { user, profile } = data
-	$: ({ user, profile } = data)
+	import wave from "$lib/assets/images/logo/freq-wave.svg"
 
-	$: success = form?.success ?? false
+	let { data, form } = $props();
 
-	let avatarItem = {} as App.RowData
-	let newItemAdded: boolean
-	let profileForm: HTMLFormElement
+	let { user, profile } = $derived(data)
+
+	let success = $derived(form?.success ?? false)
+
+	let newItemAdded = $state(false) as boolean
 	let loading = false
-	let displayName: string = profile?.display_name ?? ''
-	let username: string = profile?.username ?? ''
-	let website: string = profile?.website ?? ''
-	$: avatarMbid = avatarItem?.release_group_mbid ?? profile?.avatar_mbid ?? ''
-	let avatarUrl: string = avatarItem?.avatar_url ?? profile?.avatar_url ?? ''
-	let avatarArtist: string = profile?.avatar_artist_name 
-	let avatarReleaseGroup: string = profile?.avatar_release_group_name
-	let about: string = profile?.about ?? ''
-	let email: string = user?.email as string
+	let displayName = $derived(profile?.display_name ?? '') as string
+	let username = $derived(profile?.username ?? '') as string
+	let website = $derived(profile?.website ?? '') as string
 
-	const avatarInfo = {
+	let about = $derived(profile?.about ?? '') as string
+	let email = $derived(user?.email as string) as string
+
+	let avatarItem = $state({}) as App.RowData
+	let avatarMbid = $derived(avatarItem?.release_group_mbid ?? profile?.avatar_mbid ?? '') as string
+	let avatarUrl = $derived(avatarItem?.avatar_url ?? profile?.avatar_url ?? '') as string
+	let lastFmImgUrl = $derived(avatarItem?.last_fm_img_url ?? profile?.last_fm_img_url ?? '') as string
+	let avatarArtist = $derived(avatarItem?.artist_name ?? profile?.avatar_artist_name ?? '') as string
+	let avatarReleaseGroup = $derived(avatarItem?.release_group_name ?? profile?.avatar_release_group_name ?? '') as string
+
+	let avatarInfo = $derived({
 		'img_url': avatarUrl,
+		'last_fm_img_url': lastFmImgUrl,
 		'artist_name': avatarArtist,
 		'release_group_name': avatarReleaseGroup
-	}
-
+	})
+	let imgPromise = $state(null)
 </script>
+
+<svelte:options runes={true} />
 
 <svelte:head>
 	<title>
 		Account
 	</title>
 </svelte:head>
+
+{#snippet editorItemImage(avatarItem: any, altText: string)}
+    {#await imgPromise}
+    <img 
+        src={wave} 
+        alt="loading cover art"
+    />
+	<p>Loading cover art.</p>
+    {:then}
+        <img 
+            src={(avatarItem["img_url"] ?? avatarItem["last_fm_img_url"]) ?? wave } 
+            alt="{(avatarItem["img_url"] ?? avatarItem["last_fm_img_url"]) ? altText : 'no available'} cover art"
+        />
+    {/await}
+{/snippet}
  
 <div class="panel" id="profile-info">
 	<PanelHeader>
-		<span slot="text">
-			profile info
-		</span>
+		{#snippet headerText()}
+				<span >
+				profile info
+			</span>
+		{/snippet}
 	</PanelHeader>
 	<div class="form-wrapper">
 		<form
@@ -53,7 +75,6 @@
 			class="form-column"
 			method="post"
 			action="?/update"
-			bind:this={profileForm}
 		>
 			<div class="label-group">
 				<label 
@@ -157,7 +178,7 @@
 				type="hidden" 
 				name="newAvatarUrl" 
 				id="newAvatarUrl" 
-				value={avatarItem?.img_url ?? null} 
+				value={avatarItem?.img_url ?? avatarItem?.last_fm_img_url ?? null} 
 			/>
 			<input 
 				type="hidden" 
@@ -194,18 +215,17 @@
 					bind:newItemAdded={newItemAdded}
 					mode="single"
 					limit="10"
-					avatarSearch={true}
+					bind:imgPromise={imgPromise}
 				>
 				</MusicBrainzSearch>
 			</div>
 			{#if avatarUrl && !newItemAdded}
-				<CoverArtFallback
+				<CoverArt
 					item={avatarInfo}
-					altText="user avatar"
-				></CoverArtFallback>
-				<!-- <img src={avatarUrl} alt="user avatar"/> -->
+					altText={`${displayName}'s avatar: ${avatarInfo['release_group_name']} by ${avatarInfo['artist_name']}`}
+				></CoverArt>
 			{:else if avatarItem && newItemAdded}
-				<img src={avatarItem.img_url} alt="user avatar"/>
+				{@render editorItemImage(avatarItem, avatarItem["release_group_name"])}
 			{/if}
 			<div class="actions">
 				<button
@@ -241,12 +261,16 @@
 <NotificationModal
 	showModal={success}
 >
-	<span slot="header-text">
-		Success!
-	</span>
-	<span slot="message">
-		Your profile has been updated.
-	</span>
+	{#snippet headerText()}
+		<span >
+			Success!
+		</span>
+	{/snippet}
+	{#snippet message()}
+		<span >
+			Your profile has been updated.
+		</span>
+	{/snippet}
 </NotificationModal>
 
 <style>

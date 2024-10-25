@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { onMount, createEventDispatcher } from 'svelte'
     import { enhance } from '$app/forms'
 
     import { Popover } from "bits-ui";
@@ -12,16 +11,30 @@
     import PenLine from 'lucide-svelte/icons/pen-line'
     import Trash2 from 'lucide-svelte/icons/trash-2'
 
-    export let editState: boolean | null | undefined = false
-    export let mode: 'profileMenu' | 'postMenu' | 'sessionUserPostMenu'
-    export let profileUserId: string | null =  null
-    export let blocked: boolean = false
-    export let flagged: boolean = false
-    export let postId: string | null =  null
-    export let success: boolean | null = null
+    interface ComponentProps {
+        editState?: boolean | null | undefined
+        mode: 'profileMenu' | 'postMenu' | 'sessionUserPostMenu'
+        profileUserId?: string | null
+        blocked?: boolean
+        flagged?: boolean
+        postId?: string | null
+        success?: boolean | null
+    }
 
-    let popOverOpenState: boolean
-    let showModal: boolean = false
+    let {
+        editState = $bindable(false),
+        mode,
+        profileUserId = null,
+        blocked = false,
+        flagged = false,
+        postId = null,
+        success
+    }: ComponentProps = $props()
+
+    // let actionSuccess = $derived(success)
+
+    let popOverOpenState: boolean = $state(false)
+    let showModal: boolean = $state(false)
     let dialog: any
     
     const diaglogTitleOptions: App.Lookup = {
@@ -67,10 +80,7 @@
         unblockUser: '?/blockUser'
     }
 
-    let dialogMode: string
-
-	$: if (dialog && ( showModal == true )) dialog.showModal()
-	$: if (dialog && !showModal) dialog.close()
+    let dialogMode = $state() as string
 
     function toggleEditState() {
         editState = !editState
@@ -85,9 +95,21 @@
 
     function closeDialog() {
         showModal = false
+        success = null
     }
 
-    onMount(() => {
+    let buttonsInactive = $state(false)
+
+    function runningAction () {
+        buttonsInactive = true
+        Promise.resolve(success).then(() => {
+            buttonsInactive = false
+            return
+        })
+    }
+
+
+    $effect(() => {
 		dialog.addEventListener("click", e => {
 			const dialogDimensions = dialog.getBoundingClientRect()
 			if (
@@ -99,22 +121,22 @@
 				dialog.close()
 			}
 		})
-	})
 
-	const dispatch = createEventDispatcher();
+        if (dialog && ( showModal == true )) dialog.showModal()
+	    if (dialog && !showModal) dialog.close()
+	})
 </script>
+<svelte:options runes={true} />
 
 <svelte:window
-	on:keydown={(e) => {
+	onkeydown={(e) => {
 		if (e.key === 'Escape') {
-			dispatch(dialog.close());
+			dialog.close()
 		}
 	}}
 />
 
 <Popover.Root
-    closeOnEscape={true}
-    closeOnOutsideClick={true}
     bind:open={popOverOpenState}
 >
     <Popover.Trigger>
@@ -125,7 +147,7 @@
             {#if !blocked}
                 <button 
                     class="popover-item" 
-                    on:click|preventDefault={() => openDialog('blockUser')}
+                    onclick={() => openDialog('blockUser')}
                 >
                     <Ban 
                         size="16" 
@@ -138,7 +160,7 @@
             {:else if blocked}
                 <button 
                     class="popover-item" 
-                    on:click|preventDefault={() => openDialog('unblockUser')}
+                    onclick={() => openDialog('unblockUser')}
                 >
                     <Circle 
                         size="16" 
@@ -152,7 +174,7 @@
             {#if !flagged}
                 <button
                     class="popover-item" 
-                    on:click|preventDefault={() => openDialog('reportUser')} 
+                    onclick={() => openDialog('reportUser')} 
                 >
                     <Flag 
                         size="16" 
@@ -165,7 +187,7 @@
             {:else if flagged}
             <button
                 class="popover-item" 
-                on:click|preventDefault={() => openDialog('reportUser')} 
+                onclick={() => openDialog('reportUser')} 
                 disabled
             >
                 <Flag 
@@ -180,7 +202,7 @@
         {:else if mode == 'sessionUserPostMenu'}
             <button 
                 class="popover-item" 
-                on:click|preventDefault={toggleEditState}
+                onclick={toggleEditState}
             >
                 <PenLine 
                     size="16" 
@@ -192,7 +214,7 @@
             </button>
             <button
                 class="popover-item" 
-                on:click|preventDefault={() => openDialog('deletePost')} 
+                onclick={() => openDialog('deletePost')} 
             >
                 <Trash2 
                     size="16" 
@@ -205,7 +227,7 @@
         {:else if mode = 'postMenu'}
             <button
                 class="popover-item" 
-                on:click|preventDefault={() => openDialog('flagPost')} 
+                onclick={() => openDialog('flagPost')} 
             >
                 <Flag 
                     size="16" 
@@ -222,74 +244,82 @@
 <dialog
     aria-label="modal"
     bind:this={dialog}
-	on:close={() => (showModal = false)}
+	onclose={() => (showModal = false)}
 >
     <form 
         method="POST" 
         id={formIDs[dialogMode]} 
         action={formActions[dialogMode]}
+        use:enhance
     >
-    <input
-        type="hidden"
-        id="profile-user-id"
-        name="profile-user-id"
-        value={profileUserId}
-    />
-    <input
-        type="hidden"
-        id="post-id"
-        name="post-id"
-        value={postId}
-        form={formIDs[dialogMode]} 
-    />
-    {#if success == null}
-        <h2>{diaglogTitleOptions[dialogMode]}</h2>
-        <p>
-            {dialogTextOptions[dialogMode]}
-        </p>
-        <div class="dialog-options">
-            <button 
-                aria-label="close modal" 
-                formmethod="dialog" 
-                on:click={closeDialog}
-            >
-                cancel
-            </button>
-            <button 
-                aria-label="submit" 
-                type="submit"
-                formaction={formActions[dialogMode]}
-            >
-                {dialogConfirmButtonOptions[dialogMode]}
-            </button>
-        </div>
-    {:else if success == true}
-        <p>
-            {successTextOptions[dialogMode]}
-        </p>
-        <div class="dialog-options">
-            <button 
-                aria-label="close modal" 
-                formmethod="dialog" 
-                on:click={closeDialog}
-            >
-                close
-            </button>
-        </div>
-    {:else if success == false}
-        <p>
-            Something went wrong
-        </p>
-        <div class="dialog-options">
-            <button 
-                aria-label="close modal" 
-                formmethod="dialog" 
-                on:click={closeDialog}
-            >
-                close
-            </button>
-        </div>
-    {/if}
+        <input
+            type="hidden"
+            id="profile-user-id"
+            name="profile-user-id"
+            value={profileUserId}
+        />
+        <input
+            type="hidden"
+            id="post-id"
+            name="post-id"
+            value={postId}
+            form={formIDs[dialogMode]} 
+        />
+        {#if success == null}
+            <h2>{diaglogTitleOptions[dialogMode]}</h2>
+            <p>
+                {dialogTextOptions[dialogMode]}
+            </p>
+            <div class="dialog-options">
+                <button 
+                    aria-label="close modal" 
+                    formmethod="dialog" 
+                    class="standard"
+                    onclick={closeDialog}
+                    disabled={buttonsInactive}
+                >
+                    cancel
+                </button>
+                <button 
+                    aria-label="submit" 
+                    type="submit"
+                    class="standard"
+                    formaction={formActions[dialogMode]}
+                    onclick={runningAction}
+                    disabled={buttonsInactive}
+                >
+                    {dialogConfirmButtonOptions[dialogMode]}
+                </button>
+            </div>
+        {:else if success == true}
+            <p>
+                {successTextOptions[dialogMode]}
+            </p>
+            <div class="dialog-options">
+                <button 
+                    aria-label="close modal" 
+                    formmethod="dialog" 
+                    class="standard"
+                    onclick={closeDialog}
+                >
+                    close
+                </button>
+            </div>
+        {:else if success == false}
+            <p>
+                Something went wrong
+            </p>
+            <div class="dialog-options">
+                <button 
+                    aria-label="close modal" 
+                    formmethod="dialog" 
+                    class="standard"
+                    onclick={closeDialog}
+                >
+                    close
+                </button>
+            </div>
+        {/if}
     </form>
 </dialog>
 

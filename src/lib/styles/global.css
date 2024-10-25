@@ -228,6 +228,7 @@ button.standard {
 	width: fit-content;
 	height: fit-content;
 	align-items: center;
+	justify-content: center;
 	text-justify: center;
 	border: var(--freq-border-button);
 	background: var(--freq-color-button-background);

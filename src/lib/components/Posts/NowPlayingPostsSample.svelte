@@ -3,19 +3,33 @@
     import PanelHeader from "$lib/components/PanelHeader.svelte"
     import NowPlayingPost from "./NowPlayingPost.svelte"
     import PostReply from "./PostReply.svelte"
-    export let posts: any
-    export let username: string
-    export let displayName: string
-    export let sessionUserId: string | null = null
+
+    interface ComponentProps {
+        posts: any
+        username: string
+        displayName: string
+        sessionUserId?: string | null
+    }
+    
+    let {
+        posts,
+        username,
+        displayName,
+        sessionUserId = null
+    }: ComponentProps = $props()
     
 </script>
+
+<svelte:options runes={true} />
 
 {#if posts && posts.length > 0}
 <div class="panel-medium">
     <PanelHeader>
-        <a class="panel-header-link" href={`/user/${username}/now-playing-posts`}>
-            {displayName}'s Now Playing posts
-        </a>
+        {#snippet headerText()}
+            <a class="panel-header-link" href={`/user/${username}/now-playing-posts`}>
+                {displayName}'s Now Playing posts
+            </a>
+        {/snippet}
     </PanelHeader>
     <div class="posts-spacing">
     {#each posts as post}
@@ -28,7 +42,7 @@
     {/each}
     </div>
     <div class="button-spacer">
-        <button class="standard" on:click={() => goto(`/user/${username}/now-playing-posts`)}>
+        <button class="standard" onclick={() => goto(`/user/${username}/now-playing-posts`)}>
             see more
         </button>
     </div>

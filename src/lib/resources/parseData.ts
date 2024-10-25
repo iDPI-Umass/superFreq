@@ -130,6 +130,7 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
                 "release_date": thisItem["release_date"],
                 "label": thisItem["label_name"],
                 "img_url": thisItem["img_url"],
+                "last_fm_img_url": thisItem["last_fm_img_url"],
                 "added_at": timestampISO
             }];
         }
@@ -146,6 +147,7 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
                 "release_date": thisItem["release_date"],
                 "label": thisItem["label"],
                 "img_url": thisItem["img_url"],
+                "last_fm_img_url": thisItem["last_fm_img_url"],
                 "added_at": timestampISO
             }];
 
@@ -185,6 +187,7 @@ export const prepareAvatarMetadataInsert = function ( avatarItem: App.RowData ) 
         "release_date": avatarItem["release_date"],
         "label": avatarItem["label_name"],
         "img_url": avatarItem["img_url"],
+        "last_fm_img_url": thisItem["last_fm_img_url"],
         "added_at": timestampISO
     }]
 
@@ -222,7 +225,8 @@ export const prepareMusicDataUpsert = function ( collectionItems: App.RowData, c
                 "release_group_name": thisItem["release_group_name"],
                 "release_date": thisItem["release_date"],
                 "label": thisItem["label"],
-                "img_url": thisItem["img_url"]
+                "img_url": thisItem["img_url"],
+                "last_fm_img_url": thisItem["last_fm_img_url"],
             }];
         }
         else if ( collectionType == "recordings" ) {
@@ -237,7 +241,8 @@ export const prepareMusicDataUpsert = function ( collectionItems: App.RowData, c
                 "release_group_name": thisItem["release_group_name"],
                 "release_date": thisItem["release_fate"],
                 "label": thisItem["label"],
-                "img_url": thisItem["img_url"]
+                "img_url": thisItem["img_url"],
+                "last_fm_img_url": thisItem["last_fm_img_url"],
             }];
 
             upsertRecordings = [...upsertRecordings, {
