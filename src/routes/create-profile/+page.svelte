@@ -6,6 +6,8 @@
     import NotificationModal from "src/lib/components/modals/NotificationModal.svelte"
     import RedirectModal from "$lib/components/modals/RedirectModal.svelte"
 
+	import wave from "$lib/assets/images/logo/freq-wave.svg"
+
 	interface Props {
 		data: any;
 		form: ActionData;
@@ -33,6 +35,21 @@
 		Create Profile
 	</title>
 </svelte:head>
+
+{#snippet editorItemImage(avatarItem: any, altText: string)}
+    {#await imgPromise}
+    <img 
+        src={wave} 
+        alt="loading cover art"
+    />
+	<p>Loading cover art.</p>
+    {:then}
+        <img 
+            src={(avatarItem["img_url"] ?? avatarItem["last_fm_img_url"]) ?? wave } 
+            alt="{(avatarItem["img_url"] ?? avatarItem["last_fm_img_url"]) ? altText : 'no available'} cover art"
+        />
+    {/await}
+{/snippet}
 
 <div class="panel" id="profile-info">
 	<PanelHeader>
@@ -180,7 +197,7 @@
 			</div>
 			<!-- add alt text and change column in postgres -->
 			{#if avatarItem.img_url && avatarItem.img_url.length > 0}
-				<img src={avatarItem.img_url} alt="user avatar"/>
+				{@render editorItemImage(avatarItem, avatarItem["release_group_name"])}
 			{/if}
 			{#if form?.success}
 				<p>update submitted</p>
