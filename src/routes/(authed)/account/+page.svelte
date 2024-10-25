@@ -7,12 +7,7 @@
 
 	import wave from "$lib/assets/images/logo/freq-wave.svg"
 
-	interface Props {
-		data: PageData;
-		form: ActionData;
-	}
-
-	let { data, form }: Props = $props();
+	let { data, form } = $props();
 
 	let { user, profile } = $derived(data)
 
@@ -229,7 +224,6 @@
 					item={avatarInfo}
 					altText={`${displayName}'s avatar: ${avatarInfo['release_group_name']} by ${avatarInfo['artist_name']}`}
 				></CoverArt>
-				<img src={avatarUrl} alt="user avatar"/>
 			{:else if avatarItem && newItemAdded}
 				{@render editorItemImage(avatarItem, avatarItem["release_group_name"])}
 			{/if}

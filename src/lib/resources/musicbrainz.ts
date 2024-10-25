@@ -63,7 +63,6 @@ function getMegaImage(img: App.Lookup) {
 }
 
 export const getLastFmCoverArt = async function ( releaseGroup: App.Lookup ) {
-
     try {
         const lastFmEndpoint = `https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=${lastFmApiKey}&artist=${releaseGroup.artist_name}&album=${releaseGroup.release_group_name}&format=json`
         const lastFmRes = await fetch(lastFmEndpoint)
@@ -77,7 +76,6 @@ export const getLastFmCoverArt = async function ( releaseGroup: App.Lookup ) {
         const coverArtUrl = null
         return coverArtUrl
     }
-
 }
 
 export const getCoverArt = async function ( releaseGroup: App.Lookup ) {
