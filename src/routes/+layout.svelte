@@ -91,8 +91,5 @@
 	avatarUrl={avatar_url}
 	avatarItem={avatarItem}
 ></Header>
-
 <div class="double-border-full-vw"></div>
 {@render children()}
-
-<!-- {@debug} -->

@@ -2,7 +2,8 @@
 	import type { ActionData, PageData } from './$types'
 	import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
-	import NotificationModal from 'src/lib/components/modals/NotificationModal.svelte'
+	import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
+	import CoverArt from '$lib/components/CoverArt.svelte'
 
 	import wave from "$lib/assets/images/logo/freq-wave.svg"
 
@@ -13,24 +14,32 @@
 
 	let { data, form }: Props = $props();
 
-	let { user, profile } = $state(data)
+	let { user, profile } = $derived(data)
 
 	let success = $derived(form?.success ?? false)
 
 	let newItemAdded = $state(false) as boolean
-	let profileForm = $state() as HTMLFormElement
 	let loading = false
-	let displayName: string = profile?.display_name ?? ''
-	let username: string = profile?.username ?? ''
-	let website: string = profile?.website ?? ''
+	let displayName = $derived(profile?.display_name ?? '') as string
+	let username = $derived(profile?.username ?? '') as string
+	let website = $derived(profile?.website ?? '') as string
 
-	let about: string = profile?.about ?? ''
-	let email: string = user?.email as string
+	let about = $derived(profile?.about ?? '') as string
+	let email = $derived(user?.email as string) as string
 
 	let avatarItem = $state({}) as App.RowData
-	let avatarMbid = $derived(avatarItem?.release_group_mbid ?? profile?.avatar_mbid ?? '')
-	let avatarUrl: string = $derived(avatarItem?.avatar_url ?? profile?.avatar_url ?? '')
+	let avatarMbid = $derived(avatarItem?.release_group_mbid ?? profile?.avatar_mbid ?? '') as string
+	let avatarUrl = $derived(avatarItem?.avatar_url ?? profile?.avatar_url ?? '') as string
+	let lastFmImgUrl = $derived(avatarItem?.last_fm_img_url ?? profile?.last_fm_img_url ?? '') as string
+	let avatarArtist = $derived(avatarItem?.artist_name ?? profile?.avatar_artist_name ?? '') as string
+	let avatarReleaseGroup = $derived(avatarItem?.release_group_name ?? profile?.avatar_release_group_name ?? '') as string
 
+	let avatarInfo = $derived({
+		'img_url': avatarUrl,
+		'last_fm_img_url': lastFmImgUrl,
+		'artist_name': avatarArtist,
+		'release_group_name': avatarReleaseGroup
+	})
 	let imgPromise = $state(null)
 </script>
 
@@ -71,7 +80,6 @@
 			class="form-column"
 			method="post"
 			action="?/update"
-			bind:this={profileForm}
 		>
 			<div class="label-group">
 				<label 
@@ -217,6 +225,10 @@
 				</MusicBrainzSearch>
 			</div>
 			{#if avatarUrl && !newItemAdded}
+				<CoverArt
+					item={avatarInfo}
+					altText={`${displayName}'s avatar: ${avatarInfo['release_group_name']} by ${avatarInfo['artist_name']}`}
+				></CoverArt>
 				<img src={avatarUrl} alt="user avatar"/>
 			{:else if avatarItem && newItemAdded}
 				{@render editorItemImage(avatarItem, avatarItem["release_group_name"])}

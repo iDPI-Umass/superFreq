@@ -46,8 +46,16 @@
     let displayName = $derived(profileUserData?.display_name as string)
 
     let imgUrl = $derived(profileUserData?.avatar_url as string)
-    let artistName = $derived(profileUserData?.avatar_artist_name as string)
-    let releaseGroupName = $derived(profileUserData?.avatar_release_group_name as string)
+    let lastFmImgUrl = $derived(profileUserData?.last_fm_img_url as string)
+    let avatarArtistName = $derived(profileUserData?.avatar_artist_name as string)
+    let avatarReleaseGroupName = $derived(profileUserData?.avatar_release_group_name as string)
+
+    let avatarItem = $derived({
+        'img_url': imgUrl,
+        'last_fm_img_url': lastFmImgUrl,
+        'artist_name': avatarArtistName,
+        'release_group_name': avatarReleaseGroupName
+    })
 
 </script>
 
@@ -63,9 +71,9 @@
     <div class="profile-info-box-left">
         <CoverArt
             imgUrl={imgUrl}
-            artistName={artistName}
-            releaseGroupName={releaseGroupName}
-            altText="{profileUserData?.display_name}'s avatar"
+            artistName={avatarArtistName}
+            releaseGroupName={avatarReleaseGroupName}
+            altText={`${displayName}'s avatar: ${avatarReleaseGroupName} by ${avatarArtistName}`}
         ></CoverArt>
         <div class="profile-info-box-column">
             <div class="profile-username-buttons-row">

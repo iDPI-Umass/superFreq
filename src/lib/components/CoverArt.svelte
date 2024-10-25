@@ -48,4 +48,3 @@
         <img src={wave} alt="not found" class={imgClass}  />
     {/await}
 {/if}
-
