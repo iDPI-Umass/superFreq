@@ -5,9 +5,9 @@ import wave from "$lib/assets/images/logo/freq-wave.svg"
 export const load: LayoutServerLoad = async ({ locals: { safeGetSession }, cookies }) => {
   const { session, user } = await safeGetSession()
 
-  if (session) {
+  if ( session ) {
     const sessionUserId = user?.id as string
-    const select = await db
+    const selectSessionProfile = await db
       .selectFrom('profiles')
       .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profiles.avatar_mbid')
       .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
@@ -22,7 +22,8 @@ export const load: LayoutServerLoad = async ({ locals: { safeGetSession }, cooki
       .where('profiles.id', '=', user?.id as string)
       .executeTakeFirst()
 
-    const profile = await select as App.ProfileObject
+    const profile = await selectSessionProfile
+    
     return { session, sessionUserId, profile, cookies: cookies.getAll() }
   }
 

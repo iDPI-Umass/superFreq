@@ -108,8 +108,6 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
 
             sessionUserPosts = selectSessionUserPosts
 
-            console.log(sessionUserPosts)
-
             /* count session user's recent comments */
             const countSessionUserComments = await trx
             .selectFrom('posts as comments')

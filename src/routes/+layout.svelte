@@ -15,10 +15,11 @@
 
 	import { profileStoresObject } from '$lib/stores.ts'
 	import Header from "$lib/components/headers/Header/page.svelte"
+	import type { Snippet } from 'svelte'
 	import type { LayoutData } from "./$types"
 	
 
-	let { data, children } = $props()
+	let { data, children }: { data: LayoutData, children: Snippet} = $props()
 	let { session, sessionUserId, user, profile, supabase } = $derived(data)
 	// export let data: LayoutData
 	// let { session, sessionUserId, user, profile, supabase } = data
@@ -34,26 +35,42 @@
 	// let avatarItem = {}
 	// $: username, displayName, avatarUrl, avatarArtist, avatarReleaseGroup, avatarItem
 
-	let username = $state() as string
-	let displayName: string = $state() as string
-	let avatarUrl: string = $state() as string
-	let avatarArtist: string = $state() as string
-	let avatarReleaseGroup: string = $state() as string
-	let avatarItem = $state({}) as App.Lookup
+	// let username = $state() as string
+	// let displayName: string = $state() as string
+	// let avatarUrl: string = $state() as string
+	// let avatarArtist: string = $state() as string
+	// let avatarReleaseGroup: string = $state() as string
+	// let avatarItem = $state({}) as App.Lookup
+
+	let { username, display_name, avatar_url, avatar_artist_name, avatar_release_group_name }: {
+		username: string
+		display_name: string
+		avatar_url: string
+		avatar_artist_name: string
+		avatar_release_group_name: string
+	} = $derived(profile)
+
+	
+
+	let avatarItem = $derived({
+		'img_url': avatar_url,
+		'artist_name': avatar_artist_name,
+		'release_group_name': avatar_release_group_name
+	}) as App.StringLookupObject
 
 
-	if (typeof window !== 'undefined') {   
-		username = profile?.username as string
-		displayName = profile?.display_name as string
-		avatarUrl = profile?.avatar_url as string
-		avatarArtist = profile?.avatar_artist_name as string
-		avatarReleaseGroup = profile?.avatar_release_group_name as string
-		avatarItem = {
-			'img_url': avatarUrl,
-			'artist_name': avatarArtist,
-			'release_group_name': avatarReleaseGroup
-		}
-	}
+	// if (typeof window !== 'undefined') {   
+	// 	username = profile?.username as string
+	// 	displayName = profile?.display_name as string
+	// 	avatarUrl = profile?.avatar_url as string
+	// 	avatarArtist = profile?.avatar_artist_name as string
+	// 	avatarReleaseGroup = profile?.avatar_release_group_name as string
+	// 	avatarItem = {
+	// 		'img_url': avatarUrl,
+	// 		'artist_name': avatarArtist,
+	// 		'release_group_name': avatarReleaseGroup
+	// 	}
+	// }
 
 	$effect(() => {
 		const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
@@ -70,7 +87,8 @@
 <Header
 	sessionUserId={sessionUserId}
 	username={username}
-	displayName={displayName}
+	displayName={display_name}
+	avatarUrl={avatar_url}
 	avatarItem={avatarItem}
 ></Header>
 

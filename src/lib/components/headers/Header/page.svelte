@@ -8,25 +8,26 @@
 
   import CoverArt from "src/lib/components/CoverArt.svelte";
 
-  let profileObject: App.ProfileObject = $state()
-
-  profileObject = $profileStoresObject
-
   interface ComponentProps {
     sessionUserId: string | null
     username: string
     displayName: string
     avatarUrl: string
-    avatarItem: any
+    avatarItem: App.StringLookupObject
   }
 
   let {
     sessionUserId,
-    username = profileObject?.username as string,
-    displayName = profileObject?.display_name as string,
-    avatarUrl = profileObject?.avatar_url as string,
-    avatarItem = null
+    username,
+    displayName,
+    avatarUrl,
+    avatarItem
   }: ComponentProps = $props()
+
+  // let profileObject = $state() as App.ProfileObject
+
+  // let profileObject = $derived($profileStoresObject)
+  // let storesUsername = $derived(profileObject.username) as string
 
 </script>
 

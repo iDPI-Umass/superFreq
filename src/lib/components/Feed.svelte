@@ -35,8 +35,6 @@
         userActionSuccess = null
     }: ComponentProps = $props()
 
-    $effect(() => console.log('feed ', userActionSuccess))
-
     function parseTimestamp ( itemTimestamp: Date ) {
         const timestampString = itemTimestamp.toISOString()
         const timestamp = Date.parse(timestampString).toString()

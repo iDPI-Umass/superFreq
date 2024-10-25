@@ -36,7 +36,6 @@ export const actions = {
             item['last_fm_img_url'] = lastFmCoverArtUrl
             delete item['artist_name']
             delete item['img_url']
-            console.log(item)
         }
 
         const update = await db
