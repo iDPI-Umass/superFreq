@@ -4,7 +4,7 @@
     import decoration from "$lib/assets/images/feed-item-decoration.svg"
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
     import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
-    import CoverArtFallback from '$lib/components/CoverArtFallback.svelte'
+    import CoverArt from 'src/lib/components/CoverArt.svelte'
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
     interface ComponentProps {
@@ -12,6 +12,7 @@
         feedItems: App.RowData[]
         batchSize?: number
         batchIterator?: number
+        offset?: number
         timestampStart?: Date | null
         timestampEnd?: Date | null
         options?: App.Lookup
@@ -25,6 +26,7 @@
         feedItems, 
         batchSize = 0,
         batchIterator = 0,
+        offset = 0,
         timestampStart = null,
         timestampEnd = null,
         options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']},
@@ -68,13 +70,13 @@
         {#if Object.keys(item).includes( 'now_playing_post_id' )}      
             <a href={`/posts/${item.username}/now-playing/${parseTimestamp(item.feed_item_timestamp)}`}>
                 <div class="feed-item-user-data">
-                        <CoverArtFallback
+                        <CoverArt
                             imgUrl={item.avatar_url}
                             artistName={item.avatar_artist_name}
                             releaseGroupName={item.avatar_release_group_name}
                             altText={`${item.display_name}'s avatar`}
                             imgClass='feed-avatar'
-                        ></CoverArtFallback>
+                        ></CoverArt>
                     {item.user_id == sessionUserId ? 'You' : item.display_name}
                     posted: 
                 </div>
@@ -94,13 +96,13 @@
         {:else if Object.keys(item).includes( 'new_follow_id' )}
             <a href={`/user/${item.username}`}>
                 <div class="feed-item-one-liner">
-                        <CoverArtFallback
+                        <CoverArt
                             imgUrl={item.avatar_url}
                             artistName={item.avatar_artist_name}
                             releaseGroupName={item.avatar_release_group_name}
                             altText={`${item.display_name}'s avatar`}
                             imgClass='feed-avatar'
-                        ></CoverArtFallback>
+                        ></CoverArt>
                     {item.display_name} followed you
                 </div>
             </a>
@@ -108,13 +110,13 @@
         {:else if Object.keys(item).includes( 'session_user_post_commenter_id' )}
             <a href={`/posts/${item.original_poster_username}/now-playing/${parseTimestamp(item.original_post_created_at)}#${item.username?.concat(parseTimestamp(item.feed_item_timestamp))}`}>
                 <div class="feed-item-one-liner">
-                        <CoverArtFallback
+                        <CoverArt
                             imgUrl={item.session_user_post_commenter_avatar_url}
                             artistName={item.avatar_artist_name}
                             releaseGroupName={item.avatar_release_group_name}
                             altText={`${item.session_user_post_commenter_display_name}'s avatar`}
                             imgClass='feed-avatar'
-                        ></CoverArtFallback>
+                        ></CoverArt>
                     {item.session_user_post_commenter_display_name} commented on your post
                 </div>
             </a>
@@ -122,13 +124,13 @@
        {:else if Object.keys(item).includes( 'session_user_post_react_user_id' )}
         <a href={`/posts/${item.original_poster_username}/now-playing/${parseTimestamp(item.feed_item_timestamp)}`}>
             <div class="feed-item-one-liner">
-                    <CoverArtFallback
+                    <CoverArt
                         imgUrl={item.session_user_post_react_user_avatar_url}
                         artistName={item.avatar_artist_name}
                         releaseGroupName={item.avatar_release_group_name}
                         altText={`${item.session_user_post_react_user_display_name}'s avatar`}
                         imgClass='feed-avatar'
-                    ></CoverArtFallback>
+                    ></CoverArt>
                 {item.session_user_post_react_user_display_name} liked your post
             </div>
         </a>
@@ -136,13 +138,13 @@
         {:else if Object.keys(item).includes( 'session_user_comment_id' )}
             <a href={`/posts/${item.original_poster_username}/now-playing/${parseTimestamp(item.original_post_created_at)}#${item.username?.concat(parseTimestamp(item.feed_item_timestamp))}`}>
                 <div class="feed-item-one-liner">
-                        <CoverArtFallback
+                        <CoverArt
                             imgUrl={item.avatar_url}
                             artistName={item.avatar_artist_name}
                             releaseGroupName={item.avatar_release_group_name}
                             altText={`${item.display_name}'s avatar`}
                             imgClass='feed-avatar'
-                        ></CoverArtFallback>
+                        ></CoverArt>
                     You commented on {item.original_poster_display_name}'s post
                 </div>
             </a>
@@ -150,13 +152,13 @@
         {:else if Object.keys(item).includes( 'followed_user_comment_id' )}
             <a href={`/posts/${item.original_poster_username}/now-playing/${parseTimestamp(item.original_post_created_at)}#${item.username?.concat(parseTimestamp(item.feed_item_timestamp))}`}>
                 <div class="feed-item-one-liner">
-                        <CoverArtFallback
+                        <CoverArt
                             imgUrl={item.avatar_url}
                             artistName={item.avatar_artist_name}
                             releaseGroupName={item.avatar_release_group_name}
                             altText={`${item.display_name}'s avatar`}
                             imgClass='feed-avatar'
-                        ></CoverArtFallback>
+                        ></CoverArt>
                     {item.display_name} commented on {item.original_poster_display_name}'s post
                 </div>
             </a>
@@ -164,13 +166,13 @@
         {:else if Object.keys(item).includes( 'reaction_id' )}
             <a href={`/posts/${item.original_poster_username}/now-playing/${parseTimestamp(item.original_post_created_at)}`}>
                 <div class="feed-item-one-liner">
-                        <CoverArtFallback
+                        <CoverArt
                             imgUrl={item.avatar_url}
                             artistName={item.avatar_artist_name}
                             releaseGroupName={item.avatar_release_group_name}
                             altText={`${item.display_name}'s avatar`}
                             imgClass='feed-avatar'
-                        ></CoverArtFallback>
+                        ></CoverArt>
                     {item.display_name} liked {item.original_poster_display_name}'s post
                 </div>
             </a>
@@ -178,13 +180,13 @@
             {:else if Object.keys(item).includes( 'session_user_owned_collection_follow_id' )}
             <a href={`/collection/${item.collection_id}`}>
                 <div class="feed-item-one-liner">
-                    <CoverArtFallback
+                    <CoverArt
                         imgUrl={item.avatar_url}
                         artistName={item.avatar_artist_name}
                         releaseGroupName={item.avatar_release_group_name}
                         altText={`${item.display_name}'s avatar`}
                         imgClass='feed-avatar'
-                    ></CoverArtFallback>
+                    ></CoverArt>
                     <span class="blurb">
                       {item.display_name}
                       followed your collection: 
@@ -198,13 +200,13 @@
         {:else if Object.keys(item).includes( 'followed_user_collection_follow_id' )}
             <a href={`/collection/${item.collection_id}`}>
                 <div class="feed-item-one-liner">
-                    <CoverArtFallback
+                    <CoverArt
                         imgUrl={item.avatar_url}
                         artistName={item.avatar_artist_name}
                         releaseGroupName={item.avatar_release_group_name}
                         altText={`${item.display_name}'s avatar`}
                         imgClass='feed-avatar'
-                    ></CoverArtFallback>
+                    ></CoverArt>
                     <span class="blurb">
                       {item.display_name}
                       followed a collection: 
@@ -218,13 +220,13 @@
         {:else if Object.keys(item).includes( 'collection_edit_id' )}
             <a href={`/collection/${item.collection_id}`}>
                 <div class="feed-item-one-liner">
-                    <CoverArtFallback
+                    <CoverArt
                         imgUrl={item.avatar_url}
                         artistName={item.avatar_artist_name}
                         releaseGroupName={item.avatar_release_group_name}
                         altText={`${item.display_name}'s avatar`}
                         imgClass='feed-avatar'
-                    ></CoverArtFallback>
+                    ></CoverArt>
                     <span class="blurb">
                       {item.display_name}
                       edited the collection: 
@@ -254,6 +256,12 @@
             type="hidden"
             name="offset"
             id="offset"
+            value={offset}
+        />
+        <input
+            type="hidden"
+            name="remaining"
+            id="remaining"
             value={remaining}
         />
         <input

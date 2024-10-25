@@ -10,7 +10,7 @@
 	import NewNowPlayingPost from '$lib/components/Posts/NewNowPlayingPost.svelte'
     import Feed from '$lib/components/Feed.svelte'
 	import NowPlayingPostsSample from '$lib/components/Posts/NowPlayingPostsSample.svelte'
-    import CoverArtFallback from '$lib/components/CoverArtFallback.svelte'
+    import CoverArt from 'src/lib/components/CoverArt.svelte'
 
     interface Props {
         data: any;
@@ -63,12 +63,12 @@
 
 <div class="profile-info">
     <div class="profile-info-box-left">
-        <CoverArtFallback
+        <CoverArt
             imgUrl={imgUrl}
             artistName={artistName}
             releaseGroupName={releaseGroupName}
             altText="{profileUserData?.display_name}'s avatar"
-        ></CoverArtFallback>
+        ></CoverArt>
         <div class="profile-info-box-column">
             <div class="profile-username-buttons-row">
                 <div class="profile-displayname-username-column">

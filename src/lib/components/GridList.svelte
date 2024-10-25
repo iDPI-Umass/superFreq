@@ -13,7 +13,7 @@
     import loadingImage from "$lib/assets/images/loading-image.png"
     import imgNotFound from "$lib/assets/images/image-not-found.png"
 
-    import CoverArtFallback from "$lib/components/CoverArtFallback.svelte"
+    import CoverArt from "src/lib/components/CoverArt.svelte"
 
     interface ComponentProps {
         collectionContents: any
@@ -209,10 +209,10 @@
         <div class={format[layout][0]}>
             {#each collectionContents as contentItem}
             <div class={format[layout][1]}>
-                <CoverArtFallback
+                <CoverArt
                     item={contentItem}
                     altText={contentItem['release_group_name']}
-                ></CoverArtFallback>
+                ></CoverArt>
                 <div class="metadata-blurb">
                     <h2>
                         <a href={`https://musicbrainz.org/release-group/${contentItem["release_group_mbid"]}`}>
@@ -233,10 +233,10 @@
         <div class={format[layout][0]}>
             {#each collectionContents as contentItem}
             <div class={format[layout][1]}>
-                <CoverArtFallback
+                <CoverArt
                     item={contentItem}
                     altText={contentItem["recording_name"]}
-                ></CoverArtFallback>
+                ></CoverArt>
                 <div class="metadata-blurb">
                     <h2>
                         <a href={`https://musicbrainz.org/recording/${contentItem["recording_mbid"]}`}>

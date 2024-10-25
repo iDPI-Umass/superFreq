@@ -6,7 +6,7 @@
   import wave from "$lib/assets/images/logo/freq-wave.svg"
   import { profileStoresObject } from "src/lib/stores"
 
-  import CoverArtFallback from "$lib/components/CoverArtFallback.svelte";
+  import CoverArt from "src/lib/components/CoverArt.svelte";
 
   let profileObject: App.ProfileObject = $state()
 
@@ -83,10 +83,10 @@
       </a>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
-          <CoverArtFallback
+          <CoverArt
             item={avatarItem}
             altText={avatarItem['release_group_name']}
-          ></CoverArtFallback>
+          ></CoverArt>
           {displayName ?? 'display name'} 
           <ChevronDown></ChevronDown>
         </DropdownMenu.Trigger>
