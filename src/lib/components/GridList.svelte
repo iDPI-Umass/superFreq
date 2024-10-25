@@ -6,8 +6,6 @@
     import {flip} from "svelte/animate";
     import {dragHandleZone, dndzone, dragHandle} from "svelte-dnd-action";
     import Grip from 'lucide-svelte/icons/grip'
-    import { imgPromiseStore } from '$lib/stores'
-    import { checkFetchedCoverArt } from "$lib/resources/musicbrainz"
 
     import wave from "$lib/assets/images/logo/freq-wave.svg"
     import loadingImage from "$lib/assets/images/loading-image.png"
@@ -161,7 +159,14 @@
                 animate:flip="{{duration: flipDurationMs}}" 
                 class={format[layout][1]} 
             >
-                {@render editorItemImage(contentItem, contentItem["release_group_name"])}
+                {#if ( contentItem["img_url"] != null ) || ( contentItem["last_fm_img_url"] != null )}
+                    <CoverArt
+                        item={contentItem}
+                        altText={`"${contentItem['release_group_name']}" by ${contentItem['artist_name']}`}
+                    ></CoverArt>
+                {:else if ( contentItem["img_url"] == null ) && ( contentItem["last_fm_img_url"] == null )}
+                    {@render editorItemImage(contentItem, contentItem["release_group_name"])}
+                {/if}
                 <div class="metadata-blurb">
                     <h2>
                         {contentItem["release_group_name"]}
@@ -180,7 +185,14 @@
                 animate:flip="{{duration: flipDurationMs}}" 
                 class={format[layout][1]}
             >
+            {#if ( contentItem["img_url"] != null ) || ( contentItem["last_fm_img_url"] != null )}
+                <CoverArt
+                    item={contentItem}
+                    altText={`"${contentItem['recording_name']}" by ${contentItem['artist_name']}`}
+                ></CoverArt>
+            {:else if ( contentItem["img_url"] == null ) && ( contentItem["last_fm_img_url"] == null )}
                 {@render editorItemImage(contentItem, contentItem["recording_name"])}
+            {/if}
                 <div class="metadata-blurb">
                     <h2>{contentItem["recording_name"]}</h2>
                     <p>{contentItem["artist_name"]}</p>

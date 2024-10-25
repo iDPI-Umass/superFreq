@@ -35,6 +35,8 @@
 		'artist_name': avatarArtist,
 		'release_group_name': avatarReleaseGroup
 	})
+
+	console.log(avatarInfo)
 	let imgPromise = $state(null)
 </script>
 
