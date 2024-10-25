@@ -8,7 +8,7 @@
 
     let { form } = $props();
 
-    $effect(() => invalidateAll())
+    $effect(() => invalidateAll)
 
     let email: string | null = $state(null)
 </script>
@@ -72,11 +72,11 @@
 <NotificationModal
     showModal={form?.showModal ?? false}
 >
-    {#snippet header-text()}
-                <span >
+    {#snippet headerText()}
+        <span >
             { form?.success ? 'Success' : 'Error'}
         </span>
-            {/snippet}
+    {/snippet}
     {#snippet message()}
                 <span >
             <p>{ form?.success ? 'Check your inbox!' : 'Something went wrong. Please try again.' }</p>
@@ -87,16 +87,16 @@
 <NotificationModal
     showModal={form?.showModal ?? false}
 >
-    {#snippet header-text()}
-                        <span >
+    {#snippet headerText()}
+        <span >
             Not approved
         </span>
-                    {/snippet}
+    {/snippet}
     {#snippet message()}
-                        <span >
+        <span >
             <p>You are not yet approved to sign up for Freq. You can <a href="https://forms.gle/sGF4yjkubeorrBRH9">request an invite.</a></p>
         </span>
-                    {/snippet}
+    {/snippet}
 </NotificationModal>
 {/if}
 

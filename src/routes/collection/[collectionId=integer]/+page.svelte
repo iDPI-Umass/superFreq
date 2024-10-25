@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { run, preventDefault } from 'svelte/legacy';
-
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
     
@@ -11,21 +9,15 @@
     import GridList from "$lib/components/GridList.svelte";
     import InfoBox from '$lib/components/InfoBox.svelte'
 
-	import type { PageData } from './$types';
     // import { insertCollectionFollow, updateCollectionFollow } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions';
-	
-    interface Props {
-        data: PageData;
-    }
 
-    let { data }: Props = $props();
-    let { sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData, infoBoxText } = $state(data);
-    run(() => {
-        ({ sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData, infoBoxText } = data);
-    });
 
-    const collectionType = collectionInfo?.type as string
-    const collectionUpdatedAt = collectionInfo?.updated_at as Date
+    let { data } = $props();
+    let { sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData, infoBoxText } = $derived(data);
+
+
+    const collectionType = $derived(collectionInfo?.type as string)
+    const collectionUpdatedAt = $derived(collectionInfo?.updated_at as Date)
 
     let gridListSelect = $state("grid")
 
@@ -36,9 +28,9 @@
     }
 
     
-    const updatedAt = new Date(collectionUpdatedAt).toLocaleDateString()
+    const updatedAt = $derived(new Date(collectionUpdatedAt).toLocaleDateString())
 
-    const collectionStatus = collectionInfo?.status as string
+    const collectionStatus = $derived(collectionInfo?.status as string)
 
 </script>
 
@@ -83,7 +75,7 @@
                         {#if sessionUserId && editPermission}
                             <button 
                                 class="standard"
-                                onclick={preventDefault(() => goto($page.url.pathname + '/edit'))}
+                                onclick={() => goto($page.url.pathname + '/edit')}
                             >
                             edit
                             </button>
