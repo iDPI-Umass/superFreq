@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { run } from 'svelte/legacy';
-
     import type { ActionData } from './$types'
     import { onMount } from 'svelte'
     import { enhance } from '$app/forms'
@@ -8,17 +6,9 @@
 	import PanelHeader from "$lib/components/PanelHeader.svelte"
     import NotificationModal from "src/lib/components/modals/NotificationModal.svelte"
 
+    let { form } = $props();
 
-    interface Props {
-        form: ActionData;
-    }
-
-    let { form }: Props = $props();
-    run(() => {
-        form
-    });
-
-    onMount(() => invalidateAll())
+    $effect(() => invalidateAll())
 
     let email: string | null = $state(null)
 </script>

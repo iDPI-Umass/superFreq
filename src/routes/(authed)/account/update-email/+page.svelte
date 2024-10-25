@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { run } from 'svelte/legacy';
-
     import type { PageData, ActionData } from './$types';
     import PanelHeader from "$lib/components/PanelHeader.svelte"
 
@@ -14,10 +12,7 @@
     let newEmail = $state('')
     let confirmEmail = $state('')
 
-	let { sessionUserId, sessionUserEmail } = $state(data)
-	run(() => {
-        ({ sessionUserId, sessionUserEmail } = data)
-    });
+	let { sessionUserId, sessionUserEmail } = $derived(data)
 
 </script>
 

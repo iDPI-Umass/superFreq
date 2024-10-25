@@ -3,8 +3,6 @@
 -->
 
 <script lang="ts">
-    import { run } from 'svelte/legacy';
-
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import GridList from '$lib/components/GridList.svelte'
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'

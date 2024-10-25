@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { run } from 'svelte/legacy';
-
     import type { PageData, ActionData } from './$types'
     import PanelHeader from "$lib/components/PanelHeader.svelte"
     import Tooltip from '$lib/components/Tooltip.svelte'
@@ -14,13 +12,10 @@
 
     let { data, form }: Props = $props();
 
-	let { profile } = $state(data)
-	run(() => {
-        ({ profile } = data)
-    });
+	let { profile } = $derived(data)
 
     let loading = false
-    let username = profile?.username as string
+    let username = $derived(profile?.username as string)
 
 </script>
 
@@ -60,7 +55,7 @@
             name="current-username"
             id="current-username"
             form="account-data"
-            value={profile?.username} 
+            value={username} 
             disabled
         />
         <label 
@@ -76,7 +71,7 @@
             name="new-username"
             id="new-username"
             form="account-data"
-            value={profile?.username} 
+            value={username} 
         />
         <button
             type="submit"

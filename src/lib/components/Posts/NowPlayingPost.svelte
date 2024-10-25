@@ -13,7 +13,7 @@
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
     interface ComponentProps {
-        sessionUserId: string | null
+        sessionUserId?: string | null
         post: any
         editState?: boolean
         mode?: string | null

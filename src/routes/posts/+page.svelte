@@ -1,23 +1,12 @@
 <script lang="ts">
-    import { run } from 'svelte/legacy';
-
-    import type { PageData, ActionData } from './$types'
     import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
     import PanelHeader from '$lib/components/PanelHeader.svelte'
 
-    interface Props {
-        data: any;
-        form: any;
-    }
+    let { data, form } = $props()
 
-    let { data, form }: Props = $props();
+    let { posts, postCount } = $derived(data)
 
-    let { posts, postCount } = $state(data)
-    run(() => {
-        ({ posts, postCount } = data)
-    });
-
-    let displayPosts = [...posts]
+    let displayPosts = $derived([...posts])
 </script>
 
 <svelte:options runes={true} />

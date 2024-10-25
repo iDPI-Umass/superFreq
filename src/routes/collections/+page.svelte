@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { run } from 'svelte/legacy';
-
     import type { PageData, ActionData } from './$types'
     import { enhance } from '$app/forms'
     interface Props {
@@ -10,10 +8,7 @@
 
     let { form, data }: Props = $props();
 
-    let { collections, remaining, totalCollections, batchSize, batchIterator } = $state(data)
-    run(() => {
-        ({ collections, remaining, totalCollections, batchSize, batchIterator } = data )
-    });
+    let { collections, remaining, totalCollections, batchSize, batchIterator } = $derived(data)
 </script>
 
 <svelte:options runes={true} />

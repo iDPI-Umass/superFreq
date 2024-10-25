@@ -1,18 +1,8 @@
 <script lang="ts">
-    import { run } from 'svelte/legacy';
-
-    import type { PageData } from "./$types"
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
-    interface Props {
-        data: PageData;
-    }
-
-    let { data }: Props = $props();
-    let { users } = $state(data)
-    run(() => {
-        ({ users } = data)
-    });
+    let { data } = $props();
+    let { users } = $derived(data)
 </script>
 
 <svelte:options runes={true} />

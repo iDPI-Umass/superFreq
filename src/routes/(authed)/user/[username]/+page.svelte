@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { run } from 'svelte/legacy';
-
     import type { ActionData, PageData } from './$types.js'
     import { goto } from '$app/navigation'
     import { enhance } from '$app/forms'
