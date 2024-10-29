@@ -17,21 +17,21 @@
         timestampEnd?: Date | null
         options?: App.Lookup
         mode: string
-        remaining?: number
+        remaining: number
         userActionSuccess?: boolean | null
     }
 
     let { 
         sessionUserId, 
         feedItems, 
-        batchSize = 0,
+        batchSize,
         batchIterator = 0,
-        offset = 0,
-        timestampStart = null,
-        timestampEnd = null,
+        offset,
+        timestampStart,
+        timestampEnd,
         options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']},
         mode,
-        remaining = 0,
+        remaining,
         userActionSuccess = null
     }: ComponentProps = $props()
 
@@ -249,6 +249,12 @@
             name="batch-size"
             id="batch-size"
             value={batchSize}
+        />
+        <input
+            type="hidden"
+            name="batch-iterator"
+            id="batch-iterator"
+            value={batchIterator}
         />
         <input
             type="hidden"

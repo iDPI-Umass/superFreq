@@ -1,13 +1,12 @@
 <script lang="ts">
-    import type { PageData, ActionData } from './$types'
     import Feed from '$lib/components/Feed.svelte'
 
-    // export let data: PageData
-    // export let form: ActionData
     let { data, form } = $props()
-    let { sessionUserId, feedData, remaining, timestampStart, timestampEnd, batchSize, batchIterator, options } = $derived(data)
+    let { sessionUserId, feedData, remaining, timestampStart, timestampEnd, batchSize, options } = $derived(data)
 
-    let offset = $derived(form?.batchIterator ? (batchSize * form?.batchIterator) : 0)
+    $effect(() => {
+        console.log('remaining: ', remaining)
+    })
 </script>
 
 <svelte:options runes={true} />
@@ -22,8 +21,7 @@
     sessionUserId={sessionUserId}
     feedItems={form?.feedItems ?? feedData}
     batchSize={batchSize}
-    batchIterator={form?.batchIterator ?? 0}
-    offset={offset}
+    batchIterator={form?.batchIterator}
     timestampStart={timestampStart}
     timestampEnd={timestampEnd}
     options={options}

@@ -17,6 +17,8 @@
         post: any
         editState?: boolean
         mode?: string | null
+        reactionActive?: boolean
+        reactionCount?: number
         userActionSuccess?: boolean | null
     }
 
@@ -25,6 +27,8 @@
         post,
         editState = $bindable(false),
         mode = null,
+        reactionActive,
+        reactionCount,
         userActionSuccess
     }: ComponentProps = $props()
 
@@ -45,8 +49,6 @@
     function toggleEditState() {
         editState = !editState
     }
-
-    const reactionCount = ( mode == "feed" ) ? 0 : post.reaction_count
 </script>
 
 <svelte:options runes={true} />
@@ -116,8 +118,8 @@
             <div class="row-group-icons">
                 <LikeReact
                 postId={post.id ?? post.now_playing_post_id}
-                reactionActive={post.reaction_active ?? false}
-                reactionCount={reactionCount ?? 0}
+                reactionActive={reactionActive as boolean}
+                reactionCount={reactionCount as number}
                 ></LikeReact>
                 {#if mode == "feed"}
                     <a href={permalink}>
@@ -157,10 +159,5 @@
         border-top: var(--freq-border-panel);
         border-bottom: var(--freq-border-panel);
         margin:  var(--freq-spacing-2x-small) 0;
-    }
-    .edit-submit-options {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
     }
 </style>

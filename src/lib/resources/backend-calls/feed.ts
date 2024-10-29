@@ -54,17 +54,22 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             sessionUserPostsTotal = countSessionUserPosts[0]['session_user_posts_count']
 
             /* get data about those posts */
-
+            
             const selectSessionUserPosts = await trx
             .selectFrom('posts as post')
             .innerJoin('profiles as profile', 'profile.id', 'post.user_id')
             .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profile.avatar_mbid')
             .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
-            .leftJoin(
-                'post_reactions as reactions',
+            .leftJoin('post_reactions as reaction',
                 (join) => join
-                .onRef('reactions.post_id', '=', 'post.id')
-                .on((eb) => eb('reactions.active', '=', true))
+                .onRef('reaction.post_id', '=', 'posts.id')
+                .on('reaction.active', '=', true)
+                .on('reaction.user_id', '=', sessionUserId)
+            )
+            .leftJoin('post_reactions as all_reactions',
+                (join) => join
+                .onRef('all_reactions.post_id', '=', 'posts.id')
+                .on('all_reactions.active', '=', true)
             )
             .select([
                 'post.id as now_playing_post_id', 
@@ -87,7 +92,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'profile.avatar_url as avatar_url',
                 'release_groups.release_group_name as avatar_release_group_name',
                 'artists.artist_name as avatar_artist_name',
-                (eb) => eb.fn.count('reactions.id').as('reaction_count')
+                'reaction.active as reaction_active',
+                (eb) => eb.fn.count('all_reactions.id').as('reaction_count')
             ])
             .where('post.user_id', '=', sessionUserId)
             .where('post.type', '=', 'now_playing')
@@ -101,7 +107,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'profile.username',
                 'profile.avatar_url',
                 'artists.artist_name',
-                'release_groups.release_group_name'
+                'release_groups.release_group_name',
+                'reaction.active'
             ])
             .orderBy('feed_item_timestamp', 'desc')
             .execute()

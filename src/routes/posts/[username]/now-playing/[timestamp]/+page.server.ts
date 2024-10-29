@@ -84,13 +84,13 @@ export const actions = {
         const data = await request.formData()
         const postId = data.get('post-id') as string
         const reactionType = data.get('reaction-type') as string
-        const postUsername = data.get('post-username') as string
-        const postCreatedAt = data.get('post-created-at') as string
 
-        const reaction = await insertUpdateReaction( sessionUserId, postId, reactionType )
+        const { reaction, reactionCount } = await insertUpdateReaction( sessionUserId, postId, reactionType )
+
+        const reactionActive = reaction?.active
 
         const success = reaction ? true : false
-        return { success }
+        return { success, reactionActive, reactionCount }
 
     },
     editPost: async ({ request, locals: { safeGetSession } }) => {

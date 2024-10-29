@@ -348,8 +348,8 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
             )
             .leftJoin('post_reactions as all_reactions',
                 (join) => join
-                .onRef('reaction.post_id', '=', 'posts.id')
-                .on('reaction.active', '=', true)
+                .onRef('all_reactions.post_id', '=', 'posts.id')
+                .on('all_reactions.active', '=', true)
             )
             .select([
                 'posts.id as id', 
@@ -393,12 +393,13 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                 'profile.username',
                 'profile.display_name',
                 'profile.avatar_url',
-                'reaction.active',
                 'artists.artist_name',
-                'release_groups.release_group_name'
+                'release_groups.release_group_name',
+                'reaction.active'
             ])
             .executeTakeFirst()
 
+            console.log(post)
             const postId = post?.id as string
 
             const replies = await trx
@@ -779,7 +780,7 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
 
             const { id } = selectReaction
 
-            return await trx
+            const updateReaction = await trx
             .updateTable('post_reactions')
             .set({
                 active: !active,
@@ -787,8 +788,21 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
                 changelog: changelog
             })
             .where('id', '=', id)
-            .returning(['id', 'reaction', 'active'])
+            .returning(['id', 'reaction', 'active', 'post_id'])
             .executeTakeFirst()
+
+            const reaction = updateReaction as App.RowData
+
+            const countReactions  = await trx
+            .selectFrom('post_reactions')
+            .select((eb) => eb.fn.count('id').as('reaction_count'))
+            .where('active', '=', true)
+            .where('post_id', '=', reaction.post_id)
+            .execute()
+
+            const reactionCount = countReactions[0]['reaction_count']
+
+            return { reaction, reactionCount }
         }
         catch (error) {
             const changelog: App.Changelog = {}
@@ -807,11 +821,21 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
                 active: true,
                 changelog: changelog
             })
-            .returning(['id', 'reaction', 'active'])
+            .returning(['id', 'reaction', 'active', 'post_id'])
             .executeTakeFirst()
 
-            const reaction = await insertReaction
-            return reaction
+            const reaction = insertReaction as App.RowData
+
+            const countReactions  = await trx
+            .selectFrom('post_reactions')
+            .select((eb) => eb.fn.count('id').as('reaction_count'))
+            .where('active', '=', true)
+            .where('post_id', '=', reaction.post_id)
+            .execute()
+
+            const reactionCount = countReactions[0]['reaction_count']
+
+            return { reaction, reactionCount }
         }
     })
 
