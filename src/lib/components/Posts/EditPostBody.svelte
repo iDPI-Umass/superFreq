@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { preventDefault } from 'svelte/legacy';
+    import { enhance } from '$app/forms'
 
     import type { Posts } from './$types'
 
@@ -19,7 +19,7 @@
 
 <svelte:options runes={true} />
 
-<form method="POST" name="editPostText" class="vertical" action="?/editPost">
+<form method="POST" name="editPostText" class="vertical" action="?/editPost" use:enhance>
     <input 
         id="post-data"
         name="post-data"

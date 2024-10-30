@@ -46,7 +46,9 @@
         editState = !editState
     }
 
-    const reactionCount = ( mode == "feed" ) ? 0 : post.reaction_count
+    let reactionActive = $derived(post?.reaction_active) as boolean
+    let reactionCount = $derived(post?.reaction_count) as number
+    let postId = $derived(post?.id ?? post?.now_playing_post_id) as string
 </script>
 
 <svelte:options runes={true} />
@@ -115,9 +117,9 @@
         <div class="post-row">
             <div class="row-group-icons">
                 <LikeReact
-                postId={post.id ?? post.now_playing_post_id}
-                reactionActive={post.reaction_active ?? false}
-                reactionCount={reactionCount ?? 0}
+                postId={postId}
+                reactionActive={reactionActive}
+                reactionCount={reactionCount}
                 ></LikeReact>
                 {#if mode == "feed"}
                     <a href={permalink}>
@@ -157,10 +159,5 @@
         border-top: var(--freq-border-panel);
         border-bottom: var(--freq-border-panel);
         margin:  var(--freq-spacing-2x-small) 0;
-    }
-    .edit-submit-options {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
     }
 </style>

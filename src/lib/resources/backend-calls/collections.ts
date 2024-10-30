@@ -238,6 +238,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
         const collectionInfo = await trx
         .selectFrom('collections_info')
         .innerJoin('profiles as profile', 'profile.id', 'collections_info.owner_id')
+        .leftJoin('release_groups', 'profile.avatar_mbid', 'release_groups.release_group_mbid')
         .select([
             'collections_info.collection_id as collection_id', 
             'collections_info.created_at as created_at', 
@@ -250,7 +251,8 @@ export const selectViewableCollectionContents = async function ( collectionId: s
             'collections_info.description_text as description_text',
             'profile.username as username',
             'profile.display_name as display_name',
-            'profile.avatar_url as avatar_url'
+            'profile.avatar_url as avatar_url',
+            'release_groups.last_fm_img_url as last_fm_img_url'
         ])
         .where(({eb, and, or, exists, selectFrom, not}) => and([
             eb('collections_info.collection_id', '=', collectionId),
@@ -344,7 +346,8 @@ export const selectViewableCollectionContents = async function ( collectionId: s
                 'artists.artist_name as artist_name',
                 'release_groups.release_group_name as release_group_name',
                 'release_groups.release_group_mbid as release_group_mbid',
-                'release_groups.img_url as img_url'
+                'release_groups.img_url as img_url',
+                'release_groups.last_fm_img_url as last_fm_img_url'
             ])
             .where('contents.collection_id', '=', collectionId)
             .where('contents.item_position', 'is not', null)
@@ -368,6 +371,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
                 'release_groups.release_group_name as release_group_name',
                 'release_groups.release_group_mbid as release_group_mbid',
                 'release_groups.img_url as img_url',
+                'release_groups.last_fm_img_url as last_fm_img_url',
                 'recordings.recording_name as recording_name',
                 'recordings.recording_mbid as recording_mbid'
             ])
@@ -461,6 +465,7 @@ export const selectEditableCollectionContents = async function ( collectionId: s
                 'artists.artist_name as artist_name',
                 'release_groups.release_group_name as release_group_name',
                 'release_groups.img_url as img_url',
+                'release_groups.last_fm_img_url as last_fm_img_url',
                 'release_groups.release_date as release_date'
             ])
             .where('contents.collection_id', '=', collectionId)
@@ -483,6 +488,7 @@ export const selectEditableCollectionContents = async function ( collectionId: s
                 'artists.artist_name as artist_name',
                 'release_groups.release_group_name as release_group_name',
                 'release_groups.img_url as img_url',
+                'release_groups.last_fm_img_url as last_fm_img_url',
                 'release_groups.release_date as release_date',
                 'recordings.recording_name as recording_name',
                 'recordings.remixer_artist_mbid as remixer_artist_mbid'
@@ -550,6 +556,7 @@ export const selectEditableTopAlbumsCollection = async function ( sessionUserId:
                 'contents.artist_mbid',
                 'release_groups.release_group_name',
                 'release_groups.img_url',
+                'release_groups.last_fm_img_url as last_fm_img_url',
                 'artists.artist_name'
             ])
             .where('info.collection_id', '=', collectionId)

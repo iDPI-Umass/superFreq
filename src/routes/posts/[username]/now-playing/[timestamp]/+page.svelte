@@ -10,15 +10,15 @@
     }
 
     let { data, form }: Props = $props();
-    let { post, postReactionActive } = $state(data)
+    let { post, postReactionActive } = $derived(data)
 
     let sessionUserId = data?.sessionUserId as string
 
-    let replies = $state(data?.replies as App.RowData[])
+    let replies = $derived(data?.replies as App.RowData[])
 
     let actionSuccess = $derived(form?.success ?? null)
 
-    const postId = post?.id as string
+    const postId = $derived(post?.id) as string
 
     function replyId ( username: string, createdAt: Date ) {
         const replyTimestampString = createdAt.toISOString()
@@ -75,6 +75,8 @@
     <NowPlayingPost
         sessionUserId={sessionUserId}
         post={post}
+        reactionActive={post?.reaction_active ?? false}
+        reactionCount={post?.reaction_count ?? 0}
         editState={form?.editState ?? false}
         userActionSuccess={actionSuccess}
     ></NowPlayingPost>

@@ -70,9 +70,7 @@
 <div class="profile-info">
     <div class="profile-info-box-left">
         <CoverArt
-            imgUrl={imgUrl}
-            artistName={avatarArtistName}
-            releaseGroupName={avatarReleaseGroupName}
+            item={avatarItem}
             altText={`${displayName}'s avatar: ${avatarReleaseGroupName} by ${avatarArtistName}`}
         ></CoverArt>
         <div class="profile-info-box-column">

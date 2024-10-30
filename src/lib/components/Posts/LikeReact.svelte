@@ -13,6 +13,16 @@
         reactionCount = 0,
         reactionActive
     }: ComponentProps = $props()
+
+    let reactionPromise = $state(false)
+
+    async function promiseCallback ( success: boolean ) {
+        reactionPromise = false
+        if ( success == true || success == false ) {
+            reactionPromise = true
+            return
+        }
+    }
 </script>
 
 <svelte:options runes={true} />
@@ -35,9 +45,9 @@
         id="reaction-type"
         value="like"
     />
-    <button class="like" formaction="?/submitReaction" onclick={() => { reactionActive = !reactionActive }}>
+    <button class="like" formaction="?/submitReaction">
         <div class="row-group-icon-description">
-            {#if reactionCount > 0}
+            {#if reactionCount > 0 }
                 <span>
                     {reactionCount}
                 </span>

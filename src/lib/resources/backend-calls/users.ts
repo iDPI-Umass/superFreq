@@ -173,7 +173,8 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
                 'collections_contents.item_position as item_position', 
                 'artists.artist_name as artist_name', 
                 'release_groups.release_group_name as release_group_name', 
-                'release_groups.img_url as img_url'
+                'release_groups.img_url as img_url',
+                'release_groups.last_fm_img_url as last_fm_img_url'
             ])
             .where('collection_id', '=', profileUserData?.top_albums_collection_id as string)
             .where('collections_contents.item_position', 'is not', null)
@@ -212,6 +213,7 @@ export const selectSessionProfile = async function ( sessionUserId: string ) {
         'profiles.username as username',
         'profiles.display_name as display_name',
         'profiles.about as about',
+        'profiles.website as website',
         'profiles.top_albums_collection_id as top_albums_collection_id',
         'profiles.avatar_url as avatar_url',
         'release_groups.last_fm_img_url as last_fm_img_url',

@@ -35,6 +35,7 @@
 		'artist_name': avatarArtist,
 		'release_group_name': avatarReleaseGroup
 	})
+
 	let imgPromise = $state(null)
 </script>
 

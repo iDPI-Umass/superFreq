@@ -10,12 +10,6 @@
     interface ComponentProps {
         sessionUserId: string
         feedItems: App.RowData[]
-        batchSize?: number
-        batchIterator?: number
-        offset?: number
-        timestampStart?: Date | null
-        timestampEnd?: Date | null
-        options?: App.Lookup
         mode: string
         remaining?: number
         userActionSuccess?: boolean | null
@@ -24,14 +18,8 @@
     let { 
         sessionUserId, 
         feedItems, 
-        batchSize = 0,
-        batchIterator = 0,
-        offset = 0,
-        timestampStart = null,
-        timestampEnd = null,
-        options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']},
         mode,
-        remaining = 0,
+        remaining,
         userActionSuccess = null
     }: ComponentProps = $props()
 
@@ -238,49 +226,7 @@
         </div>
     {/each}
     <form method="POST" action="?/loadMore" use:enhance>
-        <input
-            type="hidden"
-            name="feed-items"
-            id="feed-items"
-            value={JSON.stringify(feedItems)}
-        />
-        <input
-            type="hidden"
-            name="batch-size"
-            id="batch-size"
-            value={batchSize}
-        />
-        <input
-            type="hidden"
-            name="offset"
-            id="offset"
-            value={offset}
-        />
-        <input
-            type="hidden"
-            name="remaining"
-            id="remaining"
-            value={remaining}
-        />
-        <input
-            type="hidden"
-            name="timestamp-start"
-            id="timestamp-start"
-            value={timestampStart?.toISOString()}
-        />
-        <input
-            type="hidden"
-            name="timestamp-end"
-            id="timestamp-end"
-            value={timestampEnd?.toISOString()}
-        />
-        <input
-            type="hidden"
-            name="options"
-            id="options"
-            value={JSON.stringify(options)}
-        />
-        {#if remaining > 0}
+        {#if remaining && remaining > 0}
             <button
                 class="standard"
                 formaction="?/loadMore"

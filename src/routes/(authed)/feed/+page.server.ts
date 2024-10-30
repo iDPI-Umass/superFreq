@@ -3,41 +3,53 @@ import { selectFeedData } from '$lib/resources/backend-calls/feed'
 import { insertUpdateReaction } from '$lib/resources/backend-calls/posts'
 import { add, parseISO } from 'date-fns'
 
+let batchIterator = 0
+const feedItems = [] as App.RowData[]
+let feedItemCount = 0
+let totalAvailableItems = 0
+let remaining = 0
+let loadMore = true
+let updateReaction = false
+let nowPlayingPostId: string
+let updatedReactionActive: boolean
+let updatedReactionCount: number
+
 export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
     const session = await safeGetSession()
     const sessionUserId = session.user?.id as string
     const batchSize = 5
-    const batchIterator = 0
     const timestampEnd = new Date()
     const timestampStart = add(timestampEnd, {days: -300})
     const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
 
-    const { feedData, totalRowCount, remainingCount } = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options )
+    if ( loadMore ) {
+        const { feedData, totalRowCount, remainingCount } = await selectFeedData( sessionUserId, batchSize, batchIterator, feedItemCount, timestampStart, timestampEnd, options )
+        feedItems.push(...feedData)
+        feedItemCount = feedItems.length
 
-    const remaining = remainingCount as number
+        totalAvailableItems = totalRowCount as number
+        remaining = remainingCount as number
 
-    return { sessionUserId, feedData, totalRowCount, remaining, timestampStart, timestampEnd, batchSize, batchIterator, options }
+        loadMore = false
+    }
+
+    if ( updateReaction ) {
+        const reaction = feedItems.find((item) => (item.now_playing_post_id == nowPlayingPostId)) as App.RowData
+
+        reaction.reaction_active = updatedReactionActive
+        reaction.reaction_count = updatedReactionCount
+
+        updateReaction = false
+    }
+
+    return { sessionUserId, feedItems, remaining } 
 }
 
 export const actions = {
-    loadMore: async({ request, locals: { safeGetSession } }) => {
-        const session = await safeGetSession()
-        const sessionUserId = session.user?.id as string
-        const data = await request.formData()
-        const feedItems = JSON.parse(data.get('feed-items') as string)
-        const batchSize = parseInt(data.get('batch-size') as string)
-        let batchIterator = parseInt(data.get('batch-iterator') as string)
+    loadMore: async() => {
         batchIterator ++
-        const timestampStart = parseISO(data.get('timestamp-start') as string)
-        const timestampEnd = parseISO(data.get('timestamp-end') as string)
-        const options = JSON.parse(data.get('options') as string) as App.Lookup
-
-        const { feedData, remainingCount } = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
-
-        feedItems.push(...feedData)
-        const remaining = remainingCount as number
-
-        return { feedItems, remaining, batchIterator }
+        loadMore = true
+        return { loadMore }
     },
     submitReaction: async ({ request, locals: { safeGetSession }}) => {
         const session = await safeGetSession()
@@ -46,8 +58,13 @@ export const actions = {
         const postId = data.get('post-id') as string
         const reactionType = data.get('reaction-type') as string
 
-        const reaction = await insertUpdateReaction( sessionUserId, postId, reactionType )
+        const { reaction, reactionCount } = await insertUpdateReaction( sessionUserId, postId, reactionType )
 
-        return reaction
+        nowPlayingPostId = postId
+        updatedReactionActive = reaction.active as boolean
+        updatedReactionCount = reactionCount as number
+        updateReaction = reaction ? true : false
+
+        return { updateReaction }
     }
 } satisfies Actions
