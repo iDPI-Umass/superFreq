@@ -243,7 +243,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'post_reactions.updated_at as feed_item_timestamp',
                 'user_posts.id as post_id',
                 'user_posts.created_at as post_created_at',
-                'user.username as username'
+                'user.username as original_poster_username'
             ])
             .where('post_reactions.post_id', 'in', postIdList)
             .where('post_reactions.active', '=', true)
