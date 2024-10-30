@@ -3,13 +3,15 @@ import { selectFeedData } from '$lib/resources/backend-calls/feed'
 import { insertUpdateReaction } from '$lib/resources/backend-calls/posts'
 import { add, parseISO } from 'date-fns'
 
+let loadData = true
+let updateReaction = false
+
 let batchIterator = 0
 const feedItems = [] as App.RowData[]
 let feedItemCount = 0
 let totalAvailableItems = 0
 let remaining = 0
-let loadMore = true
-let updateReaction = false
+
 let nowPlayingPostId: string
 let updatedReactionActive: boolean
 let updatedReactionCount: number
@@ -22,7 +24,7 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
     const timestampStart = add(timestampEnd, {days: -300})
     const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
 
-    if ( loadMore ) {
+    if ( loadData ) {
         const { feedData, totalRowCount, remainingCount } = await selectFeedData( sessionUserId, batchSize, batchIterator, feedItemCount, timestampStart, timestampEnd, options )
         feedItems.push(...feedData)
         feedItemCount = feedItems.length
@@ -30,7 +32,7 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
         totalAvailableItems = totalRowCount as number
         remaining = remainingCount as number
 
-        loadMore = false
+        loadData = false
     }
 
     if ( updateReaction ) {
@@ -42,14 +44,14 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
         updateReaction = false
     }
 
-    return { sessionUserId, feedItems, remaining } 
+    return { sessionUserId, feedItems, totalAvailableItems, remaining } 
 }
 
 export const actions = {
     loadMore: async() => {
         batchIterator ++
-        loadMore = true
-        return { loadMore }
+        loadData = true
+        return { loadData }
     },
     submitReaction: async ({ request, locals: { safeGetSession }}) => {
         const session = await safeGetSession()

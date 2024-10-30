@@ -39,9 +39,9 @@
 
     let topAlbumsReturned = $derived( topAlbumsCollection ? true : false)
     
-    let followingNow = $derived(form?.followStatus ?? followInfo?.follows_now ?? false)
-    let profileUserBlocked = $derived(form?.blockStatus ?? profileUserBlockInfo?.active ?? false)
-    let profileUserFlagged = $derived(form?.flagStatus ?? profileUserFlagInfo?.active ?? false)
+    let followingNow = $derived(followInfo?.follows_now ?? false)
+    let profileUserBlocked = $derived(profileUserBlockInfo?.active ?? false)
+    let profileUserFlagged = $derived(profileUserFlagInfo?.active ?? false)
 
     let displayName = $derived(profileUserData?.display_name as string)
 
@@ -230,13 +230,13 @@
         <NewNowPlayingPost></NewNowPlayingPost>
         <Feed
             sessionUserId={sessionUserId}
-            feedItems={feedItems?.feedData}
+            feedItems={feedItems}
             mode="mini"
             userActionSuccess={form?.success}
         ></Feed>
     {:else}
         <NowPlayingPostsSample
-            posts={posts}
+            posts={feedItems}
             displayName={displayName}
             username={profileUsername}
         ></NowPlayingPostsSample>
