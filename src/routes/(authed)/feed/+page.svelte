@@ -2,11 +2,7 @@
     import Feed from '$lib/components/Feed.svelte'
 
     let { data, form } = $props()
-    let { sessionUserId, feedData, remaining, timestampStart, timestampEnd, batchSize, options } = $derived(data)
-
-    $effect(() => {
-        console.log('remaining: ', remaining)
-    })
+    let { sessionUserId, feedItems, remaining } = $derived(data)
 </script>
 
 <svelte:options runes={true} />
@@ -19,12 +15,7 @@
 
 <Feed
     sessionUserId={sessionUserId}
-    feedItems={form?.feedItems ?? feedData}
-    batchSize={batchSize}
-    batchIterator={form?.batchIterator}
-    timestampStart={timestampStart}
-    timestampEnd={timestampEnd}
-    options={options}
+    feedItems={feedItems}
     mode="feed"
-    remaining={form?.remaining ?? remaining}
+    remaining={remaining}
 ></Feed>

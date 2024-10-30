@@ -26,9 +26,6 @@
         const slug = username?.concat(replyTimestamp)
         return slug
     }
-
-    let reactionActive = $derived(post?.reaction_active)
-    let reactionCount = $derived(post?.reaction_count)
 </script>
 
 <svelte:options runes={true} />
@@ -78,8 +75,8 @@
     <NowPlayingPost
         sessionUserId={sessionUserId}
         post={post}
-        reactionActive={reactionActive ?? false}
-        reactionCount={reactionCount ?? 0}
+        reactionActive={post?.reaction_active ?? false}
+        reactionCount={post?.reaction_count ?? 0}
         editState={form?.editState ?? false}
         userActionSuccess={actionSuccess}
     ></NowPlayingPost>

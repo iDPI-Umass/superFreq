@@ -399,7 +399,6 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
             ])
             .executeTakeFirst()
 
-            console.log(post)
             const postId = post?.id as string
 
             const replies = await trx

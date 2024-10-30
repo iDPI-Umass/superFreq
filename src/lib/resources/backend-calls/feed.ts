@@ -6,9 +6,9 @@ Selects batches of data to populate session user's feed in batches within a part
 'options' specifices what type of data shows up in feed, expects an object formatted as {'options': [values]} containing any of the following values: ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits'] 
 */
 
-export const selectFeedData = async function ( sessionUserId: string, batchSize: number, batchIterator: number,  timestampStart: Date, timestampEnd: Date, options: App.Lookup) {
+export const selectFeedData = async function ( sessionUserId: string, batchSize: number, batchIterator: number, feedItemCount: number, timestampStart: Date, timestampEnd: Date, options: App.Lookup) {
 
-    let offset = batchSize * batchIterator
+    const offset = batchSize * batchIterator
 
     const feedOptions = options.options as string[]
 
@@ -62,13 +62,13 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
             .leftJoin('post_reactions as reaction',
                 (join) => join
-                .onRef('reaction.post_id', '=', 'posts.id')
+                .onRef('reaction.post_id', '=', 'post.id')
                 .on('reaction.active', '=', true)
                 .on('reaction.user_id', '=', sessionUserId)
             )
             .leftJoin('post_reactions as all_reactions',
                 (join) => join
-                .onRef('all_reactions.post_id', '=', 'posts.id')
+                .onRef('all_reactions.post_id', '=', 'post.id')
                 .on('all_reactions.active', '=', true)
             )
             .select([
@@ -678,13 +678,13 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
 
     const data = await select
 
-    let feedData: object[] = []
+    let feedData = [] as App.RowData[]
+    
     feedData = feedData.concat(data.sessionUserPosts, data.sessionUserComments, data.commentsSessionUserPost, data.reactionsSessionUserPost, data.posts, data.comments, data.reactions, data.sessionUserCollectionFollows, data.collectionFollows, data.collectionEdits, data.newFollows)
 
     feedData.sort(( a: App.RowData, b: App.RowData ) => b.feed_item_timestamp - a.feed_item_timestamp)
+
     const { totalRowCount } = data
-    batchIterator ++
-    offset = batchSize * batchIterator
-    const remainingCount = totalRowCount - feedData.length
+    const remainingCount = totalRowCount - (feedItemCount + feedData.length)
     return { feedData, totalRowCount, remainingCount }
 }

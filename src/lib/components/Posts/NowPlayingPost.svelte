@@ -17,8 +17,6 @@
         post: any
         editState?: boolean
         mode?: string | null
-        reactionActive?: boolean
-        reactionCount?: number
         userActionSuccess?: boolean | null
     }
 
@@ -27,8 +25,6 @@
         post,
         editState = $bindable(false),
         mode = null,
-        reactionActive,
-        reactionCount,
         userActionSuccess
     }: ComponentProps = $props()
 
@@ -49,6 +45,10 @@
     function toggleEditState() {
         editState = !editState
     }
+
+    let reactionActive = $derived(post?.reaction_active) as boolean
+    let reactionCount = $derived(post?.reaction_count) as number
+    let postId = $derived(post?.id ?? post?.now_playing_post_id) as string
 </script>
 
 <svelte:options runes={true} />
@@ -117,9 +117,9 @@
         <div class="post-row">
             <div class="row-group-icons">
                 <LikeReact
-                postId={post.id ?? post.now_playing_post_id}
-                reactionActive={reactionActive as boolean}
-                reactionCount={reactionCount as number}
+                postId={postId}
+                reactionActive={reactionActive}
+                reactionCount={reactionCount}
                 ></LikeReact>
                 {#if mode == "feed"}
                     <a href={permalink}>

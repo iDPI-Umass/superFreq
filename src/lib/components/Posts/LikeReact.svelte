@@ -13,6 +13,16 @@
         reactionCount = 0,
         reactionActive
     }: ComponentProps = $props()
+
+    let reactionPromise = $state(false)
+
+    async function promiseCallback ( success: boolean ) {
+        reactionPromise = false
+        if ( success == true || success == false ) {
+            reactionPromise = true
+            return
+        }
+    }
 </script>
 
 <svelte:options runes={true} />
