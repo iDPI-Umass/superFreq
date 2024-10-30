@@ -6,6 +6,18 @@ import { selectUserPostsSample, insertPost, insertUpdateReaction } from '$lib/re
 import { getListenUrlData } from '$lib/resources/parseData'
 import { add, parseISO } from 'date-fns'
 
+let loadData = true
+let userAction = false
+let updateReaction = false
+
+let profileData: any = null
+let feedItems: any = null
+
+let nowPlayingPostId: string
+let updatedReactionActive: boolean
+let updatedReactionCount: number
+
+
 export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}) => {
 
     const session = await safeGetSession()
@@ -15,26 +27,47 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     
     const batchSize = 10
     const batchIterator = 0
+    const feedItemCount = 0
     const timestampEnd = new Date()
     const timestampStart = add(timestampEnd, {days: -300})
     const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
 
-    const profileData = await selectProfilePageData( sessionUserId, profileUsername )
+    if ( loadData ) {
+        profileData = await selectProfilePageData( sessionUserId, profileUsername )
 
-    if (!profileData.profileUserData) {
-        throw redirect(303, '/')
+        if (!profileData.profileUserData) {
+            throw redirect(303, '/')
+        }
+        else if ( sessionUserId == profileData.profileUserData.id) {
+            const { feedData } = await selectFeedData( sessionUserId, batchSize, batchIterator, feedItemCount, timestampStart, timestampEnd, options)
+
+            feedItems = feedData
+        }
+        else if ( sessionUserId != profileData.profileUserData.id ) {
+            const selectPosts = await selectUserPostsSample( sessionUserId, profileUsername, batchSize )
+    
+            const { posts } = selectPosts as App.NestedObject
+            feedItems = posts
+        }
     }
-    else if ( sessionUserId == profileData.profileUserData.id) {
-        const feedItems = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
-        return { sessionUserId, profileData, feedItems, profileUsername, posts: null }
+    
+    if ( userAction ) {
+        profileData = await selectProfilePageData( sessionUserId, profileUsername )
+
+        userAction = false
+        loadData = true
     }
-    else if ( sessionUserId != profileData.profileUserData.id ) {
-        const selectPosts = await selectUserPostsSample( sessionUserId, profileUsername, batchSize )
 
-        const { posts } = selectPosts as App.NestedObject
+    if ( updateReaction ) {
+        const reaction = feedItems.find((item) => (item.now_playing_post_id == nowPlayingPostId)) as App.RowData
 
-        return { sessionUserId, profileData, feedItems: null, profileUsername, posts }
-    }    
+        reaction.reaction_active = updatedReactionActive
+        reaction.reaction_count = updatedReactionCount
+
+        updateReaction = false
+    }
+
+    return { sessionUserId, profileData, feedItems, profileUsername }
 }
 
 export const actions = { 
@@ -47,12 +80,13 @@ export const actions = {
 
         const block = await insertUpdateBlock( sessionUserId, profileUserId )
 
-        const blockStatus = block?.active
+        userAction = true
+        loadData = false
 
         if ( block ) {
-            return { block, blockStatus, success: true}
+            return { success: true}
         }
-        return { block, blockStatus, success: false }
+        return { success: false }
     },
     reportUser: async({ request, locals: { safeGetSession }}) => {
         const session = await safeGetSession()
@@ -63,13 +97,14 @@ export const actions = {
 
         const flag = await insertUserFlag( sessionUserId, profileUserId )
 
-        const flagStatus = flag?.active
+        userAction = true
+        loadData = false
 
         if ( flag ) {
-            return { flag, flagStatus, success: true }
+            return { success: true }
         }
 
-        return { flag, flagStatus, success: false }
+        return { success: false }
     },
     followUser: async({ request, locals: { safeGetSession }}) => {
         const session = await safeGetSession()
@@ -79,6 +114,9 @@ export const actions = {
         const profileUserId = data.get('profile-user-id') as string
 
         const follow = await insertUpdateUserFollow( sessionUserId, profileUserId )
+
+        userAction = true
+        loadData = false
 
         const followStatus = follow?.follows_now
         return { follow, followStatus }
@@ -251,6 +289,9 @@ export const actions = {
         const reactionType = data.get('reaction-type') as string
 
         const reaction = await insertUpdateReaction( sessionUserId, postId, reactionType )
+
+        updateReaction = true
+        loadData = false
 
         const success = reaction ? true : false
         return { success }
