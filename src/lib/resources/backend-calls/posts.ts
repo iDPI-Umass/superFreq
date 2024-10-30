@@ -713,11 +713,16 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
             const selectPosts = await trx
             .selectFrom('posts')
             .leftJoin('post_reactions as reaction', 'reaction.post_id', 'posts.id')
+            .leftJoin('post_reactions as all_reactions',
+                (join) => join
+                .onRef('all_reactions.post_id', '=', 'posts.id')
+                .on('all_reactions.active', '=', true)
+            )
             .innerJoin('profiles', 'profiles.id', 'posts.user_id')
             .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profiles.avatar_mbid')
             .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
             .select([
-                'posts.id as id',
+                'posts.id as now_playing_post_id',
                 'posts.text as text',
                 'posts.mbid as mbid',
                 'posts.artist_name as artist_name',
@@ -736,10 +741,18 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
                 'profiles.avatar_url as avatar_url',
                 'release_groups.release_group_name as avatar_release_group_name',
                 'artists.artist_name as avatar_artist_name',
-                'reaction.active as reaction_active'
+                'reaction.active as reaction_active',
+                (eb) => eb.fn.count('all_reactions.id').as('reaction_count')
             ])
             .where('posts.user_id', '=', profileUserId)
             .where('posts.parent_post_id', 'is', null)
+            .groupBy([
+                'profiles.id',
+                'posts.id',
+                'release_groups.release_group_name',
+                'artists.artist_name',
+                'reaction.active'
+            ])
             .orderBy('posts.created_at desc')
             .limit(batchSize)
             .execute()
