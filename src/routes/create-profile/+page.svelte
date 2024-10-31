@@ -199,9 +199,6 @@
 			{#if avatarItem.img_url && avatarItem.img_url.length > 0}
 				{@render editorItemImage(avatarItem, avatarItem["release_group_name"])}
 			{/if}
-			{#if form?.success}
-				<p>update submitted</p>
-			{/if}
 			<div class="actions">
 				<button
 					class="double-border-top"

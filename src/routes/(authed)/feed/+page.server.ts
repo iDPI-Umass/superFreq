@@ -31,8 +31,6 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
 
         totalAvailableItems = totalRowCount as number
         remaining = remainingCount as number
-
-        loadData = false
     }
 
     if ( updateReaction ) {
@@ -42,6 +40,7 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
         reaction.reaction_count = updatedReactionCount
 
         updateReaction = false
+        loadData = true
     }
 
     return { sessionUserId, feedItems, totalAvailableItems, remaining } 
@@ -65,7 +64,9 @@ export const actions = {
         nowPlayingPostId = postId
         updatedReactionActive = reaction.active as boolean
         updatedReactionCount = reactionCount as number
+
         updateReaction = reaction ? true : false
+        loadData = reaction ? false : true
 
         return { updateReaction }
     }

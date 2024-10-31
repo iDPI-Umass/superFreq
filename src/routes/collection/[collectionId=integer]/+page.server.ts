@@ -3,17 +3,44 @@ import type { PageServerLoad, Actions } from './$types'
 import { selectViewableCollectionContents } from '$lib/resources/backend-calls/collections'
 import { insertUpdateCollectionFollow } from '$lib/resources/backend-calls/users'
 
+let loadData = true
+let updateFollow = false
+
+let collectionId: string
+let collectionInfo: App.RowData
+let collectionContents: App.RowData[]
+let viewPermission: boolean
+let editPermission: boolean
+let followData: App.RowData
+
+let followsNow: boolean
+
 export const load: PageServerLoad = async ({ params, locals: { safeGetSession } }) => {
 
-    const collectionId = parseInt(params.collectionId).toString();
+    collectionId = parseInt(params.collectionId).toString();
 
     const session = await safeGetSession()
     const sessionUserId = session.user?.id as string
 
-    const { collectionInfo, collectionContents, viewPermission, editPermission, followData } =  await selectViewableCollectionContents(collectionId, sessionUserId)
+    if ( loadData ) {
+        const collection =  await selectViewableCollectionContents(collectionId, sessionUserId)
 
-    if ( !viewPermission ) {
-        throw redirect(307, '/collections')
+        collectionInfo = collection.collectionInfo as App.RowData
+        collectionContents = collection.collectionContents as App.RowData[]
+        viewPermission = collection.viewPermission as boolean
+        editPermission = collection.editPermission as boolean
+        followData = collection.followData as App.RowData
+    
+        if ( !viewPermission ) {
+            throw redirect(307, '/collections')
+        }
+    }
+
+    if ( updateFollow ) {
+        followData.follows_now = followsNow
+
+        updateFollow = false
+        loadData = true
     }
 
     return { sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData }
@@ -29,6 +56,11 @@ export const actions = {
 
         const follow = await insertUpdateCollectionFollow(sessionUserId, collectionId)
 
-        return { follow, success: true }
+        followsNow = follow?.follows_now as boolean
+
+        updateFollow = true
+        loadData = false
+
+        return { success: true }
     }
 } satisfies Actions
