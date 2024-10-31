@@ -1,12 +1,13 @@
-import { invalidateAll } from "$app/navigation"
 import type { PageServerLoad, Actions } from "../(authed)/account/$types"
 import { profileStoresObject } from "$lib/stores"
 import { newSessionProfile } from "$lib/resources/backend-calls/users"
 import wave from "$lib/assets/images/logo/freq-wave.svg"
 
+let email: string
+
 export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
     const session = await safeGetSession()
-    const email =  session.user?.email as string
+    email =  session.user?.email as string
 
     return { email }
 }
@@ -24,7 +25,6 @@ export const actions = {
         const avatarItem = JSON.parse(formData.get('avatarItem') as string)
         const avatarUrl = formData.get('avatarUrl')
         const avatarMbid = formData.get('avatarMbid')
-        const email = formData.get('email') as string
 
         const profileData = {
             'username': username,

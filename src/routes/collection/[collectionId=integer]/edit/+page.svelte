@@ -73,41 +73,32 @@
                     * required
                 </span>
             </div>
-            <input class="text" type="text" name="collection-title" id="collection-title" bind:value={collectionTitle} required />
             <input 
-                type="hidden"
-                name="collection-id"
-                value={collectionId}
-            />
-            <input 
-                type="hidden"
-                name="collection-type"
-                value={collectionType}
-            />            
+                class="text" 
+                type="text" 
+                name="collection-title" 
+                id="collection-title" 
+                bind:value={collectionTitle} required 
+            />       
             <input 
                 type="hidden"
                 name="status"
                 value={collectionStatus}
             />
             {#key collectionItems?.length}
-            <input 
-                type="hidden"
-                name="collection-contents"
-                value={JSON.stringify(collectionItems)}
-            />
+                <input 
+                    type="hidden"
+                    name="collection-contents"
+                    value={JSON.stringify(collectionItems)}
+                />
             {/key}
             {#key deletedItems?.length}
-            <input 
-                type="hidden"
-                name="deleted-items"
-                value={JSON.stringify(deletedItems)}
-            />
+                <input 
+                    type="hidden"
+                    name="deleted-items"
+                    value={JSON.stringify(deletedItems)}
+                />
             {/key}
-            <input 
-                type="hidden"
-                name="updated-by"
-                value={sessionUserId}
-            />
             {#if isOwner}
                 <fieldset>
                     <div class="label-group">
@@ -124,16 +115,43 @@
                     </div>
                     <ul>
                         <li>
-                            <input class="radio" type="radio" name="status" id="open" value="open" bind:group={collectionStatus} />
-                            <label for="open">open</label>
+                            <input 
+                                class="radio" 
+                                type="radio" 
+                                name="status" 
+                                id="open" 
+                                value="open" 
+                                bind:group={collectionStatus} 
+                            />
+                            <label for="open">
+                                open
+                            </label>
                         </li>
                         <li>
-                            <input class="radio" type="radio" name="status" id="public" value="public" bind:group={collectionStatus} />
-                            <label for="public">public</label>
+                            <input 
+                                class="radio"
+                                type="radio" 
+                                name="status" 
+                                id="public" 
+                                value="public" 
+                                bind:group={collectionStatus} 
+                             />
+                            <label for="public">
+                                public
+                            </label>
                         </li>
                         <li>
-                            <input class="radio" type="radio" name="status" id="private" value="private" bind:group={collectionStatus} />
-                            <label for="private">private</label>
+                            <input 
+                                class="radio" 
+                                type="radio" 
+                                name="status" 
+                                id="private" 
+                                value="private" 
+                                bind:group={collectionStatus} 
+                            />
+                            <label for="private">
+                                private
+                            </label>
                         </li>
                     </ul>
                 </fieldset>
@@ -157,7 +175,9 @@
                 cols="1"
                 spellcheck=true 
                 required
-            >{descriptionText}</textarea>
+            >
+                {descriptionText}
+            </textarea>
             <div class="collection-info-button-spacing">
                 <button 
                 class="double-border-top" 

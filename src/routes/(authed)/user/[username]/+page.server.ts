@@ -81,13 +81,12 @@ export const actions = {
 
         const block = await insertUpdateBlock( sessionUserId, profileUserId )
 
-        userAction = true
-        loadData = false
+        const userActionSuccess = block ? true : false
 
-        if ( block ) {
-            return { success: true}
-        }
-        return { success: false }
+        userAction = userActionSuccess ? true : false
+        loadData = userActionSuccess? false : true
+
+        return { userActionSuccess }
     },
     reportUser: async({ request, locals: { safeGetSession }}) => {
         const session = await safeGetSession()
@@ -98,14 +97,12 @@ export const actions = {
 
         const flag = await insertUserFlag( sessionUserId, profileUserId )
 
-        userAction = true
-        loadData = false
+        const userActionSuccess = flag ? true : false
 
-        if ( flag ) {
-            return { success: true }
-        }
+        userAction = userActionSuccess ? true : false
+        loadData = userActionSuccess ? false : true
 
-        return { success: false }
+        return { userActionSuccess }
     },
     followUser: async({ request, locals: { safeGetSession }}) => {
         const session = await safeGetSession()
@@ -116,11 +113,12 @@ export const actions = {
 
         const follow = await insertUpdateUserFollow( sessionUserId, profileUserId )
 
-        userAction = true
-        loadData = false
+        const userActionSuccess = follow ? true : false
 
-        const followStatus = follow?.follows_now
-        return { follow, followStatus }
+        userAction = userActionSuccess ? true : false
+        loadData = userActionSuccess ? false : true
+
+        return { userActionSuccess }
     },
     parseListenUrl: async ({ request }) => {
         const data = await request.formData()
@@ -170,7 +168,7 @@ export const actions = {
 
 
         if ( !timestampSlug ) {
-            return { success: false }
+            return { postSuccess: false }
         }
         else {
             redirect(303, `/posts/${username}/now-playing/${timestamp}`)
@@ -217,7 +215,7 @@ export const actions = {
         const timestamp = Date.parse(timestampSlug).toString()
 
         if ( !timestampSlug ) {
-            return { success: false }
+            return { postSuccess: false }
         }
         else{
             redirect(303, `/posts/${username}/now-playing/${timestamp}`)
@@ -264,7 +262,7 @@ export const actions = {
         const timestamp = Date.parse(timestampSlug).toString()
 
         if ( !timestampSlug ) {
-            return { success: false }
+            return { postSuccess: false }
         }
         else{
             redirect(303, `/posts/${username}/now-playing/${timestamp}`)
@@ -279,8 +277,9 @@ export const actions = {
 
         const flag = await insertPostFlag( sessionUserId, postId )
 
-        const success = flag ? true : false
-        return { success }
+        const userActionSuccess = flag ? true : false
+
+        return { userActionSuccess }
     },
     submitReaction: async ({ request, locals: { safeGetSession }}) => {
         const session = await safeGetSession()
@@ -291,10 +290,11 @@ export const actions = {
 
         const reaction = await insertUpdateReaction( sessionUserId, postId, reactionType )
 
-        updateReaction = true
-        loadData = false
+        const userActionSuccess = reaction ? true : false
 
-        const success = reaction ? true : false
-        return { success }
+        updateReaction = userActionSuccess ? true : false
+        loadData = userActionSuccess ? false : true
+
+        return { userActionSuccess }
     }
 } satisfies Actions

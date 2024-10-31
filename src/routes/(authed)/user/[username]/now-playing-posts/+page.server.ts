@@ -32,12 +32,10 @@ export const actions = {
 
         const submitEdit = await updatePost( sessionUserId, postData, editedText )
 
-        if ( submitEdit ) {
-            return { success: true, editState: false }
-        }
-        else {
-            return { success: false, editState: true }
-        }
+        const success = submitEdit ? true : false
+        const editState = submitEdit ? false : true
+
+        return { success, editState }
     },
     deletePost: async ({ request, locals: { safeGetSession } }) => {
         const session = await safeGetSession()
@@ -48,13 +46,9 @@ export const actions = {
 
         const submitDelete = await deletePost( sessionUserId, postId )
 
-        if ( submitDelete ) {
-            return { success: true }
-        }
-        else { 
-            return { success: false }
-        }
+        const success = submitDelete ? true : false
 
+        return { success }
     },
     flagPost: async ({ request, locals: { safeGetSession }}) => {
         const session = await safeGetSession()
@@ -65,12 +59,9 @@ export const actions = {
 
         const flag = await insertPostFlag( sessionUserId, postId )
 
-        if ( flag ) {
-            return { success: true }
-        }
-        else {
-            return { success: false }
-        }
+        const success = flag ? true : false
+
+        return { success }
     },
     submitReaction: async ({ request, locals: { safeGetSession }}) => {
         const session = await safeGetSession()
@@ -80,15 +71,9 @@ export const actions = {
         const reactionType = data.get('reaction-type') as string
 
         const reaction = await insertUpdateReaction( sessionUserId, postId, reactionType )
-        
-        if ( reaction ) {
-            return {
-                reactionSuccess: true
-            }
-        }
-        else { return { 
-            reactionSuccess: false 
-        }}
 
+        const reactionSuccess = reaction ? true : false
+
+        return { reactionSuccess }
     }
 } satisfies Actions

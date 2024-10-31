@@ -27,8 +27,6 @@
 
     let { profileUserData, followInfo, permission, profileUserBlockInfo, profileUserFlagInfo } = $derived(profileData)
 
-    let success = $derived(form?.success ?? null)
-
     const profileUserId = $derived(profileUserData?.id as string)
 
     let collectionCount = $derived(permission ? profileData?.collectionCount as number : null)
@@ -122,7 +120,7 @@
                         blocked={profileUserBlocked}
                         flagged={profileUserFlagged}
                         profileUserId={profileUserId}
-                        success={success}
+                        success={form?.userActionSuccess}
                     ></UserActionsMenu>
                 {/if}
                 </div>
@@ -232,7 +230,7 @@
             sessionUserId={sessionUserId}
             feedItems={feedItems}
             mode="mini"
-            userActionSuccess={form?.success}
+            userActionSuccess={form?.userActionSuccess}
         ></Feed>
     {:else}
         <NowPlayingPostsSample

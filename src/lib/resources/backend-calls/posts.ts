@@ -163,7 +163,7 @@ export const deletePost = async function ( sessionUserId: string, postId: string
             changelog: changelog
         })
         .where('id','=', postId)
-        .returning(['id', 'status'])
+        .returning(['id', 'status', 'parent_post_id'])
         .executeTakeFirst()
 
         const update = await updatePost
@@ -332,7 +332,7 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
             .executeTakeFirstOrThrow()
 
 
-            return { post: null, replies: null, permission: false, postReactionActive: null, reactionCount: null }
+            return { post: null, replies: null, permission: false }
         }
         catch ( error ) {
             const post = await trx
