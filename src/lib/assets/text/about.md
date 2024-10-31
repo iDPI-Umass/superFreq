@@ -50,9 +50,9 @@ What’s missing is a purpose-built place to talk about, listen to, and spread k
 A lot of natural and incredible music discovery comes from the sharing of music within small communities and social groups, and Freq works to provide that small community structure on a platform-wide scale. Music communities are among the most vibrant groups across the world, and we provide a community-focused structure on our platform. 
 <hr />
 
-<h1 id="features">
+<h2 id="features">
 How Freq works
-</h1>
+</h2>
 
 Right now, there are three things you can do on Freq.  
 
@@ -67,15 +67,15 @@ Right now, there are three things you can do on Freq.
 </div>
 
 <hr />
-<h1 id="guidelines">
+<h2 id="guidelines">
 Community guidelines
 
-</h1>
+</h2>
 
 
 Freq’s primary goals are to empower music lovers, grow music communities, and preserve music history. Like any healthy community, there are certain guidelines members must follow to maintain a productive environment. Please consider the following guidelines when using Freq and interacting with other users.
 
-## Don’t do this stuff. You might get banned. 
+### Don’t do this stuff. You might get banned. 
 
 - Start trouble for the sake of it.
 - Harass, abuse, or bully other users. 
@@ -83,7 +83,7 @@ Freq’s primary goals are to empower music lovers, grow music communities, and 
 - Promote violent, hostile, or antisocial viewpoints and content. 
 - Post spam.
 
-## Remember:
+### Remember:
 
 - Music is made by real people. 
 - Users on this platform are real people. 
@@ -94,9 +94,9 @@ Freq’s primary goals are to empower music lovers, grow music communities, and 
 When in doubt, <a target="_blank" href="https://en.wikipedia.org/wiki/PLUR">PLUR</a>.
 </div>
 <hr />
-<h1 id="goals">
+<h2 id="goals">
 Our intentions
-</h1>
+</h2>
 
 There are two primary goals for Freq. The first is to invigorate grassroots music culture. The second, per the imperatives of the Initiative for Digital Public Infrastructure, where this is being developed, is to model small social media built for the civic good.
 
@@ -107,16 +107,16 @@ One reason this moment in the Internet is so strange is because there are not an
 And while it’s wonderful that there are many social spaces online that cater to a community of their users, we believe that social media has a rich, unmet potential to cater to already existing communities offline. The nice thing about music is there are music communities all over the place, and Freq hopes to provide a toolset that’s relevant to their needs and, hopefully in some ways, their thriving.
 
 <hr />
-<h1 id="team">
+<h2 id="team">
 Our team
-</h1>
+</h2>
 
 Freq is being developed as an open source project at the [Initiative for Digital Public Infrastructure](https://publicinfrastructure.org) at UMass Amherst. Michael Sugarman designed the site based on ongoing ethographic and historical research and is developing the software. Lucas Ruud wrote this documentation. [Bocoup](https://bocoup.com) provided visual design for the site. The development has been guided by ethnographic research such as historical interviews and user testing with the student DJs from the UMass Amherst student-run radio station, WMUA. Gil Cuevas and Noah Pring have worked as research assistants on this project.
 
 <hr />
-<h1 id="roadmap">
+<h2 id="roadmap">
 Roadmap
-</h1>
+</h2>
 
 The following features are intended for this software. Some will come after the release of the 1.0. These are listed in rough order of priority:
 
@@ -134,9 +134,9 @@ Since the point of this software is music community, we will be working in the c
 Should Freq prove relevant to enough users, and should the project continue past the summer of 2025, we will be implementing a responsible, transparent revenue model intended to pay fairly for the labor it takes to build and operate this website and improve the user experience.
 
 <hr />
-<h1 id="bugs">
+<h2 id="bugs">
 Known Bugs
-</h1>
+</h2>
 
 - Layout/design weirdness
     - Dropdown menu background color and text color are behaving in bizarre ways
@@ -150,9 +150,9 @@ Known Bugs
 Notice other bugs? [Fill out this easy Google Form.](https://docs.google.com/forms/d/e/1FAIpQLSfKj4FlApgfM-Kc4rYwAxNQslBMS9rk-DdfowMa5qcHlRYhew/viewform?usp=sf_link)
 
 <hr />
-<h1 id="data">
+<h2 id="data">
 Our Data
-</h1>
+</h2>
 
 Freq is powered by [MusicBrainz](https://musicbrainz.org/), an open source music encyclopedia. This database is the most comprehensive open source music library, containing music data that may not be present on major streaming services. 
 
