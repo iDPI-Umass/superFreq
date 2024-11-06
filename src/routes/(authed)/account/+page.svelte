@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ActionData, PageData } from './$types'
+	import { enhance } from '$app/forms'
 	import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
 	import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
@@ -11,7 +11,7 @@
 
 	let { user, profile } = $derived(data)
 
-	let success = $derived(form?.success ?? false)
+	let success = $derived(form?.success)
 
 	let newItemAdded = $state(false) as boolean
 	let loading = false
@@ -37,6 +37,7 @@
 	})
 
 	let imgPromise = $state(null)
+	let avatarPromise = $state(false)
 </script>
 
 <svelte:options runes={true} />
@@ -76,6 +77,14 @@
 			class="form-column"
 			method="post"
 			action="?/update"
+			use:enhance={() => {
+				avatarPromise = true
+				console.log(avatarPromise)
+				return async ({ update }) => {
+					avatarPromise = false
+					await update()
+				}}
+			}
 		>
 			<div class="label-group">
 				<label 
@@ -233,10 +242,10 @@
 					form="account-data"
 					class="double-border-top"
 					type="submit"
-					disabled={loading}
+					disabled={loading || avatarPromise}
 					>
 					<div class="inner-border">
-						{loading ? 'Loading...' : 'Update profile'}
+						{( loading || avatarPromise ) ? 'Loading...' : 'Update profile'}
 					</div>
 				</button>
 				<form 

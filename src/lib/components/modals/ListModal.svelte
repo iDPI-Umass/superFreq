@@ -1,22 +1,6 @@
-<!-- 
-	Generates modal for lists, such as search results, list of user's collections, or list of users followed. 
-	
-	Expects slot names "header-text" and "list". <ol> recommended over <ul> for accessibility.
-
-	Requires a button that executes the function dialog.showModal(). Something like this:
-
-	    <button 
-			on:click={() => ( showModal = true )}
-			on:click|preventDefault={someFunction} 
-			disabled={!(someProp)}
-		>
-			{someText}
-		</button>
--->
-
 <script lang="ts">
 	import type { Snippet } from 'svelte'
-    import { onMount, createEventDispatcher } from 'svelte'
+
 
 	interface ComponentProps {
         showModal: boolean
@@ -31,9 +15,6 @@
 	}: ComponentProps = $props()
 
     let dialog: any = $state()
-
-	// $: if (dialog && showModal) dialog.showModal()
-	// $: if (dialog && !showModal) dialog.close()
 
     $effect(() => {
 		dialog.addEventListener("click", e => {

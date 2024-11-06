@@ -33,6 +33,7 @@
 	}: ComponentProps = $props()
 
 	let showModal = $state(false)
+	let addingItem = $state(false)
 
 	let mbData = $state([]) as any[]
 	let searchComplete = $state(false)
@@ -50,6 +51,7 @@
 	
 	// Attempting to create promise for await block with cover image in GridList component, still working on it.
 	async function addItem ( mode: string, item: App.RowData ) {
+		addingItem = true
 		if ( mode == 'single' ) {
 			const singleItem = await addSingleItem( item, addedItems, searchCategory )
 			addedItems = singleItem.addedItems
@@ -68,6 +70,7 @@
 				addedItems["last_fm_img_url"] = success ? lastFmCoverArtUrl : null
 				imgPromise = new Promise ((resolve) => resolve(success)) 
 			}
+			addingItem = false
 			return { addedItems, query, searchComplete, newItemAdded, showModal }
 		}
 		if ( mode == 'collection' ) {
@@ -91,6 +94,7 @@
 				addedItems[thisItemIndex]["last_fm_img_url"] = success ? lastFmCoverArtUrl : null
 				imgPromise = new Promise ((resolve) => resolve(success))
 			}
+			addingItem = false
 			return { addedItems, deletedItems, query, searchComplete, newItemAdded, showModal, imgPromise }
 		}
 	}
@@ -110,43 +114,44 @@
 			{/if}
 		{/snippet}
 		{#snippet list()}
-		<div>
-			{#if searchComplete}
-				<ol>
-					{#each mbData as item}
-					<li>
-						<button 
-							class="standard"
-							aria-label="add item"
-							onclick={() => addItem(mode, item)}
-		
-						>
-							+ add
-						</button>
-						<p>
-						{#if searchCategory == "artists"}
-							<span>{item["name"] ?? ''}</span>
-							({item["area"] ? item["area"]["name"] : ''}, 
-							{item["life-span"] ? item["life-span"]["begin"] : ''})
-						{:else if searchCategory == "release_groups"}
-							<span >{item["title"] ?? '0'}</span>  by 
-							{item["artist-credit"][0]["artist"]["name"] ?? ''} 
-							({item["first-release-date"] ?? ''})
-						{:else if searchCategory == "recordings"}
-							<span>{item["title"] ?? ''}</span> by 
-							{item["artist-credit"][0]["artist"]["name"] ?? ''} 
-							({item["releases"] ? item["releases"][0]["release-group"]["title"] : ''})
-						{/if}
-						</p>
-						<!-- {#if avatarSearch}
-							<img class="thumbnail" src={item["img_url"]} />
-						{/if} -->
-					</li>
-					<hr />
-					{/each}
-				</ol>
-			{/if}
-		</div>
+			<div>
+				{#if searchComplete}
+					<ol>
+						{#each mbData as item}
+						<li>
+							<button 
+								class="standard"
+								aria-label="add item"
+								onclick={() => addItem(mode, item)}
+								disabled={addingItem}
+			
+							>
+								+ add
+							</button>
+							<p>
+							{#if searchCategory == "artists"}
+								<span>{item["name"] ?? ''}</span>
+								({item["area"] ? item["area"]["name"] : ''}, 
+								{item["life-span"] ? item["life-span"]["begin"] : ''})
+							{:else if searchCategory == "release_groups"}
+								<span >{item["title"] ?? '0'}</span>  by 
+								{item["artist-credit"][0]["artist"]["name"] ?? ''} 
+								({item["first-release-date"] ?? ''})
+							{:else if searchCategory == "recordings"}
+								<span>{item["title"] ?? ''}</span> by 
+								{item["artist-credit"][0]["artist"]["name"] ?? ''} 
+								({item["releases"] ? item["releases"][0]["release-group"]["title"] : ''})
+							{/if}
+							</p>
+							<!-- {#if avatarSearch}
+								<img class="thumbnail" src={item["img_url"]} />
+							{/if} -->
+						</li>
+						<hr />
+						{/each}
+					</ol>
+				{/if}
+			</div>
 		{/snippet}
 	</ListModal>
 	<form class="search">
