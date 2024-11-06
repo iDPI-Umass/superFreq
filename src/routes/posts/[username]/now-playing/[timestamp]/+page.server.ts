@@ -45,7 +45,6 @@ export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSe
     let permission: boolean = true
 
     if ( loadData ) {
-        console.log('initial load')
         const select = await selectPostAndReplies( sessionUserId, username, timestampString, postType )
 
         post = select.post as App.RowData
@@ -64,7 +63,6 @@ export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSe
     }
 
     if ( updateReaction ) {
-        console.log('update reaction function')
         post.reaction_active = reactionActive
         post.reaction_count = postReactionCount
         updateReaction = false

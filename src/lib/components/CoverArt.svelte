@@ -25,6 +25,8 @@
         imgClass
     }: ComponentProps = $props()
 
+
+
     const coverArtItem = ( item != null ) ? item : {
         'img_url': imgUrl,
         'artist_name': artistName,
