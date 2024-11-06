@@ -1,10 +1,8 @@
 <script lang="ts">
     import { enhance } from '$app/forms'
 
-    import type { Posts } from './$types'
-
     interface ComponentProps {
-        postData: Posts
+        postData: App.RowData
         editState?: boolean
     }
     let { 
@@ -15,11 +13,26 @@
     function toggleEditState() {
         editState = !editState
     }
+
+    let editPromise = $state(false)
 </script>
 
 <svelte:options runes={true} />
 
-<form method="POST" name="editPostText" class="vertical" action="?/editPost" use:enhance>
+<form 
+    method="POST" 
+    name="editPostText" 
+    class="vertical" 
+    action="?/editPost" 
+    use:enhance={() => {
+        editPromise = true
+        console.log(editPromise)
+        return async ({ update }) => {
+            editPromise = false
+            await update()
+        }}
+    }
+>
     <input 
         id="post-data"
         name="post-data"
@@ -35,10 +48,18 @@
         required
     >{postData.text}</textarea>
     <div class="edit-submit-options">
-        <button class="standard" onclick={preventDefault(toggleEditState)}>
+        <button 
+            class="standard" 
+            onclick={toggleEditState}
+        >
             cancel
         </button>
-        <button class="standard" formaction="?/editPost">
+        <button
+            type="submit"
+            class="standard" 
+            formaction="?/editPost"
+            disabled={editPromise}
+        >
             submit edit
         </button>
     </div>
