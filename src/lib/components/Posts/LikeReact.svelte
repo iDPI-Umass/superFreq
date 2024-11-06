@@ -25,7 +25,6 @@
     action="?/submitReaction" 
     use:enhance={() => {
         reactionPromise = true
-        console.log(reactionPromise)
         return async ({ update }) => {
             reactionPromise = false
             await update()

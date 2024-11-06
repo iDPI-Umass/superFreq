@@ -26,7 +26,6 @@
     action="?/editPost" 
     use:enhance={() => {
         editPromise = true
-        console.log(editPromise)
         return async ({ update }) => {
             editPromise = false
             await update()

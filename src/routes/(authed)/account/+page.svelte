@@ -79,7 +79,6 @@
 			action="?/update"
 			use:enhance={() => {
 				avatarPromise = true
-				console.log(avatarPromise)
 				return async ({ update }) => {
 					avatarPromise = false
 					await update()
