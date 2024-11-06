@@ -25,11 +25,15 @@
         imgClass
     }: ComponentProps = $props()
 
+
+
     const coverArtItem = ( item != null ) ? item : {
         'img_url': imgUrl,
         'artist_name': artistName,
         'release_group_name': releaseGroupName
     }
+
+    console.log('cover art item: ', coverArtItem)
 
     const coverArtArchiveImgUrl = item ? item['img_url'] : null
     const lastFmImgUrl = item ?  item['last_fm_img_url'] : null

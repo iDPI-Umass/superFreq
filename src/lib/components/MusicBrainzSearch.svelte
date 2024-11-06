@@ -85,8 +85,8 @@
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
 				const releaseGroup = {
 					mbid: item["id"] ?? item["releases"][0]["release-group"]["id"],
-					artistName: item["artist-credit"][0]["artist"]["name"] ?? item["artist-credit"][0]["artist"]["name"],
-					releaseGroupName: item["title"] ?? item["releases"][0]["release-group"]["title"]
+					artist_name: item["artist-credit"][0]["artist"]["name"] ?? item["artist-credit"][0]["artist"]["name"],
+					release_group_name: item["title"] ?? item["releases"][0]["release-group"]["title"]
 				}
 				const { success, coverArtArchiveUrl, lastFmCoverArtUrl } = await getCoverArt(releaseGroup)
 				const thisItemIndex = addedItems.findIndex((item) => item['release_group_mbid'] == releaseGroup.mbid)
