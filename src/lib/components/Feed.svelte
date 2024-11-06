@@ -1,6 +1,7 @@
 <script lang="ts">
     import { enhance } from '$app/forms'
     import { goto } from '$app/navigation'
+    import { parseTimestamp } from '$lib/resources/parseData'
     import decoration from "$lib/assets/images/feed-item-decoration.svg"
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
     import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
@@ -22,12 +23,6 @@
         remaining,
         userActionSuccess = null
     }: ComponentProps = $props()
-
-    function parseTimestamp ( itemTimestamp: Date ) {
-        const timestampString = itemTimestamp.toISOString()
-        const timestamp = Date.parse(timestampString).toString()
-        return timestamp
-    }
 </script>
 
 <svelte:options runes={true} />
