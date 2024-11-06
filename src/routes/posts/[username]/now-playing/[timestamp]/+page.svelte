@@ -33,13 +33,6 @@
 {#snippet formInputs(formName: string)}
     <input
         type="hidden"
-        name="post-created-at"
-        id="post-created-at"
-        form={formName}
-        value={post?.created_at.toISOString()}
-    />
-    <input
-        type="hidden"
         name="reaction-type"
         id="reaction-type"
         form="submitReaction"

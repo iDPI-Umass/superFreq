@@ -263,6 +263,7 @@ button.like {
     background: none;
     color: var(--freq-color-text-muted);
     font-size: var(--freq-font-size-small);
+    scale: 100%;
 }
 
 button.like:is(:hover, :focus) {
@@ -270,6 +271,12 @@ button.like:is(:hover, :focus) {
     transition: 0.5s cubic;
 }
 button.like:active {
-    background-color: var(--freq-color-button-lens-active);
+    background: var(--freq-color-button-lens-active);
     scale: 90%;
+}
+
+button.like:disabled,
+button.like:is( :disabled:hover, :disabled:focus, :disabled:active ) {
+    background: none;
+    scale: 100%;
 }

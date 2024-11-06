@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { enhance } from '$app/forms'
+    import { enhance, applyAction } from '$app/forms'
     import Heart from 'lucide-svelte/icons/heart'
 
     interface ComponentProps {
@@ -8,21 +8,13 @@
         reactionActive: boolean
     }
     
-    let { 
+    let {
         postId,
         reactionCount = 0,
         reactionActive
     }: ComponentProps = $props()
 
     let reactionPromise = $state(false)
-
-    async function promiseCallback ( success: boolean ) {
-        reactionPromise = false
-        if ( success == true || success == false ) {
-            reactionPromise = true
-            return
-        }
-    }
 </script>
 
 <svelte:options runes={true} />
@@ -31,7 +23,14 @@
     method="POST" 
     id="submitReaction"
     action="?/submitReaction" 
-    use:enhance
+    use:enhance={() => {
+        reactionPromise = true
+        console.log(reactionPromise)
+        return async ({ update }) => {
+            reactionPromise = false
+            await update()
+        }}
+    }
 >
     <input
         type="hidden"
@@ -45,7 +44,11 @@
         id="reaction-type"
         value="like"
     />
-    <button class="like" formaction="?/submitReaction">
+    <button 
+        class="like" 
+        formaction="?/submitReaction"
+        disabled={reactionPromise}
+    >
         <div class="row-group-icon-description">
             {#if reactionCount > 0 }
                 <span>

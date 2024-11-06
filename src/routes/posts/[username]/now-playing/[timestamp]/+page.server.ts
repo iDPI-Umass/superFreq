@@ -6,6 +6,7 @@ import { insertPostFlag } from '$lib/resources/backend-calls/users'
 
 let loadData = true
 
+let post: App.RowData = {}
 let postId: string
 let postUsername: string
 let postCreatedAt: string
@@ -14,10 +15,12 @@ let postReplies: App.RowData[]
 
 let updateReaction: boolean
 let reactionActive: boolean
+let postReactionCount: number
 let editPost: boolean
 let editedText: string
 
 export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSession } }) => {
+
     const session = await safeGetSession()
 
     const { profile } = await parent()
@@ -38,11 +41,11 @@ export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSe
     const timestampString = new Date(timestamp).toISOString()
     const postType = "now_playing"
 
-    let post: App.RowData = {}
     let replies: App.RowData[] = []
     let permission: boolean = true
 
     if ( loadData ) {
+        console.log('initial load')
         const select = await selectPostAndReplies( sessionUserId, username, timestampString, postType )
 
         post = select.post as App.RowData
@@ -61,7 +64,9 @@ export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSe
     }
 
     if ( updateReaction ) {
-        post.reacion_active = reactionActive
+        console.log('update reaction function')
+        post.reaction_active = reactionActive
+        post.reaction_count = postReactionCount
         updateReaction = false
         loadData = true
     }
@@ -71,6 +76,7 @@ export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSe
         editPost = false
         loadData = true
     }
+
 
     return { sessionUserId, post, postReplies }
 }
@@ -118,6 +124,7 @@ export const actions = {
         const { reaction, reactionCount } = await insertUpdateReaction( sessionUserId, postId, reactionType )
 
         reactionActive = reaction?.active
+        postReactionCount = reactionCount as number
 
         const success = reaction ? true : false
 
