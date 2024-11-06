@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { PageData,  ActionData } from "../$types"
+	import { enhance } from "$app/forms"
 
     import PanelHeader from "$lib/components/PanelHeader.svelte"
     import MusicBrainzSearch from "$lib/components/MusicBrainzSearch.svelte"
@@ -25,7 +26,7 @@
     let avatarItem = $state({} as App.RowData)
 
 	let imgPromise = $state(null)
-
+	let avatarPromise = $state(false)
 </script>
 
 <svelte:options runes={true} />
@@ -65,6 +66,14 @@
 			class="form-column"
 			method="POST"
 			action="?/create"
+			use:enhance={() => {
+				avatarPromise = true
+				console.log(avatarPromise)
+				return async ({ update }) => {
+					avatarPromise = false
+					await update()
+				}}
+			}
 		>
             <label 
                 class="text-label" 
@@ -203,7 +212,7 @@
 				<button
 					class="double-border-top"
 					type="submit"
-					disabled={!( username && displayName )}
+					disabled={( !( username && displayName ) || avatarPromise )}
 					form="account-data"
 					formaction="?/create"
 					>
