@@ -237,13 +237,10 @@ button.standard {
 
 }
 
-button.standard:is(:hover, :focus) {
+button.standard:is(:hover, :focus),
+button.standard:is(:hover, :focus) * {
 	border: var(--freq-border-primary);
 	color: var(--freq-color-text);
-}
-
-button.standard *:is(:hover, :focus) {
-	border: var(--freq-border-primary);
 }
 
 button.standard:active {
@@ -253,19 +250,10 @@ button.standard:active {
 	transition: all;
 }
 
-button.standard:disabled {
+button.standard:is(:disabled, :disabled:hover, :disabled:focus, :disabled:active) {
 	background: var(--freq-color-button-lens-disabled);
-	border: var(--freq-border-button-disabled);
-}
-
-button.standard:disabled:is(:hover, :focus) {
 	border: var(--freq-border-button-disabled);
 	color: var(--freq-color-text-muted);
-}
-
-button.standard:disabled:active {
-	background: var(--freq-color-button-lens-disabled);
-	border: var(--freq-border-button-disabled);
 	scale: 100%;
 }
 
@@ -313,16 +301,7 @@ button.double-border-top:active {
 	transition: all;
 }
 
-button.double-border-top:disabled {
-	background: var(--freq-color-button-lens-disabled);
-	border: var(--freq-border-button-disabled);
-}
-
-button.double-border-top:disabled:is(:hover, :focus) {
-	border: var(--freq-border-button-disabled);
-}
-
-button.double-border-top:disabled:active {
+button.double-border-top:is(:disabled, :disabled:hover, :disabled:focus, :disabled:active) {
 	background: var(--freq-color-button-lens-disabled);
 	border: var(--freq-border-button-disabled);
 	scale: 100%;
@@ -344,25 +323,23 @@ button.double-border-top .inner-border-condensed {
 	font-size: var(--freq-font-size-2x-small);
 }
 
-button.double-border-top:is(:hover > *, :focus > *) {
+button.double-border-top:is(:hover, :focus),
+button.double-border-top:is(:hover, :focus) .inner-border,
+button.double-border-top:is(:hover, :focus) .inner-border-condensed {
 	border-top: var(--freq-border-primary);
 }
 
-button.double-border-top:active > *   {
+button.double-border-top:active,
+button.double-border-top:active .inner-border,
+button.double-border-top:active .inner-border-condensed {
 	border-top: var(--freq-border-button-active);
 }
 
-button.double-border-top:disabled > * {
-	border-top: var(--freq-border-button-disabled);
-}
-
-button.double-border-top:disabled:is(:hover > *, :disabled:focus > * ) {
+button.double-border-top:is(:disabled, :disabled:hover, :disabled:focus, :disabled:active),
+button.double-border-top:is(:disabled, :disabled:hover, :disabled:focus, :disabled:active) .inner-border,
+button.double-border-top:is(:disabled, :disabled:hover, :disabled:focus, :disabled:active) .inner-border-condensed {
 	border-top: var(--freq-border-button-disabled);
 	color: var(--freq-color-text-muted);
-}
-
-button.double-border-top:disabled:active > *   {
-	border-top: var(--freq-border-button-disabled);
 }
 
 /* Buttons layout */
