@@ -1,11 +1,24 @@
 <script lang="ts">
 	import { enhance } from '$app/forms'
     import { parseTimestamp } from 'src/lib/resources/parseData'
+    import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
 
     let { data } = $props()
 
-    let { items } = $derived(data)
+    let { queueItems }: { queueItems: App.RowData[]} = $derived(data)
     let resolvePromise = $state(false)
+
+    function itemType ( item: App.RowData ) {
+        if ( item.target_user_id ) {
+            return "user"
+        }
+        else if ( item. target_post_id ) {
+            return "post"
+        }
+    }
+
+    let showModerationLog = $state(false)
+    let showChangelog = $state(false)
 </script>
 
 <svelte:head>
@@ -35,15 +48,12 @@
                     Target Post
                 </th>
                 <th scope="col">
-                    Changelog
-                </th>
-                <th scope="col">
-                    Resolved
+                    Moderate
                 </th>
             </tr>
         </thead>
         <tbody>
-            {#each items as item}
+            {#each queueItems as item}
                 <tr>
                     <td>
                         {item.timestamp}
@@ -65,18 +75,51 @@
                     </td>
                     <td>
                         {#if item.target_post_timestamp}
+                            {#if Object.keys(item.post_changelog).length > 0}
+                                <button
+                                    class="more-info"
+                                    onclick={() => showChangelog = true}
+                                >
+                                    post changelog
+                                </button>
+                                <NotificationModal
+                                    showModal={showChangelog}
+                                >
+                                    {#snippet headerText()}
+                                    Post Changelog
+                                    {/snippet}
+                                    {#snippet message()}
+                                    {JSON.stringify(item.post_changelog)}
+                                    {/snippet}
+                                </NotificationModal>
+                            {/if}
                             <a href="/posts/{item.target_post_username}/now-playing/{parseTimestamp(item.target_post_timestamp)}">
                                 {item.target_post_username}: {item.target_post_timestamp}
                             </a>
                         {/if}
                     </td>
                     <td>
-                        {item.changelog}
-                    </td>
-                    <td>
+                        {#if Object.keys(item.moderation_log).length > 0}
+                            <button
+                                class="more-info"
+                                onclick={() => showModerationLog = true}
+                            >
+                                moderation log
+                            </button>
+                            <NotificationModal
+                                showModal={showModerationLog}
+                            >
+                                {#snippet headerText()}
+                                Moderation Log
+                                {/snippet}
+                                {#snippet message()}
+                                {JSON.stringify(item.moderation_log)}
+                                {/snippet}
+                            </NotificationModal>
+                        {/if}
                         <form
                             method="POST"
-                            action="?/archive"
+                            action="?/update"
                             use:enhance={() => {
                                 resolvePromise = true
                                 return async ({ update }) => {
@@ -91,13 +134,35 @@
                                 id="item-id"
                                 value={item.moderation_item_id}
                             />
-                            <button
-                                class="standard"
-                                type="submit"
-                                disabled={resolvePromise}
-                            >
-                            archive
-                        </button>
+                            <input
+                                type="hidden"
+                                name="item-type"
+                                id="item-type"
+                                value={itemType(item)}
+                            />
+                            <textarea
+                                name="notes"
+                                id="notes"
+                            ></textarea>
+                            <div class="cell-row">
+                                <div class="input-column">
+                                    <label for="resolved">
+                                        archive
+                                    </label>
+                                    <input 
+                                        type="checkbox" 
+                                        name="resolved"
+                                        id="resolved"
+                                    />
+                                </div>
+                                <button
+                                    class="standard"
+                                    type="submit"
+                                    disabled={resolvePromise}
+                                >
+                                    update
+                                </button>
+                            </div>
                         </form>
                     </td>
                 </tr>
@@ -113,16 +178,38 @@
     table {
         border: var(--freq-border-panel);
     }
+    tbody tr {
+        border-bottom: var(--freq-border-panel);
+    }
     th, td {
-        border-right:  var(--freq-border-panel);
+        border-right: var(--freq-border-panel);
+        border-bottom: var(--freq-border-panel);
         padding: var(--freq-spacing-small);
     }
-    tr {
-        border-top:  var(--freq-border-panel);
-    }
     th:last-child, 
-    td:last-child,
-    tr:last-child {
-        border: none;
+    td:last-child {
+        border-right: none;
+    }
+    tr:last-child > td {
+        border-bottom: none;
+    }
+    .input-column {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+    }
+    .cell-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .more-info {
+        border: var(--freq-border-panel-light);
+        margin-bottom: var(--freq-spacing-small);
+    }
+    .more-info:is(:hover, :focus) {
+        border: var(--freq-border-panel-light);
+        text-decoration: underline;
     }
 </style>
