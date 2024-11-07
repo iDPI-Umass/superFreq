@@ -33,6 +33,13 @@ export const displayDate = ( date: Date ) => {
     return new Date(date).toLocaleDateString( undefined, options )
 }
 
+/* Parse timestamp for hyperlinks */
+export function parseTimestamp ( itemTimestamp: Date ) {
+    const timestampString = itemTimestamp.toISOString()
+    const timestamp = Date.parse(timestampString).toString()
+    return timestamp
+}
+
 /*
 //
 ** User data parsing
