@@ -26,8 +26,8 @@
     use:enhance={() => {
         reactionPromise = true
         return async ({ update }) => {
-            reactionPromise = false
             await update()
+            reactionPromise = false
         }}
     }
 >
