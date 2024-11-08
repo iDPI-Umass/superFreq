@@ -1,7 +1,7 @@
 <script lang="ts">
     import Feed from '$lib/components/Feed.svelte'
 
-    let { data } = $props()
+    let { data, form } = $props()
     let { sessionUserId, feedItems, remaining } = $derived(data)
 </script>
 
@@ -9,7 +9,7 @@
 
 <svelte:head>
 	<title>
-		Feed
+		Firehose Feed
 	</title>
 </svelte:head>
 

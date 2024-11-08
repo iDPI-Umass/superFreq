@@ -69,6 +69,9 @@
           <ChevronDown></ChevronDown>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
+            <DropdownMenu.Item href={"/feed/firehose"}>
+              universal feed
+            </DropdownMenu.Item>
             <DropdownMenu.Item href={"/collections"}>
               collections
             </DropdownMenu.Item>

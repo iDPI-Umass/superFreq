@@ -26,11 +26,6 @@
 </script>
 
 <svelte:options runes={true} />
-<svelte:head>
-	<title>
-		Feed
-	</title>
-</svelte:head>
 
 <div class="feed-panel">
     <PanelHeader>
