@@ -6,7 +6,7 @@ Selects batches of data to populate session user's feed in batches within a part
 'options' specifices what type of data shows up in feed, expects an object formatted as {'options': [values]} containing any of the following values: ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits'] 
 */
 
-export const selectFeedData = async function ( sessionUserId: string, batchSize: number, batchIterator: number, feedItemCount: number, timestampStart: Date, timestampEnd: Date, options: App.Lookup) {
+export const selectFeedData = async function ( sessionUserId: string, batchSize: number, batchIterator: number, feedItemCount: number, timestampStart: Date, timestampEnd: Date, options: App.Lookup ) {
 
     const offset = batchSize * batchIterator
 
@@ -681,6 +681,172 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
     let feedData = [] as App.RowData[]
     
     feedData = feedData.concat(data.sessionUserPosts, data.sessionUserComments, data.commentsSessionUserPost, data.reactionsSessionUserPost, data.posts, data.comments, data.reactions, data.sessionUserCollectionFollows, data.collectionFollows, data.collectionEdits, data.newFollows)
+
+    feedData.sort(( a: App.RowData, b: App.RowData ) => b.feed_item_timestamp - a.feed_item_timestamp)
+
+    const { totalRowCount } = data
+    const remainingCount = totalRowCount - (feedItemCount + feedData.length)
+    return { feedData, totalRowCount, remainingCount }
+}
+
+export const selectFirehoseFeed = async function ( sessionUserId: string, batchSize: number, batchIterator: number, feedItemCount: number, timestampStart: Date, timestampEnd: Date ) {
+
+    const offset = batchSize * batchIterator
+
+    const select = await db.transaction().execute(async (trx) => {
+        /* fetch data for all users that don't block session user */
+        const selectUsers = await trx
+        .selectFrom('profiles')
+        .select('id')
+        .where(({eb, and, not, exists, selectFrom}) => not(
+            exists(
+                selectFrom('user_moderation_actions')
+                .selectAll()
+                .whereRef('user_moderation_actions.user_id', '=', 'profiles.id')
+                .where('user_moderation_actions.target_user_id', '=', sessionUserId )
+                .where('active', '=', true)
+        )))
+        .execute()
+
+        /* get list of those users' IDs */
+        const userIds: string[] = []
+
+        for( const user of selectUsers ) {
+            const id = user.id as string
+            userIds.push(id)
+        }
+
+        console.log(selectUsers)
+
+        /* count and fetch recent Now Playing posts by followed users */
+        let postsTotal = 0
+        let posts: App.RowData = []
+
+        const countPosts = await trx
+        .selectFrom('posts')
+        .select((eb) => eb.fn.count<number>('id').as('posts_count'))
+        .where('user_id', 'in', userIds)
+        .where('posts.type', '=', 'now_playing')
+        .where('posts.status', '!=', 'deleted')
+        .where((eb) => eb.between('created_at', timestampStart, timestampEnd))
+        .execute()
+
+        postsTotal = countPosts[0]['posts_count']
+
+        const selectFollowingPosts = await trx
+        .selectFrom('posts as post')
+        .innerJoin('profiles as profile', 'post.user_id', 'profile.id')
+        .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profile.avatar_mbid')
+        .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
+        .leftJoin(
+            'post_reactions as reaction',
+            (join) => join
+            .onRef('reaction.post_id', '=', 'post.id')
+            .on((eb) => eb('reaction.user_id', '=', sessionUserId))
+        )
+        .leftJoin('post_reactions as all_reactions',
+            (join) => join
+            .onRef('all_reactions.post_id', '=', 'post.id')
+            .on('all_reactions.active', '=', true)
+        )
+        .select([
+            'post.id as now_playing_post_id', 
+            'post.user_id as user_id', 
+            'profile.display_name as display_name', 
+            'profile.username as username', 
+            'profile.avatar_url as avatar_url', 
+            'release_groups.release_group_name as avatar_release_group_name',
+            'artists.artist_name as avatar_artist_name',
+            'post.text as text', 
+            'post.item_type as item_type', 
+            'post.artist_name as artist_name', 
+            'post.release_group_name as release_group_name', 
+            'post.recording_name as recording_name', 
+            'post.episode_title as episode_title', 
+            'post.show_title as show_title', 
+            'post.listen_url as listen_url', 
+            'post.created_at as feed_item_timestamp',
+            'post.embed_id as embed_id',
+            'post.embed_source as embed_source',
+            'post.embed_account as embed_account',
+            'post.listen_url as listen_url',
+            'reaction.active as reaction_active',
+            (eb) => eb.fn.count('all_reactions.id').as('reaction_count')
+        ])
+        .where('post.user_id', 'in', userIds)
+        .where('post.type', '=', 'now_playing')
+        .where('post.status', '!=', 'deleted')
+        .where((eb) => eb.between('post.created_at', timestampStart, timestampEnd))
+        .groupBy([
+            'post.id',
+            'profile.display_name',
+            'profile.username',
+            'profile.avatar_url',
+            'reaction.active',
+            'artists.artist_name',
+            'release_groups.release_group_name'
+        ])
+        .limit(batchSize)
+        .offset(offset)
+        .orderBy('feed_item_timestamp', 'desc')
+        .execute()
+
+        posts = selectFollowingPosts
+
+        /* count and fetch collection edits */
+        let collectionEditsTotal = 0
+        let collectionEdits: App.RowData = []
+        
+        /* count collection edits by all users */
+        const countFollowingCollectionsEdits = await trx
+        .selectFrom('collections_updates')
+        .innerJoin('collections_info as info', 'info.collection_id', 'collections_updates.collection_id')
+        .select((eb) => eb.fn.count<number>('collections_updates.collection_id').as('collection_edits_count'))
+        .where('collections_updates.updated_by', 'in', userIds)
+        .where('info.status', '!=', 'deleted')
+        .where((eb) => eb.between('collections_updates.updated_at', timestampStart, timestampEnd))
+        .execute()
+
+        collectionEditsTotal = countFollowingCollectionsEdits[0]['collection_edits_count']
+
+        /* get info about those edits */
+        const selectFollowingCollectionsEdits = await trx
+        .selectFrom('collections_updates')
+        .innerJoin('collections_info as info', 'info.collection_id', 'collections_updates.collection_id')
+        .innerJoin('profiles as profile', 'profile.id', 'collections_updates.updated_by')
+        .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profile.avatar_mbid')
+        .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
+        .select([
+            'collections_updates.id as collection_edit_id', 
+            'collections_updates.collection_id as collection_id', 
+            'collections_updates.updated_at as feed_item_timestamp', 
+            'collections_updates.updated_by as updated_by',
+            'info.title as title',  
+            'profile.display_name as display_name', 
+            'profile.avatar_url as avatar_url',
+            'release_groups.release_group_name as avatar_release_group_name',
+            'artists.artist_name as avatar_artist_name'
+        ])
+        .where('info.status', '!=', 'deleted')
+        .where('collections_updates.updated_by', 'in', userIds)
+        .where((eb) => eb.between('collections_updates.updated_at', timestampStart, timestampEnd))
+        .limit(batchSize)
+        .offset(offset)
+        .orderBy('feed_item_timestamp desc')
+        .execute()
+
+        collectionEdits = selectFollowingCollectionsEdits
+
+        const totalRowCount = Number(postsTotal) + Number (collectionEditsTotal)
+
+        return { postsTotal, posts, collectionEditsTotal, collectionEdits, totalRowCount }
+    })
+
+    const data = await select
+    
+    let feedData = [] as App.RowData[]
+
+    feedData = feedData.concat(data.posts, data.collectionEdits)
 
     feedData.sort(( a: App.RowData, b: App.RowData ) => b.feed_item_timestamp - a.feed_item_timestamp)
 
