@@ -9,8 +9,6 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
 
     const { queueItems, permission } = await getModerationQueueItems(sessionUserId)
 
-    console.log(queueItems)
-
     if ( permission ) {
         return { queueItems }
     }
@@ -36,8 +34,6 @@ export const actions = {
             'moderator_reviewed_at': timestampISO,
             'target_item_type': type
         }
-
-        console.log(moderationItem)
 
         const { success } = await updateModerationItem( sessionUserId, moderationItem )
 

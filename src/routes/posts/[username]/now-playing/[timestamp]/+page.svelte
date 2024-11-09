@@ -5,9 +5,9 @@
     import PostReplyEditor from '$lib/components/Posts/PostReplyEditor.svelte'
 
     let { data, form } = $props();
-    let { post, replies }: {
+    let { post, postReplies }: {
         post: App.RowData
-        replies: App.RowData[]
+        postReplies: App.RowData[]
     } = $derived(data)
 
     let sessionUserId = data?.sessionUserId as string
@@ -52,7 +52,7 @@
         userActionSuccess={actionSuccess}
     ></NowPlayingPost>
     <PostReplyEditor></PostReplyEditor>
-    {#each replies as reply}
+    {#each postReplies as reply}
         <div id={ replyId( reply.username, reply.created_at )}>
             <PostReply
                 reply={reply}

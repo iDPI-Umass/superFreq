@@ -716,8 +716,6 @@ export const selectFirehoseFeed = async function ( sessionUserId: string, batchS
             userIds.push(id)
         }
 
-        console.log(selectUsers)
-
         /* count and fetch recent Now Playing posts by followed users */
         let postsTotal = 0
         let posts: App.RowData = []

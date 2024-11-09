@@ -68,7 +68,6 @@ export const getModerationQueueItems = async function ( sessionUserId: string ) 
 export const updateModerationItem = async function ( sessionUserId: string, moderationItem: App.RowData ) {
     const timestampISOString: string = new Date().toISOString()
 
-    console.log(moderationItem)
     const updateQueueItem = await db.transaction().execute(async(trx) => {
         try {
             await trx
@@ -95,9 +94,7 @@ export const updateModerationItem = async function ( sessionUserId: string, mode
                 'notes': moderationItem.notes,
                 'needs_review': moderationItem.needs_review
             }
-
-            console.log(log)
-
+            
             await trx
             .updateTable('user_moderation_actions')
             .set({
