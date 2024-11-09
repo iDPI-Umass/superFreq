@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit'
 import { parseISO } from "date-fns"
 import type { PageServerLoad, Actions } from './$types'
-import { selectPostAndReplies, insertPost, updatePost, deletePost, insertUpdateReaction } from '$lib/resources/backend-calls/posts'
+import { selectPostAndReplies, insertPost, updatePost, deletePost, insertUpdateReaction, selectPostReplies } from '$lib/resources/backend-calls/posts'
 import { insertPostFlag } from '$lib/resources/backend-calls/users'
 
 let loadData = true
@@ -74,7 +74,6 @@ export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSe
         editPost = false
         loadData = true
     }
-
 
     return { sessionUserId, post, postReplies }
 }
