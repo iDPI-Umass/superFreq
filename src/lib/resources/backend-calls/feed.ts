@@ -90,6 +90,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'profile.username as username',
                 'profile.display_name as display_name',
                 'profile.avatar_url as avatar_url',
+                'release_groups.last_fm_img_url as avatar_last_fm_img_url',
                 'release_groups.release_group_name as avatar_release_group_name',
                 'artists.artist_name as avatar_artist_name',
                 'reaction.active as reaction_active',
@@ -107,6 +108,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'profile.username',
                 'profile.avatar_url',
                 'artists.artist_name',
+                'release_groups.last_fm_img_url',
                 'release_groups.release_group_name',
                 'reaction.active'
             ])
@@ -157,6 +159,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'profile.username as username',
                 'profile.display_name as display_name',
                 'profile.avatar_url as avatar_url',
+                'release_groups.last_fm_img_url as avatar_last_fm_img_url',
                 'release_groups.release_group_name as avatar_release_group_name',
                 'artists.artist_name as avatar_artist_name',
                 'original_poster.username as original_poster_username',
@@ -198,7 +201,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'commenter.id as session_user_post_commenter_id', 
                 'commenter.display_name as session_user_post_commenter_display_name', 
                 'commenter.username as username',
-                'commenter.avatar_url as session_user_post_commenter_avatar_url',
+                'commenter.avatar_url as avatar_url',
+                'release_groups.last_fm_img_url as avatar_last_fm_img_url',
                 'release_groups.release_group_name as avatar_release_group_name',
                 'artists.artist_name as avatar_artist_name',
                 'comments.created_at as feed_item_timestamp',
@@ -237,7 +241,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'react_user.id as session_user_post_react_user_id', 
                 'react_user.display_name as session_user_post_react_user_display_name', 
                 'react_user.username as session_user_post_react_user_username',
-                'react_user.avatar_url as session_user_post_react_user_avatar_url',
+                'react_user.avatar_url as avatar_url',
+                'release_groups.last_fm_img_url as avatar_last_fm_img_url',
                 'release_groups.release_group_name as avatar_release_group_name',
                 'artists.artist_name as avatar_artist_name',
                 'post_reactions.updated_at as feed_item_timestamp',
@@ -317,6 +322,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'profile.display_name as display_name', 
                 'profile.username as username', 
                 'profile.avatar_url as avatar_url', 
+                'release_groups.last_fm_img_url as avatar_last_fm_img_url',
                 'release_groups.release_group_name as avatar_release_group_name',
                 'artists.artist_name as avatar_artist_name',
                 'post.text as text', 
@@ -346,6 +352,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'profile.avatar_url',
                 'reaction.active',
                 'artists.artist_name',
+                'release_groups.last_fm_img_url',
                 'release_groups.release_group_name'
             ])
             .limit(batchSize)
@@ -390,6 +397,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'commenter.username as username',
                 'commenter.display_name as display_name', 
                 'commenter.avatar_url as avatar_url', 
+                'release_groups.last_fm_img_url as avatar_last_fm_img_url',
                 'release_groups.release_group_name as avatar_release_group_name',
                 'artists.artist_name as avatar_artist_name',
                 'comments.text as comment_text', 'comments.parent_post_id', 
@@ -459,6 +467,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'reaction.updated_at as feed_item_timestamp', 
                 'react_user.display_name as display_name', 
                 'react_user.avatar_url as avatar_url', 
+                'release_groups.last_fm_img_url as avatar_last_fm_img_url',
                 'release_groups.release_group_name as avatar_release_group_name',
                 'artists.artist_name as avatar_artist_name',
                 'original_post.user_id as original_post_id', 
@@ -532,6 +541,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'collections_social.updated_at as feed_item_timestamp', 
                 'profile.display_name as display_name', 
                 'profile.avatar_url as avatar_url', 
+                'release_groups.last_fm_img_url as avatar_last_fm_img_url',
                 'release_groups.release_group_name as avatar_release_group_name',
                 'artists.artist_name as avatar_artist_name',
                 'info.title as title'
@@ -564,6 +574,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'collections_social.updated_at as feed_item_timestamp', 
                 'profile.display_name as display_name', 
                 'profile.avatar_url as avatar_url', 
+                'release_groups.last_fm_img_url as avatar_last_fm_img_url',
                 'release_groups.release_group_name as avatar_release_group_name',
                 'artists.artist_name as avatar_artist_name',
                 'info.title as title'
@@ -617,6 +628,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'info.title as title',  
                 'profile.display_name as display_name', 
                 'profile.avatar_url as avatar_url',
+                'release_groups.last_fm_img_url as avatar_last_fm_img_url',
                 'release_groups.release_group_name as avatar_release_group_name',
                 'artists.artist_name as avatar_artist_name'
             ])
@@ -658,6 +670,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             'follower.username as username',
             'follower.display_name as display_name',
             'follower.avatar_url as avatar_url',
+            'release_groups.last_fm_img_url as avatar_last_fm_img_url',
             'release_groups.release_group_name as avatar_release_group_name',
             'artists.artist_name as avatar_artist_name'
         ])
@@ -698,7 +711,7 @@ export const selectFirehoseFeed = async function ( sessionUserId: string, batchS
         const selectUsers = await trx
         .selectFrom('profiles')
         .select('id')
-        .where(({eb, and, not, exists, selectFrom}) => not(
+        .where(({not, exists, selectFrom}) => not(
             exists(
                 selectFrom('user_moderation_actions')
                 .selectAll()
@@ -753,6 +766,7 @@ export const selectFirehoseFeed = async function ( sessionUserId: string, batchS
             'profile.display_name as display_name', 
             'profile.username as username', 
             'profile.avatar_url as avatar_url', 
+            'release_groups.last_fm_img_url as avatar_last_fm_img_url',
             'release_groups.release_group_name as avatar_release_group_name',
             'artists.artist_name as avatar_artist_name',
             'post.text as text', 
@@ -782,6 +796,7 @@ export const selectFirehoseFeed = async function ( sessionUserId: string, batchS
             'profile.avatar_url',
             'reaction.active',
             'artists.artist_name',
+            'release_groups.last_fm_img_url',
             'release_groups.release_group_name'
         ])
         .limit(batchSize)
@@ -822,6 +837,7 @@ export const selectFirehoseFeed = async function ( sessionUserId: string, batchS
             'info.title as title',  
             'profile.display_name as display_name', 
             'profile.avatar_url as avatar_url',
+            'release_groups.last_fm_img_url as avatar_last_fm_img_url',
             'release_groups.release_group_name as avatar_release_group_name',
             'artists.artist_name as avatar_artist_name'
         ])

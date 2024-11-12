@@ -20,7 +20,7 @@
 	
 
 	let { data, children }: { data: LayoutData, children: Snippet} = $props()
-	let { session, sessionUserId, user, profile, supabase } = $derived(data)
+	let { session, sessionUserId, supabase } = $derived(data)
 	// export let data: LayoutData
 	// let { session, sessionUserId, user, profile, supabase } = data
 	// $: ({ session, sessionUserId, user, profile, supabase } = data)
@@ -42,18 +42,20 @@
 	// let avatarReleaseGroup: string = $state() as string
 	// let avatarItem = $state({}) as App.Lookup
 
-	let { username, display_name, avatar_url, avatar_artist_name, avatar_release_group_name }: {
+	let { profile } = $derived(data) as App.RowData
+
+	let { username, display_name, avatar_url, avatar_last_fm_img_url, avatar_artist_name, avatar_release_group_name }: {
 		username: string
 		display_name: string
 		avatar_url: string
+		avatar_last_fm_img_url: string
 		avatar_artist_name: string
 		avatar_release_group_name: string
 	} = $derived(profile)
 
-	
-
 	let avatarItem = $derived({
 		'img_url': avatar_url,
+		'last_fm_img_url': avatar_last_fm_img_url,
 		'artist_name': avatar_artist_name,
 		'release_group_name': avatar_release_group_name
 	}) as App.StringLookupObject
@@ -88,7 +90,6 @@
 	sessionUserId={sessionUserId}
 	username={username}
 	displayName={display_name}
-	avatarUrl={avatar_url}
 	avatarItem={avatarItem}
 ></Header>
 <div class="double-border-full-vw"></div>

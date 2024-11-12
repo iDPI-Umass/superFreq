@@ -12,7 +12,6 @@
     sessionUserId: string | null
     username: string
     displayName: string
-    avatarUrl: string
     avatarItem: App.StringLookupObject
   }
 
@@ -20,7 +19,6 @@
     sessionUserId,
     username,
     displayName,
-    avatarUrl,
     avatarItem
   }: ComponentProps = $props()
 
@@ -169,7 +167,10 @@
       </DropdownMenu.Root>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
-          <img src={avatarUrl ?? wave} alt="{displayName}'s avatar" />
+          <CoverArt
+            item={avatarItem}
+            altText={avatarItem['release_group_name']}
+          ></CoverArt>
           {displayName ?? 'display name'} 
           <ChevronDown></ChevronDown>
         </DropdownMenu.Trigger>

@@ -28,7 +28,7 @@
     {#each displayPosts as post}
         <NowPlayingPost
             post={post}
-            mode="feed"
+            mode="sample"
         >
         </NowPlayingPost>
     {/each}
