@@ -12,6 +12,7 @@ export const load: PageServerLoad = async () => {
         post['display_name'] = `${mobyDickArray[Math.floor(Math.random() * mobyDickArray.length)]} ${mobyDickArray[Math.floor(Math.random() * mobyDickArray.length)]}`
     }
 
+    console.log(posts)
     return { posts, postCount }
 }
 

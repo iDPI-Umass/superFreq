@@ -24,7 +24,7 @@
         sessionUserId = null,
         post,
         editState = $bindable(false),
-        mode = null,
+        mode = null, // valid values are null, "feed", and "sample"
         userActionSuccess
     }: ComponentProps = $props()
 
@@ -49,6 +49,13 @@
     let reactionActive = $derived(post?.reaction_active) as boolean
     let reactionCount = $derived(post?.reaction_count) as number
     let postId = $derived(post?.id ?? post?.now_playing_post_id) as string
+
+    let avatarItem = {
+        'img_url': post.avatar_url,
+        'last_fm_img_url': post.avatar_last_fm_img_url,
+        'artist_name': post.avatar_artist_name,
+        'release_group_name': post.avatar_release_group_name
+    }
 </script>
 
 <svelte:options runes={true} />
@@ -58,7 +65,7 @@
         <div class="post-row">
             <div class="row-group-user-data">
                 <CoverArt
-                    imgUrl={post.avatar_url}
+                    item={avatarItem}
                     artistName={post.avatar_artist_name}
                     releaseGroupName={post.avatar_release_group_name}
                     altText={`${post.display_name}'s avatar`}
@@ -115,37 +122,39 @@
             {/if}
         </div>
         <div class="post-row">
-            <div class="row-group-icons">
-                <LikeReact
-                postId={postId}
-                reactionActive={reactionActive}
-                reactionCount={reactionCount}
-                ></LikeReact>
-                {#if mode == "feed"}
-                    <a href={permalink}>
-                        <Reply size="16" color="var(--freq-color-text-muted)"></Reply>
-                        <span class="descriptor">
-                            reply
-                        </span>
-                    </a>
-                {/if}
-            </div>
-            <div class="row-group-icon-description">
-                {#if post.user_id == sessionUserId }
-                    <UserActionsMenu
-                        mode='sessionUserPostMenu'
-                        postId={post.id ?? post.now_playing_post_id}
-                        bind:editState={editState}
-                        success={userActionSuccess}
-                    ></UserActionsMenu>
-                {:else if sessionUserId}
-                    <UserActionsMenu
-                        mode='postMenu'
-                        postId={post.id ?? post.now_playing_post_id}
-                        success={userActionSuccess}
-                    ></UserActionsMenu>
-                {/if}
-            </div>
+            {#if mode != 'sample'}
+                <div class="row-group-icons">
+                    <LikeReact
+                    postId={postId}
+                    reactionActive={reactionActive}
+                    reactionCount={reactionCount}
+                    ></LikeReact>
+                    {#if mode == "feed"}
+                        <a href={permalink}>
+                            <Reply size="16" color="var(--freq-color-text-muted)"></Reply>
+                            <span class="descriptor">
+                                reply
+                            </span>
+                        </a>
+                    {/if}
+                </div>
+                <div class="row-group-icon-description">
+                    {#if post.user_id == sessionUserId }
+                        <UserActionsMenu
+                            mode='sessionUserPostMenu'
+                            postId={post.id ?? post.now_playing_post_id}
+                            bind:editState={editState}
+                            success={userActionSuccess}
+                        ></UserActionsMenu>
+                    {:else if sessionUserId}
+                        <UserActionsMenu
+                            mode='postMenu'
+                            postId={post.id ?? post.now_playing_post_id}
+                            success={userActionSuccess}
+                        ></UserActionsMenu>
+                    {/if}
+                </div>
+            {/if}
         </div>
     </div>
 </div>

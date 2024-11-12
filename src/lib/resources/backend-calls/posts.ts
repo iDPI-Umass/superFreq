@@ -461,27 +461,49 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
 
 export const selectRandomPosts = async function ( postCount: number ) {
 
-    const selectPosts = await db
-    .selectFrom('posts')
-    .select([
-        'text', 
-        'artist_name', 
-        'release_group_name', 
-        'recording_name', 
-        'episode_title',
-        'embed_id',
-        'embed_source',
-        'show_title',
-        'item_type', 
-        'created_at'
-    ])
-    .where('status', '!=', 'deleted')
-    .where('parent_post_id', 'is', null)
-    .orderBy(sql`random()`)
-    .limit(postCount)
-    .execute()
+    const selectPosts = await db.transaction().execute(async(trx) => {
+        const posts = await trx
+        .selectFrom('posts')
+        .select([
+            'text', 
+            'artist_name', 
+            'release_group_name', 
+            'recording_name', 
+            'episode_title',
+            'embed_id',
+            'embed_source',
+            'show_title',
+            'item_type', 
+            'created_at'
+        ])
+        .where('status', '!=', 'deleted')
+        .where('parent_post_id', 'is', null) 
+        .orderBy(sql`random()`)
+        .limit(postCount)
+        .execute()
 
-    return selectPosts
+        const randomAvatarImages = await trx
+        .selectFrom('release_groups')
+        .select(['img_url', 'last_fm_img_url'])
+        .orderBy(sql`random()`)
+        .limit(postCount)
+        .execute()
+
+        return { posts, randomAvatarImages }
+    })
+
+    const { posts, randomAvatarImages } = await selectPosts
+
+    for ( const post of posts ) {
+        const index = posts.indexOf(post)
+        const image = {
+            'avatar_img_url': randomAvatarImages[index]['img_url'],
+            'avatar_last_fm_img_url': randomAvatarImages[index]['last_fm_img_url']
+        }
+        Object.assign(post, image)
+    }
+
+    return posts
 }
 
 /* Select a user's Now Playing posts */
