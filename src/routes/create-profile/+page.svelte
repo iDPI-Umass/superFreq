@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { PageData,  ActionData } from "../$types"
+	import { invalidateAll } from "$app/navigation"
 	import { enhance } from "$app/forms"
 
     import PanelHeader from "$lib/components/PanelHeader.svelte"
@@ -27,6 +28,10 @@
 
 	let imgPromise = $state(null)
 	let avatarPromise = $state(false)
+
+	$effect.pre(() => {
+		invalidateAll()
+	})
 </script>
 
 <svelte:options runes={true} />

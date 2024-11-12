@@ -216,7 +216,7 @@ export const selectSessionProfile = async function ( sessionUserId: string ) {
         'profiles.website as website',
         'profiles.top_albums_collection_id as top_albums_collection_id',
         'profiles.avatar_url as avatar_url',
-        'release_groups.last_fm_img_url as last_fm_img_url',
+        'release_groups.last_fm_img_url as avatar_last_fm_img_url',
         'profiles.avatar_mbid as avatar_mbid',
         'release_groups.release_group_name as avatar_release_group_name',
         'artists.artist_name as avatar_artist_name'

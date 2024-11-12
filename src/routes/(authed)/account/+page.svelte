@@ -1,20 +1,21 @@
 <script lang="ts">
 	import { enhance } from '$app/forms'
+	import { invalidate, invalidateAll } from '$app/navigation'
 	import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
 	import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
 	import CoverArt from '$lib/components/CoverArt.svelte'
 
 	import wave from "$lib/assets/images/logo/freq-wave.svg"
+	import { tick } from 'svelte';
 
 	let { data, form } = $props();
 
 	let { user, profile } = $derived(data)
 
-	let success = $derived(form?.success)
+	let success = $derived(form?.success) as boolean
 
 	let newItemAdded = $state(false) as boolean
-	let loading = false
 	let displayName = $derived(profile?.display_name ?? '') as string
 	let username = $derived(profile?.username ?? '') as string
 	let website = $derived(profile?.website ?? '') as string
@@ -25,7 +26,7 @@
 	let avatarItem = $state({}) as App.RowData
 	let avatarMbid = $derived(avatarItem?.release_group_mbid ?? profile?.avatar_mbid ?? '') as string
 	let avatarUrl = $derived(avatarItem?.avatar_url ?? profile?.avatar_url ?? '') as string
-	let lastFmImgUrl = $derived(avatarItem?.last_fm_img_url ?? profile?.last_fm_img_url ?? '') as string
+	let lastFmImgUrl = $derived(avatarItem?.last_fm_img_url ?? profile?.avatar_last_fm_img_url ?? '') as string
 	let avatarArtist = $derived(avatarItem?.artist_name ?? profile?.avatar_artist_name ?? '') as string
 	let avatarReleaseGroup = $derived(avatarItem?.release_group_name ?? profile?.avatar_release_group_name ?? '') as string
 
@@ -33,11 +34,18 @@
 		'img_url': avatarUrl,
 		'last_fm_img_url': lastFmImgUrl,
 		'artist_name': avatarArtist,
-		'release_group_name': avatarReleaseGroup
+		'artist_mbid': avatarItem?.artist_mbid,
+		'release_group_name': avatarReleaseGroup,
+		'release_group_mbid': avatarItem?.release_group_mbid,
+		'label': avatarItem?.label,
 	})
 
 	let imgPromise = $state(null)
-	let avatarPromise = $state(false)
+	let loading = $derived(( newItemAdded && !imgPromise ) ? true : false )
+
+	$effect.pre(() => {
+		invalidateAll()
+	})
 </script>
 
 <svelte:options runes={true} />
@@ -77,13 +85,7 @@
 			class="form-column"
 			method="post"
 			action="?/update"
-			use:enhance={() => {
-				avatarPromise = true
-				return async ({ update }) => {
-					avatarPromise = false
-					await update()
-				}}
-			}
+
 		>
 			<div class="label-group">
 				<label 
@@ -175,7 +177,7 @@
 				type="hidden" 
 				name="avatarItem" 
 				id="avatarmItem" 
-				value={JSON.stringify(avatarItem)} 
+				value={JSON.stringify(avatarInfo)} 
 			/>
 			<input 
 				type="hidden" 
@@ -241,10 +243,10 @@
 					form="account-data"
 					class="double-border-top"
 					type="submit"
-					disabled={loading || avatarPromise}
+					disabled={loading}
 					>
 					<div class="inner-border">
-						{( loading || avatarPromise ) ? 'Loading...' : 'Update profile'}
+						{( loading ) ? 'Loading...' : 'Update profile'}
 					</div>
 				</button>
 				<form 

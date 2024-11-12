@@ -2,7 +2,7 @@ import type { LayoutServerLoad } from './$types'
 import { db } from 'src/database.ts'
 import wave from "$lib/assets/images/logo/freq-wave.svg"
 
-export const load: LayoutServerLoad = async ({ locals: { safeGetSession }, cookies }) => {
+export const load: LayoutServerLoad = async ({ depends, locals: { safeGetSession }, cookies }) => {
   const { session, user } = await safeGetSession()
 
   if ( session ) {
@@ -16,6 +16,7 @@ export const load: LayoutServerLoad = async ({ locals: { safeGetSession }, cooki
         'display_name', 
         'website', 
         'avatar_url',
+        'release_groups.last_fm_img_url as avatar_last_fm_img_url',
         'release_groups.release_group_name as avatar_release_group_name',
         'artists.artist_name as avatar_artist_name'
       ])
@@ -24,6 +25,7 @@ export const load: LayoutServerLoad = async ({ locals: { safeGetSession }, cooki
 
     const profile = await selectSessionProfile
     
+    depends('app:avatarImg')
     return { session, sessionUserId, profile, cookies: cookies.getAll() }
   }
 

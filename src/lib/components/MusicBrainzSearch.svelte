@@ -62,8 +62,8 @@
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
 				const releaseGroup = {
 					mbid: item["id"] ?? item["releases"][0]["release-group"]["id"],
-					artistName: item["artist-credit"][0]["artist"]["name"] ?? item["artist-credit"][0]["artist"]["name"],
-					releaseGroupName: item["title"] ?? item["releases"][0]["release-group"]["title"]
+					artist_name: item["artist-credit"][0]["artist"]["name"] ?? item["artist-credit"][0]["artist"]["name"],
+					release_group_name: item["title"] ?? item["releases"][0]["release-group"]["title"]
 				}
 				const { success, coverArtArchiveUrl, lastFmCoverArtUrl } = await getCoverArt(releaseGroup)
 				addedItems["img_url"] = success ? coverArtArchiveUrl : null
@@ -98,6 +98,8 @@
 			return { addedItems, deletedItems, query, searchComplete, newItemAdded, showModal, imgPromise }
 		}
 	}
+
+	$effect(() => console.log(imgPromise))
 </script>
 
 <svelte:options runes={true} />

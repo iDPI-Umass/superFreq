@@ -17,6 +17,7 @@ export const load: PageServerLoad = async ({locals: { safeGetSession }}) => {
         'release_groups.release_group_mbid as release_group_mbid',
         'release_groups.release_group_name as release_group_name',
         'release_groups.img_url as img_url',
+        'release_groups.last_fm_img_url as last_fm_img_url',
         'release_groups.artist_mbid as artist_mbid',
         'artists.artist_name as artist_name'
     ])
@@ -31,16 +32,23 @@ export const actions = {
         const data = await request.formData()
         const releaseGroups = JSON.parse(data.get('release-groups') as string)
 
+        const cursedImgUrl = 'https://lastfm.freetls.fastly.net/i/u/300x300/152eda5cc22449eaa0874091eb7054b2.jpg'
+
+        const updatedImages = []
         for ( const item of releaseGroups ) {
-            const lastFmCoverArtUrl = await getLastFmCoverArt(item)
-            item['last_fm_img_url'] = lastFmCoverArtUrl
-            delete item['artist_name']
-            delete item['img_url']
+            if ( item['last_fm_img_url'] == cursedImgUrl )
+            { 
+                const lastFmCoverArtUrl = await getLastFmCoverArt(item)
+                item['last_fm_img_url'] = lastFmCoverArtUrl
+                delete item['artist_name']
+                delete item['img_url']
+                updatedImages.push(item)
+            }
         }
 
         const update = await db
         .insertInto( 'release_groups' )
-        .values( releaseGroups )
+        .values( updatedImages )
         .onConflict((oc) => oc
             .column( 'release_group_mbid' )
             .doUpdateSet((eb) => ({

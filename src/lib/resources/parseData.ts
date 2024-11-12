@@ -194,7 +194,7 @@ export const prepareAvatarMetadataInsert = function ( avatarItem: App.RowData ) 
         "release_date": avatarItem["release_date"],
         "label": avatarItem["label_name"],
         "img_url": avatarItem["img_url"],
-        "last_fm_img_url": thisItem["last_fm_img_url"],
+        "last_fm_img_url": avatarItem["last_fm_img_url"],
         "added_at": timestampISO
     }]
 
