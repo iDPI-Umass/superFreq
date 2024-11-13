@@ -219,6 +219,9 @@
 				>
 				</MusicBrainzSearch>
 			</div>
+			<span class="tip">
+				search for album cover to make your profile image
+			</span>
 			<!-- add alt text and change column in postgres -->
 			{#if avatarItem.img_url && avatarItem.img_url.length > 0}
 				{@render editorItemImage(avatarItem, avatarItem["release_group_name"])}
@@ -291,6 +294,10 @@
 		align-items: center;
 		justify-content: space-between;
 		margin: var(--freq-height-spacer-quarter) 0;
+	}
+	.tip {
+		text-transform: lowercase;
+		color: var(--freq-color-text-muted);
 	}
 	img {
 		margin: var(--freq-height-spacer-half) 0 0 0;

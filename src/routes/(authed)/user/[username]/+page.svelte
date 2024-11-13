@@ -55,6 +55,8 @@
         'release_group_name': avatarReleaseGroupName
     })
 
+    let isSessionUserProfile = $derived(( profileUserData?.id == sessionUserId ) ? true : false )
+
 </script>
 
 <svelte:options runes={true} />
@@ -67,10 +69,22 @@
 
 <div class="profile-info">
     <div class="profile-info-box-left">
-        <CoverArt
-            item={avatarItem}
-            altText={`${displayName}'s avatar: ${avatarReleaseGroupName} by ${avatarArtistName}`}
-        ></CoverArt>
+        <div class="cover-art-widget">
+            <div class="avatar-image">
+                <CoverArt
+                    item={avatarItem}
+                    altText={`${displayName}'s avatar: ${avatarReleaseGroupName} by ${avatarArtistName}`}
+                ></CoverArt>
+            </div>
+            {#if isSessionUserProfile}
+                <button 
+                    class="mini"
+                    onclick={() => goto('/account')}
+                >
+                    edit
+                </button>
+            {/if}
+        </div>
         <div class="profile-info-box-column">
             <div class="profile-username-buttons-row">
                 <div class="profile-displayname-username-column">
@@ -78,7 +92,7 @@
                     <p class="data-muted">{profileUserData?.username}</p>
                 </div>
                 <div class="profile-buttons-group">
-                {#if profileUserData?.id == sessionUserId }
+                {#if isSessionUserProfile }
                     <button class="double-border-top" onclick={() => goto('/account')}>
                         <div class="inner-border-condensed">
                             edit profile
@@ -244,5 +258,17 @@
 <style>
     .content {
         max-width: var(--freq-desktop-width);
+    }
+    .cover-art-widget {
+        position: relative;
+    }
+    .avatar-image {
+        position: relative;
+        z-index: 0;
+    }
+    button.mini {
+        position: absolute;
+        z-index: 1;
+        top: 0;
     }
 </style>

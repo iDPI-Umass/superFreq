@@ -215,7 +215,7 @@
 				class="text-label" 
 				for="avatarUrl"
 			>
-				<strong>Avatar:</strong> search for an album to make your profile image
+				Avatar 
 			</label>
 			<div class="mb-search">
 				<MusicBrainzSearch
@@ -230,6 +230,9 @@
 				>
 				</MusicBrainzSearch>
 			</div>
+			<span class="tip">
+				search for album cover to make your profile image
+			</span>
 			{#if avatarUrl && !newItemAdded}
 				<CoverArt
 					item={avatarInfo}
@@ -300,6 +303,10 @@
 		align-items: center;
 		justify-content: space-between;
 		margin: var(--freq-height-spacer-quarter) 0;
+	}
+	.tip {
+		text-transform: lowercase;
+		color: var(--freq-color-text-muted);
 	}
 	img {
 		margin: var(--freq-height-spacer-half) 0 0 0;
