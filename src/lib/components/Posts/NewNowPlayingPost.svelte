@@ -12,8 +12,8 @@
     }
 
     let {
-        addedItem,
-        newItemAdded = $bindable() as boolean,
+        addedItem = {},
+        newItemAdded = $bindable(false),
     }: ComponentProps = $props()
 </script>
 <svelte:options runes={true} />

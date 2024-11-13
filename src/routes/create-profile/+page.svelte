@@ -25,13 +25,24 @@
     let website = ''
     let newItemAdded = $state(false)
     let avatarItem = $state({} as App.RowData)
+	let delay = $state(5)
+	let countdown = $state(0)
 
 	let imgPromise = $state(null)
 	let avatarPromise = $state(false)
 
+	let showModal = $derived(form?.success ? form?.success : false)
+
 	$effect.pre(() => {
 		invalidateAll()
 	})
+
+	$effect(() => {
+        if ( showModal ) {
+            countdown = delay
+            setInterval(() => countdown -= 1, 1000)
+        }
+    })
 </script>
 
 <svelte:options runes={true} />
@@ -230,7 +241,7 @@
 </div>
 
 <NotificationModal
-    showModal = {( form?.success ? !form?.success : false )}
+    showModal = {showModal}
 >
 	{#snippet headerText()}
 		<span >
@@ -248,7 +259,8 @@
 </NotificationModal>
 
 <RedirectModal
-    showModal={ form?.success ? form?.success : false }
+    showModal={showModal}
+	delay={delay}
     redirectPath={'/about#guidelines'}
 >
     {#snippet headerText()}
@@ -258,7 +270,7 @@
 	{/snippet}
     {#snippet message()}
 		<span >
-	        Automatically redirecting to our Community Guidelines in 5 seconds.
+	        Automatically redirecting to our Community Guidelines in {countdown} seconds.
 	    </span>
 	{/snippet}
 </RedirectModal>
