@@ -23,9 +23,9 @@
 		searchCategory, // "artists" | "release_groups" | "releases" | "recordings" | "labels"
 		searchButtonText,
 		searchPlaceholder,
-		addedItems = $bindable(),
+		addedItems = $bindable([]),
 		deletedItems = $bindable([]),
-		newItemAdded = $bindable(),
+		newItemAdded = $bindable(false),
 		mode, // "single" | "collection"
 		limit = '25',
 		query = '',
@@ -98,8 +98,6 @@
 			return { addedItems, deletedItems, query, searchComplete, newItemAdded, showModal, imgPromise }
 		}
 	}
-
-	$effect(() => console.log(imgPromise))
 </script>
 
 <svelte:options runes={true} />

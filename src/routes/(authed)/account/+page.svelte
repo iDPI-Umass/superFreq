@@ -215,7 +215,7 @@
 				class="text-label" 
 				for="avatarUrl"
 			>
-				choose an album cover for your avatar
+				<strong>Avatar:</strong> search for an album to make your profile image
 			</label>
 			<div class="mb-search">
 				<MusicBrainzSearch

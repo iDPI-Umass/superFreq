@@ -195,7 +195,7 @@
 		bind:collectionItems={collectionItems}
 		bind:deletedItems={deletedItems}
 		collectionType={collectionType}
-		itemAdded={itemAdded}
+		bind:itemAdded={itemAdded}
 		bind:imgPromise={imgPromise}
 	></CollectionEditor>
 </div>

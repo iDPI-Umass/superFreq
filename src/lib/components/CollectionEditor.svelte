@@ -12,9 +12,9 @@
 
     let {
         collectionType,
-        collectionItems = $bindable(),
+        collectionItems = $bindable([]),
         deletedItems = $bindable([]),
-        itemAdded = $bindable(),
+        itemAdded = $bindable(false),
         imgPromise = $bindable(null)
     }: ComponentProps = $props()
 
@@ -56,7 +56,6 @@
 <GridList 
     bind:collectionContents={collectionItems}
     bind:deletedItems={deletedItems}
-    collectionReturned={itemAdded}
     collectionType={collectionType}
     layout="list"
     mode="edit"
