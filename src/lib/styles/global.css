@@ -286,6 +286,12 @@ label.text-label {
 	font-style: italic;
 }
 
+.tip {
+	text-transform: lowercase;
+	color: var(--freq-color-text-muted);
+	font-size: var(--freq-font-size-small);
+}
+
 /* @media screen and (max-width: 600px) {
 	.label-group {
 		flex-direction: column;

@@ -295,10 +295,6 @@
 		justify-content: space-between;
 		margin: var(--freq-height-spacer-quarter) 0;
 	}
-	.tip {
-		text-transform: lowercase;
-		color: var(--freq-color-text-muted);
-	}
 	img {
 		margin: var(--freq-height-spacer-half) 0 0 0;
 		width: 90%;
