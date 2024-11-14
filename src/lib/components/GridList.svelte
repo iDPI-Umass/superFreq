@@ -12,7 +12,6 @@
     import imgNotFound from "$lib/assets/images/image-not-found.png"
 
     import CoverArt from "src/lib/components/CoverArt.svelte"
-	import { Cpu } from "lucide-svelte";
 
     interface ComponentProps {
         collectionContents: any

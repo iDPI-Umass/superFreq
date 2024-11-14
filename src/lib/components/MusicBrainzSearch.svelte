@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ListModal from 'src/lib/components/modals/ListModal.svelte'
-	import { mbSearch, addCollectionItemNoImg, getCoverArt, addSingleItemNoImg, mbidCateogory, artistName, releaseGroupName, releaseGroupMbid, recordingName, itemDate, artistOrigin } from '$lib/resources/musicbrainz'
+	import { mbSearch, addCollectionItemNoImg, getCoverArt, addSingleItemNoImg, mbidCateogory, artistName, releaseGroupName, releaseGroupMbid, releaseGroupMetadata, recordingName, itemDate, artistOrigin } from '$lib/resources/musicbrainz'
 	import CoverArt from './CoverArt.svelte';
 
 	interface ComponentProps {
@@ -80,11 +80,7 @@
 			showModal = false
 
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
-				const releaseGroup = {
-					mbid: item["id"] ?? item["releases"][0]["release-group"]["id"],
-					artist_name: item["artist-credit"][0]["artist"]["name"] ?? item["artist-credit"][0]["artist"]["name"],
-					release_group_name: item["title"] ?? item["releases"][0]["release-group"]["title"]
-				}
+				const releaseGroup = releaseGroupMetadata( searchCategory, item )
 				const { success, coverArtArchiveUrl, lastFmCoverArtUrl } = await getCoverArt(releaseGroup)
 				const thisItemIndex = addedItems.findIndex((item) => item['release_group_mbid'] == releaseGroup.mbid)
 				addedItems[thisItemIndex]["img_url"] = success ? coverArtArchiveUrl : null
@@ -132,12 +128,14 @@
 								</div>
 								{#if searchCategory == "artists"}
 									<span>
-										{artistName(searchCategory, item)}
+										<span class="metadata-bold">
+											{artistName(searchCategory, item)}
+										</span>
+										<br />
+										{artistOrigin(searchCategory, item)}
+										<br /> 
+										{itemDate(searchCategory, item)}
 									</span>
-									<br />
-									{artistOrigin(searchCategory, item)}
-									<br /> 
-									{itemDate(searchCategory, item)}
 								{:else if searchCategory == "release_groups"}
 									<span>
 										<span class="metadata-bold" >
@@ -150,12 +148,14 @@
 									</span>
 								{:else if searchCategory == "recordings"}
 									<span>
-										{recordingName(searchCategory, item)}
-									</span> 
-									by 
-									{artistName(searchCategory, item)}
-									<br />
-									{releaseGroupName(searchCategory, item)}
+										<span class="metadata-bold">
+											{recordingName(searchCategory, item)}
+										</span> 
+										by 
+										{artistName(searchCategory, item)}
+										<br />
+										{releaseGroupName(searchCategory, item)}
+									</span>
 								{/if}
 							</div>
 							{#if searchCategory == "release_groups" || searchCategory == "recordings"}
