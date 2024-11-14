@@ -4,6 +4,12 @@ import { PUBLIC_LAST_FM_API_KEY } from '$env/static/public'
 
 const lastFmApiKey = PUBLIC_LAST_FM_API_KEY
 
+/*
+//
+** Search
+//
+*/
+
 export const mbSearch = async function ( query: string, searchCategory: string, limit: string ) {
     if ( !query ) {
         return { mbData: null, searchComplete: false }
@@ -56,7 +62,78 @@ export const getLabel = async function( item: App.RowData ) {
     }
 }
 
-// get cover art from Cover Art Archive or Last.fm
+/*
+//
+** Get various metadata
+//
+*/
+
+export const mbidCateogory = function ( searchCategory: string ) {
+    return mbidCategoryTable[searchCategory] as string
+}
+
+export const artistName = function ( searchCategory: string, item: App.RowData ) {
+    let name = ''
+    if ( searchCategory == 'artists' ) {
+        name = item["name"] ?? ''
+    }
+    else if ( searchCategory == 'release_groups' ) {
+        name = item["artist-credit"][0]["artist"]["name"] ?? ''
+    }
+    else if ( searchCategory == 'recordings' ) {
+        name = item["artist-credit"][0]["artist"]["name"] ?? ''
+    }
+    return name
+}
+
+export const releaseGroupName = function ( searchCategory: string, item: App.RowData ) {
+    let name = ''
+    if ( searchCategory == 'release_groups' ) {
+        name = item["title"] ?? ''
+    }
+    else if ( searchCategory == 'recordings' ) {
+        name = item["releases"] ? item["releases"][0]["release-group"]["title"] : ''
+    }
+    return name
+}
+
+export const releaseGroupMbid  = function ( searchCategory: string, item: App.RowData ) {
+    let mbid = ''
+    if ( searchCategory == 'release_groups' ) {
+        mbid = item["id"]
+    }
+    else if ( searchCategory == 'recordings' ) {
+        mbid = item["releases"][0]["release-group"]["id"]
+    }
+    return mbid
+}
+
+export const recordingName = function ( searchCategory: string, item: App.RowData ) {
+    const name = item["title"] ?? ''
+    return name
+}
+
+export const itemDate = function ( searchCategory: string, item: App.RowData ) {
+    let date = ''
+    if ( searchCategory == 'artists' ) {
+        date = item["life-span"] ? item["life-span"]["begin"] : ''
+    }
+    else if ( searchCategory == 'release_groups' ) {
+        date = item["first-release-date"] ?? ''
+    }
+    return date
+}
+
+export const artistOrigin = function ( searchCategory: string, item: App.RowData ) {
+    const origin = item["area"] ? item["area"]["name"] : ''
+    return origin
+}
+
+/*
+//
+** Get cover art from Cover Art Archive or Last.fm
+//
+*/
 
 function getMegaImage(img: App.Lookup) {
     return img.size == "mega"
@@ -121,10 +198,11 @@ export const checkFetchedCoverArt = async function( item: App.Lookup ){
     }
 }
 
-// Get MBID category
-export const mbidCateogory = function ( searchCategory: string ) {
-    return mbidCategoryTable[searchCategory] as string
-}
+/*
+//
+** Add item from search results
+//
+*/
 
 // Check if item is already in collection
 export const checkDuplicate = function ( item: App.RowData, addedItems: App.RowData | App.RowData[], deletedItems: App.RowData[], mbidCategory: string ) {
