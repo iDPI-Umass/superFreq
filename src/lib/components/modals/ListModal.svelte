@@ -50,9 +50,9 @@
 	onclose={() => (showModal = false)}
 >
 	<div class="dialog-header">
-		<h1>
+		<h2>
 			{@render headerText?.()}
-		</h1>
+		</h2>
 		<button 
 			aria-label="close modal" 
 			formmethod="dialog" 
@@ -66,6 +66,7 @@
 
 <style>
 	dialog {
+		max-width: 500px;
         text-decoration: none;
 		margin-top: 15%;
     }
@@ -75,8 +76,9 @@
 		align-items: center;
 		justify-content: space-between;
 	}
-	h1 {
+	h2 {
 		font-size: var(--freq-font-size-x-small);
+		color: var(--freq-color-primary);
 	}
 	.dialog-header button {
 		width: fit-content;

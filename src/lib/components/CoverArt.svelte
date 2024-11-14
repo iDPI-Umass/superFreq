@@ -45,8 +45,14 @@
     {#await getLastFmCoverArt(coverArtItem)}
         <img src={wave} alt="loading" class={imgClass} />
     {:then result}
-        <img src={result} alt={altText} class={imgClass}  />
+        <img src={result ? result : wave} alt={result ? altText : 'not found'} class={imgClass}  />
     {:catch}
         <img src={wave} alt="not found" class={imgClass}  />
     {/await}
 {/if}
+
+<style>
+    img {
+        width: inherit;
+    }
+</style>
