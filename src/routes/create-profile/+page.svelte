@@ -7,6 +7,7 @@
     import MusicBrainzSearch from "$lib/components/MusicBrainzSearch.svelte"
     import NotificationModal from "src/lib/components/modals/NotificationModal.svelte"
     import RedirectModal from "$lib/components/modals/RedirectModal.svelte"
+	import AvatarSearch from "$lib/components/AvatarSearch.svelte"
 
 	import wave from "$lib/assets/images/logo/freq-wave.svg"
 
@@ -25,13 +26,36 @@
     let website = ''
     let newItemAdded = $state(false)
     let avatarItem = $state({} as App.RowData)
+	let delay = $state(5)
+	let countdown = $state(0)
 
 	let imgPromise = $state(null)
 	let avatarPromise = $state(false)
 
+	let avatarUrl = $derived(avatarItem?.avatar_url ?? '') as string
+
+	let avatarInfo = $derived({
+		'img_url': avatarUrl,
+		'last_fm_img_url': avatarItem?.last_fm_img_url,
+		'artist_name': avatarItem?.artist_name,
+		'artist_mbid': avatarItem?.artist_mbid,
+		'release_group_name': avatarItem?.release_group_name,
+		'release_group_mbid': avatarItem?.release_group_mbid,
+		'label': avatarItem?.label,
+	}) as App.RowData
+
+	let showModal = $derived(form?.success ? form?.success : false)
+
 	$effect.pre(() => {
 		invalidateAll()
 	})
+
+	$effect(() => {
+        if ( showModal ) {
+            countdown = delay
+            setInterval(() => countdown -= 1, 1000)
+        }
+    })
 </script>
 
 <svelte:options runes={true} />
@@ -191,27 +215,16 @@
 				class="text-label" 
 				for="avatarUrl"
 			>
-				choose an album cover for your avatar
+				Avatar
 			</label>
-			<!--
-				Form to search for avatar url
-			-->
-			<div class="mb-search">
-				<MusicBrainzSearch
-					searchCategory="release_groups"
-					searchButtonText="search"
-					searchPlaceholder="Search for an album"
-					bind:addedItems={avatarItem}
-					bind:newItemAdded={newItemAdded}
-					mode="single"
-					bind:imgPromise={imgPromise}
-				>
-				</MusicBrainzSearch>
-			</div>
-			<!-- add alt text and change column in postgres -->
-			{#if avatarItem.img_url && avatarItem.img_url.length > 0}
-				{@render editorItemImage(avatarItem, avatarItem["release_group_name"])}
-			{/if}
+			<AvatarSearch
+				bind:newItemAdded={newItemAdded}
+				displayName={displayName}
+				avatarUrl={avatarUrl}
+				bind:avatarItem={avatarItem}
+				avatarInfo={avatarInfo}
+				bind:imgPromise={imgPromise}
+			></AvatarSearch>
 			<div class="actions">
 				<button
 					class="double-border-top"
@@ -230,7 +243,7 @@
 </div>
 
 <NotificationModal
-    showModal = {( form?.success ? !form?.success : false )}
+    showModal = {showModal}
 >
 	{#snippet headerText()}
 		<span >
@@ -248,7 +261,8 @@
 </NotificationModal>
 
 <RedirectModal
-    showModal={ form?.success ? form?.success : false }
+    showModal={showModal}
+	delay={delay}
     redirectPath={'/about#guidelines'}
 >
     {#snippet headerText()}
@@ -258,7 +272,7 @@
 	{/snippet}
     {#snippet message()}
 		<span >
-	        Automatically redirecting to our Community Guidelines in 5 seconds.
+	        Automatically redirecting to our Community Guidelines in {countdown} seconds.
 	    </span>
 	{/snippet}
 </RedirectModal>

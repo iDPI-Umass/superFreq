@@ -1,39 +1,55 @@
 <script lang="ts">
-    import { tick } from 'svelte'
+    import { onDestroy, onMount, tick } from 'svelte'
     import type { Snippet } from 'svelte'
-    import { goto } from '$app/navigation'
+    import { goto, preloadData } from '$app/navigation'
 
     interface ComponentProps {
         showModal: boolean
         redirectPath: string,
         headerText?: Snippet,
-        message?: Snippet
+        message?: Snippet,
+        delay: number
     }
 
     let { 
         showModal = $bindable(),
         redirectPath, // expects format '/route'
         headerText,
-        message
+        message,
+        delay = $bindable()
     }: ComponentProps = $props()
 
     let dialog: any = $state()
+    
+    let delayMs = $state(delay * 1000) 
 
-	// $: if (dialog && showModal) dialog.showModal()
-	// $: if (dialog && !showModal) dialog.close()
-
-    $effect.pre ( () => {
-        if ( showModal == true ) {
-            tick().then(() => {
-                setTimeout(() => goto(redirectPath), 5000)
-            })
-        }
-    })
+    // $effect (() => {
+    //     if ( showModal == true ) {
+    //         tick().then(() => {
+    //             setTimeout(() => {
+    //                 goto(redirectPath)
+    //             }, delayMs)
+    //         })
+    //         // .then(() => setInterval(() => {
+    //         //         delay -= 1
+    //         //         console.log(delay)
+    //         //     }, 1000))
+    //     }
+    // })
 
     $effect (() => {
         if ( dialog && showModal ) dialog.showModal()
 		if ( dialog && !showModal ) dialog.close()
+
+        preloadData(redirectPath)
+
+        if ( showModal == true ) {
+            setTimeout(() => {
+                goto(redirectPath)
+            }, delayMs)
+        }
     })
+
 </script>
 
 <svelte:options runes={true} />

@@ -11,12 +11,13 @@
 
 	let collectionType = "release_groups"
 
-	let imgPromise = $state()
+	let imgPromise = $state(null)
 
 	let collectionItems = $state(collectionContents ? collectionContents : [] as App.RowData[])
 
 	let deletedItems = $state(deletedCollectionContents ? deletedCollectionContents : [] as App.RowData[])
-	let itemAdded = false
+
+	let itemAdded = $state(false)
 </script>
 
 <svelte:options runes={true} />

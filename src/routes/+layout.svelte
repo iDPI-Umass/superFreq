@@ -6,6 +6,7 @@
 	import "$lib/styles/fonts.css";
 	import "$lib/styles/freq-dark-theme.css";
 	import "$lib/styles/global.css";
+	import "$lib/styles/interaction.css";
 	import "$lib/styles/posts.css";
 	import "$lib/styles/profile.css";
 	import "$lib/styles/themes.css";
