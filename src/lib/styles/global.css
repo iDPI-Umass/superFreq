@@ -98,6 +98,15 @@ body {
 	color: var(--freq-color-mellow);
 }
 
+hr {
+	display: block;
+	width: 70%;
+	height: 1px;
+	margin-left: 0;
+	border: none;
+	background: linear-gradient(90deg, #7F90A2 35%, #000000 100%) padding-box;
+	padding: 0;
+}
 
 /*
 //

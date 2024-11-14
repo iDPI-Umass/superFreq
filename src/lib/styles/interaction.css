@@ -128,6 +128,35 @@ button.double-border-top:is(:disabled, :disabled:hover, :disabled:focus, :disabl
 	color: var(--freq-color-text-muted);
 }
 
+/* Like button */
+
+button.like {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    gap: var(--freq-inline-gap-double);
+    border: none;
+    background: none;
+    color: var(--freq-color-text-muted);
+    font-size: var(--freq-font-size-small);
+    scale: 100%;
+}
+
+button.like:is(:hover, :focus) {
+    background: var(--freq-color-button-lens-active);
+    transition: 0.5s cubic;
+}
+button.like:active {
+    background: var(--freq-color-button-lens-active);
+    scale: 90%;
+}
+
+button.like:disabled,
+button.like:is( :disabled:hover, :disabled:focus, :disabled:active ) {
+    background: none;
+    scale: 100%;
+}
+
 /* Mini button */
 button.mini {
     width: fit-content;

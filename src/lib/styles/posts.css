@@ -145,13 +145,6 @@ form.reply {
 	margin: var(--freq-height-spacer) var(--freq-width-spacer);
 }
 
-/* Feed items */
-
-
-
-/* About page */
-
-
 /* Inline styles */
 
 .post-text {
@@ -240,43 +233,4 @@ form.reply {
 .feed-avatar, .feed-avatar > img {
     max-width: var(--freq-image-thumbnail-4x-small);
     border-radius: var(--freq-border-radius-circle);
-}
-
-/* UI elements */
-
-hr {
-	display: block;
-	width: 70%;
-	height: 1px;
-	margin-left: 0;
-	border: none;
-	background: linear-gradient(90deg, #7F90A2 35%, #000000 100%) padding-box;
-	padding: 0;
-}
-
-button.like {
-    display: flex;
-    flex-direction: row;
-    align-items: start;
-    gap: var(--freq-inline-gap-double);
-    border: none;
-    background: none;
-    color: var(--freq-color-text-muted);
-    font-size: var(--freq-font-size-small);
-    scale: 100%;
-}
-
-button.like:is(:hover, :focus) {
-    background: var(--freq-color-button-lens-active);
-    transition: 0.5s cubic;
-}
-button.like:active {
-    background: var(--freq-color-button-lens-active);
-    scale: 90%;
-}
-
-button.like:disabled,
-button.like:is( :disabled:hover, :disabled:focus, :disabled:active ) {
-    background: none;
-    scale: 100%;
 }
