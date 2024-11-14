@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import { parseISO } from "date-fns"
-import type { PageServerLoad, Actions, Posts } from './$types'
+import type { PageServerLoad, Actions } from './$types'
 import { insertPost } from '$lib/resources/backend-calls/posts'
 import { getListenUrlData } from '$lib/resources/parseData'
 
@@ -56,7 +56,7 @@ export const actions = {
 
         const embedInfo = listenUrl ? await getListenUrlData(listenUrl) : null
 
-        const postData: Posts = {
+        const postData = {
             user_id: sessionUserId,
             type: "now_playing",
             status: "new",
@@ -74,7 +74,7 @@ export const actions = {
             embed_id: embedInfo?.id ?? null,
             embed_source: embedInfo?.source ?? null,
             embed_account: embedInfo?.account ?? null
-        }
+        } as App.RowData
 
         const { username, createdAt } = await insertPost( postData )
         const timestampSlug = createdAt?.toISOString()
