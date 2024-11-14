@@ -67,7 +67,6 @@
             item.item_position = null
             deletedItems.push(item)
         }
-        console.log( collectionContents[0], items[0])
 	}
 
     const undersizedCollection = ( mode == 'view' && ( layout == 'grid' && collectionContents.length < 6 ) || ( layout == 'condensed-grid' && collectionContents.length < 4 )) ? true : false
