@@ -1,5 +1,7 @@
 <!-- 
- Needs *either* an item object *or* imgUrl, aritstName, and releaseGroupName props. Allows for more flexible use depending on structure of data for a given route's layout.
+Needs *either* an item object *or* imgUrl, aritstName, and releaseGroupName props. 
+ 
+Currently configured to server Last.fm images on the client side by default on account of Internet Archive's Cover Art Archive being down.
 -->
 
 

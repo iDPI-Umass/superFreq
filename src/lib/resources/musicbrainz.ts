@@ -110,7 +110,13 @@ export const artistOrigin = function ( searchCategory: string, item: App.RowData
 }
 
 export const releaseGroupMetadata =  function ( searchCategory: string, item: App.RowData ) {
-    let releaseGroup = {}
+    let releaseGroup = {           
+        mbid: null,
+        release_date: null,
+        artist_name: null,
+        release_group_name: null
+    } as App.RowData
+
     if ( searchCategory == 'release_groups' ) {
         releaseGroup = {
             mbid: item["id"],
@@ -122,6 +128,7 @@ export const releaseGroupMetadata =  function ( searchCategory: string, item: Ap
     else if ( searchCategory == 'recordings' ) {
         releaseGroup = {
             mbid: item["releases"][0]["release-group"]["id"],
+            release_date: null,
             artist_name: item["artist-credit"][0]["artist"]["name"],
             release_group_name: item["releases"][0]["release-group"]["title"]
         }
@@ -213,7 +220,7 @@ export const getLastFmCoverArt = async function ( releaseGroup: App.Lookup ) {
     }
 }
 
-export const getCoverArt = async function ( releaseGroup: App.Lookup ) {
+export const getCoverArt = async function ( releaseGroup: App.RowData ) {
     const coverArtArchiveEndpoint = `https://coverartarchive.org/release-group/${releaseGroup.mbid}/front`
 
     try {
@@ -235,7 +242,7 @@ export const getCoverArt = async function ( releaseGroup: App.Lookup ) {
     }
 }
 
-export const checkFetchedCoverArt = async function( item: App.Lookup ){
+export const checkFetchedCoverArt = async function( item: App.RowData ){
     try {
         const imgUrl =  item["img_url"] as string
         const coverArt = await fetch( imgUrl, { signal: AbortSignal.timeout(5000)} )
@@ -336,7 +343,7 @@ export const addCollectionItem = async function (
     // Add the item
     const mbid = releaseGroupMbid( searchCategory, item )
     const releaseDate = itemDate( searchCategory, item )
-    const label = await getLabel( searchCategory, mbid, releaseDate)
+    const label = await getLabel( searchCategory, mbid, releaseDate )
     const releaseGroup = releaseGroupMetadata(searchCategory, item )
     const coverArt = await getCoverArt( releaseGroup )
 
@@ -411,7 +418,7 @@ export const addCollectionItemNoImg = async function (
     // Add the item
     const mbid = releaseGroupMbid( searchCategory, item )
     const releaseDate = itemDate( searchCategory, item )
-    const label = await getLabel( searchCategory, mbid, releaseDate)
+    const label = await getLabel( searchCategory, mbid, releaseDate )
 
     addedItems = [...addedItems, {
         "original_id": originalId ?? null,
@@ -446,7 +453,7 @@ export const addSingleItem = async function  (
     const coverArt = await getCoverArt( releaseGroup )
     const mbid = releaseGroupMbid( searchCategory, item )
     const releaseDate = itemDate( searchCategory, item )
-    const label = await getLabel( searchCategory, mbid, releaseDate)
+    const label = await getLabel( searchCategory, mbid, releaseDate )
     addedItems =  {
         "artist_mbid": artistMbid( searchCategory, item ),
         "artist_name": artistName( searchCategory, item ),
@@ -473,7 +480,7 @@ export const addSingleItemNoImg = async function  (
 ) {
     const mbid = releaseGroupMbid( searchCategory, item )
     const releaseDate = itemDate( searchCategory, item )
-    const label = await getLabel( searchCategory, mbid, releaseDate)
+    const label = await getLabel( searchCategory, mbid, releaseDate )
     addedItems =  {
         "artist_mbid": artistMbid( searchCategory, item ),
         "artist_name": artistName( searchCategory, item ),
@@ -488,6 +495,5 @@ export const addSingleItemNoImg = async function  (
         "label": label.name,
         "notes": null,
     }
-    console.log(addedItems)
     return { addedItems }
 }
