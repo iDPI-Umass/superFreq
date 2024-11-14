@@ -1,10 +1,7 @@
-<!-- Need to improve image placeholder in GridList using a promise created in this component -->
-
 <script lang="ts">
 	import ListModal from 'src/lib/components/modals/ListModal.svelte'
-	import { mbSearch, addCollectionItem, addCollectionItemNoImg, getCoverArt, addSingleItem, mbidCateogory } from '$lib/resources/musicbrainz'
-	import { imgPromiseStore } from '$lib/stores'
-	import imgNotFound from "$lib/assets/images/image-not-found.png"
+	import { mbSearch, addCollectionItemNoImg, getCoverArt, addSingleItem, mbidCateogory } from '$lib/resources/musicbrainz'
+	import CoverArt from './CoverArt.svelte';
 
 	interface ComponentProps {
 		searchCategory: string
@@ -26,7 +23,7 @@
 		addedItems = $bindable([]),
 		deletedItems = $bindable([]),
 		newItemAdded = $bindable(false),
-		mode, // "single" | "collection"
+		mode, // "single" | "collection" | "avatar-search"
 		limit = '25',
 		query = '',
 		imgPromise = $bindable(null)
@@ -38,8 +35,6 @@
 	let mbData = $state([]) as any[]
 	let searchComplete = $state(false)
 
-	const mbidCategory = mbidCateogory( searchCategory )
-
 	async function search ( query: string, searchCategory: string, limit: string ) {
 		mbData = []
 		showModal = true
@@ -48,8 +43,67 @@
 		searchComplete = searchResults.searchComplete
 		return { mbData, searchComplete, showModal }
 	}
+
+	function artistName ( item: any ) {
+		let name = ''
+		if ( searchCategory == 'artists' ) {
+			name = item["name"] ?? ''
+		}
+		else if ( searchCategory == 'release_groups' ) {
+			name = item["artist-credit"][0]["artist"]["name"] ?? ''
+		}
+		else if ( searchCategory == 'recordings' ) {
+			name = item["artist-credit"][0]["artist"]["name"] ?? ''
+		}
+		return name
+	}
+
+	function releaseGroupName ( item: any ) {
+		let name = ''
+		if ( searchCategory == 'release_groups' ) {
+			name = item["title"] ?? ''
+		}
+		else if ( searchCategory == 'recordings' ) {
+			name = item["releases"] ? item["releases"][0]["release-group"]["title"] : ''
+		}
+		return name
+	}
+
+	function releaseGroupMbid ( item: any ) {
+		let mbid = ''
+		if ( searchCategory == 'release_groups' ) {
+			mbid = item["id"]
+		}
+		else if ( searchCategory == 'recordings' ) {
+			mbid = item["releases"][0]["release-group"]["id"]
+		}
+		return mbid
+	}
+
+	function recordingName ( item: any ) {
+		const name = item["title"] ?? ''
+		return name
+	}
+
+	function itemDate ( item: any ) {
+		let date = ''
+		if ( searchCategory == 'artists' ) {
+			date = item["life-span"] ? item["life-span"]["begin"] : ''
+		}
+		else if ( searchCategory == 'release_groups' ) {
+			date = item["first-release-date"] ?? ''
+		}
+		return date
+	}
+
+	function artistOrigin ( item: any ) {
+		const origin = item["area"] ? item["area"]["name"] : ''
+		return origin
+	}
+
+	const mbidCategory = mbidCateogory( searchCategory )
 	
-	// Attempting to create promise for await block with cover image in GridList component, still working on it.
+	// Get album art and handle promise for CoverArt component
 	async function addItem ( mode: string, item: App.RowData ) {
 		addingItem = true
 		if ( mode == 'single' ) {
@@ -61,9 +115,9 @@
 			showModal = false
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
 				const releaseGroup = {
-					mbid: item["id"] ?? item["releases"][0]["release-group"]["id"],
-					artist_name: item["artist-credit"][0]["artist"]["name"] ?? item["artist-credit"][0]["artist"]["name"],
-					release_group_name: item["title"] ?? item["releases"][0]["release-group"]["title"]
+					mbid: releaseGroupMbid(item),
+					artist_name: artistName(item),
+					release_group_name: releaseGroupName(item)
 				}
 				const { success, coverArtArchiveUrl, lastFmCoverArtUrl } = await getCoverArt(releaseGroup)
 				addedItems["img_url"] = success ? coverArtArchiveUrl : null
@@ -119,35 +173,56 @@
 					<ol>
 						{#each mbData as item}
 						<li>
-							<button 
-								class="standard"
-								aria-label="add item"
-								onclick={() => addItem(mode, item)}
-								disabled={addingItem}
-			
-							>
-								+ add
-							</button>
-							<p>
-							{#if searchCategory == "artists"}
-								<span>{item["name"] ?? ''}</span>
-								({item["area"] ? item["area"]["name"] : ''}, 
-								{item["life-span"] ? item["life-span"]["begin"] : ''})
-							{:else if searchCategory == "release_groups"}
-								<span >{item["title"] ?? '0'}</span>  by 
-								{item["artist-credit"][0]["artist"]["name"] ?? ''} 
-								({item["first-release-date"] ?? ''})
-							{:else if searchCategory == "recordings"}
-								<span>{item["title"] ?? ''}</span> by 
-								{item["artist-credit"][0]["artist"]["name"] ?? ''} 
-								({item["releases"] ? item["releases"][0]["release-group"]["title"] : ''})
+							<div class="li-row">
+								<div class="li-row-button-spacing">
+									<button 
+										class="standard"
+										aria-label="add item"
+										onclick={() => addItem(mode, item)}
+										disabled={addingItem}
+					
+									>
+										+ add
+									</button>
+								</div>
+								{#if searchCategory == "artists"}
+									<span>
+										{artistName(item)}
+									</span>
+									<br />
+									{artistOrigin(item)}
+									<br /> 
+									{itemDate(item)}
+								{:else if searchCategory == "release_groups"}
+									<span>
+										<span class="metadata-bold" >
+											{releaseGroupName(item)}
+										</span>  
+										by 
+										{artistName(item)}
+										<br /> 
+										{itemDate(item)}
+									</span>
+								{:else if searchCategory == "recordings"}
+									<span>
+										{recordingName(item)}
+									</span> 
+									by 
+									{artistName(item)}
+									<br />
+									{releaseGroupName(item)}
+								{/if}
+							</div>
+							{#if searchCategory == "release_groups" || searchCategory == "recordings"}
+								<div class="result-image">
+									<CoverArt
+										artistName={artistName(item)}
+										releaseGroupName={releaseGroupName(item)}
+										altText='album {releaseGroupName(item)} by artist {artistName(item)}'
+									></CoverArt>
+								</div>
 							{/if}
-							</p>
-							<!-- {#if avatarSearch}
-								<img class="thumbnail" src={item["img_url"]} />
-							{/if} -->
 						</li>
-						<hr />
 						{/each}
 					</ol>
 				{/if}
@@ -208,21 +283,42 @@
 	li {
 		display: flex;
 		flex-direction: row;
-		align-items: center;
-		margin-bottom: var(--freq-spacing-2x-small);
+		max-width: 500px;
+		align-items: start;
+		margin: var(--freq-spacing-2x-small) 0;
+		padding: var(--freq-spacing-small) 0;
+		border-bottom: 1px solid transparent;
+		border-image: linear-gradient(90deg, #7F90A2 35%, #000000 100%);
+		border-image-slice: 1;
 	}
-    li span {
+	li:last-child {
+		border: none;
+		margin-bottom: 0;
+		padding-bottom: 0;
+	}
+    span {
+		margin-right: var(--freq-spacing-small);
 		font-size: var(--freq-font-size-medium);
-        font-weight: var(--freq-font-weight-medium);
     }
-	li p {
+	span.metadata-bold {
+		margin: 0;
+		font-weight: var(--freq-font-weight-medium);
+	}
+	.li-row {
+		display: flex;
+		flex-direction: row;
+		align-items: start;
 		margin: 0 calc( var(--freq-inline-gap) * 2 );
 	}
-	img {
-		width: var(--freq-image-thumbnail-small);
-		margin-right: 1%;
+	.li-row-button-spacing {
+		width: 66px;
+		margin-right: var(--freq-spacing-small);
 	}
-
+	.result-image {
+		width: 100px;
+		margin-left: auto;
+		margin-right: 0;
+	}
 	@media screen and (max-width: 600px) {
         .search-bar * {
             flex-direction: column;
