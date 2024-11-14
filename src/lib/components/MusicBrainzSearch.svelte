@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ListModal from 'src/lib/components/modals/ListModal.svelte'
-	import { mbSearch, addCollectionItemNoImg, getCoverArt, addSingleItem, mbidCateogory, artistName, releaseGroupName, releaseGroupMbid, recordingName, itemDate, artistOrigin } from '$lib/resources/musicbrainz'
+	import { mbSearch, addCollectionItemNoImg, getCoverArt, addSingleItemNoImg, mbidCateogory, artistName, releaseGroupName, releaseGroupMbid, recordingName, itemDate, artistOrigin } from '$lib/resources/musicbrainz'
 	import CoverArt from './CoverArt.svelte';
 
 	interface ComponentProps {
@@ -50,7 +50,7 @@
 	async function addItem ( mode: string, item: App.RowData ) {
 		addingItem = true
 		if ( mode == 'single' ) {
-			const singleItem = await addSingleItem( item, addedItems, searchCategory )
+			const singleItem = await addSingleItemNoImg( item, addedItems, searchCategory )
 			addedItems = singleItem.addedItems
 			query = ""
 			searchComplete = false
@@ -121,7 +121,9 @@
 									<button 
 										class="standard"
 										aria-label="add item"
-										onclick={() => addItem(mode, item)}
+										onclick={() => {
+											addItem(mode, item)
+											}}
 										disabled={addingItem}
 					
 									>

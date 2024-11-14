@@ -39,27 +39,28 @@ export const mbSearch = async function ( query: string, searchCategory: string, 
 }
 
 // returns mbid and label name for earliest release in release group
-export const getLabel = async function( item: App.RowData ) {
-    const releaseGroupMbid = item["mbid"]
-    const releaseDate = item["releaseDate"]
-    let labelName: string | null = null
-    let labelMbid: string | null = null
+export const getLabel = async function( searchCategory: string, releaseGroupMbid: string, releaseDate: string ) {
+    let name = null
+    let mbid = null
 
     const endpoint = `https://musicbrainz.org/ws/2/release?release-group=${releaseGroupMbid}&inc=labels&fmt=json`
 
-    const res = await fetch (endpoint)
-    let releases = await res.json()
-    releases = releases["releases"]
-
-    for ( const release of releases ) {
-        if ( releaseDate == release["date"] ) {
-            if ( release["label-info"].length > 0 ) {
-                labelName = release["label-info"][0]["label"]["name"];
-                labelMbid = release["label-info"][0]["label"]["id"];
+    if ( searchCategory == 'release_groups' || searchCategory == 'recordings' ) {
+        const res = await fetch (endpoint)
+        let releases = await res.json()
+        releases = releases["releases"]
+    
+        for ( const release of releases ) {
+            if ( releaseDate == release["date"] ) {
+                if ( release["label-info"].length > 0 ) {
+                    name = release["label-info"][0]["label"]["name"];
+                    mbid = release["label-info"][0]["label"]["id"];
+                }
+                return { name, mbid }
             }
-            return { labelName, labelMbid }
         }
     }
+    return { name, mbid }
 }
 
 /*
@@ -72,45 +73,107 @@ export const mbidCateogory = function ( searchCategory: string ) {
     return mbidCategoryTable[searchCategory] as string
 }
 
-export const artistName = function ( searchCategory: string, item: App.RowData ) {
-    let name = ''
+export const artistMbid = function ( searchCategory: string, item: App.RowData ) {
+    let mbid = null
     if ( searchCategory == 'artists' ) {
-        name = item["name"] ?? ''
+        mbid = item["id"] ?? null
     }
     else if ( searchCategory == 'release_groups' ) {
-        name = item["artist-credit"][0]["artist"]["name"] ?? ''
+        mbid = item["artist-credit"][0]["artist"]["id"] ?? null
     }
     else if ( searchCategory == 'recordings' ) {
-        name = item["artist-credit"][0]["artist"]["name"] ?? ''
-    }
-    return name
-}
-
-export const releaseGroupName = function ( searchCategory: string, item: App.RowData ) {
-    let name = ''
-    if ( searchCategory == 'release_groups' ) {
-        name = item["title"] ?? ''
-    }
-    else if ( searchCategory == 'recordings' ) {
-        name = item["releases"] ? item["releases"][0]["release-group"]["title"] : ''
-    }
-    return name
-}
-
-export const releaseGroupMbid  = function ( searchCategory: string, item: App.RowData ) {
-    let mbid = ''
-    if ( searchCategory == 'release_groups' ) {
-        mbid = item["id"]
-    }
-    else if ( searchCategory == 'recordings' ) {
-        mbid = item["releases"][0]["release-group"]["id"]
+        mbid = item["artist-credit"][0]["artist"]["id"] ?? null
     }
     return mbid
 }
 
-export const recordingName = function ( searchCategory: string, item: App.RowData ) {
-    const name = item["title"] ?? ''
+export const artistName = function ( searchCategory: string, item: App.RowData ) {
+    let name = null
+    if ( searchCategory == 'artists' ) {
+        name = item["name"] ?? null
+    }
+    else if ( searchCategory == 'release_groups' ) {
+        name = item["artist-credit"][0]["artist"]["name"] ?? null
+    }
+    else if ( searchCategory == 'recordings' ) {
+        name = item["artist-credit"][0]["artist"]["name"] ?? null
+    }
     return name
+}
+
+export const artistOrigin = function ( searchCategory: string, item: App.RowData ) {
+    let origin = null
+    if ( searchCategory == 'artists' ) {
+        origin = item["area"] ? item["area"]["name"] : null
+    }
+    return origin
+}
+
+export const releaseGroupMetadata =  function ( searchCategory: string, item: App.RowData ) {
+    let releaseGroup = {}
+    if ( searchCategory == 'release_groups' ) {
+        releaseGroup = {
+            mbid: item["id"],
+            release_date: item["first-release-date"],
+            artist_name: item["artist-credit"][0]["artist"]["name"],
+            release_group_name: item["title"]
+        }
+    }
+    else if ( searchCategory == 'recordings' ) {
+        releaseGroup = {
+            mbid: item["releases"][0]["release-group"]["id"],
+            artist_name: item["artist-credit"][0]["artist"]["name"],
+            release_group_name: item["releases"][0]["release-group"]["title"]
+        }
+    }
+    return releaseGroup
+}
+
+export const releaseGroupMbid  = function ( searchCategory: string, item: App.RowData ) {
+    let mbid = null
+    if ( searchCategory == 'release_groups' ) {
+        mbid = item["id"] ?? null
+    }
+    else if ( searchCategory == 'recordings' ) {
+        mbid = item["releases"][0]["release-group"]["id"] ?? null
+    }
+    return mbid
+}
+
+export const releaseGroupName = function ( searchCategory: string, item: App.RowData ) {
+    let name = null
+    if ( searchCategory == 'release_groups' ) {
+        name = item["title"] ?? null
+    }
+    else if ( searchCategory == 'recordings' ) {
+        name = item["releases"] ? item["releases"][0]["release-group"]["title"] : null
+    }
+    return name
+}
+
+export const recordingMbid = function ( searchCategory: string, item: App.RowData ) {
+    let name = null
+    if ( searchCategory == 'recordings' ) {
+        name = item["id"] ?? null
+    }
+    return name
+}
+
+
+export const recordingName = function ( searchCategory: string, item: App.RowData ) {
+    let name = null
+    if ( searchCategory == 'recordings' ) {
+        name = item["title"] ?? null
+    }
+    return name
+}
+
+export const remixerMbid = function ( searchCategory: string, item: App.RowData ) {
+    let mbid = null
+    if ( searchCategory == 'recordings' ) {
+        mbid = item["releations"] && item["relations"][0]["artist"]["type"] == "remixer" ? item["relations"][0]["artist"]["id"] : null
+    }
+    return mbid
 }
 
 export const itemDate = function ( searchCategory: string, item: App.RowData ) {
@@ -122,11 +185,6 @@ export const itemDate = function ( searchCategory: string, item: App.RowData ) {
         date = item["first-release-date"] ?? ''
     }
     return date
-}
-
-export const artistOrigin = function ( searchCategory: string, item: App.RowData ) {
-    const origin = item["area"] ? item["area"]["name"] : ''
-    return origin
 }
 
 /*
@@ -231,7 +289,6 @@ export const checkLimit = function ( limit: string, addedItems: App.RowData | Ap
     return limitReached
 }
 
-// adds item from MusicBrainz search results to collection editor
 export const addCollectionItem = async function ( 
     item: App.RowData, 
     addedItems: App.RowData[], 
@@ -277,96 +334,29 @@ export const addCollectionItem = async function (
     }
 
     // Add the item
-    let labelName: string | null = null
-    let labelMbid: string | null = null
-    if ( searchCategory == "artists" ) {
-        addedItems = [...addedItems, {
-            "original_id": originalId ?? null,
-            "item_position": addedItems.length,
-            "artist_mbid": item["id"],
-            "artist_name": item["name"],
-            "release_group_mbid": null,
-            "release_group_name": null,
-            "release_date": null,
-            "recording_mbid": null,
-            "recording_name": null,
-            "remixer_mbid": null,
-            "img_url": null,
-            "last_fm_img_url": null,
-            "label_name": null,
-            "label_mbid": null,
-            "notes": null,
-            "id": addedItems.length + 1
-        }];
-    }
-    else if ( searchCategory == "release_groups" ) {
-        const releaseGroup = {
-            mbid: item["id"],
-            release_date: item["first-release-date"],
-            artist_name: item["artist-credit"][0]["artist"]["name"],
-            release_group_name: item["title"]
-        }
-        const label = await getLabel(releaseGroup);
-        labelName = label?.labelName ?? null
-        labelMbid = label?.labelMbid ?? null
-        const coverArt = await getCoverArt( releaseGroup );
-        addedItems = [...addedItems, {
-            "original_id": originalId ?? null,
-            "item_position": addedItems.length,
-            "artist_mbid": item["artist-credit"][0]["artist"]["id"],
-            "artist_name": item["artist-credit"][0]["artist"]["name"],
-            "release_group_mbid": item["id"],
-            "release_group_name": item["title"],
-            "release_date": item["first-release-date"],
-            "recording_mbid": null,
-            "recording_name": null,
-            "remixer_mbid": null,
-            "img_url": coverArt.coverArtArchiveUrl,
-            "last_fm_img_url": coverArt.lastFmCoverArtUrl,
-            "label_name": labelName, 
-            "label_mbid": labelMbid,
-            "notes": null,
-            "id": addedItems.length + 1
-        }];
-    }
-    else if ( searchCategory == "recordings" ) {
-        let remixerMbid: string | null = null;
-        if ( item["relations"] && item["relations"][0]["artist"]["type"] == "remixer" ) {
-            remixerMbid = item["relations"][0]["artist"]["id"];
-        }
-        const releaseGroup = {
-            mbid: item["releases"][0]["release-group"]["id"],
-            artistName: item["artist-credit"][0]["artist"]["name"],
-            releaseGroupName: item["releases"][0]["release-group"]["title"]
-        }
-        const releaseDate = item["first-release-date"]
-        const labelObject = {
-            'mbid': releaseGroup.mbid,
-            'releaseDate': releaseDate
-        }
-        const label = await getLabel(labelObject);
-        labelName = label?.labelName ?? null
-        labelMbid = label?.labelMbid ?? null
-        const coverArt = await getCoverArt( releaseGroup );
-        addedItems = [...addedItems, {
-            "original_id": originalId ?? null,
-            "item_position": addedItems.length,
-            "artist_mbid": item["artist-credit"][0]["artist"]["id"],
-            "artist_name": item["artist-credit"][0]["artist"]["name"],
-            "release_group_mbid": item["releases"][0]["release-group"]["id"],
-            "release_group_name": item["releases"][0]["release-group"]["title"],
-            "recording_mbid": item["id"],
-            "recording_name": item["title"],
-            "release_date": item["first-release-date"],
-            "remixer_artist_mbid": remixerMbid,
-            "img_url": coverArt.coverArtArchiveUrl,
-            "last_fm_img_url": coverArt.lastFmCoverArtUrl,
-            "label_name": labelName, 
-            "label_mbid": labelMbid,
-            "notes": null,
-            "id": addedItems.length +1
-        }];
-    }
+    const mbid = releaseGroupMbid( searchCategory, item )
+    const releaseDate = itemDate( searchCategory, item )
+    const label = await getLabel( searchCategory, mbid, releaseDate)
+    const releaseGroup = releaseGroupMetadata(searchCategory, item )
+    const coverArt = await getCoverArt( releaseGroup )
+
+    addedItems = [...addedItems, {
+        "original_id": originalId ?? null,
+        "item_position": addedItems.length,
+        "artist_mbid": artistMbid( searchCategory, item ),
+        "artist_name": artistName( searchCategory, item ),
+        "release_group_mbid": mbid,
+        "release_group_name": releaseGroupName( searchCategory, item ),
+        "recording_mbid": recordingMbid( searchCategory, item ),
+        "recording_name": recordingName( searchCategory, item ),
+        "remixer_mbid": remixerMbid( searchCategory, item ),
+        "release_date": releaseDate,
+        "img_url": coverArt.coverArtArchiveUrl,
+        "last_fm_img_url": coverArt.lastFmCoverArtUrl,
+        "label": label.name,
+        "notes": null,
+        "id": addedItems.length + 1
+    }]
     return {
         addedItems,
         deletedItems,
@@ -374,8 +364,6 @@ export const addCollectionItem = async function (
     }
 }
 
-
-// adds item from MusicBrainz search results to collection editor
 export const addCollectionItemNoImg = async function ( 
     item: App.RowData, 
     addedItems: App.RowData[], 
@@ -421,94 +409,27 @@ export const addCollectionItemNoImg = async function (
     }
 
     // Add the item
-    let labelName: string | null = null
-    let labelMbid: string | null = null
-    if ( searchCategory == "artists" ) {
-        addedItems = [...addedItems, {
-            "original_id": originalId ?? null,
-            "item_position": addedItems.length,
-            "artist_mbid": item["id"],
-            "artist_name": item["name"],
-            "release_group_mbid": null,
-            "release_group_name": null,
-            "release_date": null,
-            "recording_mbid": null,
-            "recording_name": null,
-            "remixer_mbid": null,
-            "img_url": null,
-            "last_fm_img_url": null,
-            "label_name": null,
-            "label_mbid": null,
-            "notes": null,
-            "id": addedItems.length + 1
-        }];
-    }
-    else if ( searchCategory == "release_groups" ) {
-        const releaseGroup = {
-            mbid: item["id"],
-            releaseDate: item["first-release-date"],
-            artistName: item["artist-credit"][0]["artist"]["name"],
-            releaseGroupName: item["title"]
-        }
-        const label = await getLabel(releaseGroup);
-        labelName = label?.labelName ?? null
-        labelMbid = label?.labelMbid ?? null
-        addedItems = [...addedItems, {
-            "original_id": originalId ?? null,
-            "item_position": addedItems.length,
-            "artist_mbid": item["artist-credit"][0]["artist"]["id"],
-            "artist_name": item["artist-credit"][0]["artist"]["name"],
-            "release_group_mbid": item["id"],
-            "release_group_name": item["title"],
-            "release_date": item["first-release-date"],
-            "recording_mbid": null,
-            "recording_name": null,
-            "remixer_mbid": null,
-            "img_url": null,
-            "last_fm_img_url": null,
-            "label_name": labelName, 
-            "label_mbid": labelMbid,
-            "notes": null,
-            "id": addedItems.length + 1
-        }];
-    }
-    else if ( searchCategory == "recordings" ) {
-        let remixerMbid: string | null = null;
-        if ( item["relations"] && item["relations"][0]["artist"]["type"] == "remixer" ) {
-            remixerMbid = item["relations"][0]["artist"]["id"];
-        }
-        const releaseGroup = {
-            mbid: item["releases"][0]["release-group"]["id"],
-            artist_name: item["artist-credit"][0]["artist"]["name"],
-            release_group_name: item["releases"][0]["release-group"]["title"]
-        }
-        const releaseDate = item["first-release-date"]
-        const labelObject = {
-            'mbid': releaseGroup.mbid,
-            'releaseDate': releaseDate
-        }
-        const label = await getLabel(labelObject);
-        labelName = label?.labelName ?? null
-        labelMbid = label?.labelMbid ?? null
-        addedItems = [...addedItems, {
-            "original_id": originalId ?? null,
-            "item_position": addedItems.length,
-            "artist_mbid": item["artist-credit"][0]["artist"]["id"],
-            "artist_name": item["artist-credit"][0]["artist"]["name"],
-            "release_group_mbid": item["releases"][0]["release-group"]["id"],
-            "release_group_name": item["releases"][0]["release-group"]["title"],
-            "recording_mbid": item["id"],
-            "recording_name": item["title"],
-            "release_date": item["first-release-date"],
-            "remixer_artist_mbid": remixerMbid,
-            "img_url": null,
-            "last_fm_img_url": null,
-            "label_name": labelName, 
-            "label_mbid": labelMbid,
-            "notes": null,
-            "id": addedItems.length +1
-        }];
-    }
+    const mbid = releaseGroupMbid( searchCategory, item )
+    const releaseDate = itemDate( searchCategory, item )
+    const label = await getLabel( searchCategory, mbid, releaseDate)
+
+    addedItems = [...addedItems, {
+        "original_id": originalId ?? null,
+        "item_position": addedItems.length,
+        "artist_mbid": artistMbid( searchCategory, item ),
+        "artist_name": artistName( searchCategory, item ),
+        "release_group_mbid": mbid,
+        "release_group_name": releaseGroupName( searchCategory, item ),
+        "recording_mbid": recordingMbid( searchCategory, item ),
+        "recording_name": recordingName( searchCategory, item ),
+        "remixer_mbid": remixerMbid( searchCategory, item ),
+        "release_date": releaseDate,
+        "img_url": null,
+        "last_fm_img_url": null,
+        "label": label.name,
+        "notes": null,
+        "id": addedItems.length + 1
+    }]
     return {
         addedItems,
         deletedItems,
@@ -521,85 +442,24 @@ export const addSingleItem = async function  (
     addedItems: App.RowData, 
     searchCategory: string,  
 ) {
-    let labelName: string | null = null
-    let labelMbid: string | null = null
-    if ( searchCategory == "artists" ) {
-        addedItems =  {
-            "artist_mbid": item["id"],
-            "artist_name": item["name"],
-            "release_group_mbid": null,
-            "release_group_name": null,
-            "release_date": null,
-            "recording_mbid": null,
-            "recording_name": null,
-            "remixer_mbid": null,
-            "img_url": null,
-            "last_fm_img_url": null,
-            "label": null,
-            "notes": null,
-        }
-    }
-    else if ( searchCategory == "release_groups" ) {
-        const releaseGroup = {
-            mbid: item["id"],
-            release_date: item["first-release-date"],
-            artist_name: item["artist-credit"][0]["artist"]["name"],
-            release_group_name: item["title"]
-        }
-        const label = await getLabel(releaseGroup);
-        labelName = label?.labelName ?? null
-        labelMbid = label?.labelMbid ?? null
-        const coverArt = await getCoverArt( releaseGroup );
-        addedItems = {
-            "artist_mbid": item["artist-credit"][0]["artist"]["id"],
-            "artist_name": item["artist-credit"][0]["artist"]["name"],
-            "release_group_mbid": item["id"],
-            "release_group_name": item["title"],
-            "release_date": item["first-release-date"],
-            "recording_mbid": null,
-            "recording_name": null,
-            "remixer_mbid": null,
-            "img_url": coverArt.coverArtArchiveUrl,
-            "last_fm_img_url": coverArt.lastFmCoverArtUrl,
-            "label_name": labelName, 
-            "label_mbid": labelMbid,
-            "notes": null,
-        }
-    }
-    else if ( searchCategory == "recordings" ) {
-        let remixerMbid: string | null = null;
-        if ( item["releations"] && item["relations"][0]["artist"]["type"] == "remixer" ) {
-            remixerMbid = item["relations"][0]["artist"]["id"];
-        }
-        const releaseGroup = {
-            mbid: item["releases"][0]["release-group"]["id"],
-            artist_name: item["artist-credit"][0]["artist"]["name"],
-            release_group_name: item["releases"][0]["release-group"]["title"]
-        }
-        const releaseDate = item["first-release-date"]
-        const labelObject = {
-            'mbid': releaseGroup.mbid,
-            'releaseDate': releaseDate
-        }
-        const label = await getLabel(labelObject);
-        labelName = label?.labelName ?? null;
-        labelMbid = label?.labelMbid ?? null;
-        const coverArt = await getCoverArt( releaseGroup );
-        addedItems = {
-            "artist_mbid": item["artist-credit"][0]["artist"]["id"],
-            "artist_name": item["artist-credit"][0]["artist"]["name"],
-            "release_group_mbid": item["releases"][0]["release-group"]["id"],
-            "release_group_name": item["releases"][0]["release-group"]["title"],
-            "recording_mbid": item["id"],
-            "recording_name": item["title"],
-            "release_date": item["first-release-date"],
-            "remixer_artist_mbid": remixerMbid,
-            "img_url": coverArt.coverArtArchiveUrl,
-            "last_fm_img_url": coverArt.lastFmCoverArtUrl,
-            "label_name": labelName, 
-            "label_mbid": labelMbid,
-            "notes": null,
-        }
+    const releaseGroup = releaseGroupMetadata(searchCategory, item )
+    const coverArt = await getCoverArt( releaseGroup )
+    const mbid = releaseGroupMbid( searchCategory, item )
+    const releaseDate = itemDate( searchCategory, item )
+    const label = await getLabel( searchCategory, mbid, releaseDate)
+    addedItems =  {
+        "artist_mbid": artistMbid( searchCategory, item ),
+        "artist_name": artistName( searchCategory, item ),
+        "release_group_mbid": mbid,
+        "release_group_name": releaseGroupName( searchCategory, item ),
+        "recording_mbid": recordingMbid( searchCategory, item ),
+        "recording_name": recordingName( searchCategory, item ),
+        "remixer_mbid": remixerMbid( searchCategory, item ),
+        "release_date": releaseDate,
+        "img_url": coverArt.coverArtArchiveUrl,
+        "last_fm_img_url": coverArt.lastFmCoverArtUrl,
+        "label": label.name,
+        "notes": null,
     }
     return {
         addedItems
@@ -611,85 +471,23 @@ export const addSingleItemNoImg = async function  (
     addedItems: App.RowData, 
     searchCategory: string,  
 ) {
-    let labelName: string | null = null
-    let labelMbid: string | null = null
-    if ( searchCategory == "artists" ) {
-        addedItems =  {
-            "artist_mbid": item["id"],
-            "artist_name": item["name"],
-            "release_group_mbid": null,
-            "release_group_name": null,
-            "release_date": null,
-            "recording_mbid": null,
-            "recording_name": null,
-            "remixer_mbid": null,
-            "img_url": null,
-            "last_fm_img_url": null,
-            "label": null,
-            "notes": null,
-        }
+    const mbid = releaseGroupMbid( searchCategory, item )
+    const releaseDate = itemDate( searchCategory, item )
+    const label = await getLabel( searchCategory, mbid, releaseDate)
+    addedItems =  {
+        "artist_mbid": artistMbid( searchCategory, item ),
+        "artist_name": artistName( searchCategory, item ),
+        "release_group_mbid": mbid,
+        "release_group_name": releaseGroupName( searchCategory, item ),
+        "recording_mbid": recordingMbid( searchCategory, item ),
+        "recording_name": recordingName( searchCategory, item ),
+        "remixer_mbid": remixerMbid( searchCategory, item ),
+        "release_date": releaseDate,
+        "img_url": null,
+        "last_fm_img_url": null,
+        "label": label.name,
+        "notes": null,
     }
-    else if ( searchCategory == "release_groups" ) {
-        const releaseGroup = {
-            mbid: item["id"],
-            release_date: item["first-release-date"],
-            artist_name: item["artist-credit"][0]["artist"]["name"],
-            release_group_name: item["title"]
-        }
-        const label = await getLabel(releaseGroup);
-        labelName = label?.labelName ?? null
-        labelMbid = label?.labelMbid ?? null
-        addedItems = {
-            "artist_mbid": item["artist-credit"][0]["artist"]["id"],
-            "artist_name": item["artist-credit"][0]["artist"]["name"],
-            "release_group_mbid": item["id"],
-            "release_group_name": item["title"],
-            "release_date": item["first-release-date"],
-            "recording_mbid": null,
-            "recording_name": null,
-            "remixer_mbid": null,
-            "img_url": null,
-            "last_fm_img_url": null,
-            "label_name": labelName, 
-            "label_mbid": labelMbid,
-            "notes": null,
-        }
-    }
-    else if ( searchCategory == "recordings" ) {
-        let remixerMbid: string | null = null;
-        if ( item["releations"] && item["relations"][0]["artist"]["type"] == "remixer" ) {
-            remixerMbid = item["relations"][0]["artist"]["id"];
-        }
-        const releaseGroup = {
-            mbid: item["releases"][0]["release-group"]["id"],
-            artist_name: item["artist-credit"][0]["artist"]["name"],
-            release_group_name: item["releases"][0]["release-group"]["title"]
-        }
-        const releaseDate = item["first-release-date"]
-        const labelObject = {
-            'mbid': releaseGroup.mbid,
-            'releaseDate': releaseDate
-        }
-        const label = await getLabel(labelObject);
-        labelName = label?.labelName ?? null;
-        labelMbid = label?.labelMbid ?? null;
-        addedItems = {
-            "artist_mbid": item["artist-credit"][0]["artist"]["id"],
-            "artist_name": item["artist-credit"][0]["artist"]["name"],
-            "release_group_mbid": item["releases"][0]["release-group"]["id"],
-            "release_group_name": item["releases"][0]["release-group"]["title"],
-            "recording_mbid": item["id"],
-            "recording_name": item["title"],
-            "release_date": item["first-release-date"],
-            "remixer_artist_mbid": remixerMbid,
-            "img_url": null,
-            "last_fm_img_url": null,
-            "label_name": labelName, 
-            "label_mbid": labelMbid,
-            "notes": null,
-        }
-    }
-    return {
-        addedItems
-    }
+    console.log(addedItems)
+    return { addedItems }
 }
