@@ -16,12 +16,6 @@
         newItemAdded = $bindable(false),
     }: ComponentProps = $props()
 
-    const actionLookup = {
-        'release_group': '?/postAlbum',
-        'recording': '?/postTrack',
-        'episode': '?/postMix'
-    } as App.StringLookupObject
-
 </script>
 <svelte:options runes={true} />
 
