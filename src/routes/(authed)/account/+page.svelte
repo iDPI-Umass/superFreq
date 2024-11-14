@@ -5,6 +5,7 @@
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
 	import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
 	import CoverArt from '$lib/components/CoverArt.svelte'
+	import AvatarSearch from '$lib/components/AvatarSearch.svelte'
 
 	import wave from "$lib/assets/images/logo/freq-wave.svg"
 	import { tick } from 'svelte';
@@ -38,7 +39,7 @@
 		'release_group_name': avatarReleaseGroup,
 		'release_group_mbid': avatarItem?.release_group_mbid,
 		'label': avatarItem?.label,
-	})
+	}) as App.RowData
 
 	let imgPromise = $state(null)
 	let loading = $derived(( newItemAdded && !imgPromise ) ? true : false )
@@ -217,30 +218,14 @@
 			>
 				Avatar 
 			</label>
-			<div class="mb-search">
-				<MusicBrainzSearch
-					searchCategory="release_groups"
-					searchButtonText="search"
-					searchPlaceholder="Search for an album"
-					bind:addedItems={avatarItem}
-					bind:newItemAdded={newItemAdded}
-					mode="single"
-					limit="10"
-					bind:imgPromise={imgPromise}
-				>
-				</MusicBrainzSearch>
-			</div>
-			<span class="tip">
-				search for album cover to make your profile image
-			</span>
-			{#if avatarUrl && !newItemAdded}
-				<CoverArt
-					item={avatarInfo}
-					altText={`${displayName}'s avatar: ${avatarInfo['release_group_name']} by ${avatarInfo['artist_name']}`}
-				></CoverArt>
-			{:else if avatarItem && newItemAdded}
-				{@render editorItemImage(avatarItem, avatarItem["release_group_name"])}
-			{/if}
+			<AvatarSearch
+				bind:newItemAdded={newItemAdded}
+				displayName={displayName}
+				avatarUrl={avatarUrl}
+				bind:avatarItem={avatarItem}
+				avatarInfo={avatarInfo}
+				bind:imgPromise={imgPromise}
+			></AvatarSearch>
 			<div class="actions">
 				<button
 					form="account-data"

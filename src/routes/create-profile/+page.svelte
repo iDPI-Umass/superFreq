@@ -7,6 +7,7 @@
     import MusicBrainzSearch from "$lib/components/MusicBrainzSearch.svelte"
     import NotificationModal from "src/lib/components/modals/NotificationModal.svelte"
     import RedirectModal from "$lib/components/modals/RedirectModal.svelte"
+	import AvatarSearch from "$lib/components/AvatarSearch.svelte"
 
 	import wave from "$lib/assets/images/logo/freq-wave.svg"
 
@@ -30,6 +31,18 @@
 
 	let imgPromise = $state(null)
 	let avatarPromise = $state(false)
+
+	let avatarUrl = $derived(avatarItem?.avatar_url ?? '') as string
+
+	let avatarInfo = $derived({
+		'img_url': avatarUrl,
+		'last_fm_img_url': avatarItem?.last_fm_img_url,
+		'artist_name': avatarItem?.artist_name,
+		'artist_mbid': avatarItem?.artist_mbid,
+		'release_group_name': avatarItem?.release_group_name,
+		'release_group_mbid': avatarItem?.release_group_mbid,
+		'label': avatarItem?.label,
+	}) as App.RowData
 
 	let showModal = $derived(form?.success ? form?.success : false)
 
@@ -202,30 +215,16 @@
 				class="text-label" 
 				for="avatarUrl"
 			>
-				<strong>Avatar:</strong> search for an album to make your profile image
+				Avatar
 			</label>
-			<!--
-				Form to search for avatar url
-			-->
-			<div class="mb-search">
-				<MusicBrainzSearch
-					searchCategory="release_groups"
-					searchButtonText="search"
-					searchPlaceholder="Search for an album"
-					bind:addedItems={avatarItem}
-					bind:newItemAdded={newItemAdded}
-					mode="single"
-					bind:imgPromise={imgPromise}
-				>
-				</MusicBrainzSearch>
-			</div>
-			<span class="tip">
-				search for album cover to make your profile image
-			</span>
-			<!-- add alt text and change column in postgres -->
-			{#if avatarItem.img_url && avatarItem.img_url.length > 0}
-				{@render editorItemImage(avatarItem, avatarItem["release_group_name"])}
-			{/if}
+			<AvatarSearch
+				bind:newItemAdded={newItemAdded}
+				displayName={displayName}
+				avatarUrl={avatarUrl}
+				bind:avatarItem={avatarItem}
+				avatarInfo={avatarInfo}
+				bind:imgPromise={imgPromise}
+			></AvatarSearch>
 			<div class="actions">
 				<button
 					class="double-border-top"
