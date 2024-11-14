@@ -15,16 +15,183 @@
         addedItem = {},
         newItemAdded = $bindable(false),
     }: ComponentProps = $props()
+
 </script>
 <svelte:options runes={true} />
+
+{#snippet postForm( itemType: string, addedItem: App.RowData )}
+    <form method="POST" action="?/post" class="vertical" use:enhance>
+        <input
+            id="item-type" 
+            name="item-type" 
+            type="hidden" 
+            value={itemType}
+        />
+        <input
+            id="mbid" 
+            name="mbid" 
+            type="hidden" 
+            value={addedItem?.release_group_mbid ?? addedItem?.artist_mbid ?? null} 
+        />
+        <div class="tooltip-group">
+            <label 
+                class="text-label" 
+                for="listen-url"
+            >
+                listen link
+            </label>
+            <Tooltip>
+                A link from Bandcamp, Soundcloud, or YouTube can be embedded in your post. 
+            </Tooltip>
+        </div>
+        <input 
+            class="text" 
+            id="listen-url" 
+            name="listen-url" 
+            type="url"
+            placeholder="paste link" 
+        />
+        <div class="label-group">
+            <label 
+                class="text-label" 
+                for="artist-name"
+            >
+                {itemType == 'episode' ?  'host / dj' : 'artist name'}
+            </label>        
+            <span class="label-explainer">
+                * required
+            </span>
+        </div>
+        {#if itemType == 'release_group' || itemType == 'recording'}
+            <input  
+                id="artist-mbid" 
+                name="artist-mbid" 
+                type="hidden"
+                value={addedItem?.artist_mbid ?? null}
+            />
+            <input
+                class="text"  
+                id="artist-name" 
+                name="artist-name" 
+                type="text"
+                placeholder="artist name" 
+                value={addedItem?.artist_name ?? null}
+            />
+            <div class="label-group">
+                <label 
+                    class="text-label" 
+                    for="album-name"
+                >
+                    album name
+                </label>
+                <span class="label-explainer">
+                    * required
+                </span>
+            </div>
+            <input  
+                id="release-group-mbid" 
+                name="release-group-mbid" 
+                type="hidden"
+                value={addedItem?.release_group_mbid ?? null}
+            />
+            <input 
+                class="text" 
+                id="release-group-name" 
+                name="release-group-name" 
+                type="text"
+                placeholder="album name"
+                value={addedItem?.release_group_name ?? null}
+            />
+        {/if}
+        {#if itemType == 'recording'}
+            <div class="label-group">
+                <label
+                    class="text-label" 
+                    for="track-name"
+                >
+                    track name
+                </label>
+                <span class="label-explainer">
+                    * required
+                </span>
+            </div>
+                <input  
+                id="recording-mbid" 
+                name="recording-mbid" 
+                type="hidden"
+                value={addedItem?.recording_mbid ?? null}
+            />
+            <input 
+                class="text"    
+                id="recording-name" 
+                name="track-name" 
+                type="text"
+                placeholder="track title" 
+                value={addedItem?.recording_name ?? null}
+            />
+        {/if}
+        {#if itemType == 'episode'}
+            <div class="label-group">
+                <label
+                    class="text-label" 
+                    for="episode"
+                >
+                    episode / mix title
+                </label>
+                <span class="label-explainer">
+                    * required
+                </span>
+            </div>
+            <input 
+                class="text"    
+                id="episode" 
+                name="episode" 
+                type="text"
+                placeholder="episode" 
+                value={addedItem?.episode_name ?? null}
+            />
+            <label
+                class="text-label" 
+                for="show"
+            >
+                show name / mix series
+            </label>
+            <input 
+                class="text"    
+                id="show" 
+                name="show" 
+                type="text"
+                placeholder="show" 
+                value={addedItem?.show_name ?? null}
+            />
+        {/if}
+        <label 
+            class="text-label" 
+            for="post-text"
+        >
+            thoughts
+        </label>
+        <textarea
+            cols="1"
+            rows="5"
+            id="post-text"
+            name="post-text"
+            spellcheck=true 
+            placeholder="Some prompts: What do you like about this? Does it remind you of something? Are you looking for more like it?"
+        ></textarea>
+        <button class="standard" formaction='?/post' type="submit">
+            submit
+        </button>
+    </form>
+{/snippet}
 
 <div class="border">
     <PanelHeader>
         {#snippet headerText()}
-                <span >
+            <span >
                 what are you listening to?
             </span>
-            {/snippet}
+        {/snippet}
     </PanelHeader>
     <Tabs.Root>
         <Tabs.List>
@@ -53,105 +220,7 @@
                     Search for an album to autofill this form.
                 </Tooltip>
             </div>
-            <form method="POST" action="?/postAlbum" name="album" class="vertical" use:enhance>
-                <input
-                    id="item-type" 
-                    name="item-type" 
-                    type="hidden" 
-                    value="release_group"
-                />
-                <input
-                    id="mbid" 
-                    name="mbid" 
-                    type="hidden" 
-                    value={addedItem?.releaseGroupMbid ?? null} 
-                />
-                <div class="tooltip-group">
-                    <label 
-                        class="text-label" 
-                        for="listen-url"
-                    >
-                        listen link
-                    </label>
-                    <Tooltip>
-                        A link from Bandcamp, Soundcloud, or YouTube can be embedded in your post. 
-                    </Tooltip>
-                </div>
-                <input 
-                    class="text" 
-                    id="listen-url" 
-                    name="listen-url" 
-                    type="url"
-                    placeholder="paste link" 
-                />
-                <div class="label-group">
-                    <label 
-                        class="text-label" 
-                        for="artist-name"
-                    >
-                        artist name
-                    </label>        
-                    <span class="label-explainer">
-                        * required
-                    </span>
-                </div>
-                <input  
-                    id="artist-mbid" 
-                    name="artist-mbid" 
-                    type="hidden"
-                    value={addedItem?.artistMbid ?? null}
-                />
-                <input
-                    class="text"  
-                    id="artist-name" 
-                    name="artist-name" 
-                    type="text"
-                    placeholder="artist name" 
-                    value={addedItem?.artist_name ?? null}
-                />
-                <div class="label-group">
-                    <label 
-                        class="text-label" 
-                        for="album-name"
-                    >
-                        album name
-                    </label>
-                    <span class="label-explainer">
-                        * required
-                    </span>
-                </div>
-                <input 
-                    class="text" 
-                    id="album-name" 
-                    name="album-name" 
-                    type="text"
-                    placeholder="album name"
-                    value={addedItem?.release_group_name ?? null}
-                />
-                <input  
-                    id="release-group-mbid" 
-                    name="release-group-mbid" 
-                    type="hidden"
-                    value={addedItem?.release_group_mbid ?? null}
-                />
-                <label 
-                    class="text-label" 
-                    for="post-text"
-                >
-                    thoughts
-                </label>
-                <textarea
-                    cols="1"
-                    rows="5"
-                    id="post-text"
-                    name="post-text"
-                    spellcheck=true 
-                    placeholder="Some prompts: What do you like about this? Does it remind you of something? Are you looking for more like it?"
-                ></textarea>
-                <button class="standard" formaction="?/postAlbum" type="submit">
-                    submit
-                </button>
-            </form>
+            {@render postForm('release_group', addedItem)}
         </Tabs.Content>
         <Tabs.Content value="track">
             <div class="search">
@@ -167,240 +236,10 @@
                     Search for a track to autofill this form.
                 </Tooltip>
             </div>
-            <form method="POST"  name="track" class="vertical" action="?/postTrack" use:enhance>
-                <input
-                    id="item-type" 
-                    name="item-type" 
-                    type="hidden" 
-                    value="recording"
-                />
-                <input
-                    id="mbid-type" 
-                    name="mbid-type" 
-                    type="hidden" 
-                    value="recording"
-                />
-                <input
-                    id="mbid" 
-                    name="mbid" 
-                    type="hidden" 
-                    value={addedItem?.recording_mbid ?? null} 
-                />
-                <div class="tooltip-group">
-                    <label 
-                        class="text-label" 
-                        for="listen-url"
-                    >
-                        listen link
-                    </label>
-                    <Tooltip>
-                        A link from Bandcamp, Soundcloud, or YouTube can be embedded in your post. 
-                    </Tooltip>
-                </div>
-                <input 
-                    class="text" 
-                    id="listen-url" 
-                    name="listen-url" 
-                    type="url"
-                    placeholder="paste link" 
-                />
-                <div class="label-group">
-                    <label 
-                        class="text-label" 
-                        for="artist-name"
-                    >
-                        artist name
-                    </label>        
-                    <span class="label-explainer">
-                        * required
-                    </span>
-                </div>
-                <input
-                    class="text"  
-                    id="artist-name" 
-                    name="artist-name" 
-                    type="text"
-                    placeholder="artist name" 
-                    value={addedItem?.artist_name ?? null}
-                />
-                <input  
-                    id="artist-mbid" 
-                    name="artist-mbid" 
-                    type="hidden"
-                    value={addedItem?.artist_mbid ?? null}
-                />
-                <label 
-                    class="text-label" 
-                    for="album-name"
-                >
-                    album name
-                </label>
-                <input 
-                    class="text" 
-                    id="album-name" 
-                    name="album-name" 
-                    type="text"
-                    placeholder="album name" 
-                    value={addedItem?.release_group_name ?? null}
-                />
-                <input  
-                    id="release-group-mbid" 
-                    name="release-group-mbid" 
-                    type="hidden"
-                    value={addedItem?.release_group_mbid ?? null}
-                />
-                <div class="label-group">
-                    <label
-                        class="text-label" 
-                        for="track-name"
-                    >
-                        track name
-                    </label>
-                    <span class="label-explainer">
-                        * required
-                    </span>
-                </div>
-                <input 
-                    class="text"    
-                    id="track-name" 
-                    name="track-name" 
-                    type="text"
-                    placeholder="track title" 
-                    value={addedItem?.recording_name ?? null}
-                />
-                <input  
-                    id="recording-mbid" 
-                    name="recording-mbid" 
-                    type="hidden"
-                    value={addedItem?.recording_mbid ?? null}
-                />
-                <label 
-                    class="text-label" 
-                    for="postText"
-                >
-                    thoughts
-                </label>
-                <textarea
-                    cols="1"
-                    rows="5"
-                    id="post-text"
-                    name="post-text"
-                    spellcheck=true 
-                    placeholder="Some prompts: What do you like about this? Does it remind you of something? Are you looking for more like it?"
-                ></textarea>
-                <button class="standard" formaction="?/postTrack" type="submit">
-                    submit
-                </button>
-            </form>
+            {@render postForm('recording', addedItem)}
         </Tabs.Content>
         <Tabs.Content value="mix">
-            <form method="POST" name="mix" class="vertical" action="?/postMix" use:enhance>
-                <input
-                    id="item-type" 
-                    name="item-type" 
-                    type="hidden" 
-                    value="episode"
-                />
-                <input
-                    id="mbid" 
-                    name="mbid" 
-                    type="hidden" 
-                    value={addedItem?.artist_mbid ?? null} 
-                />
-                <div class="tooltip-group">
-                    <label 
-                        class="text-label" 
-                        for="listen-url"
-                    >
-                        listen link
-                    </label>
-                    <Tooltip>
-                        A link from Bandcamp, Soundcloud, Mixcloud, or YouTube can be embedded in your post. 
-                    </Tooltip>
-                </div>
-                <input 
-                    class="text" 
-                    id="listen-url" 
-                    name="listen-url" 
-                    type="url"
-                    placeholder="paste link" 
-                />
-                <div class="label-group">
-                    <label 
-                        class="text-label" 
-                        for="artist-name"
-                    >
-                    host / dj
-                    </label>        
-                    <span class="label-explainer">
-                        * required
-                    </span>
-                </div>
-                <input
-                    class="text"  
-                    id="artist-name" 
-                    name="artist-name" 
-                    type="text"
-                    placeholder="artist name" 
-                    value={addedItem?.artist_name ?? null}
-                />
-                <input  
-                    id="artist-mbid" 
-                    name="artist-mbid" 
-                    type="hidden"
-                    value={addedItem?.artist_mbid ?? null}
-                />
-                <div class="label-group">
-                    <label
-                        class="text-label" 
-                        for="episode"
-                    >
-                        episode / mix title
-                    </label>
-                    <span class="label-explainer">
-                        * required
-                    </span>
-                </div>
-                <input 
-                    class="text"    
-                    id="episode" 
-                    name="episode" 
-                    type="text"
-                    placeholder="episode" 
-                    value={addedItem?.episode_name ?? null}
-                />
-                <label
-                    class="text-label" 
-                    for="show"
-                >
-                    show name / mix series
-                </label>
-                <input 
-                    class="text"    
-                    id="show" 
-                    name="show" 
-                    type="text"
-                    placeholder="show" 
-                    value={addedItem?.show_name ?? null}
-                />
-                <label 
-                    class="text-label" 
-                    for="post-text"
-                >
-                    thoughts
-                </label>
-                <textarea
-                    cols="1"
-                    rows="5"
-                    id="post-text"
-                    name="post-text"
-                    spellcheck=true 
-                    placeholder="Some prompts: What do you like about this? Does it remind you of something? Are you looking for more like it?"
-                ></textarea>
-                <button class="standard" formaction="?/postMix" type="submit">
-                    submit
-                </button>
-            </form>
+            {@render postForm('episode', addedItem)}
         </Tabs.Content>
     </Tabs.Root>
 </div>

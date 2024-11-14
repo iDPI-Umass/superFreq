@@ -48,7 +48,7 @@
         searchPlaceholder="Search for an album"
         bind:addedItems={avatarItem}
         bind:newItemAdded={newItemAdded}
-        mode="avatar-search"
+        mode="single"
         limit="10"
         bind:imgPromise={imgPromise}
     >

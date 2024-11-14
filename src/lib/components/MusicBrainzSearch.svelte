@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ListModal from 'src/lib/components/modals/ListModal.svelte'
-	import { mbSearch, addCollectionItemNoImg, getCoverArt, addSingleItem, mbidCateogory } from '$lib/resources/musicbrainz'
+	import { mbSearch, addCollectionItemNoImg, getCoverArt, addSingleItemNoImg, mbidCateogory, artistName, releaseGroupName, releaseGroupMbid, recordingName, itemDate, artistOrigin } from '$lib/resources/musicbrainz'
 	import CoverArt from './CoverArt.svelte';
 
 	interface ComponentProps {
@@ -44,70 +44,13 @@
 		return { mbData, searchComplete, showModal }
 	}
 
-	function artistName ( item: any ) {
-		let name = ''
-		if ( searchCategory == 'artists' ) {
-			name = item["name"] ?? ''
-		}
-		else if ( searchCategory == 'release_groups' ) {
-			name = item["artist-credit"][0]["artist"]["name"] ?? ''
-		}
-		else if ( searchCategory == 'recordings' ) {
-			name = item["artist-credit"][0]["artist"]["name"] ?? ''
-		}
-		return name
-	}
-
-	function releaseGroupName ( item: any ) {
-		let name = ''
-		if ( searchCategory == 'release_groups' ) {
-			name = item["title"] ?? ''
-		}
-		else if ( searchCategory == 'recordings' ) {
-			name = item["releases"] ? item["releases"][0]["release-group"]["title"] : ''
-		}
-		return name
-	}
-
-	function releaseGroupMbid ( item: any ) {
-		let mbid = ''
-		if ( searchCategory == 'release_groups' ) {
-			mbid = item["id"]
-		}
-		else if ( searchCategory == 'recordings' ) {
-			mbid = item["releases"][0]["release-group"]["id"]
-		}
-		return mbid
-	}
-
-	function recordingName ( item: any ) {
-		const name = item["title"] ?? ''
-		return name
-	}
-
-	function itemDate ( item: any ) {
-		let date = ''
-		if ( searchCategory == 'artists' ) {
-			date = item["life-span"] ? item["life-span"]["begin"] : ''
-		}
-		else if ( searchCategory == 'release_groups' ) {
-			date = item["first-release-date"] ?? ''
-		}
-		return date
-	}
-
-	function artistOrigin ( item: any ) {
-		const origin = item["area"] ? item["area"]["name"] : ''
-		return origin
-	}
-
 	const mbidCategory = mbidCateogory( searchCategory )
 	
 	// Get album art and handle promise for CoverArt component
 	async function addItem ( mode: string, item: App.RowData ) {
 		addingItem = true
 		if ( mode == 'single' ) {
-			const singleItem = await addSingleItem( item, addedItems, searchCategory )
+			const singleItem = await addSingleItemNoImg( item, addedItems, searchCategory )
 			addedItems = singleItem.addedItems
 			query = ""
 			searchComplete = false
@@ -115,9 +58,9 @@
 			showModal = false
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
 				const releaseGroup = {
-					mbid: releaseGroupMbid(item),
-					artist_name: artistName(item),
-					release_group_name: releaseGroupName(item)
+					mbid: releaseGroupMbid(searchCategory, item),
+					artist_name: artistName(searchCategory, item),
+					release_group_name: releaseGroupName(searchCategory, item)
 				}
 				const { success, coverArtArchiveUrl, lastFmCoverArtUrl } = await getCoverArt(releaseGroup)
 				addedItems["img_url"] = success ? coverArtArchiveUrl : null
@@ -178,7 +121,9 @@
 									<button 
 										class="standard"
 										aria-label="add item"
-										onclick={() => addItem(mode, item)}
+										onclick={() => {
+											addItem(mode, item)
+											}}
 										disabled={addingItem}
 					
 									>
@@ -187,38 +132,38 @@
 								</div>
 								{#if searchCategory == "artists"}
 									<span>
-										{artistName(item)}
+										{artistName(searchCategory, item)}
 									</span>
 									<br />
-									{artistOrigin(item)}
+									{artistOrigin(searchCategory, item)}
 									<br /> 
-									{itemDate(item)}
+									{itemDate(searchCategory, item)}
 								{:else if searchCategory == "release_groups"}
 									<span>
 										<span class="metadata-bold" >
-											{releaseGroupName(item)}
+											{releaseGroupName(searchCategory, item)}
 										</span>  
 										by 
-										{artistName(item)}
+										{artistName(searchCategory, item)}
 										<br /> 
-										{itemDate(item)}
+										{itemDate(searchCategory, item)}
 									</span>
 								{:else if searchCategory == "recordings"}
 									<span>
-										{recordingName(item)}
+										{recordingName(searchCategory, item)}
 									</span> 
 									by 
-									{artistName(item)}
+									{artistName(searchCategory, item)}
 									<br />
-									{releaseGroupName(item)}
+									{releaseGroupName(searchCategory, item)}
 								{/if}
 							</div>
 							{#if searchCategory == "release_groups" || searchCategory == "recordings"}
 								<div class="result-image">
 									<CoverArt
-										artistName={artistName(item)}
-										releaseGroupName={releaseGroupName(item)}
-										altText='album {releaseGroupName(item)} by artist {artistName(item)}'
+										artistName={artistName(searchCategory, item)}
+										releaseGroupName={releaseGroupName(searchCategory, item)}
+										altText='album {releaseGroupName(searchCategory, item)} by artist {artistName(searchCategory, item)}'
 									></CoverArt>
 								</div>
 							{/if}
