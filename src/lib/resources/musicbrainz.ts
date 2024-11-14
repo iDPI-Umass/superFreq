@@ -488,6 +488,5 @@ export const addSingleItemNoImg = async function  (
         "label": label.name,
         "notes": null,
     }
-    console.log(addedItems)
     return { addedItems }
 }

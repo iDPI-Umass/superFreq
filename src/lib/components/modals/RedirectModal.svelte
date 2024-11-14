@@ -22,21 +22,7 @@
     let dialog: any = $state()
     
     let delayMs = $state(delay * 1000) 
-
-    // $effect (() => {
-    //     if ( showModal == true ) {
-    //         tick().then(() => {
-    //             setTimeout(() => {
-    //                 goto(redirectPath)
-    //             }, delayMs)
-    //         })
-    //         // .then(() => setInterval(() => {
-    //         //         delay -= 1
-    //         //         console.log(delay)
-    //         //     }, 1000))
-    //     }
-    // })
-
+    
     $effect (() => {
         if ( dialog && showModal ) dialog.showModal()
 		if ( dialog && !showModal ) dialog.close()
