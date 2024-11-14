@@ -408,7 +408,13 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
     }
 
     async function parseYouTubeHtml ( html: any, listenUrlString: string) {
-        const itemId = listenUrlString.includes('youtu.be') ? listenUrlString.split('/')[3].split('?')[0] : listenUrlString.split('=')[1]
+        let itemId = listenUrlString.includes('youtu.be') ? listenUrlString.split('/')[3].split('?')[0] : listenUrlString.split('=')[1]
+
+        if ( itemId.includes('&')) {
+            const elements = itemId.split('&')
+            itemId = elements[0]
+        }
+
         const {document} = await parseHTML(html)
         const pageTitle = document.title
         let title: string | null = null
