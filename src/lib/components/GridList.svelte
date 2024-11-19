@@ -41,7 +41,6 @@
         "condensed-grid": ["media-grid-condensed", "media-grid-item"],
     }
 
-    console.log( layout, format[layout])
     let items = $state(collectionContents)
     $effect(() => { items = collectionContents })
 
@@ -71,15 +70,16 @@
         }
 	}
 
-    const undersizedCollection = ( mode == 'view' && ( layout == 'grid' && collectionContents.length < 6 ) || ( layout == 'condensed-grid' && collectionContents.length < 4 )) ? true : false
+    const undersizedCollection = $derived(( mode == 'view' && ( layout == 'grid' && collectionContents.length < 6 ) || ( layout == 'condensed-grid' && collectionContents.length < 4 )) ? true : false)
 
-    function getGridSpacers ( items: any ) {
+    function getGridSpacers ( items: any, layout: string ) {
         const spacesArray = [] as number[]
         if ( !undersizedCollection || layout == 'list' ) {
             return spacesArray
         }
 
-        const remainingSpaces = ( layout == 'grid' ) ? 6 % items.length : 4 % items.length
+        const remainingSpaces = ( layout == 'grid' ) ? items.length % 6 : items.length % 4
+
         let n = 0
         while ( n < remainingSpaces ) {
             spacesArray.push(n)
@@ -88,7 +88,7 @@
         return spacesArray
     }
 
-    const gridSpacers = $derived(getGridSpacers(items))
+    const gridSpacers = $derived(getGridSpacers(items, layout))
 </script>
 
 <svelte:options runes={true} />
@@ -129,7 +129,7 @@
 {#snippet underSizedCollection()}
     {#if undersizedCollection}
         {#each gridSpacers as spacer}
-            <div class='media-grid-item'></div>
+            <div class='media-grid-item'> </div>
         {/each}
     {/if}
 {/snippet}
@@ -268,6 +268,7 @@
                         </div>
                     </div>
                 {/if}
+                
             {/each}
             {@render underSizedCollection()}
         </ul>
