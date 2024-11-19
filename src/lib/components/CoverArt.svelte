@@ -29,14 +29,14 @@ Currently configured to server Last.fm images on the client side by default on a
 
 
 
-    const coverArtItem = ( item != null ) ? item : {
+    const coverArtItem = $derived(( item != null ) ? item : {
         'img_url': imgUrl,
         'artist_name': artistName,
         'release_group_name': releaseGroupName
-    }
+    })
 
-    const coverArtArchiveImgUrl = item ? item['img_url'] : null
-    const lastFmImgUrl = item ?  item['last_fm_img_url'] : null
+    const coverArtArchiveImgUrl = $derived(item ? item['img_url'] : null)
+    const lastFmImgUrl = $derived(item ?  item['last_fm_img_url'] : null)
 </script>
 
 <svelte:options runes={true} />
