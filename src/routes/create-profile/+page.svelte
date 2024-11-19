@@ -263,7 +263,7 @@
 <RedirectModal
     showModal={showModal}
 	delay={delay}
-    redirectPath={'/about#guidelines'}
+    redirectPath={'/about/guidelines'}
 >
     {#snippet headerText()}
 		<span >

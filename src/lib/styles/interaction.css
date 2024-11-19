@@ -72,6 +72,7 @@ button.double-border-top {
 	border: var(--freq-border-button);
 	color: var(--freq-color-text-muted);
 	text-transform: uppercase;
+	text-wrap: nowrap;
 }
 
 
@@ -146,6 +147,7 @@ button.like:is(:hover, :focus) {
     background: var(--freq-color-button-lens-active);
     transition: 0.5s cubic;
 }
+
 button.like:active {
     background: var(--freq-color-button-lens-active);
     scale: 90%;
@@ -195,8 +197,25 @@ button.popover-item {
     align-items: end;
     gap: var(--freq-inline-gap);
 	border: none;
+	background: none;
     color: var(--freq-color-text-muted);
     font-size: var(--freq-font-size-small);
+}
+
+button.popover-item:is(:hover, :focus) {
+    background: var(--freq-color-button-lens-active);
+    transition: 0.5s cubic;
+}
+
+button.popover-item:active {
+    background: var(--freq-color-button-lens-active);
+    scale: 90%;
+}
+
+button.popover-item:disabled,
+button.popover-item:is( :disabled:hover, :disabled:focus, :disabled:active ) {
+    background: none;
+    scale: 100%;
 }
 
 /* Buttons layout */

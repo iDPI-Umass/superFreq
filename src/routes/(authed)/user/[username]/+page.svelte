@@ -69,77 +69,79 @@
 
 <div class="profile-info">
     <div class="profile-info-box-left">
-        <div class="cover-art-widget">
-            <div class="avatar-image">
-                <CoverArt
-                    item={avatarItem}
-                    altText={`${displayName}'s avatar: ${avatarReleaseGroupName} by ${avatarArtistName}`}
-                ></CoverArt>
-            </div>
-            {#if isSessionUserProfile}
-                <button 
-                    class="mini"
-                    onclick={() => goto('/account')}
-                >
-                    edit
-                </button>
-            {/if}
-        </div>
-        <div class="profile-info-box-column">
-            <div class="profile-username-buttons-row">
-                <div class="profile-displayname-username-column">
-                    <h1>{profileUserData?.display_name}</h1>
-                    <p class="data-muted">{profileUserData?.username}</p>
+        <div class="avatar-user-data">
+            <div class="cover-art-widget">
+                <div class="avatar-image">
+                    <CoverArt
+                        item={avatarItem}
+                        altText={`${displayName}'s avatar: ${avatarReleaseGroupName} by ${avatarArtistName}`}
+                    ></CoverArt>
                 </div>
-                <div class="profile-buttons-group">
-                {#if isSessionUserProfile }
-                    <button class="double-border-top" onclick={() => goto('/account')}>
-                        <div class="inner-border-condensed">
-                            edit profile
-                        </div>
-                    </button>
-                    <!-- <button class="double-border-top">
-                        <div class="inner-border-condensed">
-                            <div class="buttons-group-icon">
-                                <Settings size="16"></Settings>
-                            </div>
-                        </div>
-                    </button> -->
-                {:else}
-                    <form
-                        method="POST"
-                        action="?/followUser"
-                        use:enhance
+                {#if isSessionUserProfile}
+                    <button 
+                        class="mini"
+                        onclick={() => goto('/account')}
                     >
-                        <input 
-                            type="hidden"
-                            name="profile-user-id" 
-                            id="profile-user-id"
-                            value={profileUserId}
-                        />
-                        <button 
-                            class="standard" 
-                            type="submit"
-                            formaction="?/followUser"
-                        >
-                        {#if followingNow == true}
-                            unfollow
-                        {:else}
-                            + follow
-                        {/if}
-                        </button>  
-                    </form>
-                    <UserActionsMenu
-                        mode='profileMenu'
-                        blocked={profileUserBlocked}
-                        flagged={profileUserFlagged}
-                        profileUserId={profileUserId}
-                        success={form?.userActionSuccess}
-                    ></UserActionsMenu>
+                        edit
+                    </button>
                 {/if}
+            </div>
+            <div class="profile-info-box-column">
+                <div class="profile-user-data-column">
+                    <div class="profile-displayname-username-column">
+                        <h1>{profileUserData?.display_name}</h1>
+                        <p class="data-muted">{profileUserData?.username}</p>
+                    </div>
+                    <p>{profileUserData?.about ?? ''}</p>
                 </div>
             </div>
-            <p>{profileUserData?.about ?? ''}</p>
+        </div>
+        <div class="profile-buttons-group">
+            {#if isSessionUserProfile }
+                <button class="double-border-top" onclick={() => goto('/account')}>
+                    <div class="inner-border-condensed">
+                        edit profile
+                    </div>
+                </button>
+                <!-- <button class="double-border-top">
+                    <div class="inner-border-condensed">
+                        <div class="buttons-group-icon">
+                            <Settings size="16"></Settings>
+                        </div>
+                    </div>
+                </button> -->
+            {:else}
+                <form
+                    method="POST"
+                    action="?/followUser"
+                    use:enhance
+                >
+                    <input 
+                        type="hidden"
+                        name="profile-user-id" 
+                        id="profile-user-id"
+                        value={profileUserId}
+                    />
+                    <button 
+                        class="standard" 
+                        type="submit"
+                        formaction="?/followUser"
+                    >
+                    {#if followingNow == true}
+                        unfollow
+                    {:else}
+                        + follow
+                    {/if}
+                    </button>  
+                </form>
+                <UserActionsMenu
+                    mode='profileMenu'
+                    blocked={profileUserBlocked}
+                    flagged={profileUserFlagged}
+                    profileUserId={profileUserId}
+                    success={form?.userActionSuccess}
+                ></UserActionsMenu>
+            {/if}
         </div>
     </div>
     <div class="profile-info-box-right">
@@ -193,6 +195,7 @@
                 </a>
             </div>
         </div>
+        
     </div>
 </div>
 <div class="border-full-vw"></div>
