@@ -27,7 +27,6 @@
 .profile-info-box-column {
     display: flex;
     flex-direction: column;
-    width: 100%;
     gap: var(--freq-inline-gap);
 }
 .profile-displayname-username-column {
@@ -45,6 +44,7 @@
     width: auto;
     align-items: start;
     justify-content: space-between;
+    gap: var(--freq-spacer-gap);
 }
 
 .profile-user-data-column {
@@ -116,10 +116,8 @@
     .profile-info-box-column {
         width: auto;
     }
-    .profile-user-data-buttons-row {
+    .profile-user-data-buttons-row{
         flex-wrap: wrap;
-        align-items: flex-start;
-        justify-content: flex-start;
         gap: var(--freq-spacer-gap-quarter);
     }
     .profile-buttons-group {
