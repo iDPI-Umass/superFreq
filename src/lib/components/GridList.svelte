@@ -18,6 +18,7 @@
         deletedItems?: any
         collectionReturned?: boolean
         collectionType: string
+        collectionStatus: string
         layout: string
         mode: string
         imgPromise?: any
@@ -28,6 +29,7 @@
         deletedItems = $bindable([]),
         collectionReturned,
         collectionType, // "artists" | "release_groups" | "recordings" | "labels"
+        collectionStatus, // "open", "public", "private", "deleted"
         layout, // "grid" | "condensed-grid" | "list"
         mode, //"view" | "edit"
         imgPromise = $bindable(null)
@@ -68,15 +70,16 @@
         }
 	}
 
-    const undersizedCollection = ( mode == 'view' && ( layout == 'grid' && collectionContents.length < 6 ) || ( layout == 'condensed-grid' && collectionContents.length < 4 )) ? true : false
+    const undersizedCollection = $derived(( mode == 'view' && ( layout == 'grid' && collectionContents.length < 6 ) || ( layout == 'condensed-grid' && collectionContents.length < 4 )) ? true : false)
 
-    function getGridSpacers ( items: any ) {
+    function getGridSpacers ( items: any, layout: string ) {
         const spacesArray = [] as number[]
         if ( !undersizedCollection || layout == 'list' ) {
             return spacesArray
         }
 
-        const remainingSpaces = ( layout == 'grid' ) ? 6 % items.length : 4 % items.length
+        const remainingSpaces = ( layout == 'grid' ) ? items.length % 6 : items.length % 4
+
         let n = 0
         while ( n < remainingSpaces ) {
             spacesArray.push(n)
@@ -85,7 +88,7 @@
         return spacesArray
     }
 
-    const gridSpacers = $derived(getGridSpacers(items))
+    const gridSpacers = $derived(getGridSpacers(items, layout))
 </script>
 
 <svelte:options runes={true} />
@@ -115,17 +118,23 @@
     {/await}
 {/snippet}
 
+{#snippet itemAttribution(item: any, status: string)}
+    {#if  status == "open"}
+        <a class="attribution" href="/user/{item.inserted_by_username}">
+            {item.inserted_by_display_name}
+        </a>
+    {/if}
+{/snippet}
+
 {#snippet underSizedCollection()}
     {#if undersizedCollection}
         {#each gridSpacers as spacer}
-            <div class='media-grid-item'></div>
+            <div class='media-grid-item'> </div>
         {/each}
     {/if}
 {/snippet}
 
-{#await collectionContents.length > 0}
-<div></div>
-{:then}
+{#await collectionContents.length > 0 then}
     {#if mode == "edit"}
         <ul 
         aria-label="collection items" 
@@ -204,79 +213,78 @@
             {/if}
         </ul>
     {:else if mode == "view" }
-        {#if collectionType == "artists"}
-            <div class={format[layout][0]}>
-                {#each collectionContents as contentItem}
-                <div class={format[layout][1]}>
-                    <p>
-                        <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
-                            
-                                {contentItem["artists"]["artist_name"]}
-                        </a>
-                    </p>
-                </div>
-                {/each}
-                {@render underSizedCollection()}
-            </div>
-        {:else if collectionType == "release_groups"}
-            <div class={format[layout][0]}>
-                {#each collectionContents as contentItem}
-                <div class={format[layout][1]}>
-                    <CoverArt
-                        item={contentItem}
-                        altText={contentItem['release_group_name']}
-                    ></CoverArt>
-                    <div class="metadata-blurb">
-                        <h2>
-                            <a href={`https://musicbrainz.org/release-group/${contentItem["release_group_mbid"]}`}>
-                                {contentItem["release_group_name"]}
-                            </a>
-                        </h2>
+        <ul class={format[layout][0]}>
+            {#each collectionContents as contentItem}
+                {#if collectionType == "artists"}                    
+                    <li class={format[layout][1]}>
                         <p>
                             <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
-                                {contentItem["artist_name"]}
+                                
+                                    {contentItem["artists"]["artist_name"]}
                             </a>
                         </p>
+                        {@render itemAttribution(contentItem, collectionStatus)}
+                    </li>
+                {:else if collectionType == "release_groups"}
+                    <li class={format[layout][1]}>
+                        <CoverArt
+                            item={contentItem}
+                            altText={contentItem['release_group_name']}
+                        ></CoverArt>
+                        <div class="metadata-blurb">
+                            <h2>
+                                <a href={`https://musicbrainz.org/release-group/${contentItem["release_group_mbid"]}`}>
+                                    {contentItem["release_group_name"]}
+                                </a>
+                            </h2>
+                            <p>
+                                <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
+                                    {contentItem["artist_name"]}
+                                </a>
+                            </p>
+                        </div>
+                        {@render itemAttribution(contentItem, collectionStatus)}
+                    </li>
+                {:else if collectionType == "recordings"}
+                    <div class={format[layout][0]}>
+                        <div class={format[layout][1]}>
+                            <CoverArt
+                                item={contentItem}
+                                altText={contentItem["recording_name"]}
+                            ></CoverArt>
+                            <div class="metadata-blurb">
+                                <h2>
+                                    <a href={`https://musicbrainz.org/recording/${contentItem["recording_mbid"]}`}>
+                                        {contentItem["recording_name"]}
+                                    </a>
+                                </h2>
+                                <p>
+                                    <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
+                                        {contentItem["artist_name"]}
+                                    </a>
+                                </p>
+                                {@render itemAttribution(contentItem, collectionStatus)}
+                            </div>
+                        </div>
                     </div>
-                </div>
-                {/each}
-                {@render underSizedCollection()}
-            </div>
-        {:else if collectionType == "recordings"}
-            <div class={format[layout][0]}>
-                {#each collectionContents as contentItem}
-                <div class={format[layout][1]}>
-                    <CoverArt
-                        item={contentItem}
-                        altText={contentItem["recording_name"]}
-                    ></CoverArt>
-                    <div class="metadata-blurb">
-                        <h2>
-                            <a href={`https://musicbrainz.org/recording/${contentItem["recording_mbid"]}`}>
-                                {contentItem["recording_name"]}
-                            </a>
-                        </h2>
-                        <p>
-                            <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
-                                {contentItem["artist_name"]}
-                            </a>
-                        </p>
-                    </div>
-                </div>
-                {/each}
-                {@render underSizedCollection()}
-            </div>
-        {/if}
+                {/if}
+                
+            {/each}
+            {@render underSizedCollection()}
+        </ul>
     {/if}
 {/await}
 
 <style>
-    li {
+    /* li {
         display: flex;
         flex-direction: row;
         gap: 0.25em;
         margin: auto 0;
-    }
+    } */
+     ul {
+        padding: 0;
+     }
     button.standard {
         display: flex;
         flex-direction: row;
@@ -292,6 +300,15 @@
         width: 200px;
         align-items: center;
         margin-right: 0;
+    }
+    a.attribution {
+        width: fit-content;
+        background: var(--freq-color-background-badge-light);
+        margin: 0 0 0 auto;
+        padding: var(--freq-height-spacer-quarter) var(--freq-width-spacer-quarter);
+        color: var(--freq-color-text-medium);
+        font-size: var(--freq-font-size-small);
+        text-decoration: underline;
     }
     @media screen and (max-width: 600px) {
         .editor-interactions {

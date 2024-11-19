@@ -4,6 +4,7 @@
 
     interface ComponentProps {
         collectionType: string
+        collectionStatus: string
         collectionItems: App.RowData[]
         deletedItems?: App.RowData[]
         itemAdded: boolean
@@ -12,6 +13,7 @@
 
     let {
         collectionType,
+        collectionStatus,
         collectionItems = $bindable([]),
         deletedItems = $bindable([]),
         itemAdded = $bindable(false),
@@ -57,6 +59,7 @@
     bind:collectionContents={collectionItems}
     bind:deletedItems={deletedItems}
     collectionType={collectionType}
+    collectionStatus={collectionStatus}
     layout="list"
     mode="edit"
     bind:imgPromise={imgPromise}

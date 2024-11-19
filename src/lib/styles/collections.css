@@ -153,9 +153,9 @@
 	display: grid;
 	grid-template-columns: repeat(6, 1fr);
 	grid-template-rows: minmax(min-content, max-content);
-	width: 100%;
+	width: inherit;
 	gap: var(--freq-grid-gap);
-	margin-top: -1px;
+	margin: -1px 0 0 0;
 	overflow: hidden;
 	--line-offset: calc(var(--freq-grid-gap)/2);
 }
@@ -202,7 +202,7 @@
 	display: flex;
 	flex-direction: column;
 	max-width: 1fr;
-	height: 100%;
+	height: auto;
 	align-items: top;
 	justify-content: center;
 	margin-left: -1px;

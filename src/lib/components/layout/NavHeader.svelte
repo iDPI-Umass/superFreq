@@ -241,9 +241,10 @@
     flex-direction: row;
     max-width: var(--freq-desktop-width);
     padding: 2vh 2vw;
+    margin: 0 auto;
     font-family: "Krona_One", sans-serif;
     color: #8091A3;
-    gap: 0.25em;
+    gap: var(--freq-inline-gap);
     align-items: center;
     justify-content: space-between;
   }
@@ -270,6 +271,9 @@
     margin: 0 auto;
   }
   @media screen and (max-width: 770px) {
+    header {
+      justify-content: center;
+    }
     img {
       position: sticky;
       height: 32px; 
@@ -282,7 +286,7 @@
     nav.narrow {
       display: flex;
       max-width: 100vw;
-      gap: var(--freq-inline-gap-);
+      gap: var(--freq-inline-gap);
     }
   }
   </style>

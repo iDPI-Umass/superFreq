@@ -40,7 +40,9 @@ export const load: PageServerLoad = async ({ parent, params, locals: { safeGetSe
 }
 
 export const actions: Actions = {
-  updateCollection: async ({ request }) => {
+  updateCollection: async ({ request, locals: { safeGetSession} }) => {
+    const { session } = await safeGetSession()
+    const sessionUserId = session?.user.id as string
     const data = await request.formData()
 
     const collectionTitle = data.get('collection-title')
@@ -64,7 +66,7 @@ export const actions: Actions = {
       updated_by: updatedBy
     }
 
-    const update = await updateCollection( collectionInfo, activeAndDeletedCollectionItems )
+    const update = await updateCollection( sessionUserId, collectionInfo, activeAndDeletedCollectionItems )
 
     if ( !update ) {
       alert('update not successful') 

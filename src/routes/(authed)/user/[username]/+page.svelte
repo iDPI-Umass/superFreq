@@ -89,7 +89,7 @@
             <div class="profile-info-box-column">
                 <div class="profile-user-data-column">
                     <div class="profile-displayname-username-column">
-                        <h1>{profileUserData?.display_name}</h1>
+                        <h2>{profileUserData?.display_name}</h2>
                         <p class="data-muted">{profileUserData?.username}</p>
                     </div>
                     <p>{profileUserData?.about ?? ''}</p>

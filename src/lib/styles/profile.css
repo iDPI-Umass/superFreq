@@ -13,7 +13,7 @@
     width: var(--freq-image-thumbnail-medium);
     height: var(--freq-image-thumbnail-medium);
 }
-.profile-info h1{
+.profile-info h2 {
     font-size: var(--freq-font-size-medium);
 }
 .profile-info-box-left {
@@ -121,6 +121,8 @@
         border-top: var(--freq-border-panel);
     }
     .profile-stats-box {
-        margin: 0;
+        width: 100%;
+        justify-content: center;
+        margin: 0 auto;
     }
 }

@@ -269,7 +269,7 @@ export const prepareMusicDataUpsert = function ( collectionItems: App.RowData, c
 Parse data for table upsert in format expected by collections_contents. null item_position means item is deleted from collection.
 */
 
-export const populateCollectionContents = function ( collectionItems: App.RowData, collectionId: string ) {
+export const populateCollectionContents = function ( sessionUserId: string, collectionItems: App.RowData, collectionId: string ) {
     
     let collectionContents = [] as any
 
@@ -291,7 +291,9 @@ export const populateCollectionContents = function ( collectionItems: App.RowDat
                 "id": thisItem["original_id"],
                 "collection_id": collectionId,
                 "inserted_at": thisItem["inserted_at"] ?? timestampISO,
+                "inserted_by": thisItem['inserted_by'],
                 "updated_at": timestampISO,
+                "updated_by": sessionUserId,
                 "artist_mbid": thisItem["artist_mbid"],
                 "release_group_mbid": thisItem["release_group_mbid"],
                 "recording_mbid": thisItem["recording_mbid"],
@@ -304,7 +306,9 @@ export const populateCollectionContents = function ( collectionItems: App.RowDat
             collectionContents = [...collectionContents, {
                 "collection_id": collectionId,
                 "inserted_at": thisItem["inserted_at"] ?? timestampISO,
+                "inserted_by": sessionUserId,
                 "updated_at": timestampISO,
+                "updated_by": sessionUserId,
                 "artist_mbid": thisItem["artist_mbid"],
                 "release_group_mbid": thisItem["release_group_mbid"],
                 "recording_mbid": thisItem["recording_mbid"],
