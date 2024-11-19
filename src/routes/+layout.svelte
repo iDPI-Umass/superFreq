@@ -15,7 +15,7 @@
 	import { onMount, onDestroy } from 'svelte'
 
 	import { profileStoresObject } from '$lib/stores.ts'
-	import Header from "$lib/components/headers/Header/page.svelte"
+	import Header from "src/lib/components/layout/NavHeader.svelte"
 	import type { Snippet } from 'svelte'
 	import type { LayoutData } from "./$types"
 	
