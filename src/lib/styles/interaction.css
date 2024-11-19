@@ -72,6 +72,7 @@ button.double-border-top {
 	border: var(--freq-border-button);
 	color: var(--freq-color-text-muted);
 	text-transform: uppercase;
+	text-wrap: nowrap;
 }
 
 

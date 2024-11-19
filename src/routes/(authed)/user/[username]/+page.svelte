@@ -85,13 +85,17 @@
                 </button>
             {/if}
         </div>
-        <div class="profile-info-box-column">
-            <div class="profile-username-buttons-row">
-                <div class="profile-displayname-username-column">
-                    <h1>{profileUserData?.display_name}</h1>
-                    <p class="data-muted">{profileUserData?.username}</p>
+        <div class="profile-user-data-buttons-row">
+            <div class="profile-info-box-column">
+                <div class="profile-user-data-column">
+                    <div class="profile-displayname-username-column">
+                        <h1>{profileUserData?.display_name}</h1>
+                        <p class="data-muted">{profileUserData?.username}</p>
+                    </div>
+                    <p>{profileUserData?.about ?? ''}</p>
                 </div>
-                <div class="profile-buttons-group">
+            </div>
+            <div class="profile-buttons-group">
                 {#if isSessionUserProfile }
                     <button class="double-border-top" onclick={() => goto('/account')}>
                         <div class="inner-border-condensed">
@@ -137,9 +141,7 @@
                         success={form?.userActionSuccess}
                     ></UserActionsMenu>
                 {/if}
-                </div>
             </div>
-            <p>{profileUserData?.about ?? ''}</p>
         </div>
     </div>
     <div class="profile-info-box-right">
