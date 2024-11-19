@@ -264,6 +264,7 @@
   }
   .buttons-group {
     display: flex;
+    max-width: 80%;
     flex-direction: row;
     margin: 0 auto;
   }
