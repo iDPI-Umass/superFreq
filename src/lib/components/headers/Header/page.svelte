@@ -233,7 +233,7 @@
   .grid-background {
     display: flex;
     flex-direction: column;
-    width: 100vw;
+    max-width: 100vw;
     background: var(--freq-grid-dark-background);
   }
   header {
@@ -254,7 +254,8 @@
       margin: auto 1vw;
   }
   nav {
-    margin-right: 10%;
+    display: flex;
+    flex-direction: row;
   }
   nav.narrow {
     display: none
@@ -269,11 +270,19 @@
     margin: 0 auto;
   }
   @media screen and (max-width: 770px) {
+    img {
+      position: sticky;
+      height: 32px; 
+      width: auto;
+      margin: auto;
+    }
     nav.wide {
       display: none;
     }
     nav.narrow {
       display: flex;
+      max-width: 100vw;
+      gap: var(--freq-inline-gap-);
     }
   }
   </style>
