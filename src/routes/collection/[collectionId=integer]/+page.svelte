@@ -17,6 +17,7 @@
 
 
     const collectionType = $derived(collectionInfo?.type as string)
+    const collectionStatus = $derived(collectionInfo?.status as string)
     const collectionUpdatedAt = $derived(collectionInfo?.updated_at as Date)
 
     let gridListSelect = $state("grid")
@@ -29,9 +30,6 @@
 
     
     const updatedAt = $derived(new Date(collectionUpdatedAt).toLocaleDateString())
-
-    const collectionStatus = $derived(collectionInfo?.status as string)
-
 </script>
 
 <svelte:options runes={true} />
@@ -134,10 +132,10 @@
             collectionContents={collectionContents}
             collectionReturned={viewPermission}
             collectionType={collectionType}
+            collectionStatus={collectionStatus}
             layout={gridListSelect}
             mode="view"
         >
         </GridList>
-
     </div>
 </div>

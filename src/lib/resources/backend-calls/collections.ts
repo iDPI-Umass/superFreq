@@ -319,12 +319,18 @@ export const selectViewableCollectionContents = async function ( collectionId: s
             const collectionContents = await trx
             .selectFrom('collections_contents as contents')
             .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
+            .leftJoin('profiles as insert_profile', 'contents.inserted_by', 'insert_profile.id')
+            .leftJoin('profiles as update_user', 'contents.updated_by', 'update_user.id')
             .select([
                 'contents.id as id',
                 'contents.collection_id as collection_id',
                 'contents.item_position as item_position',
                 'contents.artist_mbid as artist_mbid',
-                'artists.artist_name as artist_name'
+                'artists.artist_name as artist_name',
+                'insert_profile.username as inserted_by_username',
+                'insert_profile.display_name as inserted_by_display_name',
+                'update_user.username as updated_by_username',
+                'update_user.display_name as updated_by_display_name'
             ])
             .where('contents.collection_id', '=', collectionId)
             .where('contents.item_position', 'is not', null)
@@ -338,6 +344,8 @@ export const selectViewableCollectionContents = async function ( collectionId: s
             .selectFrom('collections_contents as contents')
             .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
             .innerJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
+            .leftJoin('profiles as insert_profile', 'contents.inserted_by', 'insert_profile.id')
+            .leftJoin('profiles as update_user', 'contents.updated_by', 'update_user.id')
             .select([
                 'contents.id as id',
                 'contents.collection_id as collection_id',
@@ -347,7 +355,11 @@ export const selectViewableCollectionContents = async function ( collectionId: s
                 'release_groups.release_group_name as release_group_name',
                 'release_groups.release_group_mbid as release_group_mbid',
                 'release_groups.img_url as img_url',
-                'release_groups.last_fm_img_url as last_fm_img_url'
+                'release_groups.last_fm_img_url as last_fm_img_url',
+                'insert_profile.username as inserted_by_username',
+                'insert_profile.display_name as inserted_by_display_name',
+                'update_user.username as updated_by_username',
+                'update_user.display_name as updated_by_display_name'
             ])
             .where('contents.collection_id', '=', collectionId)
             .where('contents.item_position', 'is not', null)
@@ -362,6 +374,8 @@ export const selectViewableCollectionContents = async function ( collectionId: s
             .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
             .innerJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
             .innerJoin('recordings', 'recordings.recording_mbid', 'contents.recording_mbid')
+            .leftJoin('profiles as insert_profile', 'contents.inserted_by', 'insert_profile.id')
+            .leftJoin('profiles as update_user', 'contents.updated_by', 'update_user.id')
             .select([
                 'contents.id as id',
                 'contents.collection_id as collection_id',
@@ -373,7 +387,11 @@ export const selectViewableCollectionContents = async function ( collectionId: s
                 'release_groups.img_url as img_url',
                 'release_groups.last_fm_img_url as last_fm_img_url',
                 'recordings.recording_name as recording_name',
-                'recordings.recording_mbid as recording_mbid'
+                'recordings.recording_mbid as recording_mbid',
+                'insert_profile.username as inserted_by_username',
+                'insert_profile.display_name as inserted_by_display_name',
+                'update_user.username as updated_by_username',
+                'update_user.display_name as updated_by_display_name'
             ])
             .where('contents.collection_id', '=', collectionId)
             .where('contents.item_position', 'is not', null)
@@ -439,6 +457,8 @@ export const selectEditableCollectionContents = async function ( collectionId: s
             selectCollectionContents = await trx
             .selectFrom('collections_contents as contents')
             .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
+            .leftJoin('profiles as insert_profile', 'contents.inserted_by', 'insert_profile.id')
+            .leftJoin('profiles as update_user', 'contents.updated_by', 'update_user.id')
             .select([
                 'contents.id as original_id',
                 'contents.collection_id as collection_id',
@@ -446,6 +466,10 @@ export const selectEditableCollectionContents = async function ( collectionId: s
                 'contents.artist_mbid as artist_mbid',
                 'contents.item_position as item_position',
                 'artists.artist_name as artist_name',
+                'insert_profile.username as inserted_by_username',
+                'insert_profile.display_name as inserted_by_display_name',
+                'update_user.username as updated_by_username',
+                'update_user.display_name as updated_by_display_name'
             ])
             .where('contents.collection_id', '=', collectionId)
             .execute()
@@ -455,6 +479,8 @@ export const selectEditableCollectionContents = async function ( collectionId: s
             .selectFrom('collections_contents as contents')
             .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
             .innerJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
+            .leftJoin('profiles as insert_profile', 'contents.inserted_by', 'insert_profile.id')
+            .leftJoin('profiles as update_user', 'contents.updated_by', 'update_user.id')
             .select([
                 'contents.id as original_id',
                 'contents.collection_id as collection_id',
@@ -466,7 +492,11 @@ export const selectEditableCollectionContents = async function ( collectionId: s
                 'release_groups.release_group_name as release_group_name',
                 'release_groups.img_url as img_url',
                 'release_groups.last_fm_img_url as last_fm_img_url',
-                'release_groups.release_date as release_date'
+                'release_groups.release_date as release_date',
+                'insert_profile.username as inserted_by_username',
+                'insert_profile.display_name as inserted_by_display_name',
+                'update_user.username as updated_by_username',
+                'update_user.display_name as updated_by_display_name'
             ])
             .where('contents.collection_id', '=', collectionId)
             .execute()
@@ -477,6 +507,8 @@ export const selectEditableCollectionContents = async function ( collectionId: s
             .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
             .innerJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
             .innerJoin('recordings', 'recordings.recording_mbid', 'contents.recording_mbid')
+            .leftJoin('profiles as insert_profile', 'contents.inserted_by', 'insert_profile.id')
+            .leftJoin('profiles as update_user', 'contents.updated_by', 'update_user.id')
             .select([
                 'contents.id as original_id',
                 'contents.collection_id as collection_id',
@@ -491,7 +523,11 @@ export const selectEditableCollectionContents = async function ( collectionId: s
                 'release_groups.last_fm_img_url as last_fm_img_url',
                 'release_groups.release_date as release_date',
                 'recordings.recording_name as recording_name',
-                'recordings.remixer_artist_mbid as remixer_artist_mbid'
+                'recordings.remixer_artist_mbid as remixer_artist_mbid',
+                'insert_profile.username as inserted_by_username',
+                'insert_profile.display_name as inserted_by_display_name',
+                'update_user.username as updated_by_username',
+                'update_user.display_name as updated_by_display_name'
             ])
             .where('contents.collection_id', '=', collectionId)
             .execute()
@@ -659,7 +695,7 @@ export const insertCollection = async function ( sessionUserId: string, collecti
         })
         .executeTakeFirst()
 
-        const collectionContents = await populateCollectionContents(collectionItems, collectionId) 
+        const collectionContents = await populateCollectionContents(sessionUserId, collectionItems, collectionId) 
 
         if ( collectionInfo["type"] == 'artists') {
             await trx
@@ -738,7 +774,7 @@ Update collection with transaciton that does the following:
     - inserts new collections_contents rows and updates existing ones
 */
 
-export const updateCollection = async function ( collectionInfo: App.RowData, collectionItems: App.RowData ) {
+export const updateCollection = async function ( sessionUserId: string, collectionInfo: App.RowData, collectionItems: App.RowData ) {
 
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
@@ -748,7 +784,7 @@ export const updateCollection = async function ( collectionInfo: App.RowData, co
 
     const { artistsMetadata, releaseGroupsMetadata, recordingsMetadata } =  await prepareMusicMetadataInsert(collectionItems, collectionType)
 
-    const collectionContents = await populateCollectionContents(collectionItems, collectionId) 
+    const collectionContents = await populateCollectionContents(sessionUserId, collectionItems, collectionId) 
 
     const update = await db.transaction().execute(async (trx) => {
 
@@ -933,7 +969,7 @@ export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: s
                 )
                 .execute()
             
-            const collectionContents = await populateCollectionContents(collectionItems, collectionId) 
+            const collectionContents = await populateCollectionContents(sessionUserId, collectionItems, collectionId) 
             
             await trx
             .insertInto( 'collections_contents' )
