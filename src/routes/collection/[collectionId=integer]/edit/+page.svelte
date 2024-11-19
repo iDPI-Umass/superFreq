@@ -38,6 +38,8 @@
     let deletedItems = $state(collection?.deletedCollectionContents as App.RowData[])
 
     const isOwner = $derived(( sessionUserId == collectionInfo.owner_id ) ? true : false)
+
+    console.log(descriptionText)
 </script>
 <svelte:options runes={true} />
 
@@ -175,9 +177,7 @@
                 cols="1"
                 spellcheck=true 
                 required
-            >
-                {descriptionText}
-            </textarea>
+            >{descriptionText}</textarea>
             <div class="collection-info-button-spacing">
                 <button 
                 class="double-border-top" 
