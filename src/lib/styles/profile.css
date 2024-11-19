@@ -24,6 +24,12 @@
     gap: var(--freq-spacer-gap);
     align-items: start;
 }
+.avatar-user-data {
+    display: flex;
+    flex-direction: row;
+    width: inherit;
+    gap: var(--freq-spacer-gap);
+}
 .profile-info-box-column {
     display: flex;
     flex-direction: column;
@@ -38,22 +44,12 @@
     padding: 0;
     margin: 0;
 }
-.profile-user-data-buttons-row {
-    display: flex;
-    flex-direction: row;
-    width: auto;
-    align-items: start;
-    justify-content: space-between;
-    gap: var(--freq-spacer-gap);
-}
-
 .profile-user-data-column {
     display: flex;
     flex-direction: column;
     width: auto;
     align-items: start;
 }
-
 .profile-buttons-group {
     display: flex;
     flex-direction: row;
@@ -61,7 +57,6 @@
     margin-right: 4px;
     gap: var(--freq-spacer-gap-half);
 }
-
 .profile-info-box-right {
     display: flex;
     flex-direction: row;
@@ -109,16 +104,14 @@
         width: inherit;
     }
     .profile-info-box-left {
+        flex-direction: column;
         padding: 0 var(--freq-spacing-large);
-        align-items: center;
+        align-items: start;
         justify-content: center;
+        gap: 0;
     }
     .profile-info-box-column {
         width: auto;
-    }
-    .profile-user-data-buttons-row{
-        flex-wrap: wrap;
-        gap: var(--freq-spacer-gap-quarter);
     }
     .profile-buttons-group {
         margin: 0;
@@ -127,7 +120,7 @@
         border-left: none;
         border-top: var(--freq-border-panel);
     }
-    .profile-username-buttons-row {
-        justify-content: start;
+    .profile-stats-box {
+        margin: 0;
     }
 }

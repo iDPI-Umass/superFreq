@@ -69,23 +69,23 @@
 
 <div class="profile-info">
     <div class="profile-info-box-left">
-        <div class="cover-art-widget">
-            <div class="avatar-image">
-                <CoverArt
-                    item={avatarItem}
-                    altText={`${displayName}'s avatar: ${avatarReleaseGroupName} by ${avatarArtistName}`}
-                ></CoverArt>
+        <div class="avatar-user-data">
+            <div class="cover-art-widget">
+                <div class="avatar-image">
+                    <CoverArt
+                        item={avatarItem}
+                        altText={`${displayName}'s avatar: ${avatarReleaseGroupName} by ${avatarArtistName}`}
+                    ></CoverArt>
+                </div>
+                {#if isSessionUserProfile}
+                    <button 
+                        class="mini"
+                        onclick={() => goto('/account')}
+                    >
+                        edit
+                    </button>
+                {/if}
             </div>
-            {#if isSessionUserProfile}
-                <button 
-                    class="mini"
-                    onclick={() => goto('/account')}
-                >
-                    edit
-                </button>
-            {/if}
-        </div>
-        <div class="profile-user-data-buttons-row">
             <div class="profile-info-box-column">
                 <div class="profile-user-data-column">
                     <div class="profile-displayname-username-column">
@@ -95,53 +95,53 @@
                     <p>{profileUserData?.about ?? ''}</p>
                 </div>
             </div>
-            <div class="profile-buttons-group">
-                {#if isSessionUserProfile }
-                    <button class="double-border-top" onclick={() => goto('/account')}>
-                        <div class="inner-border-condensed">
-                            edit profile
+        </div>
+        <div class="profile-buttons-group">
+            {#if isSessionUserProfile }
+                <button class="double-border-top" onclick={() => goto('/account')}>
+                    <div class="inner-border-condensed">
+                        edit profile
+                    </div>
+                </button>
+                <!-- <button class="double-border-top">
+                    <div class="inner-border-condensed">
+                        <div class="buttons-group-icon">
+                            <Settings size="16"></Settings>
                         </div>
-                    </button>
-                    <!-- <button class="double-border-top">
-                        <div class="inner-border-condensed">
-                            <div class="buttons-group-icon">
-                                <Settings size="16"></Settings>
-                            </div>
-                        </div>
-                    </button> -->
-                {:else}
-                    <form
-                        method="POST"
-                        action="?/followUser"
-                        use:enhance
+                    </div>
+                </button> -->
+            {:else}
+                <form
+                    method="POST"
+                    action="?/followUser"
+                    use:enhance
+                >
+                    <input 
+                        type="hidden"
+                        name="profile-user-id" 
+                        id="profile-user-id"
+                        value={profileUserId}
+                    />
+                    <button 
+                        class="standard" 
+                        type="submit"
+                        formaction="?/followUser"
                     >
-                        <input 
-                            type="hidden"
-                            name="profile-user-id" 
-                            id="profile-user-id"
-                            value={profileUserId}
-                        />
-                        <button 
-                            class="standard" 
-                            type="submit"
-                            formaction="?/followUser"
-                        >
-                        {#if followingNow == true}
-                            unfollow
-                        {:else}
-                            + follow
-                        {/if}
-                        </button>  
-                    </form>
-                    <UserActionsMenu
-                        mode='profileMenu'
-                        blocked={profileUserBlocked}
-                        flagged={profileUserFlagged}
-                        profileUserId={profileUserId}
-                        success={form?.userActionSuccess}
-                    ></UserActionsMenu>
-                {/if}
-            </div>
+                    {#if followingNow == true}
+                        unfollow
+                    {:else}
+                        + follow
+                    {/if}
+                    </button>  
+                </form>
+                <UserActionsMenu
+                    mode='profileMenu'
+                    blocked={profileUserBlocked}
+                    flagged={profileUserFlagged}
+                    profileUserId={profileUserId}
+                    success={form?.userActionSuccess}
+                ></UserActionsMenu>
+            {/if}
         </div>
     </div>
     <div class="profile-info-box-right">
@@ -195,6 +195,7 @@
                 </a>
             </div>
         </div>
+        
     </div>
 </div>
 <div class="border-full-vw"></div>
