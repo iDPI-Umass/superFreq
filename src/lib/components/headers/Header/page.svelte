@@ -218,10 +218,14 @@
       {/if}
     </nav>
   </header>
-  <a class="report" target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSfKj4FlApgfM-Kc4rYwAxNQslBMS9rk-DdfowMa5qcHlRYhew/viewform?usp=sf_link">
-    <button class="standard">report a bug</button>
-  </a>
-
+  <div class="buttons-group">
+    <a class="report" target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSfKj4FlApgfM-Kc4rYwAxNQslBMS9rk-DdfowMa5qcHlRYhew/viewform?usp=sf_link">
+      <button class="standard">report a bug</button>
+    </a>
+    <a class="report" target="_blank" href="https://forms.gle/27Q7qg6qLWiFnLHv7">
+      <button class="standard">feedback and requests</button>
+    </a>
+  </div>
 </div>
 
   
@@ -257,6 +261,11 @@
   }
   a.report {
     margin: auto auto var(--freq-spacing-large) auto;
+  }
+  .buttons-group {
+    display: flex;
+    flex-direction: row;
+    margin: 0 auto;
   }
   @media screen and (max-width: 770px) {
     nav.wide {

@@ -3,6 +3,12 @@ title: Freq, short for "Frequency"
 layout: about
 ---
 
+<script lang="ts">
+    import Guidelines from '$lib/assets/text/community-guidelines.md'
+    import Consent from '$lib/assets/text/data-consent.md'
+</script>
+
+
 <div class="section-link-box">
     <ul>
         <li>
@@ -40,6 +46,11 @@ layout: about
                 Our data
             </a>
         </li>
+        <li>
+            <a href="#consent">
+                Data consent
+            </a>
+        </li>
     </ul>
 </div>
 
@@ -57,7 +68,7 @@ How Freq works
 Right now, there are three things you can do on Freq.  
 
 <div class="list">
-1. You can post about what you’re currently listening to, and people can liked that post or comment on it.
+1. You can post about what you’re currently listening to, and people can like that post or comment on it.
 <br />
 <br />
 2. You can create and read collections of albums, organized by some guiding theme. For example, you can make a public collection of all of the metal bands that have come from your hometown, or you can make a private collection of albums you want to listen to.
@@ -67,33 +78,17 @@ Right now, there are three things you can do on Freq.
 </div>
 
 <hr />
+
 <h2 id="guidelines">
 Community guidelines
 
 </h2>
 
 
-Freq’s primary goals are to empower music lovers, grow music communities, and preserve music history. Like any healthy community, there are certain guidelines members must follow to maintain a productive environment. Please consider the following guidelines when using Freq and interacting with other users.
+<Guidelines></Guidelines>
 
-### Don’t do this stuff. You might get banned. 
-
-- Start trouble for the sake of it.
-- Harass, abuse, or bully other users. 
-- Post hate speech, dog whistles, or illegal content. 
-- Promote violent, hostile, or antisocial viewpoints and content. 
-- Post spam.
-
-### Remember:
-
-- Music is made by real people. 
-- Users on this platform are real people. 
-- Sharing music is an act of love and personal expression.
-- Taste is subjective. Everyone is allowed to like what they like and dislike what they don’t.
-
-<div class="info-box">
-When in doubt, <a target="_blank" href="https://en.wikipedia.org/wiki/PLUR">PLUR</a>.
-</div>
 <hr />
+
 <h2 id="goals">
 Our intentions
 </h2>
@@ -139,17 +134,15 @@ Known Bugs
 </h2>
 
 - Layout/design weirdness
-    - Dropdown menu background color and text color are behaving in bizarre ways
-    - Not all pages are currently responsive to mobile sizing
-    - Search bar in new/edit collections doesn't always resize correctly
-    - Fonts may or may not be loading correctly
-    - Some modal dialogs are too wide
+    - Elements in profile headers are misaligned
 - For a few reasons, cover art doesn’t always load
+- It is not always possible to change the order items in a collection
 - There are probably typos. Please report those.
 
 Notice other bugs? [Fill out this easy Google Form.](https://docs.google.com/forms/d/e/1FAIpQLSfKj4FlApgfM-Kc4rYwAxNQslBMS9rk-DdfowMa5qcHlRYhew/viewform?usp=sf_link)
 
 <hr />
+
 <h2 id="data">
 Our Data
 </h2>
@@ -160,9 +153,17 @@ We use their [MusicBrainz Identifiers](https://musicbrainz.org/doc/MusicBrainz_I
 
 While extensive, there may be music that isn’t currently tagged in MusicBrainz’s database. Please follow [this guide](https://musicbrainz.org/doc/How_to_Add_a_Release) to upload new music data to MusicBrainz. 
 
-Our cover art is obtained from the [Cover Art Archive](https://coverartarchive.org/), a collaboration between the Internet Archive and MusicBrainz. 
+Our cover art is obtained from the [Cover Art Archive](https://coverartarchive.org/), a collaboration between the Internet Archive and MusicBrainz, as well as Last.fm. 
 
 Please consider donating some [time](https://musicbrainz.org/doc/How_to_Contribute) or [money](https://metabrainz.org/donate) to MusicBrainz and checking out [ListenBrainz](https://listenbrainz.org/?redirect=false), a public listen history and music recommendation platform.
+
+<hr />
+
+<h2 id="consent">
+Data Consent
+</h2>
+
+<Consent></Consent>
 
 <style>
     .list {
