@@ -185,7 +185,7 @@
                 disabled={!(collectionStatus && collectionTitle)}
             >
                 <div class="inner-border">
-                    edit collection
+                    save edits
                 </div>
                 </button>
             </div>
@@ -195,6 +195,7 @@
 		bind:collectionItems={collectionItems}
 		bind:deletedItems={deletedItems}
 		collectionType={collectionType}
+        collectionStatus={collectionStatus}
 		bind:itemAdded={itemAdded}
 		bind:imgPromise={imgPromise}
 	></CollectionEditor>
