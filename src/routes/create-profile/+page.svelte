@@ -44,14 +44,15 @@
 		'label': avatarItem?.label,
 	}) as App.RowData
 
-	let showModal = $derived(form?.success ? form?.success : false)
+	let showNotificationModal = $derived( form?.success == false ? true : false )
+	let showRedirectModal = $derived(form?.success ? form?.success : false)
 
 	$effect.pre(() => {
 		invalidateAll()
 	})
 
 	$effect(() => {
-        if ( showModal ) {
+        if ( showRedirectModal ) {
             countdown = delay
             setInterval(() => countdown -= 1, 1000)
         }
@@ -243,7 +244,7 @@
 </div>
 
 <NotificationModal
-    showModal = {showModal}
+    showModal = {showNotificationModal}
 >
 	{#snippet headerText()}
 		<span >
@@ -261,7 +262,7 @@
 </NotificationModal>
 
 <RedirectModal
-    showModal={showModal}
+    showModal={showRedirectModal}
 	delay={delay}
     redirectPath={'/about/guidelines'}
 >
