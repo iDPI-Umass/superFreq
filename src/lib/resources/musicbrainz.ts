@@ -224,7 +224,7 @@ export const getCoverArt = async function ( releaseGroup: App.RowData ) {
     const coverArtArchiveEndpoint = `https://coverartarchive.org/release-group/${releaseGroup.mbid}/front`
 
     try {
-        const coverArtArchiveRes = await fetch(coverArtArchiveEndpoint, { signal: AbortSignal.timeout(5000) })
+        const coverArtArchiveRes = await fetch(coverArtArchiveEndpoint, { signal: AbortSignal.timeout(3000) })
         const coverArtArchiveUrl = coverArtArchiveRes["url"]
         const lastFmCoverArtUrl = await getLastFmCoverArt( releaseGroup )
 

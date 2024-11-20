@@ -128,7 +128,7 @@ export const actions = {
 
         return { embedInfo, success: true }
     },
-	postAlbum: async ({ request, locals: { safeGetSession } }) => {
+	post:async ({ request, locals: { safeGetSession } }) => {
         const session = await safeGetSession()
         const sessionUserId = session.user?.id
 
@@ -136,138 +136,57 @@ export const actions = {
         const timestampISO: Date = parseISO(timestampISOString)
 
         const data = await request.formData()
+        const itemType = data.get('item-type') as string
 		const listenUrl = data.get('listen-url') as string
-        const mbid = data.get('mbid') as string
-        const mbidType = data.get('item-type') as string
+        const artistMbid = data.get('artist-mbid') as string
         const artistName = data.get('artist-name') as string
-        const albumName = data.get('album-name') as string
+        const releaseGroupMbid = data.get('release-group-mbid') as string
+        const releaseGroupName = data.get('release-group-name') as string
+        const recordingMbid = data.get('recordiing-mbid') as string
+        const recordingName = data.get('recording-name') as string
+        const episodeName = data.get('episode') as string
+        const showName = data.get('show') as string
         const postText = data.get('post-text') as string
 
-        const embedInfo = await getListenUrlData(listenUrl)
+        const mbid = {
+            'release_group': releaseGroupMbid,
+            'recording': recordingMbid,
+            'episode': artistMbid
+        } as App.StringLookupObject
 
-        const postData: Posts = {
+        const embedInfo = listenUrl ? await getListenUrlData(listenUrl) : null
+
+        const postData = {
             user_id: sessionUserId,
             type: "now_playing",
             status: "new",
-            listen_url: listenUrl,
-            item_type: mbidType,
-            mbid: mbid,
-            artist_name: artistName,
-            release_group_name: albumName,
-            text: postText,
+            listen_url: listenUrl ?? null,
+            item_type: itemType,
+            mbid: mbid[itemType] ?? null,
+            artist_name: artistName ?? null,
+            release_group_name: releaseGroupName ?? null,
+            recording_name: recordingName ?? null,
+            episode_title: episodeName ?? null,
+            show_title: showName ?? null,
+            text: postText ?? null,
             created_at: timestampISO,
             updated_at: timestampISO,
-            embed_id: embedInfo.id,
-            embed_source: embedInfo.source,
-            embed_account: embedInfo.account
-        }
+            embed_id: embedInfo?.id ?? null,
+            embed_source: embedInfo?.source ?? null,
+            embed_account: embedInfo?.account ?? null
+        } as App.RowData
 
         const { username, createdAt } = await insertPost( postData )
         const timestampSlug = createdAt?.toISOString()
         const timestamp = Date.parse(timestampSlug).toString()
 
-
         if ( !timestampSlug ) {
-            return { postSuccess: false }
+            return { success: false }
         }
         else {
             redirect(303, `/posts/${username}/now-playing/${timestamp}`)
         }
-	},
-    postTrack: async ({ request, locals: { safeGetSession } }) => {
-        const session = await safeGetSession()
-        const sessionUserId = session.user?.id
-
-        const timestampISOString: string = new Date().toISOString()
-        const timestampISO: Date = parseISO(timestampISOString)
-
-		const data = await request.formData()
-        const listenUrl = data.get('listen-url') as string
-        const mbid = data.get('mbid') as string
-        const itemType = data.get('item-type') as string
-        const artistName = data.get('artist-name') as string
-        const albumName = data.get('album-name') as string
-        const recordingName = data.get('track-name') as string
-        const postText = data.get('post-text') as string
-
-        const embedInfo = await getListenUrlData(listenUrl)
-
-        const postData: Posts = {
-            user_id: sessionUserId,
-            type: "now_playing",
-            status: "new",
-            listen_url: listenUrl,
-            item_type: itemType,
-            mbid: mbid,
-            artist_name: artistName,
-            release_group_name: albumName,
-            recording_name: recordingName,
-            text: postText,
-            created_at: timestampISO,
-            updated_at: timestampISO,
-            embed_id: embedInfo.id,
-            embed_source: embedInfo.source,
-            embed_account: embedInfo.account
-        }
-
-        const { username, createdAt } = await insertPost( postData )
-        const timestampSlug = createdAt?.toISOString()
-        const timestamp = Date.parse(timestampSlug).toString()
-
-        if ( !timestampSlug ) {
-            return { postSuccess: false }
-        }
-        else{
-            redirect(303, `/posts/${username}/now-playing/${timestamp}`)
-        }
-	},
-    postMix: async ({ request, locals: { safeGetSession } }) => {
-        const session = await safeGetSession()
-        const sessionUserId = session.user?.id
-
-        const timestampISOString: string = new Date().toISOString()
-        const timestampISO: Date = parseISO(timestampISOString)
-
-		const data = await request.formData()
-        const listenUrl = data.get('listen-url') as string
-        const mbid = data.get('mbid') as string
-        const itemType = data.get('item-type') as string
-        const artistName = data.get('artist-name') as string
-        const episode = data.get('episode') as string
-        const show = data.get('show') as string
-        const postText = data.get('post-text') as string
-
-        const embedInfo = await getListenUrlData(listenUrl)
-
-        const postData: Posts = {
-            user_id: sessionUserId,
-            type: "now_playing",
-            status: "new",
-            listen_url: listenUrl,
-            item_type: itemType,
-            mbid: mbid,
-            artist_name: artistName,
-            episode_title: episode,
-            show_title: show,
-            text: postText,
-            created_at: timestampISO,
-            updated_at: timestampISO,
-            embed_id: embedInfo.id,
-            embed_source: embedInfo.source,
-            embed_account: embedInfo.account
-        }
-
-        const { username, createdAt } = await insertPost( postData )
-        const timestampSlug = createdAt?.toISOString()
-        const timestamp = Date.parse(timestampSlug).toString()
-
-        if ( !timestampSlug ) {
-            return { postSuccess: false }
-        }
-        else{
-            redirect(303, `/posts/${username}/now-playing/${timestamp}`)
-        }
-	},
+    },
     flagPost: async ({ request, locals: { safeGetSession }}) => {
         const session = await safeGetSession()
         const sessionUserId = session.user?.id as string
