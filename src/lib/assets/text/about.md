@@ -95,9 +95,9 @@ Our intentions
 
 There are two primary goals for Freq. The first is to invigorate grassroots music culture. The second, per the imperatives of the Initiative for Digital Public Infrastructure, where this is being developed, is to model small social media built for the civic good.
 
-Freq offers the chance to find music you love through a community of people you enjoy.. We want passionate listeners to be able to archive their collections and share them with a larger community, which promotes organic music discovery. 
+Freq offers the chance to find music you love through a community of people you enjoy. We want passionate listeners to be able to archive their collections and share them with a larger community, which promotes organic music discovery. 
 
-One reason this moment in the Internet is so strange is because there are not any communities that exist online for the sake of music enjoyment alone, whereas the history of the Internet can easily be told as a history of the ways people gathered around music virtually. So we believe that finding music on the Internet should be separated from buying, selling, or collecting residuals off of that music. 
+One reason this moment in the Internet is so strange is because there are not any communities that exist online for the sake of music enjoyment alone, whereas the history of the Internet can easily be told as a history of the ways people gathered around music virtually. The most powerful and popular places purpose-built for music discovery online today are marketplaces, but music lovers online deserve healthy alternatives built and maintained for the love of music, not money.
 
 And while it’s wonderful that there are many social spaces online that cater to a community of their users, we believe that social media has a rich, unmet potential to cater to already existing communities offline. The nice thing about music is there are music communities all over the place, and Freq hopes to provide a toolset that’s relevant to their needs and, hopefully in some ways, their thriving.
 
@@ -136,7 +136,7 @@ Known Bugs
 - Layout/design weirdness
     - Elements in profile headers are misaligned
 - For a few reasons, cover art doesn’t always load
-- It is not always possible to change the order items in a collection
+- It is not always possible to change the order of items in a collection
 - There are probably typos. Please report those.
 
 Notice other bugs? [Fill out this easy Google Form.](https://docs.google.com/forms/d/e/1FAIpQLSfKj4FlApgfM-Kc4rYwAxNQslBMS9rk-DdfowMa5qcHlRYhew/viewform?usp=sf_link)

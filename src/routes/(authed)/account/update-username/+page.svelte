@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { invalidateAll } from '$app/navigation'
     import type { PageData, ActionData } from './$types'
     import PanelHeader from "$lib/components/PanelHeader.svelte"
     import Tooltip from '$lib/components/Tooltip.svelte'
@@ -16,6 +17,22 @@
 
     let loading = false
     let username = $derived(profile?.username as string)
+    let delay = $state(5)
+	let countdown = $state(0)
+
+    let showNotificationModal = $derived( form?.success == false ? true : false )
+	let showRedirectModal = $derived(form?.success ? form?.success : false)
+
+    $effect.pre(() => {
+		invalidateAll()
+	})
+
+    $effect(() => {
+        if ( showRedirectModal ) {
+            countdown = delay
+            setInterval(() => countdown -= 1, 1000)
+        }
+    })
 
 </script>
 
@@ -86,7 +103,7 @@
 
     </form>
     <NotificationModal
-        showModal={(form?.success ? !form?.success : false)}
+        showModal={(form?.success == false ? true : false)}
     >
         {#snippet headerText()}
             <span >Username taken</span>
@@ -99,6 +116,7 @@
 
 <RedirectModal
     showModal={form?.success ?? false}
+    delay={delay}
     redirectPath='/account'
 >
     {#snippet message()}
