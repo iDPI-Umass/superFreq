@@ -116,20 +116,13 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
     for (const item in collectionItems) {
         const thisItem = collectionItems[item] as App.CollectionItem
 
-        if ( collectionType == "artists" ) {
-            artistsMetadata = [...artistsMetadata, {
-                "artist_mbid": thisItem["artist_mbid"],
-                "artist_name": thisItem["artist_name"],
-                "added_at": timestampISO
-            }];
-        }
-        else if	( collectionType == "release_groups" ) {
-            artistsMetadata = [...artistsMetadata, {
-                "artist_mbid": thisItem["artist_mbid"],
-                "artist_name": thisItem["artist_name"],
-                "added_at": timestampISO
-            }];
-
+        artistsMetadata = [...artistsMetadata, {
+            "artist_mbid": thisItem["artist_mbid"],
+            "artist_name": thisItem["artist_name"],
+            "added_at": timestampISO
+        }]
+        
+        if	( collectionType == "release_groups" || collectionType == "release_group" ) {
             releaseGroupsMetadata = [...releaseGroupsMetadata, {
                 "artist_mbid": thisItem["artist_mbid"],
                 "release_group_mbid": thisItem["release_group_mbid"],
@@ -139,14 +132,9 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
                 "img_url": thisItem["img_url"],
                 "last_fm_img_url": thisItem["last_fm_img_url"],
                 "added_at": timestampISO
-            }];
+            }]
         }
-        else if ( collectionType == "recordings" ) {
-            artistsMetadata = [...artistsMetadata, {
-                "artist_mbid": thisItem["artist_mbid"],
-                "artist_name": thisItem["artist_name"],
-                "added_at": timestampISO
-            }];
+        else if ( collectionType == "recordings" || collectionType == "recording" ) {
             releaseGroupsMetadata = [...releaseGroupsMetadata, {
                 "artist_mbid": thisItem["artist_mbid"],
                 "release_group_mbid": thisItem["release_group_mbid"],
@@ -165,7 +153,7 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
                 "remixer_artist_mbid": thisItem["remixer_artist_mbid"],
                 "release_date": thisItem["release_date"],
                 "added_at": timestampISO
-            }];
+            }]
         }
     }
 

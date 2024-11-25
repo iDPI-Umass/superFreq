@@ -5,14 +5,19 @@
     import PostReplyEditor from '$lib/components/Posts/PostReplyEditor.svelte'
 
     let { data, form } = $props();
-    let { post, postReplies }: {
+
+    let { post, postReplies, collections }: {
         post: App.RowData
         postReplies: App.RowData[]
+        collections: App.RowData[]
     } = $derived(data)
 
     let sessionUserId = data?.sessionUserId as string
 
     let actionSuccess = $derived(form?.success as boolean)
+
+    let showCollectionsListModal = $derived(form?.showCollectionsModal ?? false)
+    let showSaveSucessModal = $derived(form?.updateSuccess ?? false)
 
     function replyId ( username: string, createdAt: Date ) {
         const replyTimestampString = createdAt.toISOString()
@@ -50,6 +55,9 @@
         post={post}
         editState={form?.editState}
         userActionSuccess={actionSuccess}
+        collections={collections}
+        showCollectionsModal={showCollectionsListModal}
+        showSaveSucessModal={showSaveSucessModal}
     ></NowPlayingPost>
     <PostReplyEditor></PostReplyEditor>
     {#each postReplies as reply}

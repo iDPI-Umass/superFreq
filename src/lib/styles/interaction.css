@@ -189,6 +189,44 @@ button.mini:is(:disabled, :disabled:hover, :disabled:focus, :disabled:active) {
 	scale: 100%;
 }
 
+/* Add button */
+button.add {
+	display: flex;
+	flex-direction: row;
+	text-transform: uppercase;
+	padding: var(--freq-height-spacer-quarter) 2px;
+	width: 60px;
+	height: fit-content;
+	align-items: center;
+	justify-content: center;
+	text-justify: center;
+	border: var(--freq-border-button);
+	background: var(--freq-color-button-background);
+	color: var(--freq-color-text-muted);
+	font-size: var(--freq-button-font-size-small);
+
+}
+
+button.add:is(:hover, :focus),
+button.add:is(:hover, :focus) * {
+	border: var(--freq-border-primary);
+	color: var(--freq-color-text);
+}
+
+button.add:active {
+	scale: 98%;
+	background: var(--freq-color-button-lens-active);
+	border: var(--freq-border-button-active);
+	transition: all;
+}
+
+button.add:is(:disabled, :disabled:hover, :disabled:focus, :disabled:active) {
+	background: var(--freq-color-button-lens-disabled);
+	border: var(--freq-border-button-disabled);
+	color: var(--freq-color-text-muted);
+	scale: 100%;
+}
+
 /* Popover button */
 button.popover-item {
 	display: flex;
@@ -299,4 +337,57 @@ nav button.nav:active {
 nav img {
     max-height: 20px;
     margin-right: var(--freq-spacing-small);
+}
+
+/*
+//
+** Modals
+//	
+*/
+
+ol.list-modal {
+	padding: 0;
+	list-style: none;
+	font-size: var(--freq-font-size-small);
+
+}
+
+li.list-modal {
+	display: flex;
+	flex-direction: row;
+	max-width: 500px;
+	align-items: start;
+	margin: var(--freq-spacing-2x-small) 0;
+	padding: var(--freq-spacing-small) 0;
+	border-bottom: 1px solid transparent;
+	border-image: linear-gradient(90deg, #7F90A2 35%, #000000 100%);
+	border-image-slice: 1;
+}
+
+li.list-modal:last-child {
+	border: none;
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+.list-modal-li-row {
+	display: flex;
+	flex-direction: row;
+	align-items: start;
+	margin: 0 calc( var(--freq-inline-gap) * 2 );
+}
+
+.list-modal-li-row-button-spacing {
+	width: 66px;
+	margin-right: var(--freq-spacing-small);
+}
+
+span.list-modal {
+	margin-right: var(--freq-spacing-small);
+	font-size: var(--freq-font-size-medium);
+}
+
+span.list-modal-bold {
+	margin: 0;
+	font-weight: var(--freq-font-weight-medium);
 }

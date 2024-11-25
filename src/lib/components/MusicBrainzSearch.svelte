@@ -109,13 +109,13 @@
 		{#snippet list()}
 			<div>
 				{#if searchComplete}
-					<ol>
+					<ol class="list-modal">
 						{#each mbData as item}
-						<li>
-							<div class="li-row">
-								<div class="li-row-button-spacing">
+						<li class="list-modal">
+							<div class="list-modal-li-row">
+								<div class="list-modal-li-row-button-spacing">
 									<button 
-										class="standard"
+										class="add"
 										aria-label="add item"
 										onclick={() => {
 											addItem(mode, item)
@@ -127,8 +127,8 @@
 									</button>
 								</div>
 								{#if searchCategory == "artists"}
-									<span>
-										<span class="metadata-bold">
+									<span class="list-modal">
+										<span class="list-modal-bold">
 											{artistName(searchCategory, item)}
 										</span>
 										<br />
@@ -137,8 +137,8 @@
 										{itemDate(searchCategory, item)}
 									</span>
 								{:else if searchCategory == "release_groups"}
-									<span>
-										<span class="metadata-bold" >
+									<span class="list-modal">
+										<span class="list-modal-bold" >
 											{releaseGroupName(searchCategory, item)}
 										</span>  
 										by 
@@ -147,8 +147,8 @@
 										{itemDate(searchCategory, item)}
 									</span>
 								{:else if searchCategory == "recordings"}
-									<span>
-										<span class="metadata-bold">
+									<span class="list-modal">
+										<span class="list-modal-bold">
 											{recordingName(searchCategory, item)}
 										</span> 
 										by 
@@ -178,7 +178,6 @@
 		<button 
 			class="double-border-top"
 			onclick={() => search(query, searchCategory, limit)} 
-			
 			disabled={!(searchCategory)}
 		>
 			<div class="inner-border">
@@ -213,51 +212,6 @@
 	}
 	.input-sizing {
 		max-width: 100%;
-	}
-	button.standard {
-		width: 60px;
-		padding-left: 2px;
-		padding-right: 2px;
-	}
-    ol {
-		padding: 0;
-        list-style: none;
-		font-size: var(--freq-font-size-small);
-
-    }
-	li {
-		display: flex;
-		flex-direction: row;
-		max-width: 500px;
-		align-items: start;
-		margin: var(--freq-spacing-2x-small) 0;
-		padding: var(--freq-spacing-small) 0;
-		border-bottom: 1px solid transparent;
-		border-image: linear-gradient(90deg, #7F90A2 35%, #000000 100%);
-		border-image-slice: 1;
-	}
-	li:last-child {
-		border: none;
-		margin-bottom: 0;
-		padding-bottom: 0;
-	}
-    span {
-		margin-right: var(--freq-spacing-small);
-		font-size: var(--freq-font-size-medium);
-    }
-	span.metadata-bold {
-		margin: 0;
-		font-weight: var(--freq-font-weight-medium);
-	}
-	.li-row {
-		display: flex;
-		flex-direction: row;
-		align-items: start;
-		margin: 0 calc( var(--freq-inline-gap) * 2 );
-	}
-	.li-row-button-spacing {
-		width: 66px;
-		margin-right: var(--freq-spacing-small);
 	}
 	.result-image {
 		width: 100px;

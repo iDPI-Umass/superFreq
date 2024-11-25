@@ -2,6 +2,7 @@
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte'
     import EditPostBody from '$lib/components/Posts/EditPostBody.svelte'
     import LikeReact from '$lib/components/Posts/LikeReact.svelte'
+    import SaveToCollection from '$lib/components/SaveToCollection.svelte'
     import { displayDate } from '$lib/resources/parseData'
 
     import Reply from 'lucide-svelte/icons/reply'
@@ -18,6 +19,9 @@
         editState?: boolean
         mode?: string | null
         userActionSuccess?: boolean | null
+        collections?: App.RowData[],
+        showCollectionsModal?: boolean,
+        showSaveSucessModal?: boolean
     }
 
     let {
@@ -25,7 +29,10 @@
         post,
         editState = $bindable(false),
         mode = null, // valid values are null, "feed", and "sample"
-        userActionSuccess
+        userActionSuccess,
+        collections = [],
+        showCollectionsModal = $bindable(false),
+        showSaveSucessModal = $bindable(false)
     }: ComponentProps = $props()
 
     const permalinkTimestampString = (post?.created_at ?? post?.feed_item_timestamp).toISOString()
@@ -136,6 +143,14 @@
                                 reply
                             </span>
                         </a>
+                    {/if}
+                    {#if post.artist_mbid }
+                        <SaveToCollection
+                            showCollectionsListModal={showCollectionsModal}
+                            showSuccessModal={showSaveSucessModal}
+                            item={post}
+                            collections={collections}
+                        ></SaveToCollection>
                     {/if}
                 </div>
                 <div class="row-group-icon-description">

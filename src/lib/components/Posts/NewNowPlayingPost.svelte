@@ -9,13 +9,17 @@
     interface ComponentProps {
         addedItem?: any
         newItemAdded?: boolean
+        imgPromise?: any
     }
 
     let {
-        addedItem = {},
+        addedItem = $bindable({}),
         newItemAdded = $bindable(false),
+        imgPromise = $bindable(null)
     }: ComponentProps = $props()
 
+    let imgUrl = $derived(addedItem["img_url"]) as string
+    let lastFmImgUrl = $derived(addedItem["last_fm_img_url"]) as string
 </script>
 <svelte:options runes={true} />
 
@@ -28,10 +32,52 @@
             value={itemType}
         />
         <input
-            id="mbid" 
-            name="mbid" 
+            id="artist-mbid" 
+            name="artist-mbid" 
             type="hidden" 
-            value={addedItem?.release_group_mbid ?? addedItem?.artist_mbid ?? null} 
+            value={addedItem?.artist_mbid ?? null} 
+        />
+        <input
+            id="release-group-mbid" 
+            name="release-group-mbid" 
+            type="hidden" 
+            value={addedItem?.release_group_mbid ?? null} 
+        />
+        <input
+            id="recording-mbid" 
+            name="recording-mbid" 
+            type="hidden" 
+            value={addedItem?.recording_mbid ?? null} 
+        />
+        <input
+            id="remixer-artist-mbid" 
+            name="remixer-artist-mbid" 
+            type="hidden" 
+            value={addedItem?.remixer_artist_mbid ?? null} 
+        />
+        <input
+            id="release-date" 
+            name="release-date" 
+            type="hidden" 
+            value={addedItem?.release_date ?? null} 
+        />
+        <input
+            id="label" 
+            name="label" 
+            type="hidden" 
+            value={addedItem?.label ?? null} 
+        />
+        <input
+            id="img-url" 
+            name="img-url" 
+            type="hidden" 
+            value={imgUrl} 
+        />
+        <input
+            id="last-fm-img-url" 
+            name="last-fm-img-url" 
+            type="hidden" 
+            value={lastFmImgUrl} 
         />
         <div class="tooltip-group">
             <label 
@@ -63,12 +109,6 @@
             </span>
         </div>
         {#if itemType == 'release_group' || itemType == 'recording'}
-            <input  
-                id="artist-mbid" 
-                name="artist-mbid" 
-                type="hidden"
-                value={addedItem?.artist_mbid ?? null}
-            />
             <input
                 class="text"  
                 id="artist-name" 
@@ -88,12 +128,6 @@
                     * required
                 </span>
             </div>
-            <input  
-                id="release-group-mbid" 
-                name="release-group-mbid" 
-                type="hidden"
-                value={addedItem?.release_group_mbid ?? null}
-            />
             <input 
                 class="text" 
                 id="release-group-name" 
@@ -115,12 +149,6 @@
                     * required
                 </span>
             </div>
-                <input  
-                id="recording-mbid" 
-                name="recording-mbid" 
-                type="hidden"
-                value={addedItem?.recording_mbid ?? null}
-            />
             <input 
                 class="text"    
                 id="recording-name" 
@@ -215,6 +243,7 @@
                     bind:newItemAdded={newItemAdded}
                     mode="single"
                     limit="10"
+                    bind:imgPromise={imgPromise}
                 ></MusicBrainzSearch>
                 <Tooltip>
                     Search for an album to autofill this form.
@@ -231,6 +260,7 @@
                     bind:addedItems={addedItem}
                     bind:newItemAdded={newItemAdded}
                     mode="single"
+                    bind:imgPromise={imgPromise}
                 ></MusicBrainzSearch>
                 <Tooltip>
                     Search for a track to autofill this form.

@@ -50,15 +50,18 @@ export const getLabel = async function( searchCategory: string, releaseGroupMbid
         let releases = await res.json()
         releases = releases["releases"]
     
-        for ( const release of releases ) {
-            if ( releaseDate == release["date"] ) {
-                if ( release["label-info"].length > 0 ) {
-                    name = release["label-info"][0]["label"]["name"];
-                    mbid = release["label-info"][0]["label"]["id"];
+        if ( releases && releases.length > 0) {
+            for ( const release of releases ) {
+                if ( releaseDate == release["date"] ) {
+                    if ( release["label-info"].length > 0 ) {
+                        name = release["label-info"][0]["label"]["name"];
+                        mbid = release["label-info"][0]["label"]["id"];
+                    }
+                    return { name, mbid }
                 }
-                return { name, mbid }
             }
         }
+
     }
     return { name, mbid }
 }
@@ -429,7 +432,7 @@ export const addCollectionItemNoImg = async function (
         "release_group_name": releaseGroupName( searchCategory, item ),
         "recording_mbid": recordingMbid( searchCategory, item ),
         "recording_name": recordingName( searchCategory, item ),
-        "remixer_mbid": remixerMbid( searchCategory, item ),
+        "remixer_mbid": remixerMbid( searchCategory, item ) ?? null,
         "release_date": releaseDate,
         "img_url": null,
         "last_fm_img_url": null,
