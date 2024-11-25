@@ -4,6 +4,9 @@
 	
 	// export let form: ActionData
 	// $: form
+
+	let addedItem = $state({})
+	let imgPromise = $state(null)
 </script>
 
 <svelte:options runes={true} />
@@ -16,4 +19,6 @@
 
 
 <NewNowPlayingPost
+	bind:addedItem={addedItem}
+	bind:imgPromise={imgPromise}
 ></NewNowPlayingPost>

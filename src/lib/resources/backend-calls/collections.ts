@@ -228,6 +228,18 @@ export const selectListProfileUserFollowingCollections = async function ( userna
     return collections
 }
 
+export const selectListSessionUserCollections =  async function ( sessionUserId: string ) {
+    const selectCollections = await db
+    .selectFrom('collections_info')
+    .select(['collection_id', 'title'])
+    .where('owner_id', '=', sessionUserId)
+    .where('status', '!=', 'deleted')
+    .execute()
+
+    const collections = selectCollections as App.RowData[]
+    return collections
+}
+
 /*
 Fetches collection for viewing if collection is open or public, or session user is an owner or collaborator
 */
@@ -1110,4 +1122,98 @@ export const selectCollectionUserFollowData = async function ( sessionUserId: st
 
     const followData = await selectCollectionFollowData
     return followData
+}
+
+export const saveItemToCollection = async function ( sessionUserId: string, item: App.RowData, collectionId: string ) {
+    const timestampISOString: string = new Date().toISOString()
+    const timestampISO: Date = parseISO(timestampISOString)
+
+    const update = await db.transaction().execute(async (trx) => {
+        try {
+            const collectionInfo = await trx
+            .selectFrom('collections_info as info')
+            .leftJoin('collections_social as social', 'social.collection_id', 'info.collection_id')
+            .leftJoin('collections_contents as contents', 'contents.collection_id', 'info.collection_id')
+            .select([
+                'info.collection_id as id',
+                'info.changelog as changelog',
+            ])
+            .where(({eb, and, or}) => and([
+                eb('info.collection_id', '=', collectionId),
+                or([
+                    eb('info.owner_id', '=', sessionUserId),
+                    and([
+                        eb('social.user_id', '=', sessionUserId),
+                        eb('social.user_role', '=', 'collaborator')
+                    ])
+                ])
+            ]))
+            .executeTakeFirstOrThrow()
+
+            const contentsCount = await trx
+            .selectFrom('collections_contents')
+            .select((eb) => eb.fn.count<number>('id').as('count'))
+            .where('collection_id', '=', collectionId)
+            .where('item_position', 'is not', null)
+            .execute()
+
+            const itemPosition = contentsCount[0]['count']
+            
+            const infoChangelog = collectionInfo.changelog as App.Changelog
+
+            const itemChangelog = {} as App.Changelog
+
+            itemChangelog[timestampISOString] = {
+                "updated_at": timestampISO,
+                "item_position": itemPosition,
+            }
+
+            const newItem = {            
+                collection_id: collectionId,
+                inserted_at: timestampISO,
+                inserted_by: sessionUserId,
+                updated_at: timestampISO,
+                updated_by: sessionUserId,
+                artist_mbid: item["artist_mbid"],
+                release_group_mbid: item["release_group_mbid"] ?? null,
+                recording_mbid: item["recording_mbid"] ?? null,
+                item_position: itemPosition,
+                from_post: item["from_post_id"] ?? null,
+                from_collection: item["from_collection_id"] ?? null,
+                changelog: itemChangelog
+            }
+
+            await trx
+                .insertInto( 'collections_contents' )
+                .values( newItem )
+                .returningAll()
+                .execute()
+
+            await trx
+                .updateTable('collections_info')
+                .set({
+                    updated_at: timestampISO,
+                    updated_by: sessionUserId,
+                    changelog: infoChangelog
+                })
+                .where('collection_id', '=', collectionId)
+                .execute()
+                
+            await trx
+                .insertInto('collections_updates')
+                .values({
+                    collection_id: collectionId,
+                    updated_at: timestampISO,
+                    updated_by: sessionUserId
+                })
+                .execute()
+            
+            return { success: true }
+        }
+        catch ( error ) {
+            return { success: false }
+        }
+    })
+    const updateSuccess = await update.success
+    return updateSuccess
 }

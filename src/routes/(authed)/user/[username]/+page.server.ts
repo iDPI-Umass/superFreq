@@ -144,15 +144,14 @@ export const actions = {
         const releaseGroupName = data.get('release-group-name') as string
         const recordingMbid = data.get('recordiing-mbid') as string
         const recordingName = data.get('recording-name') as string
+        const remixerArtistMbid = data.get('remixer-artist-mbid') as string
+        const releaseDate = data.get('release-date') as string
+        const label = data.get('label') as string
+        const imgUrl = data.get('img-url') as string
+        const lastFmImgUrl = data.get('last-fm-img-url') as string
         const episodeName = data.get('episode') as string
         const showName = data.get('show') as string
         const postText = data.get('post-text') as string
-
-        const mbid = {
-            'release_group': releaseGroupMbid,
-            'recording': recordingMbid,
-            'episode': artistMbid
-        } as App.StringLookupObject
 
         const embedInfo = listenUrl ? await getListenUrlData(listenUrl) : null
 
@@ -162,10 +161,17 @@ export const actions = {
             status: "new",
             listen_url: listenUrl ?? null,
             item_type: itemType,
-            mbid: mbid[itemType] ?? null,
+            artist_mbid: artistMbid ?? null,
+            release_group_mbid: releaseGroupMbid ?? null,
+            recording_mbid: recordingMbid ?? null,
             artist_name: artistName ?? null,
             release_group_name: releaseGroupName ?? null,
             recording_name: recordingName ?? null,
+            remixer_artist_mbid: remixerArtistMbid ?? null,
+            release_date: releaseDate ?? null,
+            label: label ?? null,
+            img_url: imgUrl ?? null,
+            last_fm_img_url: lastFmImgUrl ?? null,
             episode_title: episodeName ?? null,
             show_title: showName ?? null,
             text: postText ?? null,

@@ -39,7 +39,6 @@
 
     const isOwner = $derived(( sessionUserId == collectionInfo.owner_id ) ? true : false)
 
-    console.log(descriptionText)
 </script>
 <svelte:options runes={true} />
 

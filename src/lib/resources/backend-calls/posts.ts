@@ -1,7 +1,7 @@
 import { sql } from 'kysely'
 import { db } from 'src/database.ts'
 import { parseISO } from 'date-fns'
-import { dateToISODate } from '$lib/resources/parseData'
+import { dateToISODate, prepareMusicMetadataInsert } from '$lib/resources/parseData'
 
 /* Insert a new post. 
 
@@ -35,8 +35,70 @@ postData template for new comments:
 */
 
 export const insertPost = async function ( postData: any ) {
+    let artistsMetadata = []
+    let releaseGroupsMetadata = []
+    let recordingsMetadata = []
+
+    if ( postData["artist_mbid"] ) {
+        const metadata = [{
+            "artist_mbid": postData["artist_mbid"],
+            "artist_name": postData["artist_name"],
+            "release_group_mbid": postData["release_group_mbid"],
+            "release_group_name": postData["release_group_name"],
+            "release_date": postData["release_date"],
+            "label": postData["label_name"],
+            "img_url": postData["img_url"],
+            "last_fm_img_url": postData["last_fm_img_url"],
+            "recording_mbid": postData["recording_mbid"],
+            "recording_name": postData["recording_name"],
+            "remixer_artist_mbid": postData["remixer_artist_mbid"],
+        }] as App.RowData[]
+    
+        const preparedMetadata = await prepareMusicMetadataInsert(metadata, postData["item_type"])
+
+        artistsMetadata = preparedMetadata.artistsMetadata
+        releaseGroupsMetadata = preparedMetadata.releaseGroupsMetadata
+        recordingsMetadata = preparedMetadata.recordingsMetadata
+    }
+
+    delete postData.label
+    delete postData.release_date
+    delete postData.remixer_artist_mbid
+    delete postData.img_url
+    delete postData.last_fm_img_url
 
     const post = await db.transaction().execute(async(trx) => {
+        if ( postData["artist_mbid"] ) {
+            await trx
+                .insertInto('artists')
+                .values(artistsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .execute()
+        }
+        
+        if ( postData["release_group_mbid"] ) {
+            await trx
+                .insertInto('release_groups')
+                .values(releaseGroupsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .returningAll()
+                .execute()
+        }
+
+        if ( postData["recording_mbid"] ) {
+            await trx
+                .insertInto('recordings')
+                .values(recordingsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .execute()
+        }
+
         const insertPost = await trx
         .insertInto('posts')
         .values(postData)
@@ -213,8 +275,9 @@ export const selectPost = async function ( sessionUserId: string, username: stri
                 'posts.id as id', 
                 'posts.text as text', 
                 'posts.user_id as user_id', 
-                'posts.type as type', 
-                'posts.mbid as mbid', 
+                'posts.artist_mbid as artist_mbid',
+                'posts.release_group_mbid as release_group_mbid',
+                'posts.recording_mbid as recording_mbid',
                 'posts.artist_name as artist_name', 
                 'posts.release_group_name as release_group_name', 
                 'posts.recording_name as recording_name', 
@@ -338,8 +401,8 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
             const post = await trx
             .selectFrom('posts')
             .innerJoin('profiles as profile', 'profile.id', 'posts.user_id')
-            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profile.avatar_mbid')
-            .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
+            .leftJoin('release_groups as avatar_release_group', 'avatar_release_group.release_group_mbid', 'profile.avatar_mbid')
+            .leftJoin('artists as avatar_artist', 'avatar_artist.artist_mbid', 'avatar_release_group.artist_mbid')
             .leftJoin('post_reactions as reaction',
                 (join) => join
                 .onRef('reaction.post_id', '=', 'posts.id')
@@ -356,7 +419,9 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                 'posts.text as text', 
                 'posts.user_id as user_id', 
                 'posts.type as type', 
-                'posts.mbid as mbid', 
+                'posts.artist_mbid as artist_mbid',
+                'posts.release_group_mbid as release_group_mbid',
+                'posts.recording_mbid as recording_mbid',
                 'posts.artist_name as artist_name', 
                 'posts.release_group_name as release_group_name', 
                 'posts.recording_name as recording_name', 
@@ -373,8 +438,8 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                 'profile.username as username', 
                 'profile.display_name as display_name', 
                 'profile.avatar_url as avatar_url', 
-                'release_groups.release_group_name as avatar_release_group_name',
-                'artists.artist_name as avatar_artist_name',
+                'avatar_release_group.release_group_name as avatar_release_group_name',
+                'avatar_artist.artist_name as avatar_artist_name',
                 'reaction.active as reaction_active',
                 (eb) => eb.fn.count('all_reactions.id').as('reaction_count')
             ])
@@ -393,8 +458,8 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                 'profile.username',
                 'profile.display_name',
                 'profile.avatar_url',
-                'artists.artist_name',
-                'release_groups.release_group_name',
+                'avatar_artist.artist_name',
+                'avatar_release_group.release_group_name',
                 'reaction.active'
             ])
             .executeTakeFirst()
@@ -550,12 +615,14 @@ export const selectUserNowPlayingPosts = async function ( sessionUserId: string,
             .select([
                 'posts.id as id',
                 'posts.text as text',
-                'posts.mbid as mbid',
                 'posts.created_at as created_at',
                 'posts.updated_at as updated_at',
                 'posts.type as type',
                 'posts.status as status',
                 'posts.artist_name as artist_name',
+                'posts.artist_mbid',
+                'posts.release_group_mbid',
+                'posts.recording_mbid',
                 'posts.release_group_name as release_group_name',
                 'posts.recording_name as recording_name',
                 'posts.episode_title as episode_title',
@@ -628,11 +695,13 @@ export const selectUserPostsAndComments = async function ( sessionUserId: string
             .select([
                 'posts.id as id',
                 'posts.text as text',
-                'posts.mbid as mbid',
                 'posts.created_at as created_at',
                 'posts.updated_at as updated_at',
                 'posts.type as type',
                 'posts.status as status',
+                'posts.artist_mbid as artist_mbid',
+                'posts.release_group_mbid as release_group_mbid',
+                'posts.recording_mbid as recording_mbid',
                 'posts.artist_name as artist_name',
                 'posts.release_group_name as release_group_name',
                 'posts.recording_name as recording_name',
@@ -662,7 +731,6 @@ export const selectUserPostsAndComments = async function ( sessionUserId: string
             .select([
                 'posts.id as id',
                 'posts.text as text',
-                'posts.mbid as mbid',
                 'posts.created_at as created_at',
                 'posts.updated_at as updated_at',
                 'posts.type as type',
@@ -746,7 +814,9 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
             .select([
                 'posts.id as now_playing_post_id',
                 'posts.text as text',
-                'posts.mbid as mbid',
+                'posts.artist_mbid as artist_mbid',
+                'posts.release_group_mbid as release_group_mbid',
+                'posts.recording_mbid as recording_mbid',
                 'posts.artist_name as artist_name',
                 'posts.release_group_name as release_group_name',
                 'posts.recording_name as recording_name',
