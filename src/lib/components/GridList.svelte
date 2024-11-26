@@ -65,6 +65,11 @@
         return text
     } 
 
+    function whitelistCheck ( url: string ) {
+        // include list of domains that are allowed for hyperlinking, return true if match
+        return false
+    }
+
     let items = $state(collectionContents)
     $effect(() => { items = collectionContents })
 
@@ -179,47 +184,72 @@
 {/snippet}
 
 {#snippet metadataBlurb( item: any, itemType: string, mode: string )}
-    {#if itemType.includes("artist") && mode == "edit"}
+    {#if itemType.includes("artist")}
         <p>
-            {item["artist_name"]}
+            {#if item['artist_mbid'] && item['artist_mbid'].length > 0 && mode == "view"}
+                <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
+                    {item["artist_name"]}
+                </a>
+            {:else}
+                {item["artist_name"]}
+            {/if}
         </p>
-    {:else if itemType.includes("artist") && mode == "view"}
-        <p>
-            <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
-                {item["artists"]["artist_name"]}
-            </a>
-        </p>
-    {:else if itemType.includes("release_group") && mode == "edit"}
+    {:else if itemType.includes("release_group")}
         <h2>
-            {item["release_group_name"]}
-        </h2>
-        <p>
-            {item["artist_name"]}
-        </p>
-    {:else if itemType.includes("release_group") && mode == "view"}
-        <h2>
+            {#if item['release_group_mbid'] && item['release_group_mbid'].length > 0  && mode == "view"} 
             <a href={`https://musicbrainz.org/release-group/${item["release_group_mbid"]}`}>
                 {item["release_group_name"]}
             </a>
+            {:else}
+                {item["release_group_name"]}
+            {/if}
         </h2>
         <p>
-            <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
+            {#if item['artist_mbid'] && item['artist_mbid'].length > 0  && mode == "view"}
+                <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
+                    {item["artist_name"]}
+                </a>
+            {:else}
                 {item["artist_name"]}
-            </a>
+            {/if}
         </p>
-    {:else if itemType.includes("recording") && mode == "edit"}
-        <h2>{item["recording_name"]}</h2>
-        <p>{item["artist_name"]}</p>
-    {:else if itemType.includes("recording") && mode == "view"}
+    {:else if itemType.includes("recording")}
         <h2>
-            <a href={`https://musicbrainz.org/recording/${item["recording_mbid"]}`}>
+            {#if item['recording_mbid'] && item['recording_mbid'].length > 0 && mode == "view"}
+                <a href={`https://musicbrainz.org/recording/${item["recording_mbid"]}`}>
+                    {item["recording_name"]}
+                </a>
+            {:else}
                 {item["recording_name"]}
-            </a>
+            {/if}
         </h2>
         <p>
-            <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
+            {#if item['artist_mbid'] && item['artist_mbid'].length > 0 && mode == "view"}
+                <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
+                    {item["artist_name"]}
+                </a>
+            {:else}
                 {item["artist_name"]}
+            {/if}
+        </p>
+    {:else if itemType.includes("episode")}
+        <h2>
+            {#if item["episode_url"] && item['episode_url'].length > 0 && whitelistCheck(item["episode_url"]) && mode == "view"}
+            <a href={item["episode_url"]}>
+                {item["episode_title"]}
             </a>
+            {:else}
+                {item["episode_title"]}
+            {/if}
+        </h2>
+        <p>
+            {#if item['artist_mbid'] && item['artist_mbid'].length > 0 && mode == "view"}
+                <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
+                    {item["artist_name"]}
+                </a>
+            {:else}
+                {item["artist_name"]}
+            {/if}
         </p>
     {/if}
 {/snippet}
