@@ -41,6 +41,32 @@
         "condensed-grid": ["media-grid-condensed", "media-grid-item"],
     }
 
+    function ariaLabel ( item: any, itemType: string) {
+        let text = ''
+        if ( itemType.includes("artist") ) {
+            text = item["artistName"]
+        }
+        else if ( itemType.includes("release_group") ) {
+            text = `${item["release_group_name"]} by ${item["artist_name"]}`
+        }
+        else if ( itemType.includes("recording") ) {
+            text = `${item["recording_name"]} by ${item["artist_name"]}`
+        }
+        return text
+    }
+
+    function altText ( item: any, itemType: string ) {
+        let text = ''
+        if ( itemType.includes('release_group')) {
+            text = `${item['release_group_name']}" by ${item['artist_name']}`
+        }
+        else if ( itemType.includes("recording") )
+            {
+                text = `"${item['recording_name']}" by ${item['artist_name']}`
+            }
+        return text
+    } 
+
     let items = $state(collectionContents)
     $effect(() => { items = collectionContents })
 
@@ -118,6 +144,88 @@
     {/await}
 {/snippet}
 
+{#snippet coverArt( item: any, itemType: string, mode: string )}
+    {#if itemType.includes("release_group") && mode == "edit"}
+        {#key items.length}
+            {#if ( item["img_url"] != null ) || ( item["last_fm_img_url"] != null )}
+                <CoverArt
+                    item={item}
+                    altText={`"${item['release_group_name']}" by ${item['artist_name']}`}
+                ></CoverArt>
+            {:else if ( item["img_url"] == null ) && ( item["last_fm_img_url"] == null )}
+                {@render editorItemImage(item, item["release_group_name"])}
+            {/if}
+        {/key}
+    {:else if itemType.includes("release_group") && mode == "view"}
+        <CoverArt
+            item={item}
+            altText={item['release_group_name']}
+        ></CoverArt>
+    {:else if itemType.includes("recording") && mode == "edit"}
+        {#key items.length}
+            {#if ( item["img_url"] != null ) || ( item["last_fm_img_url"] != null )}
+                <CoverArt
+                    item={item}
+                    altText={altText(item, ( collectionType ?? item["item_type"] ))}
+                ></CoverArt>
+            {:else if ( item["img_url"] == null ) && ( item["last_fm_img_url"] == null )}
+                {@render editorItemImage(item, item["recording_name"])}
+            {/if}
+        {/key}
+    {:else if itemType.includes("recording") && mode == "view"}
+        <CoverArt
+            item={item}
+            altText={item["recording_name"]}
+        ></CoverArt>
+    {/if}
+{/snippet}
+
+{#snippet metadataBlurb( item: any, itemType: string, mode: string )}
+    {#if itemType.includes("artist") && mode == "edit"}
+        <p>
+            {item["artist_name"]}
+        </p>
+    {:else if itemType.includes("artist") && mode == "view"}
+        <p>
+            <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
+                {item["artists"]["artist_name"]}
+            </a>
+        </p>
+    {:else if itemType.includes("release_group") && mode == "edit"}
+        <h2>
+            {item["release_group_name"]}
+        </h2>
+        <p>
+            {item["artist_name"]}
+        </p>
+    {:else if itemType.includes("release_group") && mode == "view"}
+        <h2>
+            <a href={`https://musicbrainz.org/release-group/${item["release_group_mbid"]}`}>
+                {item["release_group_name"]}
+            </a>
+        </h2>
+        <p>
+            <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
+                {item["artist_name"]}
+            </a>
+        </p>
+    {:else if itemType.includes("recording") && mode == "edit"}
+        <h2>{item["recording_name"]}</h2>
+        <p>{item["artist_name"]}</p>
+    {:else if itemType.includes("recording") && mode == "view"}
+        <h2>
+            <a href={`https://musicbrainz.org/recording/${item["recording_mbid"]}`}>
+                {item["recording_name"]}
+            </a>
+        </h2>
+        <p>
+            <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
+                {item["artist_name"]}
+            </a>
+        </p>
+    {/if}
+{/snippet}
+
 {#snippet itemAttribution(item: any, status: string)}
     {#if  status == "open"}
         <a class="attribution" href="/user/{item.inserted_by_username}">
@@ -137,133 +245,39 @@
 {#await collectionContents.length > 0 then}
     {#if mode == "edit"}
         <ul 
-        aria-label="collection items" 
-        class={format[layout][0]}
-        use:dragHandleZone={{items, flipDurationMs}} 
-        onconsider={handleSort} 
-        onfinalize={handleFinalize}
-        >   
+            aria-label="collection items" 
+            class={format[layout][0]}
+            use:dragHandleZone={{items, flipDurationMs}} 
+            onconsider={handleSort} 
+            onfinalize={handleFinalize}
+        >
             {#each items as contentItem, index(contentItem.id)}
-                {#if collectionType == "artists"}
-                    <li
-                        aria-label={contentItem["artistName"]}
-                        animate:flip="{{duration: flipDurationMs}}" 
-                        class={format[layout][1]} 
-                    >
-                        <div class="metadata-blurb">
-                            <p>
-                                {contentItem["artist_name"]}
-                            </p>
-                        </div>
-                        {@render editorInteractions(contentItem, contentItem["artist_name"])}
-                    </li>
-                {:else if collectionType == "release_groups"  }
-                    <li 
-                        aria-label="{contentItem["release_group_name"]} by ${contentItem["artist_name"]}" 
-                        animate:flip="{{duration: flipDurationMs}}" 
-                        class={format[layout][1]} 
-                    >
-                    {#key items.length}
-                        {#if ( contentItem["img_url"] != null ) || ( contentItem["last_fm_img_url"] != null )}
-                            <CoverArt
-                                item={contentItem}
-                                altText={`"${contentItem['release_group_name']}" by ${contentItem['artist_name']}`}
-                            ></CoverArt>
-                        {:else if ( contentItem["img_url"] == null ) && ( contentItem["last_fm_img_url"] == null )}
-                            {@render editorItemImage(contentItem, contentItem["release_group_name"])}
-                        {/if}
-                    {/key}
-                        <div class="metadata-blurb">
-                            <h2>
-                                {contentItem["release_group_name"]}
-                            </h2>
-                            <p>
-                                {contentItem["artist_name"]}
-                            </p>
-                        </div>
-                        {@render editorInteractions(contentItem, contentItem["release_group_name"])} 
-                    </li>
-                {:else if collectionType == "recordings"}
-                    <li 
-                        aria-label="{contentItem["recording_name"]} by ${contentItem["artist_name"]}" 
-                        animate:flip="{{duration: flipDurationMs}}" 
-                        class={format[layout][1]}
-                    >
-                    {#key items.length}
-                        {#if ( contentItem["img_url"] != null ) || ( contentItem["last_fm_img_url"] != null )}
-                            <CoverArt
-                                item={contentItem}
-                                altText={`"${contentItem['recording_name']}" by ${contentItem['artist_name']}`}
-                            ></CoverArt>
-                        {:else if ( contentItem["img_url"] == null ) && ( contentItem["last_fm_img_url"] == null )}
-                            {@render editorItemImage(contentItem, contentItem["recording_name"])}
-                        {/if}
-                    {/key}
-                        <div class="metadata-blurb">
-                            <h2>{contentItem["recording_name"]}</h2>
-                            <p>{contentItem["artist_name"]}</p>
-                        </div>
-                        {@render editorInteractions(contentItem, contentItem["recording_name"])}
-                    </li>
-                {/if}
+                <li 
+                    aria-label={ariaLabel(contentItem, ( collectionType ?? contentItem["item_type"] ))} 
+                    animate:flip="{{duration: flipDurationMs}}" 
+                    class={format[layout][1]}
+                >
+                    {@render coverArt(contentItem, ( collectionType ?? contentItem["item_type"] ), mode)}
+                    <div class="metadata-blurb">
+                        {@render metadataBlurb(contentItem, ( collectionType ?? contentItem["item_type"] ), mode)}
+                    </div>
+                    {@render editorInteractions(contentItem, contentItem["recording_name"])}
+                </li>
             {/each}
         </ul>
     {:else if mode == "view" }
-        <ul class={format[layout][0]}>
-            {#each collectionContents as contentItem}
-                {#if collectionType == "artists" || contentItem["item_type"] == "artist"}                    
-                    <li class={format[layout][1]}>
-                        <p>
-                            <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
-                                
-                                    {contentItem["artists"]["artist_name"]}
-                            </a>
-                        </p>
-                        {@render itemAttribution(contentItem, collectionStatus)}
-                    </li>
-                {:else if collectionType == "release_groups" || contentItem["item_type"] == "release_group"}
-                    <li class={format[layout][1]}>
-                        <CoverArt
-                            item={contentItem}
-                            altText={contentItem['release_group_name']}
-                        ></CoverArt>
-                        <div class="metadata-blurb">
-                            <h2>
-                                <a href={`https://musicbrainz.org/release-group/${contentItem["release_group_mbid"]}`}>
-                                    {contentItem["release_group_name"]}
-                                </a>
-                            </h2>
-                            <p>
-                                <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
-                                    {contentItem["artist_name"]}
-                                </a>
-                            </p>
-                        </div>
-                        {@render itemAttribution(contentItem, collectionStatus)}
-                    </li>
-                {:else if collectionType == "recordings" || contentItem["item_type"] == "recording"}
-                    <div class={format[layout][0]}>
-                        <div class={format[layout][1]}>
-                            <CoverArt
-                                item={contentItem}
-                                altText={contentItem["recording_name"]}
-                            ></CoverArt>
-                            <div class="metadata-blurb">
-                                <h2>
-                                    <a href={`https://musicbrainz.org/recording/${contentItem["recording_mbid"]}`}>
-                                        {contentItem["recording_name"]}
-                                    </a>
-                                </h2>
-                                <p>
-                                    <a href={`https://musicbrainz.org/artist/${contentItem["artist_mbid"]}`}>
-                                        {contentItem["artist_name"]}
-                                    </a>
-                                </p>
-                                {@render itemAttribution(contentItem, collectionStatus)}
-                            </div>
-                        </div>
+        <ul
+            aria-label="collection items" 
+            class={format[layout][0]}
+        >
+            {#each collectionContents as contentItem}                  
+                <li class={format[layout][1]}>
+                    {@render coverArt(contentItem, ( collectionType ?? contentItem["item_type"] ), mode)}
+                    <div class="metadata-blurb">
+                        {@render metadataBlurb(contentItem, ( collectionType ?? contentItem["item_type"] ), mode)}
                     </div>
-                {/if}
+                    {@render itemAttribution(contentItem, collectionStatus)}
+                </li>
             {/each}
             {@render underSizedCollection()}
         </ul>
