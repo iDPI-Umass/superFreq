@@ -8,8 +8,6 @@
     import Grip from 'lucide-svelte/icons/grip'
 
     import wave from "$lib/assets/images/logo/freq-wave.svg"
-    import loadingImage from "$lib/assets/images/loading-image.png"
-    import imgNotFound from "$lib/assets/images/image-not-found.png"
 
     import CoverArt from "src/lib/components/CoverArt.svelte"
 
@@ -132,10 +130,10 @@
 
 {#snippet editorItemImage(item: any, altText: string)}
     {#await imgPromise}
-    <img 
-        src={wave} 
-        alt="loading cover art"
-    />
+        <img 
+            src={wave} 
+            alt="loading cover art"
+        />
     {:then}
         <img 
             src={item["img_url"] ?? item["last_fm_img_url"] ?? wave} 
