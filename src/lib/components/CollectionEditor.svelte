@@ -201,6 +201,9 @@
 
 <style>
     fieldset.search {
+        margin: 0;
+    }
+    .form-column {
         margin: var(--freq-spacing-2x-small) 0;
     }
     span.or {
