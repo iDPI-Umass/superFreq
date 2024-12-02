@@ -14,7 +14,8 @@
 
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
-    import CoverArt from "src/lib/components/CoverArt.svelte"
+    import CoverArt from "$lib/components/CoverArt.svelte"
+    import CollectionItemTag from "$lib/components/CollectionItemTag.svelte"
 
     interface ComponentProps {
         collectionContents: any
@@ -185,16 +186,20 @@
             item={item}
             altText={item["recording_name"]}
         ></CoverArt>
+    {:else if itemType.includes("episode")}
+        <CoverArt
+            item={item}
+            altText={item["episode_title"]}
+        ></CoverArt>
     {/if}
 {/snippet}
 
 {#snippet metadataBlurb( item: any, itemType: string, mode: string )}
     {#if itemType.includes("artist")}
         <span class="artist">
-            <div class="type">
-                <Palette size="12" color="var(--freq-color-text-medium-dark)"></Palette>
-                <span>artist</span>
-            </div>
+            <CollectionItemTag
+                itemType={itemType}
+            ></CollectionItemTag>
             {#if item['artist_mbid'] && item['artist_mbid'].length > 0 && mode == "view"}
                 <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
                     {item["artist_name"]}
@@ -204,10 +209,9 @@
             {/if}
             </span>
     {:else if itemType.includes("release_group")}
-        <div class="type">
-            <Disc size="12" color="var(--freq-color-text-medium-dark)"></Disc>
-            <span>album</span>
-        </div>
+        <CollectionItemTag
+            itemType={itemType}
+        ></CollectionItemTag>
         <span class="title">
             {#if item['release_group_mbid'] && item['release_group_mbid'].length > 0  && mode == "view"} 
             <a href={`https://musicbrainz.org/release-group/${item["release_group_mbid"]}`}>
@@ -227,10 +231,9 @@
             {/if}
         </span>
     {:else if itemType.includes("recording")}
-        <div class="type">
-            <MusicNote size="12" color="var(--freq-color-text-medium-dark)"></MusicNote>
-            <span>track</span>
-        </div>
+        <CollectionItemTag
+            itemType={itemType}
+        ></CollectionItemTag>
         <span class="title">
             {#if item['recording_mbid'] && item['recording_mbid'].length > 0 && mode == "view"}
                 <a href={`https://musicbrainz.org/recording/${item["recording_mbid"]}`}>
@@ -250,10 +253,9 @@
             {/if}
         </span>
     {:else if itemType.includes("episode")}
-        <div class="type">
-            <BoomBox size="12" color="var(--freq-color-text-medium-dark)"></BoomBox>
-            <span>mix</span>
-        </div>
+        <CollectionItemTag
+            itemType={itemType}
+        ></CollectionItemTag>
         <span class="title">
             {#if item["episode_url"] && item['episode_url'].length > 0 && whitelistCheck(item["episode_url"]) && mode == "view"}
             <a href={item["episode_url"]}>

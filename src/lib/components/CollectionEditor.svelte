@@ -3,6 +3,7 @@
     import GridList from '$lib/components/GridList.svelte'
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
     import ManualAddModal from '$lib/components/modals/ManualAddModal.svelte'
+    import CollectionItemTag from '$lib/components/CollectionItemTag.svelte'
 
     interface ComponentProps {
         collectionType: string
@@ -80,7 +81,7 @@
     <div class="form-column">
         <fieldset class="search">
             <legend>
-                Add <span class="item-type">{itemLookup[itemType]}</span> to your collection
+                Add <CollectionItemTag itemType={itemLookup[itemType]}></CollectionItemTag> to your collection
             </legend>
             <ul>
                 <li>
