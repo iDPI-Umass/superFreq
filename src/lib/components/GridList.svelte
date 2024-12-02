@@ -302,13 +302,13 @@
         >
             {#each items as contentItem, index(contentItem.id)}
                 <li 
-                    aria-label={ariaLabel(contentItem, ( collectionType ?? contentItem["item_type"] ))} 
+                    aria-label={ariaLabel(contentItem, ( contentItem["item_type"] ?? collectionType ))} 
                     animate:flip="{{duration: flipDurationMs}}" 
                     class={format[layout][1]}
                 >
-                    {@render coverArt(contentItem, ( collectionType ?? contentItem["item_type"] ), mode)}
+                    {@render coverArt(contentItem, ( contentItem["item_type"] ?? collectionType ), mode)}
                     <div class="metadata-blurb">
-                        {@render metadataBlurb(contentItem, ( collectionType ?? contentItem["item_type"] ), mode)}
+                        {@render metadataBlurb(contentItem, ( contentItem["item_type"] ?? collectionType ), mode)}
                     </div>
                     {@render editorInteractions(contentItem, contentItem["recording_name"])}
                 </li>
@@ -321,9 +321,9 @@
         >
             {#each collectionContents as contentItem}                  
                 <li class={format[layout][1]}>
-                    {@render coverArt(contentItem, ( collectionType ?? contentItem["item_type"] ), mode)}
+                    {@render coverArt(contentItem, ( contentItem["item_type"] ?? collectionType ), mode)}
                     <div class="metadata-blurb">
-                        {@render metadataBlurb(contentItem, ( collectionType ?? contentItem["item_type"] ), mode)}
+                        {@render metadataBlurb(contentItem, ( contentItem["item_type"] ?? collectionType ), mode)}
                     </div>
                     {@render itemAttribution(contentItem, collectionStatus)}
                 </li>
