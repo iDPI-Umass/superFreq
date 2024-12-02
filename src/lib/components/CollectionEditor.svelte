@@ -70,6 +70,10 @@
         'tracks': 'recordings',
         'recording': 'recordings',
         'recordings': 'recordings',
+        'episode': 'episode',
+        'episodes': 'episode',
+        'mix': 'episode',
+        'mixes': 'episode'
     } as any
 
     let showManualAddModal = $state(false)
