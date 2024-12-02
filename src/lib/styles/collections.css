@@ -192,24 +192,6 @@ span.search-tooltip {
 	color: var(--freq-color-text-muted);
 }
 
-/* Collection item tag */
-
-.collection-item-tag{
-    display: flex;
-    flex-direction: row;
-    width: fit-content;
-    padding:  var(--freq-spacing-2x-small);
-    align-items: center;
-    gap: var(--freq-inline-gap-double);
-    background-color: var(--freq-color-background-badge-medium);
-    background: var(--freq-grid-dark-background);
-    color: var(--freq-color-text-medium-dark);
-    font-size: var(--freq-font-size-x-small);
-    text-transform: uppercase;
-    font-weight: var(--freq-font-weight-semi-bold);
-	letter-spacing: var(--freq-letter-spacing-looser);
-}
-
 /* Grid classes */
 
 .media-grid {

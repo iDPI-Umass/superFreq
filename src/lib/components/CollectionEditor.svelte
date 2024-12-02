@@ -81,7 +81,7 @@
     <div class="form-column">
         <fieldset class="search">
             <legend>
-                Add <CollectionItemTag itemType={itemLookup[itemType]}></CollectionItemTag> to your collection
+                Add <CollectionItemTag itemType={searchCategoryLookup[itemType]}></CollectionItemTag> to your collection
             </legend>
             <ul>
                 <li>
