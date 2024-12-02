@@ -198,12 +198,16 @@
 		bind:itemAdded={itemAdded}
 		bind:imgPromise={imgPromise}
 	></CollectionEditor>
+    <div class="bottom-double-border"></div>
 </div>
 
+<div class="buffer"></div>
+
 <style>
-    @media screen and (max-width: 600px) {
-        form.horizontal {
-            flex-direction: column;
-        }
+    .bottom-double-border {
+        padding-top: var(--freq-spacing-3x-small);
+    }
+    .buffer {
+        padding-bottom: var(--freq-spacing-large);
     }
 </style>

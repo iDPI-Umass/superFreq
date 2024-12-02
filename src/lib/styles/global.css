@@ -56,6 +56,11 @@ body {
 	padding-top: 4px;
 }
 
+.bottom-double-border {
+	border-top: 1px solid var(--freq-color-border-panel);
+	margin-top: var(--freq-spacing-3x-small);
+}
+
 .info-box {
     width: 50%;
     margin: var(--freq-spacing-2x-large) auto;
@@ -231,11 +236,18 @@ form.horizontal {
 	margin: var(--freq-height-spacer) var(--freq-width-spacer);
 }
 
+@media screen and (max-width: 600px) {
+	form.horizontal {
+		flex-direction: column;
+	}
+}
+
 form.search {
 	display: flex;
 	flex-direction: row;
 	width: auto;
 	align-items: center;
+	flex-wrap: nowrap;
 }
 
 /* form.search * {
@@ -401,7 +413,7 @@ fieldset legend {
 
 fieldset label {
 	font-size: var(--freq-font-size-medium);
-	color: var(--freq-color-text)
+	color: var(--freq-color-text);
 }
 
 fieldset ul, 

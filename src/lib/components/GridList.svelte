@@ -5,7 +5,12 @@
 <script lang="ts">
     import {flip} from "svelte/animate";
     import {dragHandleZone, dndzone, dragHandle} from "svelte-dnd-action";
+
     import Grip from 'lucide-svelte/icons/grip'
+    import MusicNote from 'lucide-svelte/icons/music'
+    import Disc from 'lucide-svelte/icons/disc-2'
+    import BoomBox from 'lucide-svelte/icons/boom-box'
+    import Palette from 'lucide-svelte/icons/palette'
 
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
@@ -185,7 +190,11 @@
 
 {#snippet metadataBlurb( item: any, itemType: string, mode: string )}
     {#if itemType.includes("artist")}
-        <p>
+        <span class="artist">
+            <div class="type">
+                <Palette size="12" color="var(--freq-color-text-medium-dark)"></Palette>
+                <span>artist</span>
+            </div>
             {#if item['artist_mbid'] && item['artist_mbid'].length > 0 && mode == "view"}
                 <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
                     {item["artist_name"]}
@@ -193,9 +202,13 @@
             {:else}
                 {item["artist_name"]}
             {/if}
-        </p>
+            </span>
     {:else if itemType.includes("release_group")}
-        <h2>
+        <div class="type">
+            <Disc size="12" color="var(--freq-color-text-medium-dark)"></Disc>
+            <span>album</span>
+        </div>
+        <span class="title">
             {#if item['release_group_mbid'] && item['release_group_mbid'].length > 0  && mode == "view"} 
             <a href={`https://musicbrainz.org/release-group/${item["release_group_mbid"]}`}>
                 {item["release_group_name"]}
@@ -203,8 +216,8 @@
             {:else}
                 {item["release_group_name"]}
             {/if}
-        </h2>
-        <p>
+        </span>
+        <span class="artist">
             {#if item['artist_mbid'] && item['artist_mbid'].length > 0  && mode == "view"}
                 <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
                     {item["artist_name"]}
@@ -212,9 +225,13 @@
             {:else}
                 {item["artist_name"]}
             {/if}
-        </p>
+        </span>
     {:else if itemType.includes("recording")}
-        <h2>
+        <div class="type">
+            <MusicNote size="12" color="var(--freq-color-text-medium-dark)"></MusicNote>
+            <span>track</span>
+        </div>
+        <span class="title">
             {#if item['recording_mbid'] && item['recording_mbid'].length > 0 && mode == "view"}
                 <a href={`https://musicbrainz.org/recording/${item["recording_mbid"]}`}>
                     {item["recording_name"]}
@@ -222,8 +239,8 @@
             {:else}
                 {item["recording_name"]}
             {/if}
-        </h2>
-        <p>
+        </span>
+        <span class="artist">
             {#if item['artist_mbid'] && item['artist_mbid'].length > 0 && mode == "view"}
                 <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
                     {item["artist_name"]}
@@ -231,9 +248,13 @@
             {:else}
                 {item["artist_name"]}
             {/if}
-        </p>
+        </span>
     {:else if itemType.includes("episode")}
-        <h2>
+        <div class="type">
+            <BoomBox size="12" color="var(--freq-color-text-medium-dark)"></BoomBox>
+            <span>mix</span>
+        </div>
+        <span class="title">
             {#if item["episode_url"] && item['episode_url'].length > 0 && whitelistCheck(item["episode_url"]) && mode == "view"}
             <a href={item["episode_url"]}>
                 {item["episode_title"]}
@@ -241,8 +262,8 @@
             {:else}
                 {item["episode_title"]}
             {/if}
-        </h2>
-        <p>
+        </span>
+        <span class="artist">
             {#if item['artist_mbid'] && item['artist_mbid'].length > 0 && mode == "view"}
                 <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
                     {item["artist_name"]}
@@ -250,7 +271,7 @@
             {:else}
                 {item["artist_name"]}
             {/if}
-        </p>
+        </span>
     {/if}
 {/snippet}
 
@@ -327,6 +348,7 @@
         flex-direction: row;
         width: auto;
         border-style: none;
+        text-wrap: nowrap;
     }
     .item-data {
         display: flex;
