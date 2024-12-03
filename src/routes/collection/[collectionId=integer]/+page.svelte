@@ -3,11 +3,14 @@
     import { page } from '$app/stores'
     
     import { Toolbar } from "bits-ui"
+    import { Select } from "bits-ui"
+    import ChevronDown from 'lucide-svelte/icons/chevron-down'
     import LayoutGrid from 'lucide-svelte/icons/layout-grid'
     import AlignJustify from 'lucide-svelte/icons/align-justify'
 
     import GridList from "$lib/components/GridList.svelte";
     import InfoBox from '$lib/components/InfoBox.svelte'
+	import { tick } from 'svelte';
 
     // import { insertCollectionFollow, updateCollectionFollow } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions';
 
@@ -22,6 +25,8 @@
 
     let gridListSelect = $state("grid")
 
+    let selected = $state() as any
+
     const categories: App.Lookup = {
         "artists": "artists",
         "release_groups": "albums",
@@ -30,6 +35,36 @@
 
     
     const updatedAt = $derived(new Date(collectionUpdatedAt).toLocaleDateString())
+
+    const sortOptions = ['default', 'reverse', 'artist A -> Z', 'artist Z -> a'] as any
+
+    let sortOption = $derived(selected?.value ?? 'default') as any
+
+    let sortedItems = $state()
+
+    function sort ( option: any ) {
+        const items = collectionContents
+        if ( option == "default" ) {
+            items.sort((a, b) => a.item_position - b.item_position)
+        }
+        if ( option == "reverse" ) {
+            items.sort((a, b) => b.item_position - a.item_position)
+        }
+        if ( option == "artist A -> Z") {
+            items.sort((a, b) => a.artist_name - b.artist_name)
+        }
+        if ( option == "artist Z -> A") {
+            items.sort((a, b) => b.artist_name - a.artist_name)
+        }
+
+        console.log(option, items)
+        return items
+    }
+
+    $effect(() => {
+        sortedItems =  sort(sortOption)
+    })
+
 </script>
 
 <svelte:options runes={true} />
@@ -104,6 +139,20 @@
         <div class="sort">
             <p> sorting options </p>
             <div class="sort-column">
+                <Select.Root bind:selected>
+                    <Select.Trigger>
+                        sort order <ChevronDown></ChevronDown>
+                    </Select.Trigger>
+                    <Select.Content>
+                        {#each sortOptions as option}
+                        <Select.Item value={option} label={option}>
+                            {option}
+                        </Select.Item>
+                        {/each}
+                    </Select.Content>
+                </Select.Root>
+            </div>
+            <div class="sort-column">
                 <Toolbar.Root>
                     <Toolbar.Group
                         bind:value={gridListSelect}
@@ -112,16 +161,15 @@
                         <Toolbar.GroupItem
                             aria-label="grid"
                             value="grid"
-                            class="toolbar-item"
                         >
-                            <LayoutGrid class="grid-list-icon"></LayoutGrid>
+                        <span class="option"><LayoutGrid></LayoutGrid></span>
+                            
                         </Toolbar.GroupItem>
                         <Toolbar.GroupItem
-                        aria-label="list"
-                        value="list"
-                        class="toolbar-item"
+                            aria-label="list"
+                            value="list"
                         >
-                            <AlignJustify class="grid-list-icon"></AlignJustify>
+                            <AlignJustify></AlignJustify>
                         </Toolbar.GroupItem>
                     </Toolbar.Group>
                 </Toolbar.Root>
@@ -129,7 +177,7 @@
             </div>
         </div>
         <GridList
-            collectionContents={collectionContents}
+            collectionContents={sortedItems}
             collectionReturned={viewPermission}
             collectionType={collectionType}
             collectionStatus={collectionStatus}
