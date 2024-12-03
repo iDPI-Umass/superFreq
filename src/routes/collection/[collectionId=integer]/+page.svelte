@@ -141,7 +141,7 @@
             <div class="collection-info-row">
                 <div class="collection-info-attribution">
                     <p class="collection-info-text">
-                        Collection of {categories[collectionType]} by 
+                        Collection by 
                         <a href="/user/{collectionInfo?.username}">
                             {collectionInfo?.display_name}
                         </a>
@@ -160,11 +160,15 @@
         </div>
 
         <div class="sort">
-            <p> sorting options </p>
             <div class="sort-column">
                 <Select.Root bind:selected>
-                    <Select.Trigger>
-                        sort order <ChevronDown></ChevronDown>
+                    <Select.Trigger class="sort-options">
+                        <span class="trigger-label">  
+                            <Select.Value placeholder="sort order" />
+                            <span class="chevron">
+                                <ChevronDown size={16}></ChevronDown>
+                            </span>
+                        </span>
                     </Select.Trigger>
                     <Select.Content>
                         {#each sortOptions as option}
@@ -185,18 +189,21 @@
                             aria-label="grid"
                             value="grid"
                         >
-                        <span class="option"><LayoutGrid></LayoutGrid></span>
-                            
+                            <div class="toolbar-icon">
+                                <LayoutGrid size={20}></LayoutGrid>
+                            </div>
                         </Toolbar.GroupItem>
                         <Toolbar.GroupItem
                             aria-label="list"
                             value="list"
                         >
-                            <AlignJustify></AlignJustify>
+                            <div class="toolbar-icon">
+                                <AlignJustify size={20}></AlignJustify>
+                            </div>
                         </Toolbar.GroupItem>
                     </Toolbar.Group>
                 </Toolbar.Root>
-                <span>sort mode: {gridListSelect}</span>
+                <span>view mode: {gridListSelect}</span>
             </div>
         </div>
         <GridList

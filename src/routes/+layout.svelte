@@ -95,3 +95,14 @@
 ></Header>
 <div class="double-border-full-vw"></div>
 {@render children()}
+
+<div class="buffer"></div>
+
+<style>
+    .bottom-double-border {
+        padding-top: var(--freq-spacing-3x-small);
+    }
+    .buffer {
+        padding-bottom: var(--freq-spacing-large);
+    }
+</style>

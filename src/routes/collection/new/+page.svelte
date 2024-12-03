@@ -52,7 +52,7 @@
 </svelte:head>
 
 <InfoBox mode="compact">
-    A collection is a list of albums, tracks, or artists. Among many other things, you can make a colleciton to keep track of music you want to listen to or create a resource for other people who might want to learn more about music you love.
+    A collection is a list of albums, tracks, mixes, or artists. Among many other things, you can make a colleciton to keep track of music you want to listen to or create a resource for other people who might want to learn more about music you love.
 </InfoBox>
 
 <div class="collection-container">
@@ -290,10 +290,13 @@
     <div class="bottom-double-border"></div>
 </div>
 
+<div class="buffer"></div>
+
 <style>
-    @media screen and (max-width: 600px) {
-        form.horizontal {
-            flex-direction: column;
-        }
+    .bottom-double-border {
+        padding-top: var(--freq-spacing-3x-small);
+    }
+    .buffer {
+        padding-bottom: var(--freq-spacing-large);
     }
 </style>
