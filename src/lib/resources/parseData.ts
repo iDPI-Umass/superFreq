@@ -73,6 +73,26 @@ export const categoriesTable: App.Lookup = {
     "songs": "recording"
 }
 
+/* Converts values to item types */
+
+export const itemTypeTable: App.Lookup = {
+    "artist": "artist",
+    "artists": "artist",
+    "release_group": "release_group",
+    "release-groups": "release_group",
+    "release_groups": "release_group",
+    "recording": "recording",
+    "recordings": "recording",
+    "albums": "release_group",
+    "track": "recording",
+    "tracks": "recording",
+    "songs": "recording",
+    "episode": "episode",
+    "episodes": "episode",
+    "mix": "episode",
+    "mixes": "episode"
+}
+
 /* Converts values to mbid slug */
 
 export const mbidCategoryTable: App.Lookup = {
@@ -286,6 +306,7 @@ export const populateCollectionContents = function ( sessionUserId: string, coll
                 "release_group_mbid": thisItem["release_group_mbid"],
                 "recording_mbid": thisItem["recording_mbid"],
                 "item_position": itemPosition,
+                "item_type": thisItem["item_type"],
                 "notes": thisItem["notes"],
                 "changelog": changelog
             }];
@@ -301,6 +322,7 @@ export const populateCollectionContents = function ( sessionUserId: string, coll
                 "release_group_mbid": thisItem["release_group_mbid"],
                 "recording_mbid": thisItem["recording_mbid"],
                 "item_position": itemPosition,
+                "item_type": thisItem["item_type"],
                 "notes": thisItem["notes"],
                 "changelog": changelog
             }];

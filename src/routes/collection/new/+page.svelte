@@ -7,7 +7,8 @@
     import GridList from '$lib/components/GridList.svelte'
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
     import Tooltip from '$lib/components/Tooltip.svelte'
-	import InfoBox from 'src/lib/components/InfoBox.svelte';
+	import InfoBox from 'src/lib/components/InfoBox.svelte'
+    import CollectionEditor from '$lib/components/CollectionEditor.svelte'
 
     interface Props {
         data: any;
@@ -19,6 +20,7 @@
 	let collectionTitle = $state() as string
 	let collectionType = $state() as string
 	let collectionStatus = $state() as string
+    let defaultSort = $state() as string
 
 	let collectionItems = $state([]) as object[]
 
@@ -49,7 +51,7 @@
 	</title>
 </svelte:head>
 
-<InfoBox>
+<InfoBox mode="compact">
     A collection is a list of albums, tracks, or artists. Among many other things, you can make a colleciton to keep track of music you want to listen to or create a resource for other people who might want to learn more about music you love.
 </InfoBox>
 
@@ -92,7 +94,7 @@
                 bind:value={collectionTitle} 
                 required 
             />
-            <fieldset>
+            <!-- <fieldset>
                 <div class="label-group">
                     <legend>Type of collection</legend>
                     <Tooltip>
@@ -135,6 +137,57 @@
                             bind:group={collectionType} 
                         />
                         <label for="tracks">tracks</label>
+                    </li>
+                </ul>
+            </fieldset> -->
+            <fieldset>
+                <div class="label-group">
+                    <legend>view sort</legend>
+                    <Tooltip>
+                        This how your collection is sorted by default when other users view it. This does not change or effect the order of the items in the editor below.
+                    </Tooltip>
+                </div>
+                <ul>
+                    <li>
+                        <input 
+                            class="radio" 
+                            type="radio" 
+                            name="view-sort" 
+                            id="default" 
+                            value="default" 
+                            checked
+                        />
+                        <label for="default">default</label>
+                    </li>
+                    <li>
+                        <input 
+                            class="radio" 
+                            type="radio" 
+                            name="view-sort" 
+                            id="reverse" 
+                            value="reverse" 
+                        />
+                        <label for="reverse">reverse</label>
+                    </li>
+                    <li>
+                        <input 
+                            class="radio" 
+                            type="radio" 
+                            name="view-sort" 
+                            id="artist-asc" 
+                            value="artist_asc" 
+                        />
+                        <label for="artist-asc">artists a --> z</label>
+                    </li>
+                    <li>
+                        <input 
+                            class="radio" 
+                            type="radio" 
+                            name="view-sort" 
+                            id="artist-desc" 
+                            value="artist_desc" 
+                        />
+                        <label for="artist-desc">artists z --> a</label>
                     </li>
                 </ul>
             </fieldset>
@@ -227,27 +280,14 @@
             </div>
         </div>
     </form>
-    <div class="collection-search-bar">
-		<MusicBrainzSearch 
-            searchCategory={collectionType}
-			bind:addedItems={collectionItems}
-			bind:newItemAdded={itemAdded}
-			searchButtonText={`add ${searchButtonLabel(buttonTextLookup[collectionType])}`}
-			searchPlaceholder={placeholderText}
-            mode="collection"
-            bind:imgPromise={imgPromise}
-		></MusicBrainzSearch>
-    </div>
-    {#key collectionItems.length}
-        <GridList 
-            bind:collectionContents={collectionItems}
-            collectionReturned={itemAdded}
-            collectionType={collectionType}
-            layout="list"
-            mode="edit"
-            imgPromise={imgPromise}
-        ></GridList>
-    {/key}
+	<CollectionEditor
+		bind:collectionItems={collectionItems}
+		collectionType={collectionType}
+        collectionStatus={collectionStatus}
+		bind:itemAdded={itemAdded}
+		bind:imgPromise={imgPromise}
+	></CollectionEditor>
+    <div class="bottom-double-border"></div>
 </div>
 
 <style>

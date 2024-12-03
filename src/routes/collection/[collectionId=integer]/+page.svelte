@@ -36,13 +36,13 @@
     
     const updatedAt = $derived(new Date(collectionUpdatedAt).toLocaleDateString())
 
-    const sortOptions = ['default', 'reverse', 'artist A -> Z', 'artist Z -> A'] as any
+    const sortOptions = ['default', 'reverse', 'artist A --> Z', 'artist Z --> A'] as any
 
-    let sortOption = $derived(selected?.value ?? 'default') as any
+    let sortOption = $derived(selected?.value ?? collectionInfo.default_view_sort ?? 'default') as string
 
     let sortedItems = $state()
 
-    function sort ( option: any ) {
+    function sort ( option: string ) {
         const items = collectionContents
         if ( option == "default" ) {
             items.sort((a, b) => a.item_position - b.item_position)
@@ -50,7 +50,7 @@
         else if ( option == "reverse" ) {
             items.sort((a, b) => b.item_position - a.item_position)
         }
-        else if ( option == "artist A -> Z") {
+        else if ( option == "artist A --> Z" || option == "artist_asc" ) {
             items.sort((a, b) => {
                 const nameA = a.artist_name.toUpperCase()
                 const nameB = b.artist_name.toUpperCase()
@@ -63,7 +63,7 @@
                 return 0
             })
         }
-        else if ( option == "artist Z -> A") {
+        else if ( option == "artist Z --> A" || option == "artist_desc" ) {
             items.sort((a, b) => {
                 const nameA = a.artist_name.toUpperCase()
                 const nameB = b.artist_name.toUpperCase()

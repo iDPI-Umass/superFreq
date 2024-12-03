@@ -7,10 +7,6 @@
     import {dragHandleZone, dndzone, dragHandle} from "svelte-dnd-action";
 
     import Grip from 'lucide-svelte/icons/grip'
-    import MusicNote from 'lucide-svelte/icons/music'
-    import Disc from 'lucide-svelte/icons/disc-2'
-    import BoomBox from 'lucide-svelte/icons/boom-box'
-    import Palette from 'lucide-svelte/icons/palette'
 
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 

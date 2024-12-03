@@ -1,4 +1,4 @@
-import { categoriesTable, mbidCategoryTable } from "$lib/resources/parseData"
+import { categoriesTable, mbidCategoryTable, itemTypeTable } from "$lib/resources/parseData"
 
 import { PUBLIC_LAST_FM_API_KEY } from '$env/static/public'
 
@@ -365,6 +365,7 @@ export const addCollectionItem = async function (
         "last_fm_img_url": coverArt.lastFmCoverArtUrl,
         "label": label.name,
         "notes": null,
+        "item_type": itemTypeTable[searchCategory],
         "id": addedItems.length + 1
     }]
     return {
@@ -438,6 +439,7 @@ export const addCollectionItemNoImg = async function (
         "last_fm_img_url": null,
         "label": label.name,
         "notes": null,
+        "item_type": itemTypeTable[searchCategory],
         "id": addedItems.length + 1
     }]
     return {
@@ -470,6 +472,7 @@ export const addSingleItem = async function  (
         "last_fm_img_url": coverArt.lastFmCoverArtUrl,
         "label": label.name,
         "notes": null,
+        "item_type": itemTypeTable[searchCategory],
     }
     return {
         addedItems
@@ -497,6 +500,7 @@ export const addSingleItemNoImg = async function  (
         "last_fm_img_url": null,
         "label": label.name,
         "notes": null,
+        "item_type": itemTypeTable[searchCategory],
     }
     return { addedItems }
 }

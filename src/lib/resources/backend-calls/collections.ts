@@ -260,6 +260,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
             'collections_info.created_by as created_by', 
             'collections_info.title as title', 
             'collections_info.type as type', 
+            'collections_info.default_view_sort as default_view_sort',
             'collections_info.description_text as description_text',
             'profile.username as username',
             'profile.display_name as display_name',
@@ -442,6 +443,7 @@ export const selectEditableCollectionContents = async function ( collectionId: s
             'info.title as title',
             'info.type as type',
             'info.status as status',
+            'info.default_view_sort',
             'info.owner_id as owner_id',
             'info.created_at as created_at',
             'info.created_by as created_by',
@@ -669,6 +671,7 @@ export const insertCollection = async function ( sessionUserId: string, collecti
                 updated_by: sessionUserId,
                 title: collectionInfo?.title,
                 status: collectionInfo?.status,
+                default_view_sort: collectionInfo?.default_view_sort,
                 type: collectionInfo?. type,
                 description_text: collectionInfo?.description_text,
                 changelog: collectionInfo?.changelog
@@ -822,6 +825,7 @@ export const updateCollection = async function ( sessionUserId: string, collecti
                 updated_by: collectionInfo['updated_by'],
                 status: collectionInfo['status'],
                 title: collectionInfo['title'],
+                default_view_sort: collectionInfo['default_view_sort'],
                 description_text: collectionInfo['description_text'],
                 changelog: infoChangelog
             })
