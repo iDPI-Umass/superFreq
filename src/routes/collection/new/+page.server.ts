@@ -33,6 +33,7 @@ export const actions = {
     const data = await request.formData()
     const collectionTitle = data.get('collection-title')
     const collectionType = data.get('collection-type')
+    const sort = data.get('view-sort')
     const collectionStatus = data.get('status')
     const collectionDescription = data.get('description')
     const collectionItemsString = data.get('collection-contents') as string
@@ -50,7 +51,8 @@ export const actions = {
     const collectionInfo = {
       title: collectionTitle,
       status: collectionStatus,
-      type: collectionType,
+      type: collectionType ?? null,
+      default_view_sort: sort,
       description_text: collectionDescription,
       created_at: timestampISO,
       updated_at: timestampISO,

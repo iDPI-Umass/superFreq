@@ -48,8 +48,11 @@ export const actions: Actions = {
     const collectionTitle = data.get('collection-title')
     const collectionStatus = data.get('status')
     const collectionDescription = data.get('description')
+    const sort = data.get('view-sort') as string
     const items = data.get('collection-contents') as string
     const deletedItems = data.get('deleted-items') as string
+
+    console.log(sort)
 
     const collectionItems = JSON.parse(items) as App.RowData
     const deletedCollectionItems = JSON.parse(deletedItems) as App.RowData
@@ -59,7 +62,8 @@ export const actions: Actions = {
     const collectionInfo = {
       title: collectionTitle,
       status: collectionStatus,
-      type: collectionType,
+      type: collectionType ?? null,
+      default_view_sort: sort,
       collection_id: collectionId,
       description_text: collectionDescription,
       updated_at: timestampISO,
