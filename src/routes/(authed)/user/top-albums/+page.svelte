@@ -65,7 +65,9 @@
 	<CollectionEditor
 		bind:collectionItems={collectionItems}
 		bind:deletedItems={deletedItems}
+		collectionStatus="public"
 		collectionType={collectionType}
+		mode="release_group"
 		itemAdded={itemAdded}
 		bind:imgPromise={imgPromise}
 	></CollectionEditor>

@@ -52,9 +52,10 @@ export const insertPost = async function ( postData: any ) {
             "recording_mbid": postData["recording_mbid"],
             "recording_name": postData["recording_name"],
             "remixer_artist_mbid": postData["remixer_artist_mbid"],
+            "item_type": postData["item_type"]
         }] as App.RowData[]
     
-        const preparedMetadata = await prepareMusicMetadataInsert(metadata, postData["item_type"])
+        const preparedMetadata = await prepareMusicMetadataInsert(metadata)
 
         artistsMetadata = preparedMetadata.artistsMetadata
         releaseGroupsMetadata = preparedMetadata.releaseGroupsMetadata
@@ -462,8 +463,6 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                 'reaction.active'
             ])
             .executeTakeFirst()
-
-            console.log(post)
 
             const postId = post?.id as string
 

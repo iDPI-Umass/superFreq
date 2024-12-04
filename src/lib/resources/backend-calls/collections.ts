@@ -291,8 +291,6 @@ export const selectViewableCollectionContents = async function ( collectionId: s
         ]))
         .executeTakeFirst()
 
-        const type = collectionInfo?.type ?? null
-
         const editPermission = await trx
             .selectFrom('collections_social')
             .innerJoin('collections_info as info', 'info.collection_id', 'collections_social.collection_id')
@@ -329,94 +327,37 @@ export const selectViewableCollectionContents = async function ( collectionId: s
             ]))
             .executeTakeFirst()
 
-        if ( type == 'artists') {
-            const collectionContents = await trx
-            .selectFrom('collections_contents as contents')
-            .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
-            .leftJoin('profiles as insert_profile', 'contents.inserted_by', 'insert_profile.id')
-            .leftJoin('profiles as update_user', 'contents.updated_by', 'update_user.id')
-            .select([
-                'contents.id as id',
-                'contents.collection_id as collection_id',
-                'contents.item_position as item_position',
-                'contents.artist_mbid as artist_mbid',
-                'artists.artist_name as artist_name',
-                'insert_profile.username as inserted_by_username',
-                'insert_profile.display_name as inserted_by_display_name',
-                'update_user.username as updated_by_username',
-                'update_user.display_name as updated_by_display_name'
-            ])
-            .where('contents.collection_id', '=', collectionId)
-            .where('contents.item_position', 'is not', null)
-            .orderBy('item_position')
-            .execute()
+        const collectionContents = await trx
+        .selectFrom('collections_contents as contents')
+        .leftJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
+        .leftJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
+        .leftJoin('recordings', 'recordings.recording_mbid', 'contents.recording_mbid')
+        .leftJoin('profiles as insert_profile', 'contents.inserted_by', 'insert_profile.id')
+        .leftJoin('profiles as update_user', 'contents.updated_by', 'update_user.id')
+        .select([
+            'contents.id as id',
+            'contents.collection_id as collection_id',
+            'contents.item_position as item_position',
+            'contents.artist_mbid as artist_mbid',
+            'contents.item_type as item_type',
+            'artists.artist_name as artist_name',
+            'release_groups.release_group_name as release_group_name',
+            'release_groups.release_group_mbid as release_group_mbid',
+            'release_groups.img_url as img_url',
+            'release_groups.last_fm_img_url as last_fm_img_url',
+            'recordings.recording_name as recording_name',
+            'recordings.recording_mbid as recording_mbid',
+            'insert_profile.username as inserted_by_username',
+            'insert_profile.display_name as inserted_by_display_name',
+            'update_user.username as updated_by_username',
+            'update_user.display_name as updated_by_display_name'
+        ])
+        .where('contents.collection_id', '=', collectionId)
+        .where('contents.item_position', 'is not', null)
+        .orderBy('item_position')
+        .execute()
 
-            return {collectionInfo, collectionContents, viewPermission: true, editPermission, followData}
-        }
-        else if( type == 'release_groups') {
-            const collectionContents = await trx
-            .selectFrom('collections_contents as contents')
-            .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
-            .innerJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
-            .leftJoin('profiles as insert_profile', 'contents.inserted_by', 'insert_profile.id')
-            .leftJoin('profiles as update_user', 'contents.updated_by', 'update_user.id')
-            .select([
-                'contents.id as id',
-                'contents.collection_id as collection_id',
-                'contents.item_position as item_position',
-                'contents.artist_mbid as artist_mbid',
-                'artists.artist_name as artist_name',
-                'release_groups.release_group_name as release_group_name',
-                'release_groups.release_group_mbid as release_group_mbid',
-                'release_groups.img_url as img_url',
-                'release_groups.last_fm_img_url as last_fm_img_url',
-                'insert_profile.username as inserted_by_username',
-                'insert_profile.display_name as inserted_by_display_name',
-                'update_user.username as updated_by_username',
-                'update_user.display_name as updated_by_display_name'
-            ])
-            .where('contents.collection_id', '=', collectionId)
-            .where('contents.item_position', 'is not', null)
-            .orderBy('item_position')
-            .execute()
-
-            return {collectionInfo, collectionContents, viewPermission: true, editPermission, followData}
-        }
-        else if (type == 'recordings') {
-            const collectionContents = await trx
-            .selectFrom('collections_contents as contents')
-            .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
-            .innerJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
-            .innerJoin('recordings', 'recordings.recording_mbid', 'contents.recording_mbid')
-            .leftJoin('profiles as insert_profile', 'contents.inserted_by', 'insert_profile.id')
-            .leftJoin('profiles as update_user', 'contents.updated_by', 'update_user.id')
-            .select([
-                'contents.id as id',
-                'contents.collection_id as collection_id',
-                'contents.item_position as item_position',
-                'contents.artist_mbid as artist_mbid',
-                'artists.artist_name as artist_name',
-                'release_groups.release_group_name as release_group_name',
-                'release_groups.release_group_mbid as release_group_mbid',
-                'release_groups.img_url as img_url',
-                'release_groups.last_fm_img_url as last_fm_img_url',
-                'recordings.recording_name as recording_name',
-                'recordings.recording_mbid as recording_mbid',
-                'insert_profile.username as inserted_by_username',
-                'insert_profile.display_name as inserted_by_display_name',
-                'update_user.username as updated_by_username',
-                'update_user.display_name as updated_by_display_name'
-            ])
-            .where('contents.collection_id', '=', collectionId)
-            .where('contents.item_position', 'is not', null)
-            .orderBy('item_position')
-            .execute()
-
-            return {collectionInfo, collectionContents, viewPermission: true, editPermission, followData}
-        }
-        else if ( !type ) {
-            return { collectionInfo: null, collectionContents: null, viewPermission: false, editPermission: false, followData: null}
-        }
+        return {collectionInfo, collectionContents, viewPermission: true, editPermission, followData}
     })
 
     const collection =  await selectCollection
@@ -656,9 +597,7 @@ export const insertCollection = async function ( sessionUserId: string, collecti
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
 
-    const collectionType = collectionInfo['type']
-
-    const { artistsMetadata, releaseGroupsMetadata, recordingsMetadata } =  await prepareMusicMetadataInsert(collectionItems, collectionType)
+    const { artistsMetadata, releaseGroupsMetadata, recordingsMetadata } =  await prepareMusicMetadataInsert(collectionItems)
 
     const insert = await db.transaction().execute(async (trx) => {
 
@@ -713,7 +652,7 @@ export const insertCollection = async function ( sessionUserId: string, collecti
 
         const collectionContents = await populateCollectionContents(sessionUserId, collectionItems, collectionId) 
 
-        if ( collectionInfo["type"] == 'artists') {
+        if ( artistsMetadata.length > 0 ) {
             await trx
                 .insertInto('artists')
                 .values(artistsMetadata)
@@ -722,15 +661,7 @@ export const insertCollection = async function ( sessionUserId: string, collecti
                 )
                 .execute()
         }
-        else if ( collectionInfo["type"] == 'release_groups' ) {
-            await trx
-                .insertInto('artists')
-                .values(artistsMetadata)
-                .onConflict((oc) => oc
-                    .doNothing()
-                )
-                .returningAll()
-                .execute()
+        if ( releaseGroupsMetadata.length > 0 ) {
             await trx
                 .insertInto('release_groups')
                 .values(releaseGroupsMetadata)
@@ -740,21 +671,7 @@ export const insertCollection = async function ( sessionUserId: string, collecti
                 .returningAll()
                 .execute()
         }
-        else if ( collectionInfo["type"] ==  'recordings' ) {
-            await trx
-                .insertInto('artists')
-                .values(artistsMetadata)
-                .onConflict((oc) => oc
-                    .doNothing()
-                )
-                .execute()
-            await trx
-                .insertInto('release_groups')
-                .values(releaseGroupsMetadata)
-                .onConflict((oc) => oc
-                    .doNothing()
-                )
-                .execute()
+        if ( recordingsMetadata > 0 ) {
             await trx
                 .insertInto('recordings')
                 .values(recordingsMetadata)
@@ -796,9 +713,8 @@ export const updateCollection = async function ( sessionUserId: string, collecti
     const timestampISO: Date = parseISO(timestampISOString)
 
     const collectionId = collectionInfo['collection_id']
-    const collectionType = collectionInfo['type']
 
-    const { artistsMetadata, releaseGroupsMetadata, recordingsMetadata } =  await prepareMusicMetadataInsert(collectionItems, collectionType)
+    const { artistsMetadata, releaseGroupsMetadata, recordingsMetadata } =  await prepareMusicMetadataInsert(collectionItems)
 
     const collectionContents = await populateCollectionContents(sessionUserId, collectionItems, collectionId) 
 
@@ -917,9 +833,7 @@ export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: s
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
 
-    const collectionType = 'release_groups'
-
-    const { artistsMetadata, releaseGroupsMetadata } =  await prepareMusicMetadataInsert(collectionItems, collectionType)
+    const { artistsMetadata, releaseGroupsMetadata } =  await prepareMusicMetadataInsert(collectionItems)
 
     const insertUpdateCollection = await db.transaction().execute(async (trx) => {
         try {
@@ -1133,8 +1047,6 @@ export const saveItemToCollection = async function ( sessionUserId: string, item
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
 
-    console.log(item)
-
     const update = await db.transaction().execute(async (trx) => {
         try {
             const collectionInfo = await trx
@@ -1187,8 +1099,6 @@ export const saveItemToCollection = async function ( sessionUserId: string, item
             const itemMbidCategory = itemType.concat('_mbid')
             
             const { isDuplicate, duplicateItem } = checkDuplicate(item[itemMbidCategory], activeItems, deletedItems, itemMbidCategory)
-
-            console.log(isDuplicate, duplicateItem)
 
             const contentsCount = await trx
             .selectFrom('collections_contents')
