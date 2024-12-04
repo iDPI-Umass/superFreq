@@ -292,23 +292,29 @@ export const selectViewableCollectionContents = async function ( collectionId: s
         .executeTakeFirst()
 
         const editPermission = await trx
-            .selectFrom('collections_social')
-            .innerJoin('collections_info as info', 'info.collection_id', 'collections_social.collection_id')
-            .where(({eb, and, or}) => and([
-                eb('collections_social.collection_id', '=', collectionId),
-                eb('collections_social.user_id', '=', sessionUserId),
-                or([
-                    eb('collections_social.user_role', '=', 'owner'),
-                    eb('collections_social.user_role', '=', 'collaborator'),
-                    eb('info.status', '=', 'open')
-                ])
+            .selectFrom('collections_info as info')
+            .innerJoin('collections_social', 'info.collection_id', 'collections_social.collection_id')
+            .where(({eb, and, or}) => or([
+                eb('info.status', '=', 'open'),
+                and([
+                    eb('collections_social.collection_id', '=', collectionId),
+                    eb('collections_social.user_id', '=', sessionUserId),
+                    or([
+                        eb('collections_social.user_role', '=', 'owner'),
+                        eb('collections_social.user_role', '=', 'collaborator'),
+                        
+                    ])
+                ]),
             ]))
             .select([
+                'info.collection_id as collection_id',
+                'info.status as status',
                 'collections_social.user_id as user_id', 
-                'collections_social.collection_id as collection_id', 
                 'collections_social.user_role as user_role'
             ])
             .executeTakeFirst()
+
+        console.log(editPermission)
 
         const followData = await trx
             .selectFrom('collections_social')
@@ -406,13 +412,11 @@ export const selectEditableCollectionContents = async function ( collectionId: s
         ]))
         .executeTakeFirst()
 
-        const collectionType = selectCollectionInfo?.type as string
-
-        let selectCollectionContents
-        if ( collectionType == 'artists' ) {
-            selectCollectionContents = await trx
+        const selectCollectionContents = await trx
             .selectFrom('collections_contents as contents')
-            .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
+            .leftJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
+            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
+            .leftJoin('recordings', 'recordings.recording_mbid', 'contents.recording_mbid')
             .leftJoin('profiles as insert_profile', 'contents.inserted_by', 'insert_profile.id')
             .leftJoin('profiles as update_user', 'contents.updated_by', 'update_user.id')
             .select([
@@ -421,58 +425,7 @@ export const selectEditableCollectionContents = async function ( collectionId: s
                 'contents.inserted_at as inserted_at',
                 'contents.artist_mbid as artist_mbid',
                 'contents.item_position as item_position',
-                'artists.artist_name as artist_name',
-                'insert_profile.username as inserted_by_username',
-                'insert_profile.display_name as inserted_by_display_name',
-                'update_user.username as updated_by_username',
-                'update_user.display_name as updated_by_display_name'
-            ])
-            .where('contents.collection_id', '=', collectionId)
-            .execute()
-        }
-        else if ( collectionType == 'release_groups' ) {
-            selectCollectionContents = await trx
-            .selectFrom('collections_contents as contents')
-            .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
-            .innerJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
-            .leftJoin('profiles as insert_profile', 'contents.inserted_by', 'insert_profile.id')
-            .leftJoin('profiles as update_user', 'contents.updated_by', 'update_user.id')
-            .select([
-                'contents.id as original_id',
-                'contents.collection_id as collection_id',
-                'contents.inserted_at as inserted_at',
-                'contents.artist_mbid as artist_mbid',
-                'contents.release_group_mbid as release_group_mbid',
-                'contents.item_position as item_position',
-                'artists.artist_name as artist_name',
-                'release_groups.release_group_name as release_group_name',
-                'release_groups.img_url as img_url',
-                'release_groups.last_fm_img_url as last_fm_img_url',
-                'release_groups.release_date as release_date',
-                'insert_profile.username as inserted_by_username',
-                'insert_profile.display_name as inserted_by_display_name',
-                'update_user.username as updated_by_username',
-                'update_user.display_name as updated_by_display_name'
-            ])
-            .where('contents.collection_id', '=', collectionId)
-            .execute()
-        }
-        else if ( collectionType == 'recordings' ) {
-            selectCollectionContents = await trx
-            .selectFrom('collections_contents as contents')
-            .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
-            .innerJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
-            .innerJoin('recordings', 'recordings.recording_mbid', 'contents.recording_mbid')
-            .leftJoin('profiles as insert_profile', 'contents.inserted_by', 'insert_profile.id')
-            .leftJoin('profiles as update_user', 'contents.updated_by', 'update_user.id')
-            .select([
-                'contents.id as original_id',
-                'contents.collection_id as collection_id',
-                'contents.inserted_at as inserted_at',
-                'contents.artist_mbid as artist_mbid',
-                'contents.release_group_mbid as release_group_mbid',
-                'contents.recording_mbid as recording_mbid',
-                'contents.item_position as item_position',
+                'contents.item_type as item_type',
                 'artists.artist_name as artist_name',
                 'release_groups.release_group_name as release_group_name',
                 'release_groups.img_url as img_url',
@@ -487,7 +440,6 @@ export const selectEditableCollectionContents = async function ( collectionId: s
             ])
             .where('contents.collection_id', '=', collectionId)
             .execute()
-        }
 
         const info = selectCollectionInfo
         let collectionContents = selectCollectionContents as App.RowData[]
@@ -759,7 +711,7 @@ export const updateCollection = async function ( sessionUserId: string, collecti
             })
             .executeTakeFirst()
 
-        if ( collectionInfo["type"] == 'artists') {
+        if ( artistsMetadata.length > 0 ) {
             await trx
                 .insertInto('artists')
                 .values(artistsMetadata)
@@ -768,15 +720,7 @@ export const updateCollection = async function ( sessionUserId: string, collecti
                 )
                 .execute()
         }
-        else if ( collectionInfo["type"] == 'release_groups' ) {
-            await trx
-                .insertInto('artists')
-                .values(artistsMetadata)
-                .onConflict((oc) => oc
-                    .doNothing()
-                )
-                .returningAll()
-                .execute()
+        if ( releaseGroupsMetadata.length > 0 ) {
             await trx
                 .insertInto('release_groups')
                 .values(releaseGroupsMetadata)
@@ -786,21 +730,7 @@ export const updateCollection = async function ( sessionUserId: string, collecti
                 .returningAll()
                 .execute()
         }
-        else if ( collectionInfo["type"] ==  'recordings' ) {
-            await trx
-                .insertInto('artists')
-                .values(artistsMetadata)
-                .onConflict((oc) => oc
-                    .doNothing()
-                )
-                .execute()
-            await trx
-                .insertInto('release_groups')
-                .values(releaseGroupsMetadata)
-                .onConflict((oc) => oc
-                    .doNothing()
-                )
-                .execute()
+        if ( recordingsMetadata > 0 ) {
             await trx
                 .insertInto('recordings')
                 .values(recordingsMetadata)
