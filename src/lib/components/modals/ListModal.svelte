@@ -70,6 +70,10 @@
         text-decoration: none;
 		margin-top: 15%;
     }
+    /* dialog::backdrop {
+        background-color: var(--freq-color-panel-background);
+        opacity: 10%;
+    } */
 	.dialog-header {
 		display: flex;
 		flex-direction: row;

@@ -146,8 +146,8 @@
                     {/if}
                     {#if post.artist_mbid }
                         <SaveToCollection
-                            showCollectionsListModal={showCollectionsModal}
-                            showSuccessModal={showSaveSucessModal}
+                            bind:showCollectionsListModal={showCollectionsModal}
+                            bind:showSuccessModal={showSaveSucessModal}
                             item={post}
                             collections={collections}
                         ></SaveToCollection>
