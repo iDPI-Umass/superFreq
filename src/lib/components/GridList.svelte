@@ -18,7 +18,7 @@
         deletedItems?: any
         collectionReturned?: boolean
         collectionType: string
-        collectionStatus: string
+        collectionStatus?: string
         layout: string
         mode: string
         imgPromise?: any
