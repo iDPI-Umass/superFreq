@@ -52,8 +52,6 @@ export const actions: Actions = {
     const items = data.get('collection-contents') as string
     const deletedItems = data.get('deleted-items') as string
 
-    console.log(sort)
-
     const collectionItems = JSON.parse(items) as App.RowData
     const deletedCollectionItems = JSON.parse(deletedItems) as App.RowData
 

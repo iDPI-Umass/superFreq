@@ -14,7 +14,7 @@
         mode: string
         remaining?: number
         userActionSuccess?: boolean | null
-        collections?: App.RowData[] | null
+        collections?: App.RowData[]
         showCollectionsListModal?: boolean
         showSaveSucessModal?: boolean
     }

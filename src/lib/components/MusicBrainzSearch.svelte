@@ -90,7 +90,6 @@
 				imgPromise = new Promise ((resolve) => resolve(success))
 			}
 			addingItem = false
-			console.log(collectionItems)
 			return { addedItems, deletedItems, query, searchComplete, newItemAdded, showModal, imgPromise }
 		}
 	}

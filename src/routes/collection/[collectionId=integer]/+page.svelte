@@ -80,7 +80,6 @@
             return items
         }
 
-        console.log(option, items)
         return items
     }
 

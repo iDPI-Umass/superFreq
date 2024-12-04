@@ -1,6 +1,7 @@
 import { db } from 'src/database.ts'
 import { parseISO } from "date-fns"
 import { prepareMusicMetadataInsert, populateCollectionContents } from '$lib/resources/parseData'
+import { checkDuplicate } from '$lib/resources/musicbrainz'
 
 export const selectAllOpenPublicCollections = async function ( batchSize: number, batchIterator: number ) {
 
@@ -1132,6 +1133,8 @@ export const saveItemToCollection = async function ( sessionUserId: string, item
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
 
+    console.log(item)
+
     const update = await db.transaction().execute(async (trx) => {
         try {
             const collectionInfo = await trx
@@ -1154,6 +1157,39 @@ export const saveItemToCollection = async function ( sessionUserId: string, item
             ]))
             .executeTakeFirstOrThrow()
 
+            const collectionContents = await trx
+            .selectFrom('collections_contents as contents')
+            .select([
+                'contents.id', 
+                'contents.item_position',
+                'contents.artist_mbid',
+                'contents.release_group_mbid',
+                'contents.recording_mbid',
+                'contents.item_type',
+                'contents.changelog as item_changelog',
+            ])
+            .where('collection_id', '=', collectionId)
+            .execute()
+
+            const activeItems = [] as App.RowData[]
+            const deletedItems = [] as App.RowData[]
+
+            for ( const item of collectionContents ) {
+                if ( item.item_position == null ) {
+                    deletedItems.push(item)
+                }
+                else if (item.item_position != null ) {
+                    activeItems.push(item)
+                }
+            }
+
+            const itemType = item["item_type"]
+            const itemMbidCategory = itemType.concat('_mbid')
+            
+            const { isDuplicate, duplicateItem } = checkDuplicate(item[itemMbidCategory], activeItems, deletedItems, itemMbidCategory)
+
+            console.log(isDuplicate, duplicateItem)
+
             const contentsCount = await trx
             .selectFrom('collections_contents')
             .select((eb) => eb.fn.count<number>('id').as('count'))
@@ -1165,33 +1201,56 @@ export const saveItemToCollection = async function ( sessionUserId: string, item
             
             const infoChangelog = collectionInfo.changelog as App.Changelog
 
-            const itemChangelog = {} as App.Changelog
+            let itemChangelog = {} as App.Changelog
 
-            itemChangelog[timestampISOString] = {
-                "updated_at": timestampISO,
-                "item_position": itemPosition,
+            if ( !isDuplicate ) {
+                itemChangelog[timestampISOString] = {
+                    "updated_at": timestampISO,
+                    "item_position": itemPosition,
+                }
+    
+                const newItem = {            
+                    collection_id: collectionId,
+                    inserted_at: timestampISO,
+                    inserted_by: sessionUserId,
+                    updated_at: timestampISO,
+                    updated_by: sessionUserId,
+                    artist_mbid: item["artist_mbid"],
+                    release_group_mbid: item["release_group_mbid"] ?? null,
+                    recording_mbid: item["recording_mbid"] ?? null,
+                    item_type: item["item_type"],
+                    item_position: itemPosition,
+                    from_post: item["from_post_id"] ?? null,
+                    from_collection: item["from_collection_id"] ?? null,
+                    changelog: itemChangelog
+                }
+    
+                await trx
+                    .insertInto( 'collections_contents' )
+                    .values( newItem )
+                    .returningAll()
+                    .execute()
             }
+            else if ( isDuplicate ) {
+                const itemId = duplicateItem.id
+                itemChangelog = duplicateItem.item_changelog
 
-            const newItem = {            
-                collection_id: collectionId,
-                inserted_at: timestampISO,
-                inserted_by: sessionUserId,
-                updated_at: timestampISO,
-                updated_by: sessionUserId,
-                artist_mbid: item["artist_mbid"],
-                release_group_mbid: item["release_group_mbid"] ?? null,
-                recording_mbid: item["recording_mbid"] ?? null,
-                item_position: itemPosition,
-                from_post: item["from_post_id"] ?? null,
-                from_collection: item["from_collection_id"] ?? null,
-                changelog: itemChangelog
-            }
+                itemChangelog[timestampISOString] = {
+                    "updated_at": timestampISO,
+                    "item_position": itemPosition,
+                }
 
-            await trx
-                .insertInto( 'collections_contents' )
-                .values( newItem )
-                .returningAll()
+                await trx
+                .updateTable('collections_contents')
+                .set({
+                    item_position: itemPosition,
+                    updated_at: timestampISO,
+                    updated_by: sessionUserId,
+                    changelog: infoChangelog
+                })
+                .where('id', '=', itemId)
                 .execute()
+            }
 
             await trx
                 .updateTable('collections_info')

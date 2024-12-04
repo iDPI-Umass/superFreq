@@ -19,8 +19,8 @@
         editState?: boolean
         mode?: string | null
         userActionSuccess?: boolean | null
-        collections?: App.RowData[],
-        showCollectionsModal?: boolean,
+        collections?: App.RowData[]
+        showCollectionsModal?: boolean
         showSaveSucessModal?: boolean
     }
 
@@ -144,7 +144,7 @@
                             </span>
                         </a>
                     {/if}
-                    {#if post.artist_mbid }
+                    {#if post.artist_mbid == "1"}
                         <SaveToCollection
                             bind:showCollectionsListModal={showCollectionsModal}
                             bind:showSuccessModal={showSaveSucessModal}

@@ -208,6 +208,7 @@ export const actions = {
         const artistMbid = data.get('artist-mbid') as string
         const releaseGroupMbid = data.get('release-group-mbid') as string
         const recordingMbid = data.get('recording-mbid') as string
+        const itemType = data.get('item-type') as string
         const fromPostId = data.get('saved-from-post') as string
         const fromCollectionId = data.get('saved-from-collection') as string
 
@@ -221,9 +222,12 @@ export const actions = {
             artist_mbid: artistMbid ?? null,
             release_group_mbid: validStringCheck(releaseGroupMbid),
             recording_mbid: validStringCheck(recordingMbid),
+            item_type: itemType,
             from_post_id: validStringCheck(fromPostId),
             from_collection_id: validStringCheck(fromCollectionId)
         }
+
+        console.log(item)
 
         const update = await saveItemToCollection( sessionUserId, item, collectionId )
 

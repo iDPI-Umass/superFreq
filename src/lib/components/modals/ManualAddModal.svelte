@@ -58,8 +58,6 @@
         items.push(newItem)
         showModal = false
         dialog.close()
-        console.log(newItem)
-        console.log(items)
     }
 </script>
 
