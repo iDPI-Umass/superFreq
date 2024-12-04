@@ -17,12 +17,13 @@
 
     let { data, form }: Props = $props();
 
-    let { sessionUserId, profileData, feedItems, profileUsername, posts }: {
+    let { sessionUserId, profileData, feedItems, profileUsername, posts, collections }: {
         sessionUserId: string
         profileData: any
         feedItems: any
         profileUsername: string
         posts: App.RowData[]
+        collections: App.RowData[]
     } = $derived(data)
 
     let { profileUserData, followInfo, permission, profileUserBlockInfo, profileUserFlagInfo } = $derived(profileData)
@@ -56,6 +57,9 @@
     })
 
     let isSessionUserProfile = $derived(( profileUserData?.id == sessionUserId ) ? true : false )
+
+    let showCollectionsListModal = $derived(form?.showCollectionsModal ?? false)
+    let showSaveSucessModal = $derived(form?.updateSuccess ?? false)
 
 </script>
 
@@ -248,6 +252,9 @@
             feedItems={feedItems}
             mode="mini"
             userActionSuccess={form?.userActionSuccess}
+            collections={collections}
+            showCollectionsListModal={showCollectionsListModal}
+            showSaveSucessModal={showSaveSucessModal}
         ></Feed>
     {:else}
         <NowPlayingPostsSample

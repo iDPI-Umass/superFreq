@@ -132,9 +132,9 @@
             {#if mode != 'sample'}
                 <div class="row-group-icons">
                     <LikeReact
-                    postId={postId}
-                    reactionActive={reactionActive}
-                    reactionCount={reactionCount}
+                        postId={postId}
+                        reactionActive={reactionActive}
+                        reactionCount={reactionCount}
                     ></LikeReact>
                     {#if mode == "feed"}
                         <a href={permalink}>

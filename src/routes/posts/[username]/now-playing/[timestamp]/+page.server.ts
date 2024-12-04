@@ -66,16 +66,18 @@ export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSe
     }
 
     if ( updateReaction ) {
-        post.reaction_active = reactionActive
-        post.reaction_count = postReactionCount
         updateReaction = false
         loadData = true
+
+        post.reaction_active = reactionActive
+        post.reaction_count = postReactionCount
     }
 
     if ( editPost ) {
-        post.text = editedText
         editPost = false
         loadData = true
+
+        post.text = editedText
     }
 
     return { sessionUserId, post, postReplies, collections }
