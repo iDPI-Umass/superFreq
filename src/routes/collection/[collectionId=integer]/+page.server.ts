@@ -31,6 +31,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession } 
         editPermission = collection.editPermission as boolean
         followData = collection.followData as App.RowData
 
+        console.log(editPermission)
         if ( !viewPermission ) {
             throw redirect(307, '/collections')
         }
