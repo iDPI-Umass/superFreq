@@ -103,7 +103,7 @@
 
     </form>
     <NotificationModal
-        showModal={(form?.success == false ? true : false)}
+        showModal={showNotificationModal}
     >
         {#snippet headerText()}
             <span >Username taken</span>
@@ -115,13 +115,13 @@
 </div>
 
 <RedirectModal
-    showModal={form?.success ?? false}
+    showModal={showRedirectModal}
     delay={delay}
     redirectPath='/account'
 >
     {#snippet message()}
         <span>
-            Username updated successfully. Redirecting to your account page in 5 seconds.
+            Username updated successfully. Redirecting to your account page in {countdown} seconds.
         </span>
     {/snippet}
 </RedirectModal>
