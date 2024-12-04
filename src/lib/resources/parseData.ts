@@ -136,6 +136,7 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
     for (const item in collectionItems) {
         const thisItem = collectionItems[item] as App.CollectionItem
 
+        console.log(thisItem)
         const itemType = thisItem["item_type"] as string
 
         artistsMetadata = [...artistsMetadata, {

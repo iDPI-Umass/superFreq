@@ -179,6 +179,7 @@ export const selectListProfileUserViewableCollections = async function ( usernam
                 eb('social.user_role', '=', 'collaborator')
             ])
         ]))
+        .orderBy('info.created_at desc')
         .execute()
 
         const info = selectInfo
@@ -427,10 +428,12 @@ export const selectEditableCollectionContents = async function ( collectionId: s
                 'contents.item_position as item_position',
                 'contents.item_type as item_type',
                 'artists.artist_name as artist_name',
+                'release_groups.release_group_mbid as release_group_mbid',
                 'release_groups.release_group_name as release_group_name',
                 'release_groups.img_url as img_url',
                 'release_groups.last_fm_img_url as last_fm_img_url',
                 'release_groups.release_date as release_date',
+                'recordings.recording_mbid as recording_mbid',
                 'recordings.recording_name as recording_name',
                 'recordings.remixer_artist_mbid as remixer_artist_mbid',
                 'insert_profile.username as inserted_by_username',
@@ -669,6 +672,8 @@ export const updateCollection = async function ( sessionUserId: string, collecti
     const { artistsMetadata, releaseGroupsMetadata, recordingsMetadata } =  await prepareMusicMetadataInsert(collectionItems)
 
     const collectionContents = await populateCollectionContents(sessionUserId, collectionItems, collectionId) 
+
+    console.log(artistsMetadata, releaseGroupsMetadata, recordingsMetadata)
 
     const update = await db.transaction().execute(async (trx) => {
 
