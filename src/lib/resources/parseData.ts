@@ -127,7 +127,7 @@ export const categoryParser = ( category: string ) => {
 Prepare data for table insert in format expected by: artists, release_groups, and recordings.
 */
 
-export const prepareMusicMetadataInsert = function ( collectionItems: App.RowData, collectionType: string ) {
+export const prepareMusicMetadataInsert = function ( collectionItems: App.RowData ) {
 
     let artistsMetadata = [] as any
     let releaseGroupsMetadata = [] as any
@@ -136,13 +136,15 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
     for (const item in collectionItems) {
         const thisItem = collectionItems[item] as App.CollectionItem
 
+        const itemType = thisItem["item_type"] as string
+
         artistsMetadata = [...artistsMetadata, {
             "artist_mbid": thisItem["artist_mbid"],
             "artist_name": thisItem["artist_name"],
             "added_at": timestampISO
         }]
         
-        if	( collectionType == "release_groups" || collectionType == "release_group" ) {
+        if	( itemType.includes("release_group") ) {
             releaseGroupsMetadata = [...releaseGroupsMetadata, {
                 "artist_mbid": thisItem["artist_mbid"],
                 "release_group_mbid": thisItem["release_group_mbid"],
@@ -154,7 +156,7 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
                 "added_at": timestampISO
             }]
         }
-        else if ( collectionType == "recordings" || collectionType == "recording" ) {
+        else if ( itemType.includes("recording")) {
             releaseGroupsMetadata = [...releaseGroupsMetadata, {
                 "artist_mbid": thisItem["artist_mbid"],
                 "release_group_mbid": thisItem["release_group_mbid"],

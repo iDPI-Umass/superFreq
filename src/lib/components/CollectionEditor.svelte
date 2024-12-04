@@ -8,6 +8,7 @@
     interface ComponentProps {
         collectionType: string
         collectionStatus: string
+        mode?: string
         collectionItems: App.RowData[]
         deletedItems?: App.RowData[]
         itemAdded: boolean
@@ -18,6 +19,7 @@
     let {
         collectionType,
         collectionStatus,
+        mode = '', // artists || release_groups || recordings
         collectionItems = $bindable([]),
         deletedItems = $bindable([]),
         itemAdded = $bindable(false),
@@ -48,14 +50,18 @@
         else return lookup
     }
 
-    let itemType = $state('') as string
+    let itemType = $state( mode ?? '') as string
 
     let itemLookup = {
         '': 'item',
         'artist': 'artist',
+        'artists': 'artist',
         'release_group': 'album',
+        'release_groups': 'album',
         'recording': 'track',
+        'recordings': 'track',
         'episode': 'episode or mix',
+        'episodes': 'episode or mix',
     } as any
 
     let searchCategoryLookup = {
@@ -82,6 +88,7 @@
 <svelte:options runes={true} />
 
 <div class="collection-search" >
+    {#if !(mode?.includes('artist')) && !(mode?.includes('release_group')) && !(mode?.includes('recording')) }
     <div class="form-column">
         <fieldset class="search">
             <legend>
@@ -143,6 +150,7 @@
             </ul>
         </fieldset>
     </div>
+    {/if}
     <div class="form-column">
         {#if itemType != "episode"}
             <div class="collection-search-bar">

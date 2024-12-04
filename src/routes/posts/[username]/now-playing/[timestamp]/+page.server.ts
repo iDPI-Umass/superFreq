@@ -227,8 +227,6 @@ export const actions = {
             from_collection_id: validStringCheck(fromCollectionId)
         }
 
-        console.log(item)
-
         const update = await saveItemToCollection( sessionUserId, item, collectionId )
 
         return { updateSuccess: update }

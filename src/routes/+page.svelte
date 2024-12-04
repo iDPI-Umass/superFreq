@@ -69,7 +69,7 @@
             {/snippet}
     {#snippet message()}
                 <span >
-            <p>{ form?.success ? 'Check your inbox!' : 'Something went wrong. Please try again.' }</p>
+            <p>{ form?.success ? 'Check your inbox! And maybe also your spam.' : 'Something went wrong. Please try again.' }</p>
         </span>
             {/snippet}
 </NotificationModal>
