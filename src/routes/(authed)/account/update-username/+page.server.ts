@@ -37,10 +37,10 @@ export const actions = {
                 'display_name': display_name,
                 'avatar_url': avatar_url,
               })
-            return { success: false }
+            return { success: true }
         }
         else {
-            return { success: true }
+            return { success: false }
         }
     }
 } satisfies Actions

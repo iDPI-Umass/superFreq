@@ -14,6 +14,9 @@
         mode: string
         remaining?: number
         userActionSuccess?: boolean | null
+        collections?: App.RowData[]
+        showCollectionsListModal?: boolean
+        showSaveSucessModal?: boolean
     }
 
     let { 
@@ -21,7 +24,10 @@
         feedItems, 
         mode,
         remaining,
-        userActionSuccess = null
+        userActionSuccess = null,
+        collections = [],
+        showCollectionsListModal = $bindable(false),
+        showSaveSucessModal = $bindable(false)
     }: ComponentProps = $props()
 </script>
 
@@ -65,6 +71,9 @@
                         post={item}
                         mode="feed"
                         userActionSuccess={userActionSuccess}
+                        collections={collections}
+                        bind:showCollectionsModal={showCollectionsListModal}
+                        bind:showSaveSucessModal={showSaveSucessModal}
                     ></NowPlayingPost>
                 </div>
             </div>

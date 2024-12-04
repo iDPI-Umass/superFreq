@@ -30,6 +30,7 @@
 	let collectionType = collectionInfo["type"] 
 	let collectionStatus = $state(collectionInfo["status"]) 
 	let descriptionText = $state(collectionInfo["description_text"] )
+    let defaultSort = $state(collectionInfo["default_view_sort"])
 
 	let collectionItems = $state(collection?.collectionContents as App.RowData[])
 
@@ -101,6 +102,60 @@
                 />
             {/key}
             {#if isOwner}
+                <fieldset>
+                    <div class="label-group">
+                        <legend>view sort</legend>
+                        <Tooltip>
+                            This how your collection is sorted by default when other users view it. This does not change or effect the order of the items in the editor below.
+                        </Tooltip>
+                    </div>
+                    <ul>
+                        <li>
+                            <input 
+                                class="radio" 
+                                type="radio" 
+                                name="view-sort" 
+                                id="view-sort" 
+                                value="default" 
+                                bind:group={defaultSort}
+                            />
+                            <label for="default">default</label>
+                        </li>
+                        <li>
+                            <input 
+                                class="radio" 
+                                type="radio" 
+                                name="view-sort" 
+                                id="view-sort" 
+                                value="reverse" 
+                                bind:group={defaultSort}
+                            />
+                            <label for="reverse">reverse</label>
+                        </li>
+                        <li>
+                            <input 
+                                class="radio" 
+                                type="radio" 
+                                name="view-sort" 
+                                id="view-sort" 
+                                value="artist_asc" 
+                                bind:group={defaultSort}
+                            />
+                            <label for="artist-asc">artists a --> z</label>
+                        </li>
+                        <li>
+                            <input 
+                                class="radio" 
+                                type="radio" 
+                                name="view-sort" 
+                                id="view-sort" 
+                                value="artist_desc" 
+                                bind:group={defaultSort}
+                            />
+                            <label for="artist-desc">artists z --> a</label>
+                        </li>
+                    </ul>
+                </fieldset>
                 <fieldset>
                     <div class="label-group">
                         <legend>Status of collection</legend>
@@ -198,12 +253,16 @@
 		bind:itemAdded={itemAdded}
 		bind:imgPromise={imgPromise}
 	></CollectionEditor>
+    <div class="bottom-double-border"></div>
 </div>
 
+<div class="buffer"></div>
+
 <style>
-    @media screen and (max-width: 600px) {
-        form.horizontal {
-            flex-direction: column;
-        }
+    .bottom-double-border {
+        padding-top: var(--freq-spacing-3x-small);
+    }
+    .buffer {
+        padding-bottom: var(--freq-spacing-large);
     }
 </style>

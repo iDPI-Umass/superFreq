@@ -3,6 +3,7 @@ import { redirect } from '@sveltejs/kit'
 import { selectProfilePageData, insertUpdateBlock, insertUserFlag, insertUpdateUserFollow, insertPostFlag } from '$lib/resources/backend-calls/users'
 import { selectFeedData } from '$lib/resources/backend-calls/feed'
 import { selectUserPostsSample, insertPost, insertUpdateReaction } from '$lib/resources/backend-calls/posts'
+import { selectListSessionUserCollections, saveItemToCollection } from 'src/lib/resources/backend-calls/collections'
 import { getListenUrlData } from '$lib/resources/parseData'
 import { add, parseISO } from 'date-fns'
 
@@ -17,6 +18,7 @@ let nowPlayingPostId: string
 let updatedReactionActive: boolean
 let updatedReactionCount: number
 
+let collections = [] as App.RowData[]
 
 export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}) => {
 
@@ -52,23 +54,31 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     }
     
     if ( userAction ) {
-        profileData = await selectProfilePageData( sessionUserId, profileUsername )
-
         userAction = false
         loadData = true
+
+        profileData = await selectProfilePageData( sessionUserId, profileUsername )
     }
 
+    function findNowPlayingPost( item: App.RowData, nowPlayingPostId: string ) {
+        const keys = Object.keys(item)
+        if ( keys.includes('now_playing_post_id')  && item["now_playing_post_id"] == nowPlayingPostId ) { 
+            return true
+        }
+        return false
+    }
+    
     if ( updateReaction ) {
-        const reaction = feedItems.find((item) => (item.now_playing_post_id == nowPlayingPostId)) as App.RowData
+        updateReaction = false 
+        loadData = true
+
+        const reaction = feedItems.find((element) => findNowPlayingPost(element, nowPlayingPostId)) as App.RowData
 
         reaction.reaction_active = updatedReactionActive
         reaction.reaction_count = updatedReactionCount
-
-        updateReaction = false
-        loadData = true
     }
 
-    return { sessionUserId, profileData, feedItems, profileUsername }
+    return { sessionUserId, profileData, feedItems, profileUsername, collections }
 }
 
 export const actions = { 
@@ -210,16 +220,61 @@ export const actions = {
         const session = await safeGetSession()
         const sessionUserId = session.user?.id as string
         const data = await request.formData()
-        const postId = data.get('post-id') as string
+        nowPlayingPostId = data.get('post-id') as string
         const reactionType = data.get('reaction-type') as string
 
-        const reaction = await insertUpdateReaction( sessionUserId, postId, reactionType )
+        const reaction = await insertUpdateReaction( sessionUserId, nowPlayingPostId, reactionType )
 
         const userActionSuccess = reaction ? true : false
 
+        updatedReactionActive = reaction.reaction.active as boolean
+        updatedReactionCount = parseInt(reaction.reactionCount as string)
         updateReaction = userActionSuccess ? true : false
         loadData = userActionSuccess ? false : true
 
         return { userActionSuccess }
+    },
+    getCollectionList: async ({ locals: { safeGetSession }}) => {
+        const session = await safeGetSession()
+        const sessionUserId = session.user?.id as string
+
+        if ( collections.length == 0 ) {
+            collections = await selectListSessionUserCollections(sessionUserId)
+        }
+        return { showCollectionsModal: true }
+    },
+    saveToCollection: async ({ request, locals: { safeGetSession }}) => {
+        const session = await safeGetSession()
+        const sessionUserId = session.user?.id as string
+
+        const data = await request.formData()
+        const collectionId = data.get('collection-id') as string
+        const artistMbid = data.get('artist-mbid') as string
+        const releaseGroupMbid = data.get('release-group-mbid') as string
+        const recordingMbid = data.get('recording-mbid') as string
+        const itemType = data.get('item-type') as string
+        const fromPostId = data.get('saved-from-post') as string
+        const fromCollectionId = data.get('saved-from-collection') as string
+
+        function validStringCheck ( value: string ) {
+            if ( value.length > 0 ) {
+                return value
+            }
+            else return null
+        }
+        const item = {
+            artist_mbid: artistMbid ?? null,
+            release_group_mbid: validStringCheck(releaseGroupMbid),
+            recording_mbid: validStringCheck(recordingMbid),
+            item_type: itemType,
+            from_post_id: validStringCheck(fromPostId),
+            from_collection_id: validStringCheck(fromCollectionId)
+        }
+
+        console.log(item)
+
+        const update = await saveItemToCollection( sessionUserId, item, collectionId )
+
+        return { updateSuccess: update }
     }
 } satisfies Actions

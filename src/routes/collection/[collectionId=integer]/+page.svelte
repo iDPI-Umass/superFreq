@@ -3,11 +3,14 @@
     import { page } from '$app/stores'
     
     import { Toolbar } from "bits-ui"
+    import { Select } from "bits-ui"
+    import ChevronDown from 'lucide-svelte/icons/chevron-down'
     import LayoutGrid from 'lucide-svelte/icons/layout-grid'
     import AlignJustify from 'lucide-svelte/icons/align-justify'
 
     import GridList from "$lib/components/GridList.svelte";
     import InfoBox from '$lib/components/InfoBox.svelte'
+	import { tick } from 'svelte';
 
     // import { insertCollectionFollow, updateCollectionFollow } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions';
 
@@ -22,6 +25,8 @@
 
     let gridListSelect = $state("grid")
 
+    let selected = $state() as any
+
     const categories: App.Lookup = {
         "artists": "artists",
         "release_groups": "albums",
@@ -30,6 +35,58 @@
 
     
     const updatedAt = $derived(new Date(collectionUpdatedAt).toLocaleDateString())
+
+    const sortOptions = ['default', 'reverse', 'artist A --> Z', 'artist Z --> A'] as any
+
+    let sortOption = $derived(selected?.value ?? collectionInfo.default_view_sort ?? 'default') as string
+
+    let sortedItems = $state()
+
+    function sort ( option: string ) {
+        const items = collectionContents
+        if ( option == "default" ) {
+            items.sort((a, b) => a.item_position - b.item_position)
+        }
+        else if ( option == "reverse" ) {
+            items.sort((a, b) => b.item_position - a.item_position)
+        }
+        else if ( option == "artist A --> Z" || option == "artist_asc" ) {
+            items.sort((a, b) => {
+                const nameA = a.artist_name.toUpperCase()
+                const nameB = b.artist_name.toUpperCase()
+                if (nameA < nameB) {
+                    return -1
+                }
+                if (nameA > nameB) {
+                    return 1
+                }
+                return 0
+            })
+        }
+        else if ( option == "artist Z --> A" || option == "artist_desc" ) {
+            items.sort((a, b) => {
+                const nameA = a.artist_name.toUpperCase()
+                const nameB = b.artist_name.toUpperCase()
+                if (nameA < nameB) {
+                    return 1
+                }
+                if (nameA > nameB) {
+                    return -1
+                }
+                return 0
+            })
+        }
+        else {
+            return items
+        }
+
+        return items
+    }
+
+    $effect(() => {
+        sortedItems =  sort(sortOption)
+    })
+
 </script>
 
 <svelte:options runes={true} />
@@ -83,7 +140,7 @@
             <div class="collection-info-row">
                 <div class="collection-info-attribution">
                     <p class="collection-info-text">
-                        Collection of {categories[collectionType]} by 
+                        Collection by 
                         <a href="/user/{collectionInfo?.username}">
                             {collectionInfo?.display_name}
                         </a>
@@ -102,7 +159,25 @@
         </div>
 
         <div class="sort">
-            <p> sorting options </p>
+            <div class="sort-column">
+                <Select.Root bind:selected>
+                    <Select.Trigger class="sort-options">
+                        <span class="trigger-label">  
+                            <Select.Value placeholder="sort order" />
+                            <span class="chevron">
+                                <ChevronDown size={16}></ChevronDown>
+                            </span>
+                        </span>
+                    </Select.Trigger>
+                    <Select.Content>
+                        {#each sortOptions as option}
+                        <Select.Item value={option} label={option}>
+                            {option}
+                        </Select.Item>
+                        {/each}
+                    </Select.Content>
+                </Select.Root>
+            </div>
             <div class="sort-column">
                 <Toolbar.Root>
                     <Toolbar.Group
@@ -112,24 +187,26 @@
                         <Toolbar.GroupItem
                             aria-label="grid"
                             value="grid"
-                            class="toolbar-item"
                         >
-                            <LayoutGrid class="grid-list-icon"></LayoutGrid>
+                            <div class="toolbar-icon">
+                                <LayoutGrid size={20}></LayoutGrid>
+                            </div>
                         </Toolbar.GroupItem>
                         <Toolbar.GroupItem
-                        aria-label="list"
-                        value="list"
-                        class="toolbar-item"
+                            aria-label="list"
+                            value="list"
                         >
-                            <AlignJustify class="grid-list-icon"></AlignJustify>
+                            <div class="toolbar-icon">
+                                <AlignJustify size={20}></AlignJustify>
+                            </div>
                         </Toolbar.GroupItem>
                     </Toolbar.Group>
                 </Toolbar.Root>
-                <span>sort mode: {gridListSelect}</span>
+                <span>view mode: {gridListSelect}</span>
             </div>
         </div>
         <GridList
-            collectionContents={collectionContents}
+            collectionContents={sortedItems}
             collectionReturned={viewPermission}
             collectionType={collectionType}
             collectionStatus={collectionStatus}

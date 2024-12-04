@@ -44,6 +44,8 @@
 		return { mbData, searchComplete, showModal }
 	}
 
+	const searchCategories = ['artists', 'release_groups', 'recordings']
+
 	const mbidCategory = mbidCateogory( searchCategory )
 	
 	// Get album art and handle promise for CoverArt component
@@ -178,7 +180,7 @@
 		<button 
 			class="double-border-top"
 			onclick={() => search(query, searchCategory, limit)} 
-			disabled={!(searchCategory)}
+			disabled={!searchCategory || !searchCategories.includes(searchCategory)}
 		>
 			<div class="inner-border">
 				{searchButtonText}
@@ -186,20 +188,25 @@
 		</button>
 		<div class="input-sizing">
 			<input
-			class="search" 
-			type="search" 
-			id="searchQuery" 
-			name="query" 
-			placeholder={searchPlaceholder}
-			aria-label={searchPlaceholder}
-			size="40" 
-			bind:value={query}
-		/>
+				class="search" 
+				type="search" 
+				id="searchQuery" 
+				name="query" 
+				placeholder={searchPlaceholder}
+				aria-label={searchPlaceholder}
+				size="40" 
+				bind:value={query}
+			/>
 		</div>
 	</form>
 </div>
 
 <style>
+	.search-layout {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+	}
     .search-bar {
         display: flex;
         flex-direction: row;
@@ -219,9 +226,14 @@
 		margin-right: 0;
 	}
 	@media screen and (max-width: 600px) {
-        .search-bar * {
+		form.search {
+			display: flex;
+			flex-wrap: wrap-reverse;
+			align-items: start;
+		}
+        /* .search-bar * {
             flex-direction: column;
 			align-items: start;
-        }
+        } */
     }
 </style>

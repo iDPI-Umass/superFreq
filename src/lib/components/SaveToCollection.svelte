@@ -4,13 +4,12 @@
 
     import ListModal from '$lib/components/modals/ListModal.svelte'
     import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
-	import { addCollectionItem } from '../resources/musicbrainz';
 
     interface ComponentProps {
         showCollectionsListModal: boolean,
         showSuccessModal: boolean,
         item: App.RowData,
-        collectionInfo?: App.RowData,
+        soureCollectionInfo?: App.RowData,
         collections: App.RowData[]
     }
 
@@ -18,11 +17,24 @@
         showCollectionsListModal = $bindable(false),
         showSuccessModal = $bindable(false), 
         item,
-        collectionInfo,
-        collections,
+        soureCollectionInfo,
+        collections = [],
     }: ComponentProps = $props()
 
     let addingItem = $state(false)
+
+    let savedToCollectionId = $state() as string
+    let savedToCollectionTitle = $state() as string
+    let savedToCollectionRoute = $state() as string
+
+    function savedToCollection ( collection: App.RowData ) {
+        savedToCollectionId = collection.collection_id
+        savedToCollectionTitle = collection.title
+        savedToCollectionRoute = `/collection/${savedToCollectionId}`
+        addingItem = false
+    }
+
+    
 </script>
 
 <svelte:options runes={true} />
@@ -57,7 +69,14 @@
                     <form 
                         method="POST"
                         action="?/saveToCollection" 
-                        use:enhance
+                        use:enhance={() => {
+                            addingItem = true
+                            savedToCollection ( collection )
+                            return async ({ update }) => {
+                                await update()
+                                addingItem = false
+                            }}
+                        }
                     >
                         <input 
                             type="hidden" 
@@ -79,6 +98,12 @@
                         />
                         <input 
                             type="hidden" 
+                            id="item-type" 
+                            name="item-type" 
+                            value={item.item_type} 
+                        />
+                        <input 
+                            type="hidden" 
                             id="saved-from-post" 
                             name="saved-from-post" 
                             value={item.now_playing_post_id ?? item.id} 
@@ -87,7 +112,7 @@
                             type="hidden" 
                             id="saved-from-collection" 
                             name="saved-from-collection" 
-                            value={collectionInfo?.collection_id} 
+                            value={soureCollectionInfo?.collection_id} 
                         />
                         <input 
                             type="hidden" 
@@ -123,6 +148,16 @@
         Success!
     {/snippet}
     {#snippet message()}
-        Item saved to your collection.
+        Item saved to your collection <a href={savedToCollectionRoute}>{savedToCollectionTitle}</a>.
     {/snippet}
 </NotificationModal>
+
+<style>
+    a {
+        text-decoration: underline;
+        color: var(--freq-color-primary);
+    }
+    a:is(:hover, :focus) {
+        color: var(--freq-color-text);
+    }
+</style>

@@ -155,7 +155,6 @@ export const updatePost = async function ( sessionUserId: string, postData: App.
         .updateTable('posts')
         .set({
             text: editedText,
-            mbid: postData.mbid,
             artist_name: postData.artistName,
             release_group_name: postData.releaseGroupName,
             recording_name: postData.recordingName,
@@ -169,7 +168,6 @@ export const updatePost = async function ( sessionUserId: string, postData: App.
         .where('id','=', postData.id)
         .returning([
             'text', 
-            'mbid', 
             'artist_name', 
             'release_group_name', 
             'recording_name', 
@@ -288,6 +286,7 @@ export const selectPost = async function ( sessionUserId: string, username: stri
                 'posts.created_at as created_at', 
                 'posts.updated_at as updated_at', 
                 'posts.listen_url as listen_url', 
+                'posts.item_type as item_type',
                 'profile.username as username', 
                 'profile.display_name as display_name', 
                 'profile.avatar_url as avatar_url', 
@@ -427,7 +426,6 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                 'posts.recording_name as recording_name', 
                 'posts.episode_title as episode_title', 
                 'posts.show_title as show_title', 
-                'posts.item_type as item_type', 
                 'posts.status as status', 
                 'posts.created_at as created_at', 
                 'posts.updated_at as updated_at', 
@@ -435,6 +433,7 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                 'posts.embed_id as embed_id',
                 'posts.embed_source as embed_source',
                 'posts.embed_account as embed_account',
+                'posts.item_type as item_type',
                 'profile.username as username', 
                 'profile.display_name as display_name', 
                 'profile.avatar_url as avatar_url', 
@@ -463,6 +462,8 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                 'reaction.active'
             ])
             .executeTakeFirst()
+
+            console.log(post)
 
             const postId = post?.id as string
 
@@ -631,6 +632,7 @@ export const selectUserNowPlayingPosts = async function ( sessionUserId: string,
                 'posts.embed_id as embed_id',
                 'posts.embed_source as embed_source',
                 'posts.embed_account as embed_account',
+                'posts.item_type as item_type',
                 'profiles.id as user_id',
                 'profiles.username as username',
                 'profiles.display_name as display_name',
@@ -711,6 +713,7 @@ export const selectUserPostsAndComments = async function ( sessionUserId: string
                 'posts.embed_id as embed_id',
                 'posts.embed_source as embed_source',
                 'posts.embed_account as embed_account',
+                'posts.item_type as item_type',
                 'profiles.id as user_id',
                 'profiles.username as username',
                 'profiles.display_name as display_name',
@@ -827,6 +830,7 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
                 'posts.embed_id as embed_id',
                 'posts.embed_source as embed_source',
                 'posts.parent_post_id as parent_post_id',
+                'posts.item_type as item_type',
                 'profiles.id as user_id',
                 'profiles.username as username',
                 'profiles.display_name as display_name',

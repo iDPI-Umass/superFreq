@@ -1,4 +1,4 @@
-import { categoriesTable, mbidCategoryTable } from "$lib/resources/parseData"
+import { categoriesTable, mbidCategoryTable, itemTypeTable } from "$lib/resources/parseData"
 
 import { PUBLIC_LAST_FM_API_KEY } from '$env/static/public'
 
@@ -273,13 +273,14 @@ export const checkFetchedCoverArt = async function( item: App.RowData ){
 */
 
 // Check if item is already in collection
-export const checkDuplicate = function ( item: App.RowData, addedItems: App.RowData | App.RowData[], deletedItems: App.RowData[], mbidCategory: string ) {
+export const checkDuplicate = function ( mbid: string, addedItems: App.RowData | App.RowData[], deletedItems: App.RowData[], mbidCategory: string ) {
     if ( deletedItems.length < 1 ) {
-        return false
+        return { isDuplicate: false, duplicateItem: null }
     }
-    const itemMbid = item['id']
-    const isDuplicate = addedItems.find((item) => item[mbidCategory] == itemMbid) ? true : false
-    return isDuplicate
+    const findDuplicate = addedItems.find((element) => element[mbidCategory] == mbid)
+    const isDuplicate = findDuplicate ? true : false
+    const duplicateItem = isDuplicate ? findDuplicate : null
+    return { isDuplicate, duplicateItem }
 }
 
 // Check if item was previously deleted
@@ -288,7 +289,7 @@ export const checkDeleted = function ( item: App.RowData, deletedItems: App.RowD
         return false
     }
     const itemMbid = item['id']
-    const wasDeleted = deletedItems.find((item) => item[mbidCategory] == itemMbid) ? true : false
+    const wasDeleted = deletedItems.find((element) => element[mbidCategory] == itemMbid) ? true : false
     return wasDeleted
 }
 
@@ -307,7 +308,7 @@ export const addCollectionItem = async function (
     searchCategory: string,
     mbidCategory: string, 
 ) {
-    const isDuplicate = checkDuplicate( item, addedItems, deletedItems, mbidCategory )
+    const { isDuplicate } = checkDuplicate( item["id"], addedItems, deletedItems, mbidCategory )
     const wasDeleted = checkDeleted( item, deletedItems, mbidCategory )
     const limitReached = checkLimit ( limit, addedItems )
 
@@ -365,6 +366,7 @@ export const addCollectionItem = async function (
         "last_fm_img_url": coverArt.lastFmCoverArtUrl,
         "label": label.name,
         "notes": null,
+        "item_type": itemTypeTable[searchCategory],
         "id": addedItems.length + 1
     }]
     return {
@@ -382,7 +384,7 @@ export const addCollectionItemNoImg = async function (
     searchCategory: string,
     mbidCategory: string, 
 ) {
-    const isDuplicate = checkDuplicate( item, addedItems, deletedItems, mbidCategory )
+    const { isDuplicate } = checkDuplicate( item["id"], addedItems, deletedItems, mbidCategory )
     const wasDeleted = checkDeleted( item, deletedItems, mbidCategory )
     const limitReached = checkLimit ( limit, addedItems )
 
@@ -438,6 +440,7 @@ export const addCollectionItemNoImg = async function (
         "last_fm_img_url": null,
         "label": label.name,
         "notes": null,
+        "item_type": itemTypeTable[searchCategory],
         "id": addedItems.length + 1
     }]
     return {
@@ -470,6 +473,7 @@ export const addSingleItem = async function  (
         "last_fm_img_url": coverArt.lastFmCoverArtUrl,
         "label": label.name,
         "notes": null,
+        "item_type": itemTypeTable[searchCategory],
     }
     return {
         addedItems
@@ -497,6 +501,7 @@ export const addSingleItemNoImg = async function  (
         "last_fm_img_url": null,
         "label": label.name,
         "notes": null,
+        "item_type": itemTypeTable[searchCategory],
     }
     return { addedItems }
 }

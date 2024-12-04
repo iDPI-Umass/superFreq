@@ -19,8 +19,8 @@
         editState?: boolean
         mode?: string | null
         userActionSuccess?: boolean | null
-        collections?: App.RowData[],
-        showCollectionsModal?: boolean,
+        collections?: App.RowData[]
+        showCollectionsModal?: boolean
         showSaveSucessModal?: boolean
     }
 
@@ -132,9 +132,9 @@
             {#if mode != 'sample'}
                 <div class="row-group-icons">
                     <LikeReact
-                    postId={postId}
-                    reactionActive={reactionActive}
-                    reactionCount={reactionCount}
+                        postId={postId}
+                        reactionActive={reactionActive}
+                        reactionCount={reactionCount}
                     ></LikeReact>
                     {#if mode == "feed"}
                         <a href={permalink}>
@@ -144,10 +144,10 @@
                             </span>
                         </a>
                     {/if}
-                    {#if post.artist_mbid }
+                    {#if post.artist_mbid == "1"}
                         <SaveToCollection
-                            showCollectionsListModal={showCollectionsModal}
-                            showSuccessModal={showSaveSucessModal}
+                            bind:showCollectionsListModal={showCollectionsModal}
+                            bind:showSuccessModal={showSaveSucessModal}
                             item={post}
                             collections={collections}
                         ></SaveToCollection>

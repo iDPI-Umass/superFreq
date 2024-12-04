@@ -3,8 +3,8 @@
 
 
 	interface ComponentProps {
-        showModal: boolean
-        headerText: Snippet,
+        showModal: boolean | null
+        headerText: Snippet
         list: Snippet
     }
 
