@@ -1,4 +1,5 @@
 <script lang="ts">
+    import PanelHeader from '$lib/components/PanelHeader.svelte';
     import type { PageData, ActionData } from './$types'
     import { enhance } from '$app/forms'
     interface Props {
@@ -13,8 +14,33 @@
 
 <svelte:options runes={true} />
 
-<div class="wrapper">
-    <h1>collections</h1>
+<svelte:head>
+	<title>
+		Explore Collections
+	</title>
+</svelte:head>
+
+<div class="panel">
+    <PanelHeader>
+        {#snippet headerText()}
+        collection spotlight
+        {/snippet}
+    </PanelHeader>
+    <div class="spotlight">
+        <h2>
+            <a href="/collection/111">Freq beta test listening club, December 2024</a>
+        </h2>
+    </div>
+    
+    
+</div>
+
+<div class="panel">
+    <PanelHeader>
+        {#snippet headerText()}
+        all collections
+        {/snippet}
+    </PanelHeader>
     <ul>
         {#each (form?.collections ?? collections) as collection}
             <li>
@@ -53,16 +79,15 @@
     </form>
 </div>
 
-<svelte:head>
-	<title>
-		Explore Collections
-	</title>
-</svelte:head>
-
-
 <style>
-    .wrapper {
-        margin: 3vh 3vw;
+    .spotlight {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    h2 {
+        margin: var(--freq-spacing-medium) auto;
     }
     a {
         display: flex;
