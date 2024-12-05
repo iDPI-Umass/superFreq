@@ -19,6 +19,7 @@
         collectionReturned?: boolean
         collectionType: string
         collectionStatus?: string
+        showTags?: boolean
         layout: string
         mode: string
         imgPromise?: any
@@ -29,9 +30,10 @@
         deletedItems = $bindable([]),
         collectionReturned,
         collectionType, // "artists" | "release_groups" | "recordings" | "labels"
-        collectionStatus, // "open", "public", "private", "deleted"
+        collectionStatus = "public", // "open", "public", "private", "deleted"
+        showTags = true,
         layout, // "grid" | "condensed-grid" | "list"
-        mode, //"view" | "edit"
+        mode, // "view" | "edit"
         imgPromise = $bindable(null)
     }: ComponentProps = $props()
     
@@ -194,6 +196,7 @@
     {#if itemType.includes("artist")}
         <span class="artist">
             <CollectionItemTag
+                display={showTags}
                 itemType={itemType}
             ></CollectionItemTag>
             {#if item['artist_mbid'] && item['artist_mbid'].length > 0 && mode == "view"}
@@ -206,6 +209,7 @@
             </span>
     {:else if itemType.includes("release_group")}
         <CollectionItemTag
+            display={showTags}
             itemType={itemType}
         ></CollectionItemTag>
         <span class="title">
@@ -228,6 +232,7 @@
         </span>
     {:else if itemType.includes("recording")}
         <CollectionItemTag
+            display={showTags}
             itemType={itemType}
         ></CollectionItemTag>
         <span class="title">
@@ -250,6 +255,7 @@
         </span>
     {:else if itemType.includes("episode")}
         <CollectionItemTag
+            display={showTags}
             itemType={itemType}
         ></CollectionItemTag>
         <span class="title">

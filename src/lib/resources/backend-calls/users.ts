@@ -391,13 +391,13 @@ export const updateSessionProfile = async function ( sessionUserId: string, prof
         // music metadata inserts for new avatar as release_group
         if (hasAvatar) {
             await trx
-                    .insertInto('artists')
-                    .values(artistsMetadata)
-                    .onConflict((oc) => oc
-                        .doNothing()
-                    )
-                    .returningAll()
-                    .execute()
+                .insertInto('artists')
+                .values(artistsMetadata)
+                .onConflict((oc) => oc
+                    .doNothing()
+                )
+                .returningAll()
+                .execute()
             await trx
                 .insertInto('release_groups')
                 .values(releaseGroupsMetadata)
