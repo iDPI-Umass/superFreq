@@ -108,15 +108,17 @@
                 * required
             </span>
         </div>
+        <input
+            class="text"  
+            id="artist-name" 
+            name="artist-name" 
+            type="text"
+            placeholder="artist name" 
+            value={addedItem?.artist_name ?? null}
+            required
+        />
         {#if itemType == 'release_group' || itemType == 'recording'}
-            <input
-                class="text"  
-                id="artist-name" 
-                name="artist-name" 
-                type="text"
-                placeholder="artist name" 
-                value={addedItem?.artist_name ?? null}
-            />
+
             <div class="label-group">
                 <label 
                     class="text-label" 
@@ -135,6 +137,7 @@
                 type="text"
                 placeholder="album name"
                 value={addedItem?.release_group_name ?? null}
+                required
             />
         {/if}
         {#if itemType == 'recording'}
@@ -156,6 +159,7 @@
                 type="text"
                 placeholder="track title" 
                 value={addedItem?.recording_name ?? null}
+                required
             />
         {/if}
         {#if itemType == 'episode'}
@@ -177,6 +181,7 @@
                 type="text"
                 placeholder="episode" 
                 value={addedItem?.episode_name ?? null}
+                required
             />
             <label
                 class="text-label" 

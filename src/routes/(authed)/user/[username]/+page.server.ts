@@ -4,7 +4,7 @@ import { selectProfilePageData, insertUpdateBlock, insertUserFlag, insertUpdateU
 import { selectFeedData } from '$lib/resources/backend-calls/feed'
 import { selectUserPostsSample, insertPost, insertUpdateReaction } from '$lib/resources/backend-calls/posts'
 import { selectListSessionUserCollections, saveItemToCollection } from 'src/lib/resources/backend-calls/collections'
-import { getListenUrlData } from '$lib/resources/parseData'
+import { getListenUrlData, validStringCheck } from '$lib/resources/parseData'
 import { add, parseISO } from 'date-fns'
 
 let loadData = true
@@ -169,22 +169,22 @@ export const actions = {
             user_id: sessionUserId,
             type: "now_playing",
             status: "new",
-            listen_url: listenUrl ?? null,
-            item_type: itemType,
-            artist_mbid: artistMbid ?? null,
-            release_group_mbid: releaseGroupMbid ?? null,
-            recording_mbid: recordingMbid ?? null,
-            artist_name: artistName ?? null,
-            release_group_name: releaseGroupName ?? null,
-            recording_name: recordingName ?? null,
-            remixer_artist_mbid: remixerArtistMbid ?? null,
-            release_date: releaseDate ?? null,
-            label: label ?? null,
-            img_url: imgUrl ?? null,
-            last_fm_img_url: lastFmImgUrl ?? null,
-            episode_title: episodeName ?? null,
-            show_title: showName ?? null,
-            text: postText ?? null,
+            listen_url: validStringCheck(listenUrl),
+            item_type: validStringCheck(itemType),
+            artist_mbid: validStringCheck(artistMbid),
+            release_group_mbid: validStringCheck(releaseGroupMbid),
+            recording_mbid: validStringCheck(recordingMbid),
+            artist_name: validStringCheck(artistName),
+            release_group_name: validStringCheck(releaseGroupName),
+            recording_name: validStringCheck(recordingName),
+            remixer_artist_mbid: validStringCheck(remixerArtistMbid),
+            release_date: validStringCheck(releaseDate),
+            label: validStringCheck(label),
+            img_url: validStringCheck(imgUrl),
+            last_fm_img_url: validStringCheck(lastFmImgUrl),
+            episode_title: validStringCheck(episodeName),
+            show_title: validStringCheck(showName),
+            text: validStringCheck(postText),
             created_at: timestampISO,
             updated_at: timestampISO,
             embed_id: embedInfo?.id ?? null,
@@ -256,12 +256,6 @@ export const actions = {
         const fromPostId = data.get('saved-from-post') as string
         const fromCollectionId = data.get('saved-from-collection') as string
 
-        function validStringCheck ( value: string ) {
-            if ( value.length > 0 ) {
-                return value
-            }
-            else return null
-        }
         const item = {
             artist_mbid: artistMbid ?? null,
             release_group_mbid: validStringCheck(releaseGroupMbid),

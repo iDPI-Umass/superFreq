@@ -2,6 +2,13 @@ import { parseISO } from "date-fns"
 import { parseHTML } from 'linkedom'
 
 
+export function validStringCheck ( value: string ) {
+    if ( value && value.length > 0 ) {
+        return value
+    }
+    else return null
+}
+
 /*
 //
 ** Time and date

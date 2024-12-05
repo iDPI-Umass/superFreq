@@ -4,6 +4,7 @@ import type { PageServerLoad, Actions } from './$types'
 import { selectPostAndReplies, insertPost, updatePost, deletePost, insertUpdateReaction, selectPostReplies } from '$lib/resources/backend-calls/posts'
 import { insertPostFlag } from '$lib/resources/backend-calls/users'
 import { selectListSessionUserCollections, saveItemToCollection } from 'src/lib/resources/backend-calls/collections.js'
+import { validStringCheck } from '$lib/resources/parseData'
 
 let loadData = true
 
@@ -212,12 +213,6 @@ export const actions = {
         const fromPostId = data.get('saved-from-post') as string
         const fromCollectionId = data.get('saved-from-collection') as string
 
-        function validStringCheck ( value: string ) {
-            if ( value.length > 0 ) {
-                return value
-            }
-            else return null
-        }
         const item = {
             artist_mbid: artistMbid ?? null,
             release_group_mbid: validStringCheck(releaseGroupMbid),
