@@ -61,9 +61,6 @@
     let showCollectionsListModal = $derived(form?.showCollectionsModal ?? false)
     let showSaveSucessModal = $derived(form?.updateSuccess ?? false)
 
-
-    console.log(feedItems)
-
 </script>
 
 <svelte:options runes={true} />
