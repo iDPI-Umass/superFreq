@@ -234,3 +234,8 @@ form.reply {
     max-width: var(--freq-image-thumbnail-4x-small);
     border-radius: var(--freq-border-radius-circle);
 }
+
+.avatar-large, .avatar-large > img {
+    max-width: var(--freq-image-thumbnail-small);
+    border-radius: var(--freq-border-radius-circle);
+}

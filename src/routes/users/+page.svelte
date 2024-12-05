@@ -1,8 +1,27 @@
 <script lang="ts">
+    import PanelHeader from "$lib/components/PanelHeader.svelte"
+    import CoverArt from "$lib/components/CoverArt.svelte";
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
     let { data } = $props();
     let { users } = $derived(data)
+
+    let item = {
+            'img_url': null,
+            'last_fm_img_url': null,
+            'artist_name': null,
+            'release_group_name': null
+        }
+
+    function avatarItem(user: App.RowData) {
+        item = {
+            'img_url': user.avatar_url ?? null,
+            'last_fm_img_url': user.avatar_last_fm_img_url ?? null,
+            'artist_name': user.avatar_artist_name ?? null,
+            'release_group_name': user.avatar_release_group_name ?? null
+        }
+        return item
+    }
 </script>
 
 <svelte:options runes={true} />
@@ -14,19 +33,32 @@
 </svelte:head>
 
 
+<div class="panel">
+    <PanelHeader>
+        {#snippet headerText()}
+        users
+        {/snippet}
+    </PanelHeader>
+    {#each users as user}
+        <ul>
+            {#if user.username}
+            <li>
+                <a href="/user/{user.username}">
+                        <CoverArt
+                            altText={`${user.display_name}'s avatar`}
+                            item={avatarItem(user)}
+                            imgClass={"avatar-large"}
+                        >
+                        </CoverArt>
+                    <span class="display-name">{user.display_name}</span>
+                </a>
+            </li>
+            {/if}
+        </ul>
+    {/each}
+</div>
 <h1>users</h1>
-{#each users as user}
-<ul>
-    {#if user.username}
-    <li>
-        <a href="/user/{user.username}">
-            <img src={user.avatar_url ?? wave} alt="{user.display_name}'s avatar" class="avatar" />
-            <span class="display-name">{user.display_name}</span>
-        </a>
-    </li>
-    {/if}
-</ul>
-{/each}
+
 
 <style>
     h1 {

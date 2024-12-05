@@ -27,10 +27,8 @@ Currently configured to server Last.fm images on the client side by default on a
         imgClass
     }: ComponentProps = $props()
 
-
-
     const coverArtItem = $derived(( item != null ) ? item : {
-        'img_url': imgUrl ?? item['img_url'] ?? null,
+        'img_url': imgUrl ?? null,
         'last_fm_img_url': item['last_fm_img_url'] ?? null,
         'artist_name': artistName,
         'release_group_name': releaseGroupName
@@ -43,9 +41,9 @@ Currently configured to server Last.fm images on the client side by default on a
 
 <svelte:options runes={true} />
 
-{#if coverArtArchiveImgUrl}
-    <img src={coverArtArchiveImgUrl} alt={altText} class={imgClass} />
-{:else}
+{#if coverArtArchiveImgUrl ?? lastFmImgUrl}
+    <img src={coverArtArchiveImgUrl ?? lastFmImgUrl} alt={altText} class={imgClass} />
+{:else if coverArtItem['artist_name'] && coverArtItem['artist_name'] != null}
     {#await getLastFmCoverArt(coverArtItem)}
         <img src={wave} alt="loading" class={imgClass} />
     {:then result}
@@ -53,6 +51,8 @@ Currently configured to server Last.fm images on the client side by default on a
     {:catch}
         <img src={wave} alt="not found" class={imgClass}  />
     {/await}
+{:else}
+    <img src={wave} alt="not found" class={imgClass}  />
 {/if}
 
 <style>
