@@ -315,8 +315,6 @@ export const selectViewableCollectionContents = async function ( collectionId: s
             ])
             .executeTakeFirst()
 
-        console.log(editPermission)
-
         const followData = await trx
             .selectFrom('collections_social')
             .select([
@@ -458,6 +456,7 @@ export const selectEditableCollectionContents = async function ( collectionId: s
             }
         }
 
+        filteredContents.sort(( a, b ) => a.item_position - b.item_position )
         collectionContents = filteredContents
 
         // create ID for each item for svelte-dnd component in colleciton editor
@@ -672,8 +671,6 @@ export const updateCollection = async function ( sessionUserId: string, collecti
     const { artistsMetadata, releaseGroupsMetadata, recordingsMetadata } =  await prepareMusicMetadataInsert(collectionItems)
 
     const collectionContents = await populateCollectionContents(sessionUserId, collectionItems, collectionId) 
-
-    console.log(artistsMetadata, releaseGroupsMetadata, recordingsMetadata)
 
     const update = await db.transaction().execute(async (trx) => {
 
