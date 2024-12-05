@@ -160,6 +160,9 @@
             <DropdownMenu.Item href={"/feed"}>
               feed
             </DropdownMenu.Item>
+            <DropdownMenu.Item href={"/feed/firehose"}>
+              universal feed
+            </DropdownMenu.Item>
             <DropdownMenu.Item href={"/posts/now-playing/new"}>
               new post
             </DropdownMenu.Item>
@@ -171,9 +174,6 @@
             </DropdownMenu.Item>
             <DropdownMenu.Item href={"/about/updates"}>
               updates
-            </DropdownMenu.Item>
-            <DropdownMenu.Item href={"/about/guidelines"}>
-              community guidlines
             </DropdownMenu.Item>
             <DropdownMenu.Item href={"/collections"}>
               discover collections
