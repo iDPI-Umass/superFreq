@@ -138,44 +138,47 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
 
         const itemType = thisItem["item_type"] as string
 
-        artistsMetadata = [...artistsMetadata, {
-            "artist_mbid": thisItem["artist_mbid"],
-            "artist_name": thisItem["artist_name"],
-            "added_at": timestampISO
-        }]
-        
-        if	( itemType.includes("release_group") ) {
-            releaseGroupsMetadata = [...releaseGroupsMetadata, {
+        if ( itemType ) {
+            
+            artistsMetadata = [...artistsMetadata, {
                 "artist_mbid": thisItem["artist_mbid"],
-                "release_group_mbid": thisItem["release_group_mbid"],
-                "release_group_name": thisItem["release_group_name"],
-                "release_date": thisItem["release_date"],
-                "label": thisItem["label_name"],
-                "img_url": thisItem["img_url"],
-                "last_fm_img_url": thisItem["last_fm_img_url"],
+                "artist_name": thisItem["artist_name"],
                 "added_at": timestampISO
             }]
-        }
-        else if ( itemType.includes("recording")) {
-            releaseGroupsMetadata = [...releaseGroupsMetadata, {
-                "artist_mbid": thisItem["artist_mbid"],
-                "release_group_mbid": thisItem["release_group_mbid"],
-                "release_group_name": thisItem["release_group_name"],
-                "release_date": thisItem["release_date"],
-                "label": thisItem["label"],
-                "img_url": thisItem["img_url"],
-                "last_fm_img_url": thisItem["last_fm_img_url"],
-                "added_at": timestampISO
-            }];
+            
+            if	( itemType.includes("release_group") ) {
+                releaseGroupsMetadata = [...releaseGroupsMetadata, {
+                    "artist_mbid": thisItem["artist_mbid"],
+                    "release_group_mbid": thisItem["release_group_mbid"],
+                    "release_group_name": thisItem["release_group_name"],
+                    "release_date": thisItem["release_date"],
+                    "label": thisItem["label_name"],
+                    "img_url": thisItem["img_url"],
+                    "last_fm_img_url": thisItem["last_fm_img_url"],
+                    "added_at": timestampISO
+                }]
+            }
+            else if ( itemType.includes("recording")) {
+                releaseGroupsMetadata = [...releaseGroupsMetadata, {
+                    "artist_mbid": thisItem["artist_mbid"],
+                    "release_group_mbid": thisItem["release_group_mbid"],
+                    "release_group_name": thisItem["release_group_name"],
+                    "release_date": thisItem["release_date"],
+                    "label": thisItem["label"],
+                    "img_url": thisItem["img_url"],
+                    "last_fm_img_url": thisItem["last_fm_img_url"],
+                    "added_at": timestampISO
+                }];
 
-            recordingsMetadata = [...recordingsMetadata, {
-                "artist_mbid": thisItem["artist_mbid"],
-                "recording_mbid": thisItem["recording_mbid"],
-                "recording_name": thisItem["recording_name"],
-                "remixer_artist_mbid": thisItem["remixer_artist_mbid"],
-                "release_date": thisItem["release_date"],
-                "added_at": timestampISO
-            }]
+                recordingsMetadata = [...recordingsMetadata, {
+                    "artist_mbid": thisItem["artist_mbid"],
+                    "recording_mbid": thisItem["recording_mbid"],
+                    "recording_name": thisItem["recording_name"],
+                    "remixer_artist_mbid": thisItem["remixer_artist_mbid"],
+                    "release_date": thisItem["release_date"],
+                    "added_at": timestampISO
+                }]
+            }
         }
     }
 
