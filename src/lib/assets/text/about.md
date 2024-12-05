@@ -6,6 +6,7 @@ layout: about
 <script lang="ts">
     import Guidelines from '$lib/assets/text/community-guidelines.md'
     import Consent from '$lib/assets/text/data-consent.md'
+    import Bugs from '$lib/assets/text/known-bugs.md'
 </script>
 
 
@@ -133,13 +134,7 @@ Should Freq prove relevant to enough users, and should the project continue past
 Known Bugs
 </h2>
 
-- Layout/design weirdness
-    - Elements in profile headers are misaligned
-- For a few reasons, cover art doesn’t always load
-- It is not always possible to change the order of items in a collection
-- There are probably typos. Please report those.
-
-Notice other bugs? [Fill out this easy Google Form.](https://docs.google.com/forms/d/e/1FAIpQLSfKj4FlApgfM-Kc4rYwAxNQslBMS9rk-DdfowMa5qcHlRYhew/viewform?usp=sf_link)
+<Bugs></Bugs>
 
 <hr />
 
