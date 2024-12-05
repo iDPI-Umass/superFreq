@@ -21,7 +21,6 @@ export const actions = {
 
     const activeAndDeletedCollectionItems = collectionItems.concat(deletedCollectionItems)
 
-
     const insertUpdate = await insertUpdateTopAlbumsCollection( sessionUserId, activeAndDeletedCollectionItems )
 
     const username = insertUpdate?.username as string
