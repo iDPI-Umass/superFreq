@@ -101,12 +101,14 @@
             </div>
         </div>
         <div class="post-body">
-            <NowPlayingTag
-                artistName={post.artist_name}
-                itemTitle={post.recording_name ?? post.release_group_name ?? post.episode_title}
-                itemType={post.item_type}
-            >
-            </NowPlayingTag>
+            {#if post.artist_name}
+                <NowPlayingTag
+                    artistName={post.artist_name}
+                    itemTitle={post.recording_name ?? post.release_group_name ?? post.episode_title}
+                    itemType={post.item_type}
+                >
+                </NowPlayingTag>
+            {/if}
             {#if !editState}
                 <p>
                     {post.text}
