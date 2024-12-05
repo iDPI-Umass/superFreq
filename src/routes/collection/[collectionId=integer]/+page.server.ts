@@ -37,10 +37,10 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession } 
     }
 
     if ( updateFollow ) {
-        followData.follows_now = followsNow
-
         updateFollow = false
         loadData = true
+
+        followData['follows_now'] = followsNow
     }
 
     return { sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData }
@@ -48,6 +48,9 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession } 
 
 export const actions = {
     followCollection: async ({ request, locals: { safeGetSession } }) => {
+        updateFollow = true
+        loadData = false
+
         const session = await safeGetSession()
         const sessionUserId = session.user?.id as string
         
@@ -57,9 +60,6 @@ export const actions = {
         const follow = await insertUpdateCollectionFollow(sessionUserId, collectionId)
 
         followsNow = follow?.follows_now as boolean
-
-        updateFollow = true
-        loadData = false
 
         return { success: true }
     }
