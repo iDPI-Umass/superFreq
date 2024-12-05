@@ -78,11 +78,23 @@
             </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Root>
-      <a href="/about">
-        <button class="nav">
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger>
           about
-        </button>
-      </a>
+          <ChevronDown></ChevronDown>
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Content>
+          <DropdownMenu.Item href={"/about"}>
+            about
+          </DropdownMenu.Item>
+          <DropdownMenu.Item href={"/about/updates"}>
+            updates
+          </DropdownMenu.Item>
+          <DropdownMenu.Item href={"/about/guidelines"}>
+            community guidlines
+          </DropdownMenu.Item>
+        </DropdownMenu.Content>
+      </DropdownMenu.Root>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
           <CoverArt
@@ -156,6 +168,12 @@
             </DropdownMenu.Item>
             <DropdownMenu.Item href={"/about"}>
               about
+            </DropdownMenu.Item>
+            <DropdownMenu.Item href={"/about/updates"}>
+              updates
+            </DropdownMenu.Item>
+            <DropdownMenu.Item href={"/about/guidelines"}>
+              community guidlines
             </DropdownMenu.Item>
             <DropdownMenu.Item href={"/collections"}>
               discover collections
@@ -268,7 +286,7 @@
     display: flex;
     max-width: 80%;
     flex-direction: row;
-    margin: 0 auto;
+    margin: 0;
   }
   @media screen and (max-width: 770px) {
     header {
