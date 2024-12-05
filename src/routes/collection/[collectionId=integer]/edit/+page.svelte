@@ -211,13 +211,13 @@
                         </li>
                     </ul>
                 </fieldset>
-                {#if collectionStatus && collectionStatus != 'public'}
-                    <InfoBox
-                        mode="inline"
-                    >
-                        {infoBoxText[collectionStatus]}
-                    </InfoBox>
-                {/if}
+            {/if}
+            {#if collectionStatus && collectionStatus != 'public'}
+                <InfoBox
+                    mode="inline"
+                >
+                    {infoBoxText[collectionStatus]}
+                </InfoBox>
             {/if}
         </div>
         <div class="form-column">
