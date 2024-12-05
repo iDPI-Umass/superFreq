@@ -162,11 +162,11 @@ export const releaseGroupName = function ( searchCategory: string, item: App.Row
 }
 
 export const recordingMbid = function ( searchCategory: string, item: App.RowData ) {
-    let name = null
+    let mbid = null
     if ( searchCategory == 'recordings' ) {
-        name = item["id"] ?? null
+        mbid = item["id"] ?? null
     }
-    return name
+    return mbid
 }
 
 
@@ -503,5 +503,7 @@ export const addSingleItemNoImg = async function  (
         "notes": null,
         "item_type": itemTypeTable[searchCategory],
     }
+
+    console.log(addedItems)
     return { addedItems }
 }

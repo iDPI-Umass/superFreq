@@ -208,8 +208,7 @@ export const selectAllUsers = async function () {
     .execute()
 
     const users = await selectUsers
-
-    console.log(users)
+    
     return users
 }
 
