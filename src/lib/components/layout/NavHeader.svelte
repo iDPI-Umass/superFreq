@@ -286,7 +286,7 @@
     display: flex;
     max-width: 80%;
     flex-direction: row;
-    margin: 0;
+    margin: 0 auto;
   }
   @media screen and (max-width: 770px) {
     header {
