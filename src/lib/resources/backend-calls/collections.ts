@@ -500,6 +500,7 @@ export const selectEditableTopAlbumsCollection = async function ( sessionUserId:
                 'contents.inserted_at',
                 'contents.release_group_mbid',
                 'contents.artist_mbid',
+                'contents.item_type as item_type',
                 'release_groups.release_group_name',
                 'release_groups.img_url',
                 'release_groups.last_fm_img_url as last_fm_img_url',
