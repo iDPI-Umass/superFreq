@@ -5,34 +5,38 @@
     import Palette from 'lucide-svelte/icons/palette'
 
     interface ComponentProps {
+        display?: boolean
         itemType: string
     }
     
     let {
+        display = true,
         itemType
     }: ComponentProps = $props()
 </script>
 <svelte:options runes={true} />
 
-<span class="inline-block">
-    <div class="collection-item-tag">
-        {#if itemType && itemType.includes("artist")}
-            <Palette size="12" color="var(--freq-color-text-medium-dark)"></Palette>
-            <span>artist</span>
-        {:else if itemType && itemType.includes("release_group")}
-            <Disc size="12" color="var(--freq-color-text-medium-dark)"></Disc>
-            <span>album</span>
-        {:else if itemType && itemType.includes("recording")}
-            <MusicNote size="12" color="var(--freq-color-text-medium-dark)"></MusicNote>
-            <span>track</span>
-        {:else if itemType && itemType.includes("episode")}
-            <BoomBox size="12" color="var(--freq-color-text-medium-dark)"></BoomBox>
-            <span>mix</span>
-        {:else}
-            <span>item</span>
-        {/if}
-    </div>
-</span>
+{#if display}
+    <span class="inline-block">
+        <div class="collection-item-tag">
+            {#if itemType && itemType.includes("artist")}
+                <Palette size="12" color="var(--freq-color-text-medium-dark)"></Palette>
+                <span>artist</span>
+            {:else if itemType && itemType.includes("release_group")}
+                <Disc size="12" color="var(--freq-color-text-medium-dark)"></Disc>
+                <span>album</span>
+            {:else if itemType && itemType.includes("recording")}
+                <MusicNote size="12" color="var(--freq-color-text-medium-dark)"></MusicNote>
+                <span>track</span>
+            {:else if itemType && itemType.includes("episode")}
+                <BoomBox size="12" color="var(--freq-color-text-medium-dark)"></BoomBox>
+                <span>mix</span>
+            {:else}
+                <span>item</span>
+            {/if}
+        </div>
+    </span>
+{/if}
 
 <style>
     .collection-item-tag{

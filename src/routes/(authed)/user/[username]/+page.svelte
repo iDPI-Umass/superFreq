@@ -225,6 +225,7 @@
             collectionContents={topAlbumsCollection}
             collectionReturned={topAlbumsReturned}
             collectionType="release_groups"
+            showTags={false}
             layout="condensed-grid"
             mode="view"
         >
