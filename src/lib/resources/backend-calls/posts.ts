@@ -865,6 +865,7 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
             ])
             .where('posts.user_id', '=', profileUserId)
             .where('posts.parent_post_id', 'is', null)
+            .where('posts.status', '!=', 'deleted')
             .groupBy([
                 'profiles.id',
                 'posts.id',

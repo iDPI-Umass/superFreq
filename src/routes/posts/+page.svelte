@@ -7,6 +7,7 @@
     let { posts, postCount } = $derived(data)
 
     let displayPosts = $derived([...posts])
+
 </script>
 
 <svelte:options runes={true} />
