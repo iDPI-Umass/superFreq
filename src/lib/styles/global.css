@@ -19,10 +19,29 @@ body {
 	border: var(--freq-border-panel);
 }
 
+.panel-no-border {
+	display: flex;
+	flex-direction: row;
+	max-width: var(--freq-max-width-primary);
+	margin: 3vh auto;
+	gap: var(--freq-width-spacer);
+}
+
 @media screen and (max-width: 600px) {
-	.panel {
+	.panel,
+	.panel-no-border {
 		margin: 3vh 3vw;
 	}
+	.panel-no-border {
+		flex-direction: column;
+	}
+}
+
+.half-width-panel {
+	height: fit-content;
+	max-width: calc(var(--freq-max-width-primary) * 0.5);
+	margin: 3vh auto;
+	border: var(--freq-border-panel);
 }
 
 .panel-medium {

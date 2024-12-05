@@ -7,6 +7,7 @@ layout: about
     import Guidelines from '$lib/assets/text/community-guidelines.md'
     import Consent from '$lib/assets/text/data-consent.md'
     import Bugs from '$lib/assets/text/known-bugs.md'
+    import Roadmap from '$lib/assets/text/roadmap.md'
 </script>
 
 
@@ -114,16 +115,7 @@ Freq is being developed as an open source project at the [Initiative for Digital
 Roadmap
 </h2>
 
-The following features are intended for this software. Some will come after the release of the 1.0. These are listed in rough order of priority:
-
-- Improved metadata mapping for Now Playing posts, including richer interaction with radio show archives and DJ mixes
-- A spotlight page for high quality Collections
-- Search
-- Granular filtering for the Feed and Collections
-- [GOBO](https://gobo.social/) compatibility
-- Groups and relevant moderation tools
-- Local scene pages that will display flyers for upcoming events
-- Various fun [ListenBrainz](https://listenbrainz.org/) integrations
+<Roadmap></Roadmap>
 
 Since the point of this software is music community, we will be working in the coming months to conduct experiments with offline music communuities, such as college and community radio stations. The goal of these experiments is to co-design features that are relevant them and the communities they serve.
 
