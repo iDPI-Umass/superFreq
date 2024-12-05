@@ -29,6 +29,16 @@
         showCollectionsListModal = $bindable(false),
         showSaveSucessModal = $bindable(false)
     }: ComponentProps = $props()
+
+    function avatarItem ( item: App.RowData ) {
+        const avatar = {
+            'img_url': item.avatar_url,
+            'last_fm_img_url': item.avatar_last_fm_img_url,
+            'artist_name': item.avatar_artist_name,
+            'release_group_name': item.avatar_release_group_name
+        }
+        return avatar
+    }
 </script>
 
 <svelte:options runes={true} />
@@ -53,9 +63,7 @@
             <a href={`/posts/${item.username}/now-playing/${parseTimestamp(item.feed_item_timestamp)}`}>
                 <div class="feed-item-user-data">
                         <CoverArt
-                            imgUrl={item.avatar_url}
-                            artistName={item.avatar_artist_name}
-                            releaseGroupName={item.avatar_release_group_name}
+                            item={avatarItem(item)}
                             altText={`${item.display_name}'s avatar`}
                             imgClass='feed-avatar'
                         ></CoverArt>
@@ -82,9 +90,7 @@
             <a href={`/user/${item.username}`}>
                 <div class="feed-item-one-liner">
                         <CoverArt
-                            imgUrl={item.avatar_url}
-                            artistName={item.avatar_artist_name}
-                            releaseGroupName={item.avatar_release_group_name}
+                            item={avatarItem(item)}
                             altText={`${item.display_name}'s avatar`}
                             imgClass='feed-avatar'
                         ></CoverArt>
@@ -96,9 +102,7 @@
             <a href={`/posts/${item.original_poster_username}/now-playing/${parseTimestamp(item.original_post_created_at)}#${item.username?.concat(parseTimestamp(item.feed_item_timestamp))}`}>
                 <div class="feed-item-one-liner">
                         <CoverArt
-                            imgUrl={item.session_user_post_commenter_avatar_url}
-                            artistName={item.avatar_artist_name}
-                            releaseGroupName={item.avatar_release_group_name}
+                            item={avatarItem(item)}
                             altText={`${item.session_user_post_commenter_display_name}'s avatar`}
                             imgClass='feed-avatar'
                         ></CoverArt>
@@ -110,9 +114,7 @@
         <a href={`/posts/${item.original_poster_username}/now-playing/${parseTimestamp(item.feed_item_timestamp)}`}>
             <div class="feed-item-one-liner">
                     <CoverArt
-                        imgUrl={item.session_user_post_react_user_avatar_url}
-                        artistName={item.avatar_artist_name}
-                        releaseGroupName={item.avatar_release_group_name}
+                        item={avatarItem(item)}
                         altText={`${item.session_user_post_react_user_display_name}'s avatar`}
                         imgClass='feed-avatar'
                     ></CoverArt>
@@ -124,9 +126,7 @@
             <a href={`/posts/${item.original_poster_username}/now-playing/${parseTimestamp(item.original_post_created_at)}#${item.username?.concat(parseTimestamp(item.feed_item_timestamp))}`}>
                 <div class="feed-item-one-liner">
                         <CoverArt
-                            imgUrl={item.avatar_url}
-                            artistName={item.avatar_artist_name}
-                            releaseGroupName={item.avatar_release_group_name}
+                            item={avatarItem(item)}
                             altText={`${item.display_name}'s avatar`}
                             imgClass='feed-avatar'
                         ></CoverArt>
@@ -138,9 +138,7 @@
             <a href={`/posts/${item.original_poster_username}/now-playing/${parseTimestamp(item.original_post_created_at)}#${item.username?.concat(parseTimestamp(item.feed_item_timestamp))}`}>
                 <div class="feed-item-one-liner">
                         <CoverArt
-                            imgUrl={item.avatar_url}
-                            artistName={item.avatar_artist_name}
-                            releaseGroupName={item.avatar_release_group_name}
+                            item={avatarItem(item)}
                             altText={`${item.display_name}'s avatar`}
                             imgClass='feed-avatar'
                         ></CoverArt>
@@ -152,9 +150,7 @@
             <a href={`/posts/${item.original_poster_username}/now-playing/${parseTimestamp(item.original_post_created_at)}`}>
                 <div class="feed-item-one-liner">
                         <CoverArt
-                            imgUrl={item.avatar_url}
-                            artistName={item.avatar_artist_name}
-                            releaseGroupName={item.avatar_release_group_name}
+                            item={avatarItem(item)}
                             altText={`${item.display_name}'s avatar`}
                             imgClass='feed-avatar'
                         ></CoverArt>
@@ -166,9 +162,7 @@
             <a href={`/collection/${item.collection_id}`}>
                 <div class="feed-item-one-liner">
                     <CoverArt
-                        imgUrl={item.avatar_url}
-                        artistName={item.avatar_artist_name}
-                        releaseGroupName={item.avatar_release_group_name}
+                        item={avatarItem(item)}
                         altText={`${item.display_name}'s avatar`}
                         imgClass='feed-avatar'
                     ></CoverArt>
@@ -186,9 +180,7 @@
             <a href={`/collection/${item.collection_id}`}>
                 <div class="feed-item-one-liner">
                     <CoverArt
-                        imgUrl={item.avatar_url}
-                        artistName={item.avatar_artist_name}
-                        releaseGroupName={item.avatar_release_group_name}
+                        item={avatarItem(item)}
                         altText={`${item.display_name}'s avatar`}
                         imgClass='feed-avatar'
                     ></CoverArt>
@@ -206,9 +198,7 @@
             <a href={`/collection/${item.collection_id}`}>
                 <div class="feed-item-one-liner">
                     <CoverArt
-                        imgUrl={item.avatar_url}
-                        artistName={item.avatar_artist_name}
-                        releaseGroupName={item.avatar_release_group_name}
+                        item={avatarItem(item)}
                         altText={`${item.display_name}'s avatar`}
                         imgClass='feed-avatar'
                     ></CoverArt>
