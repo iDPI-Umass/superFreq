@@ -558,7 +558,14 @@ export const selectRandomPosts = async function ( postCount: number ) {
 
         const randomAvatarImages = await trx
         .selectFrom('release_groups')
-        .select(['img_url', 'last_fm_img_url'])
+        .innerJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
+        .select([
+            'release_groups.img_url as avatar_url', 
+            'release_groups.last_fm_img_url as avatar_last_fm_img_url', 
+            'release_groups.release_group_mbid as release_group_mbid', 
+            'release_groups.release_group_name as avatar_release_group_name',
+            'artists.artist_name as avatar_artist_name'
+        ])
         .orderBy(sql`random()`)
         .limit(postCount)
         .execute()
@@ -571,8 +578,10 @@ export const selectRandomPosts = async function ( postCount: number ) {
     for ( const post of posts ) {
         const index = posts.indexOf(post)
         const image = {
-            'avatar_img_url': randomAvatarImages[index]['img_url'],
-            'avatar_last_fm_img_url': randomAvatarImages[index]['last_fm_img_url']
+            'avatar_img_url': randomAvatarImages[index]['avatar_url'],
+            'avatar_last_fm_img_url': randomAvatarImages[index]['avatar_last_fm_img_url'],
+            'avatar_artist_name': randomAvatarImages[index]['avatar_artist_name'],
+            'avatar_release_group_name': randomAvatarImages[index]['avatar_release_group_name'],
         }
         Object.assign(post, image)
     }

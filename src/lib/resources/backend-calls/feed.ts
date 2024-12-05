@@ -804,6 +804,7 @@ export const selectFirehoseFeed = async function ( sessionUserId: string, batchS
             'profile.avatar_url',
             'reaction.active',
             'artists.artist_name',
+            'release_groups.img_url',
             'release_groups.last_fm_img_url',
             'release_groups.release_group_name'
         ])
