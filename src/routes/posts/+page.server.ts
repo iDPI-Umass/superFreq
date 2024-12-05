@@ -6,7 +6,7 @@ import { selectRandomPosts } from '$lib/resources/backend-calls/posts'
 export const load: PageServerLoad = async () => {
 
     const postCount = 100
-    const posts = await selectRandomPosts( postCount ) as App.RowData[]
+    const posts = await selectRandomPosts( postCount )
     
     for ( const post of posts ) {
         post['display_name'] = `${mobyDickArray[Math.floor(Math.random() * mobyDickArray.length)]} ${mobyDickArray[Math.floor(Math.random() * mobyDickArray.length)]}`

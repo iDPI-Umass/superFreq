@@ -262,6 +262,7 @@ export const selectPost = async function ( sessionUserId: string, username: stri
             const post = await trx
             .selectFrom('posts')
             .innerJoin('profiles as profile', 'profile.id', 'posts.user_id')
+            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profile.avatar_mbid')
             .innerJoin((eb) =>  eb
                 .selectFrom('post_reactions')
                 .select(['post_id', (eb) => eb.fn.count<number>('id').as('reaction_count')])
@@ -290,7 +291,8 @@ export const selectPost = async function ( sessionUserId: string, username: stri
                 'posts.item_type as item_type',
                 'profile.username as username', 
                 'profile.display_name as display_name', 
-                'profile.avatar_url as avatar_url', 
+                'release_groups.img_url as avatar_url',
+                'release_groups.last_fm_img_url as avatar_last_fm_img_url',
                 'reactions.reaction_count as reaction_count'
             ])
             .where(({ eb }) => eb.and({
@@ -318,6 +320,7 @@ export const selectPostReplies = async function ( sessionUserId: string, postId:
     const getReplies = await db
     .selectFrom('posts as comments')
     .innerJoin('profiles as commenter', 'commenter.id', 'comments.user_id')
+    .leftJoin('release_groups', 'release_groups.release_group_mbid', 'commenter.avatar_mbid')
     .innerJoin('posts as parent_post', 'parent_post.id', 'parent_post_id')
     .innerJoin((eb) => eb
         .selectFrom('profiles as original_poster')
@@ -344,7 +347,8 @@ export const selectPostReplies = async function ( sessionUserId: string, postId:
         'comments.parent_post_id as parent_post_id', 
         'commenter.username as username', 
         'commenter.display_name as display_name', 
-        'commenter.avatar_url as avatar_url', 
+        'release_groups.img_url as avatar_url',
+        'release_groups.last_fm_img_url as avatar_last_fm_img_url',
         'parent_post.created_at as parent_post_date', 
         'parent_post.user_id as parent_post_user_id', 
         'original_poster.username as parent_post_username', 
@@ -437,7 +441,8 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                 'posts.item_type as item_type',
                 'profile.username as username', 
                 'profile.display_name as display_name', 
-                'profile.avatar_url as avatar_url', 
+                'avatar_release_group.img_url as avatar_url',
+                'avatar_release_group.last_fm_img_url as avatar_last_fm_img_url',
                 'avatar_release_group.release_group_name as avatar_release_group_name',
                 'avatar_artist.artist_name as avatar_artist_name',
                 'reaction.active as reaction_active',
@@ -458,8 +463,11 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                 'profile.username',
                 'profile.display_name',
                 'profile.avatar_url',
+                'avatar_release_group.img_url',
+                'avatar_release_group.last_fm_img_url',
                 'avatar_artist.artist_name',
                 'avatar_release_group.release_group_name',
+                'avatar_release_group.img_url',
                 'reaction.active'
             ])
             .executeTakeFirst()
@@ -491,7 +499,8 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                 'comments.parent_post_id as parent_post_id', 
                 'commenter.username as username', 
                 'commenter.display_name as display_name', 
-                'commenter.avatar_url as avatar_url', 
+                'release_groups.img_url as avatar_url', 
+                'release_groups.last_fm_img_url as avatar_last_fm_url', 
                 'release_groups.release_group_name as avatar_release_group_name',
                 'artists.artist_name as avatar_artist_name',
                 'original_post.created_at as original_post_date', 
@@ -549,7 +558,14 @@ export const selectRandomPosts = async function ( postCount: number ) {
 
         const randomAvatarImages = await trx
         .selectFrom('release_groups')
-        .select(['img_url', 'last_fm_img_url'])
+        .innerJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
+        .select([
+            'release_groups.img_url as avatar_url', 
+            'release_groups.last_fm_img_url as avatar_last_fm_img_url', 
+            'release_groups.release_group_mbid as release_group_mbid', 
+            'release_groups.release_group_name as avatar_release_group_name',
+            'artists.artist_name as avatar_artist_name'
+        ])
         .orderBy(sql`random()`)
         .limit(postCount)
         .execute()
@@ -562,8 +578,10 @@ export const selectRandomPosts = async function ( postCount: number ) {
     for ( const post of posts ) {
         const index = posts.indexOf(post)
         const image = {
-            'avatar_img_url': randomAvatarImages[index]['img_url'],
-            'avatar_last_fm_img_url': randomAvatarImages[index]['last_fm_img_url']
+            'avatar_img_url': randomAvatarImages[index]['avatar_url'],
+            'avatar_last_fm_img_url': randomAvatarImages[index]['avatar_last_fm_img_url'],
+            'avatar_artist_name': randomAvatarImages[index]['avatar_artist_name'],
+            'avatar_release_group_name': randomAvatarImages[index]['avatar_release_group_name'],
         }
         Object.assign(post, image)
     }
@@ -635,7 +653,8 @@ export const selectUserNowPlayingPosts = async function ( sessionUserId: string,
                 'profiles.id as user_id',
                 'profiles.username as username',
                 'profiles.display_name as display_name',
-                'profiles.avatar_url as avatar_url',
+                'release_groups.img_url as avatar_url',
+                'release_groups.last_fm_img_url as avatar_last_fm_img_url',
                 'release_groups.release_group_name as avatar_release_group_name',
                 'artists.artist_name as avatar_artist_name',
                 'reaction.active as reaction_active'
@@ -687,6 +706,7 @@ export const selectUserPostsAndComments = async function ( sessionUserId: string
             const selectPosts = await trx
             .selectFrom('posts')
             .innerJoin('profiles', 'profiles.id', 'posts.user_id')
+            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profiles.avatar_mbid')
             .leftJoin('post_reactions as reaction',
                 (join) => join
                 .onRef('reaction.post_id', '=', 'posts.id')
@@ -716,7 +736,8 @@ export const selectUserPostsAndComments = async function ( sessionUserId: string
                 'profiles.id as user_id',
                 'profiles.username as username',
                 'profiles.display_name as display_name',
-                'profiles.avatar_url as avatar_url',
+                'release_groups.img_url as avatar_url',
+                'release_groups.last_fm_img_url as avatar_last_fm_img_url',
                 'reaction.active as reaction_active'
             ])
             .where('profiles.id', '=', profileUserId)
@@ -730,6 +751,7 @@ export const selectUserPostsAndComments = async function ( sessionUserId: string
             .innerJoin('profiles', 'profiles.id', 'posts.user_id')
             .innerJoin('posts as parent_post', 'parent_post.id', 'posts.parent_post_id')
             .innerJoin('profiles as parent_poster', 'parent_poster.id', 'parent_post.user_id')
+            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profiles.avatar_mbid')
             .select([
                 'posts.id as id',
                 'posts.text as text',
@@ -749,7 +771,8 @@ export const selectUserPostsAndComments = async function ( sessionUserId: string
                 'profiles.id as user_id',
                 'profiles.username as username',
                 'profiles.display_name as display_name',
-                'profiles.avatar_url as avatar_url',
+                'release_groups.img_url as avatar_url',
+                'release_groups.last_fm_img_url as avatar_last_fm_img_url',
                 'parent_post.created_at as original_post_date',
                 'parent_poster.username as original_poster_username'
             ])
@@ -833,7 +856,8 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
                 'profiles.id as user_id',
                 'profiles.username as username',
                 'profiles.display_name as display_name',
-                'profiles.avatar_url as avatar_url',
+                'release_groups.img_url as avatar_url',
+                'release_groups.last_fm_img_url as avatar_last_fm_img_url',
                 'release_groups.release_group_name as avatar_release_group_name',
                 'artists.artist_name as avatar_artist_name',
                 'reaction.active as reaction_active',
@@ -845,6 +869,8 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
                 'profiles.id',
                 'posts.id',
                 'release_groups.release_group_name',
+                'release_groups.img_url',
+                'release_groups.last_fm_img_url',
                 'artists.artist_name',
                 'reaction.active'
             ])
