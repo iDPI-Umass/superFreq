@@ -29,13 +29,13 @@ Currently configured to server Last.fm images on the client side by default on a
 
     const coverArtItem = $derived(( item != null ) ? item : {
         'img_url': imgUrl ?? null,
-        'last_fm_img_url': item['last_fm_img_url'] ?? null,
+        'last_fm_img_url': null,
         'artist_name': artistName,
         'release_group_name': releaseGroupName
     })
 
     const coverArtArchiveImgUrl = $derived(item ? coverArtItem['img_url'] : null)
-    const lastFmImgUrl = $derived(item ?  coverArtItem['last_fm_img_url'] : null)
+    const lastFmImgUrl = $derived(item ? (item['last_fm_img_url'] ?? item['last_fm_avatar_img_url']) : null)
 
 </script>
 

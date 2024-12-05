@@ -37,11 +37,13 @@
 
 	async function search ( query: string, searchCategory: string, limit: string ) {
 		mbData = []
+		console.log( query,searchCategory,limit, mbData )
 		showModal = true
 		const searchResults = await mbSearch(query, searchCategory, limit)
 		mbData = searchResults.mbData
 		searchComplete = searchResults.searchComplete
 		return { mbData, searchComplete, showModal }
+
 	}
 
 	const searchCategories = ['artists', 'release_groups', 'recordings']
