@@ -30,7 +30,7 @@
         deletedItems = $bindable([]),
         collectionReturned,
         collectionType, // "artists" | "release_groups" | "recordings" | "labels"
-        collectionStatus, // "open", "public", "private", "deleted"
+        collectionStatus = "public", // "open", "public", "private", "deleted"
         showTags = true,
         layout, // "grid" | "condensed-grid" | "list"
         mode, // "view" | "edit"

@@ -246,7 +246,7 @@
                     bind:imgPromise={imgPromise}
                 ></MusicBrainzSearch>
                 <Tooltip>
-                    Search for an album to autofill this form.
+                    Search for an album to autofill this form. If it's not coming up search: "album name" artist (using the quotation marks).
                 </Tooltip>
             </div>
             {@render postForm('release_group', addedItem)}
@@ -263,7 +263,7 @@
                     bind:imgPromise={imgPromise}
                 ></MusicBrainzSearch>
                 <Tooltip>
-                    Search for a track to autofill this form.
+                    Search for a track to autofill this form. If it's not coming up search: "track name" artist (using the quotation marks).
                 </Tooltip>
             </div>
             {@render postForm('recording', addedItem)}
