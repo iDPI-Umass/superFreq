@@ -144,8 +144,9 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
         const thisItem = collectionItems[item] as App.CollectionItem
 
         const itemType = thisItem["item_type"] as string
+        const existsInDatabase = thisItem["original_id"] ? true : false
 
-        if ( itemType ) {
+        if ( itemType && !existsInDatabase ) {
             
             artistsMetadata = [...artistsMetadata, {
                 "artist_mbid": thisItem["artist_mbid"],

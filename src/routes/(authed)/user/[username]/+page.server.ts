@@ -27,7 +27,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
 
     const profileUsername = params.username
     
-    const batchSize = 10
+    const batchSize = 5
     const batchIterator = 0
     const feedItemCount = 0
     const timestampEnd = new Date()

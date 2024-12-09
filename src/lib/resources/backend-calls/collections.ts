@@ -401,19 +401,14 @@ export const selectEditableCollectionContents = async function ( collectionId: s
         .where(({eb, and, or}) => and([
             eb('info.collection_id', '=', collectionId),
             eb('info.status', '!=', 'deleted'),
-            and([
-                eb('social.user_id', '=', sessionUserId),
-                or([
-                    eb('info.owner_id', '=', sessionUserId),
-                    eb('social.user_role', '=', 'owner'),
-                    eb('social.user_role', '=', 'collaborator'),
-                    eb('info.status', '=', 'open')
-                ])
+            or([
+                eb('info.owner_id', '=', sessionUserId),
+                eb('social.user_role', '=', 'owner'),
+                eb('social.user_role', '=', 'collaborator'),
+                eb('info.status', '=', 'open')
             ])
         ]))
         .executeTakeFirst()
-
-        console.log(selectCollectionInfo)
 
         const selectCollectionContents = await trx
             .selectFrom('collections_contents as contents')
@@ -737,7 +732,7 @@ export const updateCollection = async function ( sessionUserId: string, collecti
                 .returningAll()
                 .execute()
         }
-        if ( recordingsMetadata > 0 ) {
+        if ( recordingsMetadata.length > 0 ) {
             await trx
                 .insertInto('recordings')
                 .values(recordingsMetadata)
@@ -767,7 +762,7 @@ export const updateCollection = async function ( sessionUserId: string, collecti
 
 export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: string, collectionItems: App.RowData ) {
 
-    console.log(collectionItems)
+    (collectionItems)
 
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)

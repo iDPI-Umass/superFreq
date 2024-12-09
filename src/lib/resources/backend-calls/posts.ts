@@ -39,8 +39,6 @@ export const insertPost = async function ( postData: any ) {
     let releaseGroupsMetadata = []
     let recordingsMetadata = []
 
-    console.log(postData)
-
     if ( postData["artist_mbid"] ) {
         const metadata = [{
             "artist_mbid": (postData["artist_mbid"]),
