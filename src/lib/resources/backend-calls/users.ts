@@ -249,8 +249,9 @@ export const selectSessionProfile = async function ( sessionUserId: string ) {
         'release_groups.img_url as avatar_url',
         'release_groups.last_fm_img_url as avatar_last_fm_img_url',
         'artists.artist_name as avatar_artist_name',
+        'artists.artist_mbid as avatar_artist_mbid',
         'release_groups.release_group_name as avatar_release_group_name',
-        'artists.artist_name as avatar_artist_name'
+        'release_groups.release_group_mbid as avatar_release_group_mbid'
     ])
     .where('id', '=', sessionUserId)
     .executeTakeFirst()
@@ -407,7 +408,7 @@ export const updateSessionProfile = async function ( sessionUserId: string, prof
     const timestampISO: Date = parseISO(timestampISOString)
 
     // prepare avatar metadata if avatar is being updated
-    const hasAvatar = Object.keys(avatarItem).length > 0 ? true : false
+    const hasAvatar = ( avatarItem && Object.keys(avatarItem).length > 0) ? true : false
     let artistsMetadata = []
     let releaseGroupsMetadata = []
 

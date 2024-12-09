@@ -22,12 +22,14 @@ export const actions = {
     const displayName = formData.get('displayName') as string
     const username = formData.get('username') as string
     const website = formData.get('website') as string
-    const avatarItem = JSON.parse(formData.get('avatarItem') as string)
     const avatarMbid = formData.get('avatarMbid') as string
     const newAvatarMbid = formData.get('newAvatarMbid') ?? null
     const avatarUrl = formData.get('avatarUrl') as string
     const newAvatarUrl = formData.get('newAvatarUrl') ?? null
+    const avatarItem = newAvatarMbid ? JSON.parse(formData.get('avatarItem') as string) : null
     const about = formData.get('about') as string
+
+    console.log(newAvatarMbid)
 
     const avatar = newAvatarUrl ? newAvatarUrl : avatarUrl
     const mbid = newAvatarMbid ? newAvatarMbid : avatarMbid
