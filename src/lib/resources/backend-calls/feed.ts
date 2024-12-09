@@ -634,6 +634,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'collections_updates.updated_at as feed_item_timestamp', 
                 'collections_updates.updated_by as updated_by',
                 'info.title as title',  
+                'info.is_top_ablums as is_top_albums',
                 'profile.display_name as display_name', 
                 'release_groups.img_url as avatar_url',
                 'release_groups.last_fm_img_url as avatar_last_fm_img_url',
