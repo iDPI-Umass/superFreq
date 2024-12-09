@@ -636,6 +636,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'info.title as title',
                 'info.is_top_albums as is_top_albums',
                 'profile.display_name as display_name', 
+                'profile.username as username',
                 'release_groups.img_url as avatar_url',
                 'release_groups.last_fm_img_url as avatar_last_fm_img_url',
                 'release_groups.release_group_name as avatar_release_group_name',
