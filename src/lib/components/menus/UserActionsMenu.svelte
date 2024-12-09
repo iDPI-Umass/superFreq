@@ -325,12 +325,12 @@
 
 <style>
     dialog {
+        margin-top: 35%;
         max-width: 300px;
     }
 	dialog[open] {
         display: flex;
         flex-direction: column;
-        margin-top: 35%;
         text-decoration: none;
         gap: var(--freq-height-spacer-gap);
     }

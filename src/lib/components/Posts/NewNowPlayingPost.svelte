@@ -155,7 +155,7 @@
             <input 
                 class="text"    
                 id="recording-name" 
-                name="track-name" 
+                name="recording-name" 
                 type="text"
                 placeholder="track title" 
                 value={addedItem?.recording_name ?? null}
