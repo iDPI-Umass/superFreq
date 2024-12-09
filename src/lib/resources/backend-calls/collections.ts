@@ -401,14 +401,11 @@ export const selectEditableCollectionContents = async function ( collectionId: s
         .where(({eb, and, or}) => and([
             eb('info.collection_id', '=', collectionId),
             eb('info.status', '!=', 'deleted'),
-            and([
-                eb('social.user_id', '=', sessionUserId),
-                or([
-                    eb('info.owner_id', '=', sessionUserId),
-                    eb('social.user_role', '=', 'owner'),
-                    eb('social.user_role', '=', 'collaborator'),
-                    eb('info.status', '=', 'open')
-                ])
+            or([
+                eb('info.owner_id', '=', sessionUserId),
+                eb('social.user_role', '=', 'owner'),
+                eb('social.user_role', '=', 'collaborator'),
+                eb('info.status', '=', 'open')
             ])
         ]))
         .executeTakeFirst()
@@ -675,6 +672,8 @@ export const updateCollection = async function ( sessionUserId: string, collecti
 
     const { artistsMetadata, releaseGroupsMetadata, recordingsMetadata } =  await prepareMusicMetadataInsert(collectionItems)
 
+    console.log(artistsMetadata, releaseGroupsMetadata, recordingsMetadata)
+
     const collectionContents = await populateCollectionContents(sessionUserId, collectionItems, collectionId) 
 
     const update = await db.transaction().execute(async (trx) => {
@@ -719,6 +718,7 @@ export const updateCollection = async function ( sessionUserId: string, collecti
             .executeTakeFirst()
 
         if ( artistsMetadata.length > 0 ) {
+            console.log('inserting artist')
             await trx
                 .insertInto('artists')
                 .values(artistsMetadata)
@@ -728,6 +728,7 @@ export const updateCollection = async function ( sessionUserId: string, collecti
                 .execute()
         }
         if ( releaseGroupsMetadata.length > 0 ) {
+            console.log('inserting release_group')
             await trx
                 .insertInto('release_groups')
                 .values(releaseGroupsMetadata)
@@ -737,7 +738,8 @@ export const updateCollection = async function ( sessionUserId: string, collecti
                 .returningAll()
                 .execute()
         }
-        if ( recordingsMetadata > 0 ) {
+        if ( recordingsMetadata.length > 0 ) {
+            console.log('inserting recording')
             await trx
                 .insertInto('recordings')
                 .values(recordingsMetadata)
