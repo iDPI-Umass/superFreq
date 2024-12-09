@@ -21,6 +21,7 @@ button.standard {
 	display: flex;
 	flex-direction: row;
 	text-transform: uppercase;
+	text-wrap: nowrap;
 	flex-wrap: nowrap;
 	padding: var(--freq-height-spacer-quarter) var(--freq-width-spacer);
 	width: fit-content;
