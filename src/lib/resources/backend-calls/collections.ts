@@ -31,11 +31,12 @@ export const selectAllOpenPublicCollections = async function ( batchSize: number
             'collections_info.type as type',
             'profile.username as username', 
             'profile.display_name as display_name',
-            'profile.avatar_url as avatar_url'
+            'profile.avatar_url as avatar_url',
+            'profile.top_albums_collection_id'
         ])
         .where(({eb, or}) => or([
-                eb('status', '=', 'open'),
-                eb('status', '=', 'public')
+                eb('collections_info.status', '=', 'open'),
+                eb('collections_info.status', '=', 'public')
             ]))
         .orderBy('collections_info.updated_at desc')
         .limit(batchSize)
@@ -44,7 +45,7 @@ export const selectAllOpenPublicCollections = async function ( batchSize: number
 
         return { collectionsCount, collections }
     })
-    
+
     const batch = await selectCollections
     const count = batch.collectionsCount[0].count
     batchIterator ++
@@ -403,6 +404,7 @@ export const selectEditableCollectionContents = async function ( collectionId: s
             and([
                 eb('social.user_id', '=', sessionUserId),
                 or([
+                    eb('info.owner_id', '=', sessionUserId),
                     eb('social.user_role', '=', 'owner'),
                     eb('social.user_role', '=', 'collaborator'),
                     eb('info.status', '=', 'open')
@@ -410,6 +412,8 @@ export const selectEditableCollectionContents = async function ( collectionId: s
             ])
         ]))
         .executeTakeFirst()
+
+        console.log(selectCollectionInfo)
 
         const selectCollectionContents = await trx
             .selectFrom('collections_contents as contents')
@@ -763,6 +767,8 @@ export const updateCollection = async function ( sessionUserId: string, collecti
 
 export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: string, collectionItems: App.RowData ) {
 
+    console.log(collectionItems)
+
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
 
@@ -921,7 +927,7 @@ export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: s
                 )
                 .execute()
 
-            const collectionContents = await populateCollectionContents(collectionItems, collectionId) 
+            const collectionContents = await populateCollectionContents(sessionUserId, collectionItems, collectionId) 
             
             await trx
             .insertInto( 'collections_contents' )
