@@ -1,6 +1,7 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
-import { db } from 'src/database.ts'
+import { checkLoginPermission } from '$lib/resources/backend-calls/users'
+
 
 export const load: PageServerLoad = async ({ parent }) => {
 
@@ -26,11 +27,7 @@ export const actions = {
       const data = await request.formData()
       const email = data.get('email') as string
 
-      const permission = await db
-      .selectFrom('approved_users')
-      .selectAll()
-      .where('email', '=', email)
-      .executeTakeFirst()
+      const permission = await checkLoginPermission( email )
 
       let authResponse
 

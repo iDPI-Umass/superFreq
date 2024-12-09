@@ -2,6 +2,23 @@ import { db } from 'src/database.ts'
 import { parseISO } from 'date-fns'
 import { prepareAvatarMetadataInsert } from '$lib/resources/parseData'
 
+/* Check login/signup permission */
+
+export const checkLoginPermission = async function ( email: string ) {
+    try {
+        await db
+        .selectFrom('approved_users')
+        .select(['id'])
+        .where('email', '~*', email)
+        .executeTakeFirstOrThrow()
+
+        return true
+    }
+    catch ( error ) {
+        return false
+    }
+}
+
 /* Select data for session user */
 
 export const selectSessionUserProfileData = async function ( sessionUserId: string ) {
