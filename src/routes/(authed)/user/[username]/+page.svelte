@@ -8,7 +8,8 @@
 	import NewNowPlayingPost from '$lib/components/Posts/NewNowPlayingPost.svelte'
     import Feed from '$lib/components/Feed.svelte'
 	import NowPlayingPostsSample from '$lib/components/Posts/NowPlayingPostsSample.svelte'
-    import CoverArt from 'src/lib/components/CoverArt.svelte'
+    import CoverArt from '$lib/components/CoverArt.svelte'
+    import InfoBox from '$lib/components/InfoBox.svelte'
 
     interface Props {
         data: any;
@@ -17,13 +18,14 @@
 
     let { data, form }: Props = $props();
 
-    let { sessionUserId, profileData, feedItems, profileUsername, posts, collections }: {
+    let { sessionUserId, profileData, feedItems, profileUsername, posts, collections, updatesPageUpdatedAt }: {
         sessionUserId: string
         profileData: any
         feedItems: any
         profileUsername: string
         posts: App.RowData[]
         collections: App.RowData[]
+        updatesPageUpdatedAt: string
     } = $derived(data)
 
     let { profileUserData, followInfo, permission, profileUserBlockInfo, profileUserFlagInfo } = $derived(profileData)
@@ -69,7 +71,6 @@
 		{displayName}'s Profile
 	</title>
 </svelte:head>
-
 
 <div class="profile-info">
     <div class="profile-info-box-left">
@@ -247,6 +248,9 @@
     </div>
     {/if}
     {#if profileUserData?.id == sessionUserId}
+        <InfoBox mode="compact">
+            New <a href="/about/updates#updates">updates and bug fixes</a> as of {updatesPageUpdatedAt}
+        </InfoBox>
         <NewNowPlayingPost></NewNowPlayingPost>
         <Feed
             sessionUserId={sessionUserId}

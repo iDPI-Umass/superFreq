@@ -6,6 +6,7 @@ import { selectUserPostsSample, insertPost, insertUpdateReaction } from '$lib/re
 import { selectListSessionUserCollections, saveItemToCollection } from 'src/lib/resources/backend-calls/collections'
 import { getListenUrlData, validStringCheck } from '$lib/resources/parseData'
 import { add, parseISO } from 'date-fns'
+import { metadata } from '$lib/assets/text/updates.md'
 
 let loadData = true
 let userAction = false
@@ -33,6 +34,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     const timestampEnd = new Date()
     const timestampStart = add(timestampEnd, {days: -300})
     const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
+    const updatesPageUpdatedAt = metadata.updated as string
 
     if ( loadData ) {
         profileData = await selectProfilePageData( sessionUserId, profileUsername )
@@ -78,7 +80,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
         reaction.reaction_count = updatedReactionCount
     }
 
-    return { sessionUserId, profileData, feedItems, profileUsername, collections }
+    return { sessionUserId, profileData, feedItems, profileUsername, collections, updatesPageUpdatedAt }
 }
 
 export const actions = { 
