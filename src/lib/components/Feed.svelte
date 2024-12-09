@@ -194,7 +194,7 @@
                 </div>
             </a>
         <!-- Followed user edited a collection -->
-        {:else if Object.keys(item).includes( 'collection_edit_id' )}
+        {:else if Object.keys(item).includes( 'collection_edit_id' ) && ( item.is_top_albums == false )}
             <a href={`/collection/${item.collection_id}`}>
                 <div class="feed-item-one-liner">
                     <CoverArt
@@ -211,6 +211,25 @@
                     </span>
                 </div>
             </a>
+        <!-- Followed user edited top albums collection -->
+        {:else if Object.keys(item).includes( 'collection_edit_id' ) && ( item.is_top_albums == true )}
+        <a href={`/user/${item.username}`}>
+            <div class="feed-item-one-liner">
+                <CoverArt
+                    item={avatarItem(item)}
+                    altText={`${item.display_name}'s avatar`}
+                    imgClass='feed-avatar'
+                ></CoverArt>
+                <span class="blurb">
+                    {item.display_name}
+                    edited their 
+                    <span class="feed-item-subject">
+                        Top Albums
+                    </span>     
+                    collection
+                </span>
+            </div>
+        </a>
         {/if}
         </div>
     {/each}
