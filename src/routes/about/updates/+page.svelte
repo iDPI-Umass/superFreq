@@ -36,7 +36,7 @@
     </div>
 </div>
 
-<div class="panel">
+<div class="panel" id="updates">
 	<PanelHeader>
 		{#snippet headerText()}
 			Updates
