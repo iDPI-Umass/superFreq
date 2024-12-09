@@ -5,8 +5,8 @@ updated: 12/09/2024
 ---
 
 ### December 9, 2024
-- Fixed 500 error when submitting edits on you Top Albums collection
-- "Top Albums" feed item takes you to user's profile page
+- Fixed 500 error when submitting edits on your Top Albums collection
+- "Top Albums" feed item now takes you to that user's profile page
 - Fixed bug that prevented users from editing an open collection
 - Email input on login screen is now case insensitive
 - Fixed bug preventing you from updating your profile if you weren't changing your avatar
