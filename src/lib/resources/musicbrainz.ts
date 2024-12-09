@@ -504,6 +504,5 @@ export const addSingleItemNoImg = async function  (
         "item_type": itemTypeTable[searchCategory],
     }
 
-    console.log(addedItems)
     return { addedItems }
 }

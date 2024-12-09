@@ -29,8 +29,6 @@ export const actions = {
     const avatarItem = newAvatarMbid ? JSON.parse(formData.get('avatarItem') as string) : null
     const about = formData.get('about') as string
 
-    console.log(newAvatarMbid)
-
     const avatar = newAvatarUrl ? newAvatarUrl : avatarUrl
     const mbid = newAvatarMbid ? newAvatarMbid : avatarMbid
 

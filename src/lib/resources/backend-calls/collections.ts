@@ -410,8 +410,6 @@ export const selectEditableCollectionContents = async function ( collectionId: s
         ]))
         .executeTakeFirst()
 
-        console.log(selectCollectionInfo)
-
         const selectCollectionContents = await trx
             .selectFrom('collections_contents as contents')
             .leftJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
@@ -672,8 +670,6 @@ export const updateCollection = async function ( sessionUserId: string, collecti
 
     const { artistsMetadata, releaseGroupsMetadata, recordingsMetadata } =  await prepareMusicMetadataInsert(collectionItems)
 
-    console.log(artistsMetadata, releaseGroupsMetadata, recordingsMetadata)
-
     const collectionContents = await populateCollectionContents(sessionUserId, collectionItems, collectionId) 
 
     const update = await db.transaction().execute(async (trx) => {
@@ -718,7 +714,6 @@ export const updateCollection = async function ( sessionUserId: string, collecti
             .executeTakeFirst()
 
         if ( artistsMetadata.length > 0 ) {
-            console.log('inserting artist')
             await trx
                 .insertInto('artists')
                 .values(artistsMetadata)
@@ -728,7 +723,6 @@ export const updateCollection = async function ( sessionUserId: string, collecti
                 .execute()
         }
         if ( releaseGroupsMetadata.length > 0 ) {
-            console.log('inserting release_group')
             await trx
                 .insertInto('release_groups')
                 .values(releaseGroupsMetadata)
@@ -739,7 +733,6 @@ export const updateCollection = async function ( sessionUserId: string, collecti
                 .execute()
         }
         if ( recordingsMetadata.length > 0 ) {
-            console.log('inserting recording')
             await trx
                 .insertInto('recordings')
                 .values(recordingsMetadata)
@@ -769,7 +762,7 @@ export const updateCollection = async function ( sessionUserId: string, collecti
 
 export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: string, collectionItems: App.RowData ) {
 
-    console.log(collectionItems)
+    (collectionItems)
 
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
