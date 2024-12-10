@@ -882,6 +882,7 @@ export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: s
                 title: title,
                 status: 'public',
                 type: 'release_groups',
+                is_top_albums: true,
                 changelog: changelog
             })
             .returning('collection_id')
