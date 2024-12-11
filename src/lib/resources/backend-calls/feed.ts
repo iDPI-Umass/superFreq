@@ -615,7 +615,10 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             .innerJoin('collections_info as info', 'info.collection_id', 'collections_updates.collection_id')
             .select((eb) => eb.fn.count<number>('collections_updates.collection_id').as('collection_edits_count'))
             .where('collections_updates.updated_by', 'in', followingUserIds)
-            .where('info.status', '!=', 'deleted')
+            .where(({eb, and}) => and([
+                eb('info.status', '!=', 'deleted'),
+                eb('info.status', '!=', 'private')
+            ]))
             .where((eb) => eb.between('collections_updates.updated_at', timestampStart, timestampEnd))
             .execute()
 
@@ -642,7 +645,10 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'release_groups.release_group_name as avatar_release_group_name',
                 'artists.artist_name as avatar_artist_name'
             ])
-            .where('info.status', '!=', 'deleted')
+            .where(({eb, and}) => and([
+                eb('info.status', '!=', 'deleted'),
+                eb('info.status', '!=', 'private')
+            ]))
             .where('collections_updates.updated_by', 'in', followingUserIds)
             .where((eb) => eb.between('collections_updates.updated_at', timestampStart, timestampEnd))
             .limit(batchSize)
