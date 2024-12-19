@@ -12,6 +12,7 @@
 
     import CoverArt from "$lib/components/CoverArt.svelte"
     import CollectionItemTag from "$lib/components/CollectionItemTag.svelte"
+    import { listenUrlWhitelistCheck } from "$lib/resources/parseData";
 
     interface ComponentProps {
         collectionContents: any
@@ -68,11 +69,6 @@
             }
         return text
     } 
-
-    function whitelistCheck ( url: string ) {
-        // include list of domains that are allowed for hyperlinking, return true if match
-        return true
-    }
 
     let items = $state(collectionContents)
     $effect(() => { items = collectionContents
@@ -261,12 +257,12 @@
             itemType={itemType}
         ></CollectionItemTag>
         <span class="title">
-            {#if item["episode_url"] && item['episode_url'].length > 0 && whitelistCheck(item["episode_url"]) && mode == "view"}
-            <a href={item["episode_url"]}>
-                {item["user_added_episode_title"]}
+            {#if item["user_added_listen_url"] && item['user_added_listen_url'].length > 0 && listenUrlWhitelistCheck(item["user_added_listen_url"]) && mode == "view"}
+            <a href={item["user_added_listen_url"]}>
+                {item["episode_title"] ?? item["user_added_episode_title"]}
             </a>
             {:else}
-                {item["user_added_episode_title"]}
+                {item["episode_title"] ?? item["user_added_episode_title"]}
             {/if}
         </span>
         <span class="artist">

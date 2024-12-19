@@ -13,7 +13,6 @@ updated: 12/11/2024
 - Fixed several bugs that prevented user-added metadata from being added to a collection when collection was created or edits were submitted
 - Fixed several bugs that prevented collection from displaying user-added metadata
 
-
 ### December 11, 2024
 #### Updates
 - Edits on private collections are now hidden from feed

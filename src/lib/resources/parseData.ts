@@ -324,7 +324,6 @@ export const populateCollectionContents = function ( sessionUserId: string, coll
                 "item_type": thisItem["item_type"],
                 "notes": thisItem["notes"],
                 "user_added_metadata_id": thisItem["user_added_metadata_id"] ?? null,
-                "episde_url": thisItem["episode_url"] ?? null,
                 "changelog": changelog
             }];
         }
@@ -342,13 +341,50 @@ export const populateCollectionContents = function ( sessionUserId: string, coll
                 "item_type": thisItem["item_type"],
                 "notes": thisItem["notes"],
                 "user_added_metadata_id": thisItem["user_added_metadata_id"] ?? null,
-                "episde_url": thisItem["episode_url"] ?? null,
                 "changelog": changelog
             }];
         }
 
     }
     return collectionContents;
+}
+
+//
+/*
+** Link parsing
+*/
+//
+
+/* Name of URL source */
+
+export const parseUrlSource = function ( listenUrlString: string ) {
+    const linkTokens = listenUrlString.split('/')
+    for ( const token of linkTokens ) {
+        if ( token.includes('youtu.be')) {
+            return 'youtube'
+        }
+        if ( token.includes('.com')) {
+            const domain = token.split('.')
+            return domain[domain.length - 2].toLowerCase()
+        } 
+    }
+
+    return ''
+}
+
+/* Check if URL is from approved list of sites */
+
+export const listenUrlSourceWhitelist = [
+    'bandcamp',
+    'soundcloud',
+    'youtube',
+    'mixcloud'
+]
+
+export const listenUrlWhitelistCheck = function ( urlString: string ) {
+    const urlSource = parseUrlSource(urlString ?? '') as string
+    const approved = listenUrlSourceWhitelist.includes(urlSource) ? true : false
+    return approved
 }
 
 /* Gets data for populating embed. Works with Bandcamp, Soundcloud, YouTube. Mixcloud needs to be debugged. */
@@ -364,19 +400,6 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
             'account': null
         }
         return embedInfo 
-    }
-    
-    function parseUrlSource ( listenUrlString: string ) {
-        const linkTokens = listenUrlString.split('/')
-        for ( const token of linkTokens ) {
-            if ( token.includes('youtu.be')) {
-                return 'youtube'
-            }
-            if ( token.includes('.com')) {
-                const domain = token.split('.')
-                return domain[domain.length - 2]
-            } 
-        }
     }
 
     const urlSource = parseUrlSource(listenUrlString)
