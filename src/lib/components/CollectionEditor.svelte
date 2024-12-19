@@ -174,8 +174,8 @@
             add <em>{itemLookup[itemType]}</em> info yourself
         </span>
         <ManualAddModal
-            showModal={showManualAddModal}
-            items={collectionItems}
+            bind:showModal={showManualAddModal}
+            bind:items={collectionItems}
             itemType={itemType}
         >
             {#snippet headerText()}

@@ -148,13 +148,15 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
 
         if ( itemType && !existsInDatabase ) {
             
-            artistsMetadata = [...artistsMetadata, {
-                "artist_mbid": thisItem["artist_mbid"],
-                "artist_name": thisItem["artist_name"],
-                "added_at": timestampISO
-            }]
+            if ( thisItem["aritst_mbid"] ) {
+                artistsMetadata = [...artistsMetadata, {
+                    "artist_mbid": thisItem["artist_mbid"],
+                    "artist_name": thisItem["artist_name"],
+                    "added_at": timestampISO
+                }]
+            }
             
-            if	( itemType.includes("release_group") ) {
+            if	( itemType.includes("release_group") && thisItem["release_group_mbid"] ) {
                 releaseGroupsMetadata = [...releaseGroupsMetadata, {
                     "artist_mbid": thisItem["artist_mbid"],
                     "release_group_mbid": thisItem["release_group_mbid"],
@@ -166,7 +168,7 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
                     "added_at": timestampISO
                 }]
             }
-            else if ( itemType.includes("recording")) {
+            else if ( itemType.includes("recording") && thisItem["recording_mbid"]) {
                 releaseGroupsMetadata = [...releaseGroupsMetadata, {
                     "artist_mbid": thisItem["artist_mbid"],
                     "release_group_mbid": thisItem["release_group_mbid"],
@@ -321,6 +323,8 @@ export const populateCollectionContents = function ( sessionUserId: string, coll
                 "item_position": itemPosition,
                 "item_type": thisItem["item_type"],
                 "notes": thisItem["notes"],
+                "user_added_metadata_id": thisItem["user_added_metadata_id"] ?? null,
+                "episde_url": thisItem["episode_url"] ?? null,
                 "changelog": changelog
             }];
         }
@@ -337,6 +341,8 @@ export const populateCollectionContents = function ( sessionUserId: string, coll
                 "item_position": itemPosition,
                 "item_type": thisItem["item_type"],
                 "notes": thisItem["notes"],
+                "user_added_metadata_id": thisItem["user_added_metadata_id"] ?? null,
+                "episde_url": thisItem["episode_url"] ?? null,
                 "changelog": changelog
             }];
         }

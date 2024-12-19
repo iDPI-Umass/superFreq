@@ -71,11 +71,13 @@
 
     function whitelistCheck ( url: string ) {
         // include list of domains that are allowed for hyperlinking, return true if match
-        return false
+        return true
     }
 
     let items = $state(collectionContents)
-    $effect(() => { items = collectionContents })
+    $effect(() => { items = collectionContents
+        console.log(items)
+     })
 
     const flipDurationMs = 300;
 
@@ -204,7 +206,7 @@
                     {item["artist_name"]}
                 </a>
             {:else}
-                {item["artist_name"]}
+                {item["artist_name"] ?? item["user_added_artist_name"]}
             {/if}
             </span>
     {:else if itemType.includes("release_group")}
@@ -218,16 +220,16 @@
                 {item["release_group_name"]}
             </a>
             {:else}
-                {item["release_group_name"]}
+                {item["release_group_name"] ?? item["user_added_release_group_name"]}
             {/if}
         </span>
         <span class="artist">
             {#if item['artist_mbid'] && item['artist_mbid'].length > 0  && mode == "view"}
                 <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
-                    {item["artist_name"]}
+                    {item["aritst_name"]}
                 </a>
             {:else}
-                {item["artist_name"]}
+                {item['artist_name'] ?? item["user_added_artist_name"]}
             {/if}
         </span>
     {:else if itemType.includes("recording")}
@@ -241,7 +243,7 @@
                     {item["recording_name"]}
                 </a>
             {:else}
-                {item["recording_name"]}
+                {item["recording_name"] ?? item["user_added_recording_name"]}
             {/if}
         </span>
         <span class="artist">
@@ -250,7 +252,7 @@
                     {item["artist_name"]}
                 </a>
             {:else}
-                {item["artist_name"]}
+                {item["artist_name"] ?? item["user_added_artist_name"]}
             {/if}
         </span>
     {:else if itemType.includes("episode")}
@@ -261,10 +263,10 @@
         <span class="title">
             {#if item["episode_url"] && item['episode_url'].length > 0 && whitelistCheck(item["episode_url"]) && mode == "view"}
             <a href={item["episode_url"]}>
-                {item["episode_title"]}
+                {item["user_added_episode_title"]}
             </a>
             {:else}
-                {item["episode_title"]}
+                {item["user_added_episode_title"]}
             {/if}
         </span>
         <span class="artist">
@@ -273,7 +275,7 @@
                     {item["artist_name"]}
                 </a>
             {:else}
-                {item["artist_name"]}
+                {item["artist_name"] ?? item["user_added_artist_name"]}
             {/if}
         </span>
     {/if}

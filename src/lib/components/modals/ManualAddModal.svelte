@@ -36,7 +36,7 @@
 		if ( dialog && !showModal ) dialog.close()
 	})
 
-    let newItem = $state({
+    let itemTemplate = {
         'item_type': null,
         'artist_name': null,
         'release_group_name': null,
@@ -48,15 +48,22 @@
         'listen_url': null,
         'item_position': null,
         'id': null
-    }) as App.RowData
+    } as App.RowData
+
+    let newItem = $state(itemTemplate)
+    let collectionLength = $derived(items.length ?? 0)
 
     function addItem() {
-        const collectionLength = items.length
+        // showModal = true
+        // dialog.showModal()
         newItem.item_type = itemType
-        newItem.item_position = collectionLength
-        newItem.id = collectionLength
+        const thisItemIndex = collectionLength
+        newItem.item_position = thisItemIndex
+        newItem.id = thisItemIndex
         items.push(newItem)
-        showModal = false
+        newItem = itemTemplate
+        console.log(items, items.length, collectionLength)
+        // showModal = false
         dialog.close()
     }
 </script>
@@ -238,6 +245,7 @@
         {/if}
         <button
             class="standard"
+            type="button"
             onclick={() => addItem()}
         >
             add item

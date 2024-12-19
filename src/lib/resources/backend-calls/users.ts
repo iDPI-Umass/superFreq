@@ -800,6 +800,7 @@ export const insertUpdateCollectionFollow =  async function ( sessionUserId: str
                 follows_now: true,
                 user_role: 'follower'
             }
+
             const insertCollectionFollow = await trx
             .insertInto('collections_social')
             .values({

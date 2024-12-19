@@ -4,6 +4,16 @@ layout: about
 updated: 12/11/2024
 ---
 
+### December 19, 2024
+#### Updates
+- Finished building "manual add" feature for collections, resolving various bugs listed below
+
+#### Bug Fixes
+- Fixed 500 error caused by following a collection
+- Fixed several bugs that prevented user-added metadata from being added to a collection when collection was created or edits were submitted
+- Fixed several bugs that prevented collection from displaying user-added metadata
+
+
 ### December 11, 2024
 #### Updates
 - Edits on private collections are now hidden from feed
