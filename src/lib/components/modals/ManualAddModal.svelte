@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { add } from 'date-fns';
 	import type { Snippet } from 'svelte'
+    import { listenUrlWhitelistCheck } from '$lib/resources/parseData'
 
 
 	interface ComponentProps {
@@ -54,17 +55,21 @@
     let collectionLength = $derived(items.length ?? 0)
 
     function addItem() {
-        // showModal = true
-        // dialog.showModal()
         newItem.item_type = itemType
         const thisItemIndex = collectionLength
         newItem.item_position = thisItemIndex
         newItem.id = thisItemIndex
+        newItem.listen_url = listenUrlChecked(newItem.listen_url) ? newItem.listen_url : null
         items.push(newItem)
+        console.log(newItem)
+        console.log(items)
         newItem = itemTemplate
-        console.log(items, items.length, collectionLength)
-        // showModal = false
         dialog.close()
+    }
+
+    function listenUrlChecked ( urlString: string ) {
+        const verifiedUrl = listenUrlWhitelistCheck( urlString ) ? urlString : null
+        return verifiedUrl 
     }
 </script>
 
