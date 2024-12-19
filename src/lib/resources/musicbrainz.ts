@@ -441,7 +441,7 @@ export const addCollectionItemNoImg = async function (
         "label": label.name,
         "notes": null,
         "item_type": itemTypeTable[searchCategory],
-        "id": addedItems.length + 1
+        "id": addedItems.length
     }]
     return {
         addedItems,

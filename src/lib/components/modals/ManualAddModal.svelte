@@ -61,8 +61,6 @@
         newItem.id = thisItemIndex
         newItem.listen_url = listenUrlChecked(newItem.listen_url) ? newItem.listen_url : null
         items.push(newItem)
-        console.log(newItem)
-        console.log(items)
         newItem = itemTemplate
         dialog.close()
     }
