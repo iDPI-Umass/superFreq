@@ -71,9 +71,6 @@
     } 
 
     let items = $state(collectionContents)
-    $effect(() => { items = collectionContents
-        console.log(items)
-     })
 
     const flipDurationMs = 300;
 
@@ -89,16 +86,19 @@
 
     // delete item from collection editor
 	function deleteItem( item: any ) {
-		items = items.filter(i => i != item);
-		for (const i of items) {
-			i["id"] = items.indexOf(i) + 1;
-		}
-        collectionContents = items
+		items = items.filter(i => i != item)
 
         if ( item.inserted_at ){
             item.item_position = null
             deletedItems.push(item)
         }
+
+		for (const i of items) {
+            const itemIndex = items.indexOf(i)
+			i["id"] = itemIndex
+            i["item_position"] = itemIndex
+		}
+        collectionContents = items
 	}
 
     const undersizedCollection = $derived(( mode == 'view' && ( layout == 'grid' && collectionContents.length < 6 ) || ( layout == 'condensed-grid' && collectionContents.length < 4 )) ? true : false)
@@ -120,6 +120,7 @@
     }
 
     const gridSpacers = $derived(getGridSpacers(items, layout))
+
 </script>
 
 <svelte:options runes={true} />
