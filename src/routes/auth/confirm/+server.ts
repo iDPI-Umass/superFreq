@@ -26,6 +26,7 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
     }
   }
 
-  redirectTo.pathname = '/auth/error'
+  const errorParth = new URL ('/auth/error')
+  errorParth.searchParams.set('redirectFrom', 'confirm')
   redirect(303, redirectTo)
 }
