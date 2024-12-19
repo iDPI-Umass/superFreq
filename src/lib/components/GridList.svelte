@@ -261,8 +261,8 @@
             itemType={itemType}
         ></CollectionItemTag>
         <span class="title">
-            {#if item["episode_url"] && item['episode_url'].length > 0 && whitelistCheck(item["episode_url"]) && mode == "view"}
-            <a href={item["episode_url"]}>
+            {#if item["user_added_listen_url"] && item['user_added_listen_url'].length > 0 && whitelistCheck(item["user_added_listen_url"]) && mode == "view"}
+            <a href={item["user_added_listen_url"]}>
                 {item["user_added_episode_title"]}
             </a>
             {:else}

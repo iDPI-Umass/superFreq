@@ -324,7 +324,6 @@ export const populateCollectionContents = function ( sessionUserId: string, coll
                 "item_type": thisItem["item_type"],
                 "notes": thisItem["notes"],
                 "user_added_metadata_id": thisItem["user_added_metadata_id"] ?? null,
-                "episde_url": thisItem["episode_url"] ?? null,
                 "changelog": changelog
             }];
         }
@@ -342,7 +341,6 @@ export const populateCollectionContents = function ( sessionUserId: string, coll
                 "item_type": thisItem["item_type"],
                 "notes": thisItem["notes"],
                 "user_added_metadata_id": thisItem["user_added_metadata_id"] ?? null,
-                "episde_url": thisItem["episode_url"] ?? null,
                 "changelog": changelog
             }];
         }

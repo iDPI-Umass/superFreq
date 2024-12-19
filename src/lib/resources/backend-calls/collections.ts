@@ -346,7 +346,6 @@ export const selectViewableCollectionContents = async function ( collectionId: s
             'contents.item_position as item_position',
             'contents.artist_mbid as artist_mbid',
             'contents.item_type as item_type',
-            'contents.episode_url as episode_url',
             'artists.artist_name as artist_name',
             'release_groups.release_group_name as release_group_name',
             'release_groups.release_group_mbid as release_group_mbid',
@@ -359,6 +358,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
             'user_added_metadata.recording_name as user_added_recording_name',
             'user_added_metadata.episode_title as user_added_episode_title',
             'user_added_metadata.show_name as user_added_show_name',
+            'user_added_metadata.listen_url as user_added_listen_url',
             'insert_profile.username as inserted_by_username',
             'insert_profile.display_name as inserted_by_display_name',
             'update_user.username as updated_by_username',
@@ -369,6 +369,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
         .orderBy('item_position')
         .execute()
 
+        console.log(collectionContents)
         return {collectionInfo, collectionContents, viewPermission: true, editPermission, followData}
     })
 
@@ -604,6 +605,7 @@ export const insertCollection = async function ( sessionUserId: string, collecti
                     'show_name': item['show_name'],
                     'added_by': sessionUserId,
                     'added_at': timestampISO,
+                    'listen_url': item['listen_url'],
                     'collection_id': collectionId
                 })
             }
@@ -740,6 +742,7 @@ export const updateCollection = async function ( sessionUserId: string, collecti
                 'show_name': item['show_name'],
                 'added_by': sessionUserId,
                 'added_at': timestampISO,
+                'listen_url': item['listen_url'],
                 'collection_id': collectionId
             })
         }
