@@ -33,5 +33,7 @@ export const GET: RequestHandler = async ({ locals: { safeGetSession }}) => {
       return redirect(303, '/create-profile')
     }
 
-    return redirect(303, '/auth/error')
+    const errorPath = new URL ( '/auth/error' )
+    errorPath.searchParams.set('redirectFrom', 'check')
+    return redirect(303, errorPath)
 }
