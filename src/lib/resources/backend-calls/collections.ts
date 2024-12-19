@@ -733,7 +733,6 @@ export const updateCollection = async function ( sessionUserId: string, collecti
     const newUserAddedItems = [] as any
     for ( const item of collectionItems ) {
         if (!item["artist_mbid"] && !item["original_id"]) {
-            console.log('new user added item')
             newUserAddedItems.push({
                 'artist_name': item['artist_name'],
                 'release_group_name': item['release_group_name'],
@@ -825,8 +824,6 @@ export const updateCollection = async function ( sessionUserId: string, collecti
                 .returningAll()
                 .execute() as App.RowData[]
         }
-
-        console.log(userAddedMetadataRows)
 
         for ( const row of userAddedMetadataRows ) {
             const artistName = row['artist_name']
