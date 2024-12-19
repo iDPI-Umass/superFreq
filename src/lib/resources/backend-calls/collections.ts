@@ -328,8 +328,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
             ])
             .where(({and, eb}) => and([
                 eb('user_id', '=', sessionUserId),
-                eb('collection_id', '=', collectionId),
-                eb('follows_now', '=', true)
+                eb('collection_id', '=', collectionId)
             ]))
             .executeTakeFirst()
 
@@ -338,6 +337,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
         .leftJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
         .leftJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
         .leftJoin('recordings', 'recordings.recording_mbid', 'contents.recording_mbid')
+        .leftJoin('user_added_metadata', 'user_added_metadata.id', 'contents.user_added_metadata_id')
         .leftJoin('profiles as insert_profile', 'contents.inserted_by', 'insert_profile.id')
         .leftJoin('profiles as update_user', 'contents.updated_by', 'update_user.id')
         .select([
@@ -346,6 +346,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
             'contents.item_position as item_position',
             'contents.artist_mbid as artist_mbid',
             'contents.item_type as item_type',
+            'contents.episode_url as episode_url',
             'artists.artist_name as artist_name',
             'release_groups.release_group_name as release_group_name',
             'release_groups.release_group_mbid as release_group_mbid',
@@ -353,6 +354,11 @@ export const selectViewableCollectionContents = async function ( collectionId: s
             'release_groups.last_fm_img_url as last_fm_img_url',
             'recordings.recording_name as recording_name',
             'recordings.recording_mbid as recording_mbid',
+            'user_added_metadata.artist_name as user_added_artist_name',
+            'user_added_metadata.release_group_name as user_added_release_group_name',
+            'user_added_metadata.recording_name as user_added_recording_name',
+            'user_added_metadata.episode_title as user_added_episode_title',
+            'user_added_metadata.show_name as user_added_show_name',
             'insert_profile.username as inserted_by_username',
             'insert_profile.display_name as inserted_by_display_name',
             'update_user.username as updated_by_username',
@@ -415,6 +421,7 @@ export const selectEditableCollectionContents = async function ( collectionId: s
             .leftJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
             .leftJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
             .leftJoin('recordings', 'recordings.recording_mbid', 'contents.recording_mbid')
+            .leftJoin('user_added_metadata', 'user_added_metadata.id', 'contents.user_added_metadata_id')
             .leftJoin('profiles as insert_profile', 'contents.inserted_by', 'insert_profile.id')
             .leftJoin('profiles as update_user', 'contents.updated_by', 'update_user.id')
             .select([
@@ -424,6 +431,7 @@ export const selectEditableCollectionContents = async function ( collectionId: s
                 'contents.artist_mbid as artist_mbid',
                 'contents.item_position as item_position',
                 'contents.item_type as item_type',
+                'contents.episode_url as episode_url',
                 'artists.artist_name as artist_name',
                 'release_groups.release_group_mbid as release_group_mbid',
                 'release_groups.release_group_name as release_group_name',
@@ -433,6 +441,11 @@ export const selectEditableCollectionContents = async function ( collectionId: s
                 'recordings.recording_mbid as recording_mbid',
                 'recordings.recording_name as recording_name',
                 'recordings.remixer_artist_mbid as remixer_artist_mbid',
+                'user_added_metadata.artist_name as user_added_artist_name',
+                'user_added_metadata.release_group_name as user_added_release_group_name',
+                'user_added_metadata.recording_name as user_added_recording_name',
+                'user_added_metadata.episode_title as user_added_episode_title',
+                'user_added_metadata.show_name as user_added_show_name',
                 'insert_profile.username as inserted_by_username',
                 'insert_profile.display_name as inserted_by_display_name',
                 'update_user.username as updated_by_username',
@@ -490,8 +503,9 @@ export const selectEditableTopAlbumsCollection = async function ( sessionUserId:
             const selectCollection = await trx
             .selectFrom('collections_info as info')
             .innerJoin('collections_contents as contents', 'contents.collection_id', 'info.collection_id')
-            .innerJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
-            .innerJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
+            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
+            .leftJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
+            .leftJoin('user_added_metadata', 'user_added_metadata.id', 'contents.user_added_metadata_id')
             .select([
                 'info.collection_id as collection_id',
                 'contents.id as original_id',
@@ -503,7 +517,9 @@ export const selectEditableTopAlbumsCollection = async function ( sessionUserId:
                 'release_groups.release_group_name',
                 'release_groups.img_url',
                 'release_groups.last_fm_img_url as last_fm_img_url',
-                'artists.artist_name'
+                'artists.artist_name',
+                'user_added_metadata.artist_name as user_added_artist_name',
+                'user_added_metadata.release_group_name as user_added_release_group_name',
             ])
             .where('info.collection_id', '=', collectionId)
             .execute()
@@ -546,7 +562,7 @@ Insert collection with transaciton that does the following:
     - inserts new collections_contents rows and updates existing ones
 */
 
-export const insertCollection = async function ( sessionUserId: string, collectionInfo: App.RowData, collectionItems: App.RowData ) {
+export const insertCollection = async function ( sessionUserId: string, collectionInfo: App.RowData, collectionItems: App.RowData[] ) {
 
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
@@ -577,6 +593,22 @@ export const insertCollection = async function ( sessionUserId: string, collecti
 
         const collectionId = newCollectionInfo?.collection_id as string
 
+        const newUserAddedItems = []
+        for ( const item of collectionItems ) {
+            if (!item["artist_mbid"]) {
+                newUserAddedItems.push({
+                    'artist_name': item['artist_name'],
+                    'release_group_name': item['release_group_name'],
+                    'recording_name': item['recording_name'],
+                    'episode_title': item['episode_title'],
+                    'show_name': item['show_name'],
+                    'added_by': sessionUserId,
+                    'added_at': timestampISO,
+                    'collection_id': collectionId
+                })
+            }
+        }
+
         const socialChangelog: App.Changelog = {}
         socialChangelog[timestampISOString] = {
             'follows_now': true,
@@ -604,8 +636,6 @@ export const insertCollection = async function ( sessionUserId: string, collecti
         })
         .executeTakeFirst()
 
-        const collectionContents = await populateCollectionContents(sessionUserId, collectionItems, collectionId) 
-
         if ( artistsMetadata.length > 0 ) {
             await trx
                 .insertInto('artists')
@@ -625,7 +655,7 @@ export const insertCollection = async function ( sessionUserId: string, collecti
                 .returningAll()
                 .execute()
         }
-        if ( recordingsMetadata > 0 ) {
+        if ( recordingsMetadata.length > 0 ) {
             await trx
                 .insertInto('recordings')
                 .values(recordingsMetadata)
@@ -634,7 +664,36 @@ export const insertCollection = async function ( sessionUserId: string, collecti
                 )
                 .execute()
         }
-        
+
+        let userAddedMetadataRows = [] as App.RowData[]
+        if ( newUserAddedItems.length > 0 ) {
+            userAddedMetadataRows = await trx
+                .insertInto('user_added_metadata')
+                .values(newUserAddedItems)
+                .returningAll()
+                .execute() as App.RowData[]
+        }
+
+        for ( const row of userAddedMetadataRows ) {
+            const artistName = row['artist_name']
+            const releaseGroupName = row['release_group_name']
+            const recordingName = row['recording_name']
+            const episodeTitle = row['episode_title']
+            const showName = row['show_name']
+
+            const collectionItemIndex = collectionItems.findIndex((item) => (
+                item['artist_name'] == artistName &&
+                item['release_group_name'] == releaseGroupName &&
+                item['recording_name'] == recordingName &&
+                item['episode_title'] == episodeTitle &&
+                item['show_name'] == showName
+            ))
+
+            collectionItems[collectionItemIndex]['user_added_metadata_id'] = row['id']
+        }
+
+        const collectionContents = await populateCollectionContents(sessionUserId, collectionItems, collectionId) 
+
         return await trx
             .insertInto( 'collections_contents' )
             .values( collectionContents )
@@ -661,7 +720,7 @@ Update collection with transaciton that does the following:
     - inserts new collections_contents rows and updates existing ones
 */
 
-export const updateCollection = async function ( sessionUserId: string, collectionInfo: App.RowData, collectionItems: App.RowData ) {
+export const updateCollection = async function ( sessionUserId: string, collectionInfo: App.RowData, collectionItems: App.RowData[] ) {
 
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
@@ -670,7 +729,21 @@ export const updateCollection = async function ( sessionUserId: string, collecti
 
     const { artistsMetadata, releaseGroupsMetadata, recordingsMetadata } =  await prepareMusicMetadataInsert(collectionItems)
 
-    const collectionContents = await populateCollectionContents(sessionUserId, collectionItems, collectionId) 
+    const newUserAddedItems = [] as any
+    for ( const item of collectionItems ) {
+        if (!item["artist_mbid"] && !item["original_id"]) {
+            newUserAddedItems.push({
+                'artist_name': item['artist_name'],
+                'release_group_name': item['release_group_name'],
+                'recording_name': item['recording_name'],
+                'episode_title': item['episode_title'],
+                'show_name': item['show_name'],
+                'added_by': sessionUserId,
+                'added_at': timestampISO,
+                'collection_id': collectionId
+            })
+        }
+    }
 
     const update = await db.transaction().execute(async (trx) => {
 
@@ -741,6 +814,34 @@ export const updateCollection = async function ( sessionUserId: string, collecti
                 )
                 .execute()
         }
+
+        let userAddedMetadataRows = [] as App.RowData[]
+        if ( newUserAddedItems.length > 0 ) {
+            userAddedMetadataRows = await trx
+                .insertInto('user_added_metadata')
+                .values(newUserAddedItems)
+                .execute() as App.RowData[]
+        }
+
+        for ( const row of userAddedMetadataRows ) {
+            const artistName = row['artist_name']
+            const releaseGroupName = row['release_group_name']
+            const recordingName = row['recording_name']
+            const episodeTitle = row['episode_title']
+            const showName = row['show_name']
+
+            const collectionItemIndex = collectionItems.findIndex((item) => (
+                item['artist_name'] == artistName &&
+                item['release_group_name'] == releaseGroupName &&
+                item['recording_name'] == recordingName &&
+                item['episode_title'] == episodeTitle &&
+                item['show_name'] == showName
+            ))
+
+            collectionItems[collectionItemIndex]['user_added_metadata_id'] = row['id']
+        }
+
+        const collectionContents = await populateCollectionContents(sessionUserId, collectionItems, collectionId) 
         
         return await trx
             .insertInto( 'collections_contents' )
