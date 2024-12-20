@@ -223,7 +223,7 @@
         <span class="artist">
             {#if item['artist_mbid'] && item['artist_mbid'].length > 0  && mode == "view"}
                 <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
-                    {item["aritst_name"]}
+                    {item["artist_name"]}
                 </a>
             {:else}
                 {item['artist_name'] ?? item["user_added_artist_name"]}
