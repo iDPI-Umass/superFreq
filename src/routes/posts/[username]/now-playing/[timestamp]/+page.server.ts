@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit'
 import { parseISO } from "date-fns"
 import type { PageServerLoad, Actions } from './$types'
-import { selectPostAndReplies, insertPost, updatePost, deletePost, insertUpdateReaction, selectPostReplies } from '$lib/resources/backend-calls/posts'
+import { selectPostAndReplies, insertPost, updatePost, deletePost, insertUpdateReaction } from '$lib/resources/backend-calls/posts'
 import { insertPostFlag } from '$lib/resources/backend-calls/users'
 import { selectListSessionUserCollections, saveItemToCollection } from 'src/lib/resources/backend-calls/collections.js'
 import { validStringCheck } from '$lib/resources/parseData'
@@ -21,6 +21,7 @@ let postReactionCount: number
 let editPost: boolean
 let editedText: string
 
+let saveItemPostId: string
 let collections = [] as App.RowData[]
 
 export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSession } }) => {
@@ -191,38 +192,26 @@ export const actions = {
 
         return { success }
     },
-    getCollectionList: async ({ locals: { safeGetSession }}) => {
-        const session = await safeGetSession()
-        const sessionUserId = session.user?.id as string
-
-        if ( collections.length == 0 ) {
+    getCollectionList: async ({ request, locals: { safeGetSession }}) => {
+           const session = await safeGetSession()
+           const sessionUserId = session.user?.id as string
+   
+           const data = await request.formData()
+           saveItemPostId = data.get('post-id') as string
+   
+           if ( collections.length == 0 ) {
             collections = await selectListSessionUserCollections(sessionUserId)
-        }
-        return { showCollectionsModal: true }
-    },
+           }
+           return { showCollectionsModal: true }
+       },
     saveToCollection: async ({ request, locals: { safeGetSession }}) => {
         const session = await safeGetSession()
         const sessionUserId = session.user?.id as string
 
         const data = await request.formData()
         const collectionId = data.get('collection-id') as string
-        const artistMbid = data.get('artist-mbid') as string
-        const releaseGroupMbid = data.get('release-group-mbid') as string
-        const recordingMbid = data.get('recording-mbid') as string
-        const itemType = data.get('item-type') as string
-        const fromPostId = data.get('saved-from-post') as string
-        const fromCollectionId = data.get('saved-from-collection') as string
 
-        const item = {
-            artist_mbid: artistMbid ?? null,
-            release_group_mbid: validStringCheck(releaseGroupMbid),
-            recording_mbid: validStringCheck(recordingMbid),
-            item_type: itemType,
-            from_post_id: validStringCheck(fromPostId),
-            from_collection_id: validStringCheck(fromCollectionId)
-        }
-
-        const update = await saveItemToCollection( sessionUserId, item, collectionId )
+        const update = await saveItemToCollection( sessionUserId, saveItemPostId, collectionId )
 
         return { updateSuccess: update }
     }

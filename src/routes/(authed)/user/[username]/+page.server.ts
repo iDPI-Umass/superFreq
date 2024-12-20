@@ -19,7 +19,8 @@ let nowPlayingPostId: string
 let updatedReactionActive: boolean
 let updatedReactionCount: number
 
-let collections = [] as App.RowData[]
+let saveItemPostId: string
+let sessionUserCollections = [] as App.RowData[]
 
 export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}) => {
 
@@ -80,7 +81,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
         reaction.reaction_count = updatedReactionCount
     }
 
-    return { sessionUserId, profileData, feedItems, profileUsername, collections, updatesPageUpdatedAt }
+    return { sessionUserId, profileData, feedItems, profileUsername, sessionUserCollections, updatesPageUpdatedAt }
 }
 
 export const actions = { 
@@ -249,12 +250,15 @@ export const actions = {
 
         return { userActionSuccess }
     },
-    getCollectionList: async ({ locals: { safeGetSession }}) => {
+    getCollectionList: async ({ request, locals: { safeGetSession }}) => {
         const session = await safeGetSession()
         const sessionUserId = session.user?.id as string
 
-        if ( collections.length == 0 ) {
-            collections = await selectListSessionUserCollections(sessionUserId)
+        const data = await request.formData()
+        saveItemPostId = data.get('post-id') as string
+
+        if ( sessionUserCollections.length == 0 ) {
+            sessionUserCollections = await selectListSessionUserCollections(sessionUserId)
         }
         return { showCollectionsModal: true }
     },
@@ -264,23 +268,8 @@ export const actions = {
 
         const data = await request.formData()
         const collectionId = data.get('collection-id') as string
-        const artistMbid = data.get('artist-mbid') as string
-        const releaseGroupMbid = data.get('release-group-mbid') as string
-        const recordingMbid = data.get('recording-mbid') as string
-        const itemType = data.get('item-type') as string
-        const fromPostId = data.get('saved-from-post') as string
-        const fromCollectionId = data.get('saved-from-collection') as string
 
-        const item = {
-            artist_mbid: artistMbid ?? null,
-            release_group_mbid: validStringCheck(releaseGroupMbid),
-            recording_mbid: validStringCheck(recordingMbid),
-            item_type: itemType,
-            from_post_id: validStringCheck(fromPostId),
-            from_collection_id: validStringCheck(fromCollectionId)
-        }
-
-        const update = await saveItemToCollection( sessionUserId, item, collectionId )
+        const update = await saveItemToCollection( sessionUserId, saveItemPostId, collectionId )
 
         return { updateSuccess: update }
     }

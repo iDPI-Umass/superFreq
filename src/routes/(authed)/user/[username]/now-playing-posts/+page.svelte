@@ -13,7 +13,10 @@
 
     let { data, form }: Props = $props();
 
-    let { posts, username, sessionUserId } =  $state(data)
+    let { posts, username, sessionUserId, sessionUserCollections } =  $state(data)
+
+    let showCollectionsListModal = $derived(form?.showCollectionsModal ?? false)
+    let showSaveSucessModal = $derived(form?.updateSuccess ?? false)
 </script>
 
 <svelte:options runes={true} />
@@ -74,6 +77,9 @@
             post={post}
             mode="feed"
             userActionSuccess={form?.success}
+            collections={sessionUserCollections}
+            showCollectionsModal={showCollectionsListModal}
+            showSaveSucessModal={showSaveSucessModal}
         >
         </NowPlayingPost>
         {:else if post.type == "reply"}

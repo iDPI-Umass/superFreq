@@ -2,7 +2,9 @@ import type { PageServerLoad, Actions } from './$types'
 import { selectFeedData } from '$lib/resources/backend-calls/feed'
 import { insertPostFlag } from '$lib/resources/backend-calls/users'
 import { insertUpdateReaction, deletePost } from '$lib/resources/backend-calls/posts'
-import { add, parseISO } from 'date-fns'
+import { validStringCheck } from '$lib/resources/parseData'
+import { selectListSessionUserCollections, saveItemToCollection } from '$lib/resources/backend-calls/collections'
+import { add } from 'date-fns'
 
 let loadData = true
 let updateReaction = false
@@ -16,6 +18,9 @@ let remaining = 0
 let nowPlayingPostId: string
 let updatedReactionActive: boolean
 let updatedReactionCount: number
+
+let saveItemPostId: string
+let sessionUserCollections = [] as App.RowData[]
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
     const session = await safeGetSession()
@@ -44,7 +49,7 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
         loadData = true
     }
 
-    return { sessionUserId, feedItems, totalAvailableItems, remaining } 
+    return { sessionUserId, feedItems, totalAvailableItems, remaining, sessionUserCollections } 
 }
 
 export const actions = {
@@ -97,4 +102,27 @@ export const actions = {
 
         return { success }
     },
+    getCollectionList: async ({ request, locals: { safeGetSession }}) => {
+        const session = await safeGetSession()
+        const sessionUserId = session.user?.id as string
+
+        const data = await request.formData()
+        saveItemPostId = data.get('post-id') as string
+
+        if ( sessionUserCollections.length == 0 ) {
+            sessionUserCollections = await selectListSessionUserCollections(sessionUserId)
+        }
+        return { showCollectionsModal: true }
+    },
+    saveToCollection: async ({ request, locals: { safeGetSession }}) => {
+        const session = await safeGetSession()
+        const sessionUserId = session.user?.id as string
+
+        const data = await request.formData()
+        const collectionId = data.get('collection-id') as string
+
+        const update = await saveItemToCollection( sessionUserId, saveItemPostId, collectionId )
+
+        return { updateSuccess: update }
+    }
 } satisfies Actions

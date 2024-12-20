@@ -4,6 +4,9 @@ layout: about
 updated: 12/20/2024
 ---
 ### December 20, 2024
+#### Updates
+- Option to delete collection added
+
 #### Bug Fixes
 - "Delete" and "flag" now works for posts everywhere
 

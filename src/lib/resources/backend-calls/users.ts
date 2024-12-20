@@ -119,17 +119,20 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
 
         // get metrics
         const countCollections = await trx
-            .selectFrom('collections_social')
+            .selectFrom('collections_social as social')
+            .innerJoin('collections_info as info', 'info.collection_id', 'social.collection_id')
             .select((eb) => eb
                 .fn.count<number>('id')
                 .as('count')
             )
-            .where(({eb, and, or}) => and([
-                eb('user_id', '=', profileUserId),
+            .where(({eb, and, or, not}) => and([
+                eb('social.user_id', '=', profileUserId),
                 or([
-                    eb('user_role','=', 'owner'),
-                    eb('user_role', '=', 'collaborator')
-                ])]))
+                    eb('social.user_role','=', 'owner'),
+                    eb('social.user_role', '=', 'collaborator')
+                ]),
+                not(eb('info.status', '=', 'deleted'))
+            ]))
             .execute()
         
         const collectionCount = countCollections[0]['count']

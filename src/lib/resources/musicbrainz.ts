@@ -277,9 +277,10 @@ export const checkDuplicate = function ( mbid: string, addedItems: App.RowData |
     if ( deletedItems.length < 1 ) {
         return { isDuplicate: false, duplicateItem: null }
     }
-    const findDuplicate = addedItems.find((element) => element[mbidCategory] == mbid)
-    const isDuplicate = findDuplicate ? true : false
-    const duplicateItem = isDuplicate ? findDuplicate : null
+    const findMbidDuplicate = addedItems.find((element) => element[mbidCategory] == mbid)
+    const findUserAddedMetadataDuplicate = addedItems.find((element) => element['user_added_metadata_id'] == mbid)
+    const isDuplicate = ( findMbidDuplicate || findUserAddedMetadataDuplicate ) ? true : false
+    const duplicateItem = isDuplicate ? ( findMbidDuplicate ?? findUserAddedMetadataDuplicate ) : null
     return { isDuplicate, duplicateItem }
 }
 

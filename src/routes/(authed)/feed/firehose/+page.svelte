@@ -2,7 +2,10 @@
     import Feed from '$lib/components/Feed.svelte'
 
     let { data, form } = $props()
-    let { sessionUserId, feedItems, remaining } = $derived(data)
+    let { sessionUserId, feedItems, remaining, sessionUserCollections } = $derived(data)
+
+    let showCollectionsListModal = $derived(form?.showCollectionsModal ?? false)
+    let showSaveSucessModal = $derived(form?.updateSuccess ?? false)
 </script>
 
 <svelte:options runes={true} />
@@ -18,4 +21,7 @@
     feedItems={feedItems}
     mode="feed"
     remaining={remaining}
+    collections={sessionUserCollections}
+    showCollectionsListModal={showCollectionsListModal}
+    showSaveSucessModal={showSaveSucessModal}
 ></Feed>

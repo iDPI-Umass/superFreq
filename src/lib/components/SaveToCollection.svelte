@@ -6,18 +6,16 @@
     import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
 
     interface ComponentProps {
-        showCollectionsListModal: boolean,
-        showSuccessModal: boolean,
-        item: App.RowData,
-        soureCollectionInfo?: App.RowData,
+        showCollectionsListModal: boolean
+        showSuccessModal: boolean
+        postId?: string
         collections: App.RowData[]
     }
 
     let { 
         showCollectionsListModal = $bindable(false),
         showSuccessModal = $bindable(false), 
-        item,
-        soureCollectionInfo,
+        postId,
         collections = [],
     }: ComponentProps = $props()
 
@@ -30,11 +28,10 @@
     function savedToCollection ( collection: App.RowData ) {
         savedToCollectionId = collection.collection_id
         savedToCollectionTitle = collection.title
-        savedToCollectionRoute = `/collection/${savedToCollectionId}`
-        addingItem = false
+        savedToCollectionRoute = `/collection/${collection.id}`
+        console.log(collection)
     }
 
-    
 </script>
 
 <svelte:options runes={true} />
@@ -44,6 +41,12 @@
     action="?/getCollectionList" 
     use:enhance
 >
+    <input 
+        type="hidden" 
+        id="post-id" 
+        name="post-id" 
+        value={postId} 
+    />
     <button 
         class="like" 
         type="submit"
@@ -59,85 +62,50 @@
     {#snippet headerText()}
         Save item to a collection
     {/snippet}
+
     {#snippet list()}
-        
-        {#await collections}
-            loading list of your collections
-        {:then}
-            <ol class="list-modal">
-                {#each collections as collection}
-                    <form 
-                        method="POST"
-                        action="?/saveToCollection" 
-                        use:enhance={() => {
-                            addingItem = true
-                            savedToCollection ( collection )
-                            return async ({ update }) => {
-                                await update()
-                                addingItem = false
-                            }}
-                        }
-                    >
-                        <input 
-                            type="hidden" 
-                            id="artist-mbid" 
-                            name="artist-mbid" 
-                            value={item.artist_mbid} 
-                        />
-                        <input 
-                            type="hidden" 
-                            id="release-group-mbid" 
-                            name="release-group-mbid" 
-                            value={item.release_group_mbid} 
-                        />
-                        <input 
-                            type="hidden" 
-                            id="recording-mbid" 
-                            name="recording-mbid" 
-                            value={item.recording_mbid} 
-                        />
-                        <input 
-                            type="hidden" 
-                            id="item-type" 
-                            name="item-type" 
-                            value={item.item_type} 
-                        />
-                        <input 
-                            type="hidden" 
-                            id="saved-from-post" 
-                            name="saved-from-post" 
-                            value={item.now_playing_post_id ?? item.id} 
-                        />
-                        <input 
-                            type="hidden" 
-                            id="saved-from-collection" 
-                            name="saved-from-collection" 
-                            value={soureCollectionInfo?.collection_id} 
-                        />
-                        <input 
-                            type="hidden" 
-                            id="collection-id" 
-                            name="collection-id" 
-                            value={collection.collection_id} 
-                        />
-                        <li class="list-modal">
-                            <div class="list-modal-li-row">
-                                <div class="list-modal-li-row-button-spacing">
-                                    <button
-                                        class="add"
-                                        type="submit"
-                                        disabled={addingItem}
-                                    >
-                                        + save
-                                    </button>
-                                </div>
-                                {collection.title}
-                            </div>
-                        </li>
-                    </form>
-                {/each}
-            </ol>
-        {/await}
+        <ol class="list-modal">
+            {#each collections as collection}
+            <li class="list-modal">
+                <div class="list-modal-li-row">
+                    <div class="list-modal-li-row-button-spacing">
+                        <form 
+                            method="POST"
+                            action="?/saveToCollection" 
+                            use:enhance={() => {
+                                addingItem = true
+                                console.log(collection)
+                                savedToCollectionId = collection.collection_id
+                                savedToCollectionTitle = collection.title
+                                savedToCollectionRoute = `/collection/${collection.collection_id}`
+                                console.log(savedToCollectionId, savedToCollectionTitle, savedToCollectionRoute)
+                                return async ({ update }) => {
+                                    await update()
+                                    addingItem = false
+                                    return{ savedToCollectionId, savedToCollectionTitle, savedToCollectionRoute }
+                                }}
+                            }
+                        >
+                            <input 
+                                type="hidden" 
+                                id="collection-id" 
+                                name="collection-id" 
+                                value={collection?.collection_id} 
+                            />
+                            <button
+                                class="add"
+                                type="submit"
+                                disabled={addingItem}
+                            >
+                                + save
+                            </button>
+                        </form>
+                    </div>
+                    {collection.title}
+                </div>
+            </li>
+            {/each}
+        </ol>
     {/snippet}
 </ListModal>
 

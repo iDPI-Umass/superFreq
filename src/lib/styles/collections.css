@@ -60,7 +60,12 @@
 }
 
 .collection-info-button-spacing {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
 	margin: auto 0 0 auto;
+	justify-content: space-between;
 }
 
 .collection-search {
