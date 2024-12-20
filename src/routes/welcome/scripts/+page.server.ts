@@ -1,72 +1,79 @@
-// import { redirect } from '@sveltejs/kit';
-// import type { PageServerLoad, Actions } from './$types';
-// import { insertUpdateTopAlbumsCollection, selectEditableTopAlbumsCollection } from '$lib/resources/backend-calls/collections';
-// import { db } from 'src/database.ts'
+import { redirect } from '@sveltejs/kit';
+import type { PageServerLoad, Actions } from './$types';
+import { insertUpdateTopAlbumsCollection, selectEditableTopAlbumsCollection } from '$lib/resources/backend-calls/collections';
+import { db } from 'src/database.ts'
 
-// let collections  = [] as App.RowData[]
+let metadata  = [] as App.RowData[]
 
-// let itemLookup = {
-//     'release_groups': 'release_group',
-//     'recordings': 'recording',
-//     'artists': 'artist'
-// } as App.StringLookupObject
+let itemLookup = {
+    'release_groups': 'release_group',
+    'recordings': 'recording',
+    'artists': 'artist'
+} as App.StringLookupObject
 
-// export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async () => {
 
-//     const selectCollections = await db
-//     .selectFrom('collections_info as info')
-//     .innerJoin('collections_contents as contents', 'info.collection_id', 'contents.collection_id')
-//     .select([
-//     'info.collection_id as collection_id',
-//     'info.type as collection_type',
-//     'contents.id as id',
-//     'contents.item_type as item_type'
-//     ])
-//     .where('info.type', 'is not', null)
-//     .execute()
+    const selectMetadata = await db
+    .selectFrom('user_added_metadata')
+    .selectAll()
+    .where('artist_name', 'is', null)
+    .where('release_group_name', 'is', null)
+    .where('recording_name', 'is', null)
+    .where('episode_title', 'is', null)
+    .execute()
 
-//     collections = selectCollections
+    metadata = selectMetadata
 
-//     return {collections}
-// }
+    return {metadata}
+}
 
-// export const actions = {
-//     default: async () => {
-//         for ( const item of collections ) {
-//             const collectionType = item['collection_type']
-//             const newItemType = itemLookup[collectionType]
-//             const oldItemType = item['item_type']
-//             item['item_type'] = oldItemType ? oldItemType : newItemType
+export const actions = {
+    default: async () => {
+        const updatedPostIds = []
+        for ( const item of metadata ) {
+            const metadataId = item['id']
+            const postId = item['post_id']
 
-//             delete item.collection_type
-//         }
+            // const insertUserAddedMetadataRow = await db
+            //     .insertInto('user_added_metadata')
+            //     .values({
+            //         artist_name: artistName,
+            //         release_group_name: releaseGroupName,
+            //         recording_name: recordingName,
+            //         episode_title: episodeTitle,
+            //         show_name: showName,
+            //         listen_url: listenUrl,
+            //         post_id: postId,
+            //         added_by: userId
+            //     })
+            //     .returning('id')
+            //     .executeTakeFirst()
+            
+            // const metadataId = insertUserAddedMetadataRow?.id as string
+
+            const updatePost = await db
+            .updateTable('posts')
+            .set({
+                user_added_metadata_id: null
+            })
+            .where('id', '=', postId)
+            .returning('id')
+            .executeTakeFirst()
+
+            updatedPostIds.push(updatePost?.id)
+
+            await db
+            .deleteFrom('user_added_metadata')
+            .where('id', '=', metadataId)
+            .execute()
+        }
         
-//         let updatedRows = []
-//         const updateCollections = await db.transaction().execute(async (trx) => {
-//             for ( const item of collections) {
-//                 try {
-//                     const updatedRow = await trx
-//                     .updateTable('collections_contents')
-//                     .set({
-//                         'item_type': item['item_type']
-//                     })
-//                     .where('id', '=', item.id)
-//                     .returningAll()
-//                     .executeTakeFirstOrThrow()
 
-//                     updatedRows.push(updatedRow)
-//                 }
-//                 catch ( error ) {
-//                     console.log('error updating ', item)
-//                 }
-//             }
-//         })
+        const updatedCount = updatedPostIds.length
+        console.log(updatedCount)
 
-//         const updatedCount = updatedRows.length
-//         console.log(updatedCount)
+        const success = updatedCount > 0 ? true : false
 
-//         const success = updatedCount > 0 ? true : false
-
-//         return ( success )
-//     }
-// } satisfies Actions
+        return ( success )
+    }
+} satisfies Actions

@@ -1,3 +1,3 @@
-<!-- <form method="POST">
+<form method="POST">
     <button class="standard" type="submit">run script</button>
-</form> -->
+</form>
