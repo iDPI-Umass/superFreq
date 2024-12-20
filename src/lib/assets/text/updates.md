@@ -3,6 +3,9 @@ title: Updates
 layout: about
 updated: 12/20/2024
 ---
+#### Notice
+There will be a production pause until about January 6th. Any bugs or really anything else are going to be ignored until then. Please submit bug reports for anything weird. Happy holidays!
+
 ### December 20, 2024
 #### Updates
 - "Save" feature added to Now Playing Posts that lets user save item to collection
