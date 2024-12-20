@@ -2,7 +2,7 @@ import type { PageServerLoad, Actions, Posts } from './$types'
 import { redirect } from '@sveltejs/kit'
 import { selectProfilePageData, insertUpdateBlock, insertUserFlag, insertUpdateUserFollow, insertPostFlag } from '$lib/resources/backend-calls/users'
 import { selectFeedData } from '$lib/resources/backend-calls/feed'
-import { selectUserPostsSample, insertPost, insertUpdateReaction } from '$lib/resources/backend-calls/posts'
+import { selectUserPostsSample, insertPost, insertUpdateReaction, deletePost } from '$lib/resources/backend-calls/posts'
 import { selectListSessionUserCollections, saveItemToCollection } from 'src/lib/resources/backend-calls/collections'
 import { getListenUrlData, validStringCheck } from '$lib/resources/parseData'
 import { add, parseISO } from 'date-fns'
@@ -217,6 +217,19 @@ export const actions = {
         const userActionSuccess = flag ? true : false
 
         return { userActionSuccess }
+    },
+    deletePost: async ({ request, locals: { safeGetSession } }) => {
+        const session = await safeGetSession()
+        const sessionUserId = session.user?.id as string
+
+        const data = await request.formData()
+        const postId = data.get('post-id') as string
+
+        const submitDelete = await deletePost( sessionUserId, postId )
+
+        const success = submitDelete ? true : false
+
+        return { success }
     },
     submitReaction: async ({ request, locals: { safeGetSession }}) => {
         const session = await safeGetSession()

@@ -1,8 +1,11 @@
 ---
 title: Updates
 layout: about
-updated: 12/19/2024
+updated: 12/20/2024
 ---
+### December 20, 2024
+#### Bug Fixes
+- "Delete" and "flag" now works for posts everywhere
 
 ### December 19, 2024
 #### Updates

@@ -1,6 +1,7 @@
 import type { PageServerLoad, Actions } from './$types'
 import { selectFeedData } from '$lib/resources/backend-calls/feed'
-import { insertUpdateReaction } from '$lib/resources/backend-calls/posts'
+import { insertPostFlag } from '$lib/resources/backend-calls/users'
+import { insertUpdateReaction, deletePost } from '$lib/resources/backend-calls/posts'
 import { add, parseISO } from 'date-fns'
 
 let loadData = true
@@ -69,5 +70,31 @@ export const actions = {
         loadData = reaction ? false : true
 
         return { updateReaction }
-    }
+    },
+    flagPost: async ({ request, locals: { safeGetSession }}) => {
+        const session = await safeGetSession()
+        const sessionUserId = session.user?.id as string
+
+        const data = await request.formData()
+        const postId = data.get('post-id') as string
+
+        const flag = await insertPostFlag( sessionUserId, postId )
+
+        const userActionSuccess = flag ? true : false
+
+        return { userActionSuccess }
+    },
+    deletePost: async ({ request, locals: { safeGetSession } }) => {
+        const session = await safeGetSession()
+        const sessionUserId = session.user?.id as string
+
+        const data = await request.formData()
+        const postId = data.get('post-id') as string
+
+        const submitDelete = await deletePost( sessionUserId, postId )
+
+        const success = submitDelete ? true : false
+
+        return { success }
+    },
 } satisfies Actions
