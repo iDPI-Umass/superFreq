@@ -39,9 +39,16 @@ export const insertPost = async function ( postData: any ) {
     let releaseGroupsMetadata = []
     let recordingsMetadata = []
 
-    if ( postData["artist_mbid"] ) {
-        const metadata = [{
-            "artist_mbid": (postData["artist_mbid"]),
+    const itemType = postData["item_type"]
+
+    let metadata = [] as any
+    if ( 
+        ( itemType == "artist" && postData["artist_mbid"] ) ||
+        ( itemType == "release_group" && postData["release_group_mbid"] ) ||
+        ( itemType == "recording" && postData["recording_mbid"] ) 
+    ) {
+        metadata = [{
+            "artist_mbid": postData["artist_mbid"],
             "artist_name": postData["artist_name"],
             "release_group_mbid": postData["release_group_mbid"],
             "release_group_name": postData["release_group_name"],
@@ -60,6 +67,18 @@ export const insertPost = async function ( postData: any ) {
         artistsMetadata = preparedMetadata.artistsMetadata
         releaseGroupsMetadata = preparedMetadata.releaseGroupsMetadata
         recordingsMetadata = preparedMetadata.recordingsMetadata
+    }
+    else {
+        metadata = [{
+            "artist_name": postData["artist_name"],
+            "artist_mbid": postData["artist_mbid"],
+            "release_group_name": postData["release_group_name"],
+            "release_group_mbid": postData["release_group_mbid"],
+            "recording_name": postData["recording_name"],
+            "episode_title": postData["episode_title"],
+            "show_name": postData["show_name"],
+            "listen_url": postData["listen_url"]
+        }]
     }
 
     delete postData.label
@@ -98,6 +117,17 @@ export const insertPost = async function ( postData: any ) {
                     .doNothing()
                 )
                 .execute()
+        }
+
+        let userAdddedMetadataRow = {} as App.RowData
+        if ( !postData["artist_mbid"] ) {
+            userAdddedMetadataRow = await trx
+                .insertInto('user_added_metadata')
+                .values(metadata)
+                .returning('id')
+                .executeTakeFirst() as App.RowData
+            
+            postData["user_added_metadata_id"] = userAdddedMetadataRow.id
         }
 
         const insertPost = await trx
