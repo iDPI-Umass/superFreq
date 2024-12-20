@@ -90,6 +90,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'post.embed_source as embed_source',
                 'post.embed_account as embed_account',
                 'post.listen_url as listen_url',
+                'post.user_added_metadata_id as user_added_metadata_id',
                 'profile.username as username',
                 'profile.display_name as display_name',
                 'release_groups.img_url as avatar_url',
@@ -345,6 +346,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 'post.embed_source as embed_source',
                 'post.embed_account as embed_account',
                 'post.listen_url as listen_url',
+                'post.user_added_metadata_id as user_added_metadata_id',
                 'reaction.active as reaction_active',
                 (eb) => eb.fn.count('all_reactions.id').as('reaction_count')
             ])
@@ -798,6 +800,7 @@ export const selectFirehoseFeed = async function ( sessionUserId: string, batchS
             'post.embed_source as embed_source',
             'post.embed_account as embed_account',
             'post.listen_url as listen_url',
+            'post.user_added_metadata_id as user_added_metadata_id',
             'reaction.active as reaction_active',
             (eb) => eb.fn.count('all_reactions.id').as('reaction_count')
         ])

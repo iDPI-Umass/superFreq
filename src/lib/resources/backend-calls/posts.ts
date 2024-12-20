@@ -39,9 +39,16 @@ export const insertPost = async function ( postData: any ) {
     let releaseGroupsMetadata = []
     let recordingsMetadata = []
 
-    if ( postData["artist_mbid"] ) {
-        const metadata = [{
-            "artist_mbid": (postData["artist_mbid"]),
+    const itemType = postData["item_type"]
+
+    let metadata = [] as any
+    if ( 
+        ( itemType == "artist" && postData["artist_mbid"] ) ||
+        ( itemType == "release_group" && postData["release_group_mbid"] ) ||
+        ( itemType == "recording" && postData["recording_mbid"] ) 
+    ) {
+        metadata = [{
+            "artist_mbid": postData["artist_mbid"],
             "artist_name": postData["artist_name"],
             "release_group_mbid": postData["release_group_mbid"],
             "release_group_name": postData["release_group_name"],
@@ -60,6 +67,18 @@ export const insertPost = async function ( postData: any ) {
         artistsMetadata = preparedMetadata.artistsMetadata
         releaseGroupsMetadata = preparedMetadata.releaseGroupsMetadata
         recordingsMetadata = preparedMetadata.recordingsMetadata
+    }
+    else {
+        metadata = [{
+            "artist_name": postData["artist_name"],
+            "artist_mbid": postData["artist_mbid"],
+            "release_group_name": postData["release_group_name"],
+            "release_group_mbid": postData["release_group_mbid"],
+            "recording_name": postData["recording_name"],
+            "episode_title": postData["episode_title"],
+            "show_name": postData["show_name"],
+            "listen_url": postData["listen_url"]
+        }]
     }
 
     delete postData.label
@@ -98,6 +117,17 @@ export const insertPost = async function ( postData: any ) {
                     .doNothing()
                 )
                 .execute()
+        }
+
+        let userAdddedMetadataRow = {} as App.RowData
+        if ( !postData["artist_mbid"] ) {
+            userAdddedMetadataRow = await trx
+                .insertInto('user_added_metadata')
+                .values(metadata)
+                .returning('id')
+                .executeTakeFirst() as App.RowData
+            
+            postData["user_added_metadata_id"] = userAdddedMetadataRow.id
         }
 
         const insertPost = await trx
@@ -289,6 +319,7 @@ export const selectPost = async function ( sessionUserId: string, username: stri
                 'posts.updated_at as updated_at', 
                 'posts.listen_url as listen_url', 
                 'posts.item_type as item_type',
+                'posts.user_added_metadata_id as user_added_metadata_id',
                 'profile.username as username', 
                 'profile.display_name as display_name', 
                 'release_groups.img_url as avatar_url',
@@ -439,6 +470,7 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                 'posts.embed_source as embed_source',
                 'posts.embed_account as embed_account',
                 'posts.item_type as item_type',
+                'posts.user_added_metadata_id as user_added_metadata_id',
                 'profile.username as username', 
                 'profile.display_name as display_name', 
                 'avatar_release_group.img_url as avatar_url',
@@ -650,6 +682,7 @@ export const selectUserNowPlayingPosts = async function ( sessionUserId: string,
                 'posts.embed_source as embed_source',
                 'posts.embed_account as embed_account',
                 'posts.item_type as item_type',
+                'posts.user_added_metadata_id as user_added_metadata_id',
                 'profiles.id as user_id',
                 'profiles.username as username',
                 'profiles.display_name as display_name',
@@ -733,6 +766,7 @@ export const selectUserPostsAndComments = async function ( sessionUserId: string
                 'posts.embed_source as embed_source',
                 'posts.embed_account as embed_account',
                 'posts.item_type as item_type',
+                'posts.user_added_metadata_id as user_added_metadata_id',
                 'profiles.id as user_id',
                 'profiles.username as username',
                 'profiles.display_name as display_name',
@@ -853,6 +887,7 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
                 'posts.embed_source as embed_source',
                 'posts.parent_post_id as parent_post_id',
                 'posts.item_type as item_type',
+                'posts.user_added_metadata_id as user_added_metadata_id',
                 'profiles.id as user_id',
                 'profiles.username as username',
                 'profiles.display_name as display_name',

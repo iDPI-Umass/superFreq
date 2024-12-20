@@ -148,7 +148,7 @@ export const selectListViewableCollections = async function ( username: string )
 }
 
 
-export const selectListProfileUserViewableCollections = async function ( username: string ) {
+export const selectListProfileUserViewableCollections = async function ( sessionUserId: string, username: string ) {
     const selectCollections = await db.transaction().execute(async (trx) => {
 
         const selectProfile = await trx
@@ -159,29 +159,59 @@ export const selectListProfileUserViewableCollections = async function ( usernam
 
         const profileUserId = selectProfile?.id as string
 
-        const selectInfo = await trx
-        .selectFrom('collections_info as info')
-        .innerJoin('collections_social as social', 'social.collection_id', 'info.collection_id')
-        .innerJoin('profiles', 'profiles.id', 'social.user_id')
-        .select([
-            'info.collection_id as id',
-            'info.title as title',
-            'info.updated_at as updated_at',
-            'profiles.display_name as display_name'
-        ])
-        .where(({eb, and, or}) => and([
-            eb('social.user_id', '=', profileUserId),
-            or([
-                eb('info.status', '=', 'public'),
-                eb('info.status', '=', 'open')
-            ]),
-            or([
-                eb('social.user_role', '=', 'owner'),
-                eb('social.user_role', '=', 'collaborator')
+        let selectInfo
+
+        if ( sessionUserId == profileUserId ) {
+            selectInfo = await trx
+            .selectFrom('collections_info as info')
+            .innerJoin('collections_social as social', 'social.collection_id', 'info.collection_id')
+            .innerJoin('profiles', 'profiles.id', 'social.user_id')
+            .select([
+                'info.collection_id as id',
+                'info.title as title',
+                'info.updated_at as updated_at',
+                'profiles.display_name as display_name'
             ])
-        ]))
-        .orderBy('info.created_at desc')
-        .execute()
+            .where(({eb, and, or}) => and([
+                eb('social.user_id', '=', profileUserId),
+                or([
+                    eb('info.status', '=', 'public'),
+                    eb('info.status', '=', 'open'),
+                    eb('info.status', '=', 'private')
+                ]),
+                or([
+                    eb('social.user_role', '=', 'owner'),
+                    eb('social.user_role', '=', 'collaborator')
+                ])
+            ]))
+            .orderBy('info.created_at desc')
+            .execute()
+        }
+        else if ( sessionUserId != profileUserId ) {
+            selectInfo = await trx
+            .selectFrom('collections_info as info')
+            .innerJoin('collections_social as social', 'social.collection_id', 'info.collection_id')
+            .innerJoin('profiles', 'profiles.id', 'social.user_id')
+            .select([
+                'info.collection_id as id',
+                'info.title as title',
+                'info.updated_at as updated_at',
+                'profiles.display_name as display_name'
+            ])
+            .where(({eb, and, or}) => and([
+                eb('social.user_id', '=', profileUserId),
+                or([
+                    eb('info.status', '=', 'public'),
+                    eb('info.status', '=', 'open')
+                ]),
+                or([
+                    eb('social.user_role', '=', 'owner'),
+                    eb('social.user_role', '=', 'collaborator')
+                ])
+            ]))
+            .orderBy('info.created_at desc')
+            .execute()
+        }
 
         const info = selectInfo
         return info
@@ -233,11 +263,14 @@ export const selectListProfileUserFollowingCollections = async function ( userna
 
 export const selectListSessionUserCollections =  async function ( sessionUserId: string ) {
     const selectCollections = await db
-    .selectFrom('collections_info')
-    .select(['collection_id', 'title'])
-    .where('owner_id', '=', sessionUserId)
-    .where('status', '!=', 'deleted')
-    .execute()
+        .selectFrom('collections_info as info')
+        .innerJoin('profiles as profile', 'profile.id', 'info.owner_id')
+        .select(['info.collection_id', 'info.title'])
+        .where('info.owner_id', '=', sessionUserId)
+        .where('info.status', '!=', 'deleted')
+        .whereRef('info.collection_id', '!=', 'profile.top_albums_collection_id')
+        .orderBy('info.updated_at desc')
+        .execute()
 
     const collections = selectCollections as App.RowData[]
     return collections
@@ -1049,6 +1082,67 @@ export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: s
 
 }
 
+export const deleteCollection = async function ( sessionUserId: string, collectionId: string ) {
+    const timestampISOString: string = new Date().toISOString()
+    const timestampISO: Date = parseISO(timestampISOString)
+
+    const update = await db.transaction().execute(async (trx) => {
+        try {
+            const selectCollection = await trx
+            .selectFrom('collections_info')
+            .select([
+                'collection_id',
+                'status',
+                'changelog'
+            ])
+            .where('collection_id', '=', collectionId)
+            .where('owner_id', '=', sessionUserId)
+            .executeTakeFirstOrThrow()
+
+            const changelog = selectCollection.changelog as App.Changelog
+
+            changelog[timestampISOString] = {
+                'updated_by': sessionUserId,
+                'status': 'deleted',
+                'updated_at': timestampISO
+            }
+
+            const updateCollection = await trx
+            .updateTable('collections_info')
+            .set({
+                'status': 'deleted',
+                'changelog': changelog
+            })
+            .where('collection_id', '=', collectionId)
+            .execute()
+
+            const insertCollectionUpdate = await trx
+            .insertInto('collections_updates')
+            .values({
+                collection_id: collectionId,
+                updated_at: timestampISO,
+                updated_by: sessionUserId
+            })
+            .execute()
+
+            if ( updateCollection && insertCollectionUpdate ) {
+                return { success: true}
+            }
+            else {
+                return { success: false }
+            }
+
+        }
+        catch ( error ) {
+            return { success: false }
+        }
+    })
+
+    const { success } = await update
+    return { success }
+    
+}
+
 export const selectCollectionUserFollowData = async function ( sessionUserId: string, collectionId: string ) {
     const selectCollectionFollowData = await db.transaction().execute(async (trx) => {
         let followData
@@ -1081,7 +1175,7 @@ export const selectCollectionUserFollowData = async function ( sessionUserId: st
     return followData
 }
 
-export const saveItemToCollection = async function ( sessionUserId: string, item: App.RowData, collectionId: string ) {
+export const saveItemToCollection = async function ( sessionUserId: string, itemId: string, collectionId: string ) {
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
 
@@ -1117,6 +1211,7 @@ export const saveItemToCollection = async function ( sessionUserId: string, item
                 'contents.recording_mbid',
                 'contents.item_type',
                 'contents.changelog as item_changelog',
+                'contents.user_added_metadata_id as user_added_metadata_id'
             ])
             .where('collection_id', '=', collectionId)
             .execute()
@@ -1133,23 +1228,33 @@ export const saveItemToCollection = async function ( sessionUserId: string, item
                 }
             }
 
+            const post = await trx
+                .selectFrom('posts')
+                .selectAll()
+                .where('id', '=', itemId)
+                .executeTakeFirst()
+
+            const item = post as App.RowData
+
             const itemType = item["item_type"]
             const itemMbidCategory = itemType.concat('_mbid')
             
-            const { isDuplicate, duplicateItem } = checkDuplicate(item[itemMbidCategory], activeItems, deletedItems, itemMbidCategory)
+            const { isDuplicate, duplicateItem } = checkDuplicate(item[itemMbidCategory] ?? item["user_added_metadata_id"], activeItems, deletedItems, itemMbidCategory)
 
             const contentsCount = await trx
-            .selectFrom('collections_contents')
-            .select((eb) => eb.fn.count<number>('id').as('count'))
-            .where('collection_id', '=', collectionId)
-            .where('item_position', 'is not', null)
-            .execute()
+                .selectFrom('collections_contents')
+                .select((eb) => eb.fn.count<number>('id').as('count'))
+                .where('collection_id', '=', collectionId)
+                .where('item_position', 'is not', null)
+                .execute()
 
             const itemPosition = contentsCount[0]['count']
             
             const infoChangelog = collectionInfo.changelog as App.Changelog
 
             let itemChangelog = {} as App.Changelog
+
+            console.log(contentsCount, itemPosition, isDuplicate)
 
             if ( !isDuplicate ) {
                 itemChangelog[timestampISOString] = {
@@ -1163,16 +1268,18 @@ export const saveItemToCollection = async function ( sessionUserId: string, item
                     inserted_by: sessionUserId,
                     updated_at: timestampISO,
                     updated_by: sessionUserId,
-                    artist_mbid: item["artist_mbid"],
+                    artist_mbid: item["artist_mbid"] ?? null,
                     release_group_mbid: item["release_group_mbid"] ?? null,
                     recording_mbid: item["recording_mbid"] ?? null,
                     item_type: item["item_type"],
                     item_position: itemPosition,
                     from_post: item["from_post_id"] ?? null,
                     from_collection: item["from_collection_id"] ?? null,
+                    user_added_metadata_id: item["user_added_metadata_id"] ?? null, 
                     changelog: itemChangelog
                 }
     
+                console.log(newItem)
                 await trx
                     .insertInto( 'collections_contents' )
                     .values( newItem )

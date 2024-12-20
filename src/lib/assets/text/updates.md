@@ -1,8 +1,15 @@
 ---
 title: Updates
 layout: about
-updated: 12/19/2024
+updated: 12/20/2024
 ---
+### December 20, 2024
+#### Updates
+- "Save" feature added to Now Playing Posts that lets user save item to collection
+- Option to delete collection added
+
+#### Bug Fixes
+- "Delete" and "flag" now works for posts everywhere
 
 ### December 19, 2024
 #### Updates

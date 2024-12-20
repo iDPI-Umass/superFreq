@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
 import { timestampISO } from '$lib/resources/parseData'
-import { selectEditableCollectionContents, updateCollection } from '$lib/resources/backend-calls/collections'
+import { selectEditableCollectionContents, updateCollection, deleteCollection } from '$lib/resources/backend-calls/collections'
 
 let collectionId: string
 let collectionType: string
@@ -76,5 +76,15 @@ export const actions: Actions = {
     else {
       throw redirect(303, `/collection/${collectionId}`)
     }
+  },
+  deleteCollection: async ({ locals: { safeGetSession }}) => {
+    const { session } = await safeGetSession()
+    const sessionUserId = session?.user.id as string
+    const { success } = await deleteCollection( sessionUserId, collectionId )
+    console.log(success)
+    if ( success ) {
+      redirect(303, '/')
+    }
+    else { return success }
   }
 }

@@ -146,11 +146,11 @@
                             </span>
                         </a>
                     {/if}
-                    {#if post.artist_mbid == "1"}
+                    {#if post.artist_mbid || post.user_added_metadata_id }
                         <SaveToCollection
                             bind:showCollectionsListModal={showCollectionsModal}
                             bind:showSuccessModal={showSaveSucessModal}
-                            item={post}
+                            postId={postId}
                             collections={collections}
                         ></SaveToCollection>
                     {/if}

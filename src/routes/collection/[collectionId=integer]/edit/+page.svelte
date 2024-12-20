@@ -5,9 +5,9 @@
     import Tooltip from '$lib/components/Tooltip.svelte'
     import InfoBox from '$lib/components/InfoBox.svelte'
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
+    import SingleActionModal from 'src/lib/components/modals/SingleActionModal.svelte'
 
-
-    let { data }:  {data: PageData} = $props()
+    let { form, data }:  {data: PageData} = $props()
     let { collection } = $state(data)
 
     const { sessionUserId, collectionId, infoBoxText }: 
@@ -19,13 +19,8 @@
 
     let imgPromise = $state(null)
 
-	/* 
-	Let's declare some variables for...
-	*/
-
     const collectionInfo = $state(collection?.info as App.RowData)
 
-	// collections_info
 	let collectionTitle = $state(collectionInfo["title"]) 
 	let collectionType = collectionInfo["type"] 
 	let collectionStatus = $state(collectionInfo["status"]) 
@@ -39,6 +34,8 @@
     let deletedItems = $state(collection?.deletedCollectionContents as App.RowData[])
 
     const isOwner = $derived(( sessionUserId == collectionInfo.owner_id ) ? true : false)
+
+    let showModal = $state(false)
 
 </script>
 <svelte:options runes={true} />
@@ -234,13 +231,22 @@
             >{descriptionText}</textarea>
             <div class="collection-info-button-spacing">
                 <button 
-                class="double-border-top" 
-                formAction = '?/updateCollection'
-                disabled={!(collectionStatus && collectionTitle)}
-            >
-                <div class="inner-border">
-                    save edits
-                </div>
+                    type="button"
+                    class="double-border-top"
+                    onclick={() => showModal = true}
+                >
+                    <div class="inner-border">
+                        delete collection
+                    </div>
+                </button>
+                <button 
+                    class="double-border-top" 
+                    formAction = '?/updateCollection'
+                    disabled={!(collectionStatus && collectionTitle)}
+                >
+                    <div class="inner-border">
+                        save edits
+                    </div>
                 </button>
             </div>
         </div>
@@ -255,6 +261,20 @@
 	></CollectionEditor>
     <div class="bottom-double-border"></div>
 </div>
+
+<SingleActionModal
+    bind:showModal={showModal}
+    formAction="?/deleteCollection"
+    buttonText="delete collection"
+    success={form?.success}
+>
+    {#snippet headerText()}
+        delete collection?
+    {/snippet} 
+    {#snippet message()}
+        Do you want to delete this collection? You will never be able to access it again.
+    {/snippet} 
+</SingleActionModal>
 
 <div class="buffer"></div>
 

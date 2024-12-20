@@ -18,13 +18,13 @@
 
     let { data, form }: Props = $props();
 
-    let { sessionUserId, profileData, feedItems, profileUsername, posts, collections, updatesPageUpdatedAt }: {
+    let { sessionUserId, profileData, feedItems, profileUsername, posts, sessionUserCollections, updatesPageUpdatedAt }: {
         sessionUserId: string
         profileData: any
         feedItems: any
         profileUsername: string
         posts: App.RowData[]
-        collections: App.RowData[]
+        sessionUserCollections: App.RowData[]
         updatesPageUpdatedAt: string
     } = $derived(data)
 
@@ -257,7 +257,7 @@
             feedItems={feedItems}
             mode="mini"
             userActionSuccess={form?.userActionSuccess}
-            collections={collections}
+            collections={sessionUserCollections}
             showCollectionsListModal={showCollectionsListModal}
             showSaveSucessModal={showSaveSucessModal}
         ></Feed>

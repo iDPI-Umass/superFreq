@@ -325,7 +325,7 @@
 
 <style>
     dialog {
-        margin-top: 35%;
+        margin: 15vh auto 85vh auto;
         max-width: 300px;
     }
 	dialog[open] {
@@ -335,7 +335,7 @@
         gap: var(--freq-height-spacer-gap);
     }
     dialog[open]::backdrop {
-        background-color: rgb(0 0 0 / 50%);
+        background-color: rgb(0 0 0 / 100%);
     }
     .dialog-options {
         display: flex;

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { enhance, applyAction } from '$app/forms'
+    import { enhance } from '$app/forms'
     import Heart from 'lucide-svelte/icons/heart'
 
     interface ComponentProps {
