@@ -1,10 +1,11 @@
 ---
 title: Updates
 layout: about
-updated: 12/20/2024
+updated: 01/09/2025
 ---
-#### Notice
-There will be a production pause until about January 6th. Any bugs or really anything else are going to be ignored until then. Please submit bug reports for anything weird. Happy holidays!
+### January 9, 2024
+#### Bug Fixes
+- Posting works again. Typos in the code...
 
 ### December 20, 2024
 #### Updates
