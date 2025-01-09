@@ -117,7 +117,7 @@
             value={addedItem?.artist_name ?? null}
             required
         />
-        {#if itemType == 'release_group' || itemType == 'recording'}
+        {#if itemType == 'release_group'}
 
             <div class="label-group">
                 <label 
@@ -138,6 +138,23 @@
                 placeholder="album name"
                 value={addedItem?.release_group_name ?? null}
                 required
+            />
+        {:else if itemType == 'recording'}
+            <div class="label-group">
+                <label 
+                    class="text-label" 
+                    for="album-name"
+                >
+                    album name
+                </label>
+            </div>
+            <input 
+                class="text" 
+                id="release-group-name" 
+                name="release-group-name" 
+                type="text"
+                placeholder="album name"
+                value={addedItem?.release_group_name ?? null}
             />
         {/if}
         {#if itemType == 'recording'}
