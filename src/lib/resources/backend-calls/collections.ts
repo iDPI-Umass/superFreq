@@ -510,7 +510,6 @@ export const selectEditableCollectionContents = async function ( collectionId: s
             item['id'] = counter
             counter += 1
         }
-
         return { info, collectionContents, deletedCollectionContents }
     })
 
@@ -568,7 +567,7 @@ export const selectEditableTopAlbumsCollection = async function ( sessionUserId:
                     filteredContents = filteredContents.filter((element) => element != item)
                 }
             }
-
+            filteredContents.sort(( a, b ) => a.item_position - b.item_position )
             collectionContents = filteredContents
 
             // create ID for each item for svelte-dnd component in colleciton editor
@@ -896,9 +895,7 @@ export const updateCollection = async function ( sessionUserId: string, collecti
         return collectionUpdate
 }
 
-export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: string, collectionItems: App.RowData ) {
-
-    (collectionItems)
+export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: string, collectionItems: App.RowData[] ) {
 
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
@@ -954,21 +951,25 @@ export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: s
                 })
                 .executeTakeFirst()
 
-            await trx
+            if ( artistsMetadata.length > 0 ) {
+                await trx
                 .insertInto('artists')
                 .values(artistsMetadata)
                 .onConflict((oc) => oc
                     .doNothing()
                 )
                 .execute()
+            }
 
-            await trx
+            if ( releaseGroupsMetadata.length > 0 ) {
+                await trx
                 .insertInto('release_groups')
                 .values(releaseGroupsMetadata)
                 .onConflict((oc) => oc
                     .doNothing()
                 )
                 .execute()
+            }
             
             const collectionContents = await populateCollectionContents(sessionUserId, collectionItems, collectionId) 
             
@@ -1254,8 +1255,6 @@ export const saveItemToCollection = async function ( sessionUserId: string, item
 
             let itemChangelog = {} as App.Changelog
 
-            console.log(contentsCount, itemPosition, isDuplicate)
-
             if ( !isDuplicate ) {
                 itemChangelog[timestampISOString] = {
                     "updated_at": timestampISO,
@@ -1279,7 +1278,6 @@ export const saveItemToCollection = async function ( sessionUserId: string, item
                     changelog: itemChangelog
                 }
     
-                console.log(newItem)
                 await trx
                     .insertInto( 'collections_contents' )
                     .values( newItem )

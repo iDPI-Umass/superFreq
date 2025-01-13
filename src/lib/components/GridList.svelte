@@ -72,6 +72,8 @@
 
     let items = $state(collectionContents)
 
+    $effect(() => items = collectionContents)
+
     const flipDurationMs = 300;
 
     function handleSort( e: any ) {
@@ -303,7 +305,7 @@
             onconsider={handleSort} 
             onfinalize={handleFinalize}
         >
-            {#each items as contentItem, index(contentItem.id)}
+            {#each items as contentItem, index(contentItem.item_position)}
                 <li 
                     aria-label={ariaLabel(contentItem, ( contentItem["item_type"] ?? collectionType ))} 
                     animate:flip="{{duration: flipDurationMs}}" 

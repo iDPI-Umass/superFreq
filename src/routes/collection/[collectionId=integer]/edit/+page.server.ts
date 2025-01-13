@@ -81,7 +81,6 @@ export const actions: Actions = {
     const { session } = await safeGetSession()
     const sessionUserId = session?.user.id as string
     const { success } = await deleteCollection( sessionUserId, collectionId )
-    console.log(success)
     if ( success ) {
       redirect(303, '/')
     }

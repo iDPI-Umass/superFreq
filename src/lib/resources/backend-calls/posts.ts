@@ -61,8 +61,7 @@ export const insertPost = async function ( postData: any ) {
             "remixer_artist_mbid": postData["remixer_artist_mbid"],
             "item_type": postData["item_type"],
         }] as App.RowData[]
-    
-        console.log(metadata)
+
         const preparedMetadata = await prepareMusicMetadataInsert(metadata)
 
         artistsMetadata = preparedMetadata.artistsMetadata
@@ -83,7 +82,6 @@ export const insertPost = async function ( postData: any ) {
         }]
     }
 
-    console.log(artistsMetadata,releaseGroupsMetadata,recordingsMetadata)
     delete postData.label
     delete postData.release_date
     delete postData.remixer_artist_mbid
