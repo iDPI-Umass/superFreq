@@ -198,6 +198,7 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
             ])
             .where('collection_id', '=', profileUserData?.top_albums_collection_id as string)
             .where('collections_contents.item_position', 'is not', null)
+            .orderBy('collections_contents.item_position')
             .execute()
 
         

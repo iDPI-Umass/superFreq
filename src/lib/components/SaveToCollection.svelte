@@ -29,7 +29,6 @@
         savedToCollectionId = collection.collection_id
         savedToCollectionTitle = collection.title
         savedToCollectionRoute = `/collection/${collection.id}`
-        console.log(collection)
     }
 
 </script>
@@ -74,11 +73,9 @@
                             action="?/saveToCollection" 
                             use:enhance={() => {
                                 addingItem = true
-                                console.log(collection)
                                 savedToCollectionId = collection.collection_id
                                 savedToCollectionTitle = collection.title
                                 savedToCollectionRoute = `/collection/${collection.collection_id}`
-                                console.log(savedToCollectionId, savedToCollectionTitle, savedToCollectionRoute)
                                 return async ({ update }) => {
                                     await update()
                                     addingItem = false

@@ -70,7 +70,6 @@ export const actions = {
         
 
         const updatedCount = updatedPostIds.length
-        console.log(updatedCount)
 
         const success = updatedCount > 0 ? true : false
 

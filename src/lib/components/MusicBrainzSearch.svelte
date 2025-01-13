@@ -80,7 +80,6 @@
 			searchComplete = false
 			newItemAdded = collectionItems.newItemAdded
 			showModal = false
-
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
 				const releaseGroup = releaseGroupMetadata( searchCategory, item )
 				const { success, coverArtArchiveUrl, lastFmCoverArtUrl } = await getCoverArt(releaseGroup)

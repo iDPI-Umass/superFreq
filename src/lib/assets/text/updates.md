@@ -1,9 +1,15 @@
 ---
 title: Updates
 layout: about
-updated: 01/09/2025
+updated: 01/13/2025
 ---
-### January 9, 2024
+### January 13, 2025
+#### Bug Fixes
+- Collections no longer displaying out of order
+- Collections no longer appearing out of order in collection editor
+- Fixed bug in collection editor where an item would not always appear after added
+
+### January 9, 2025
 #### Bug Fixes
 - Posting works again. Typos in the code...
 
