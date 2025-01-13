@@ -252,8 +252,6 @@
     {/if}
 </div>
 
-
-
 <style>
     form {
         display: flex;

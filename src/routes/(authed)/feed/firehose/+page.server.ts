@@ -36,6 +36,8 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
 
         totalAvailableItems = totalRowCount as number
         remaining = remainingCount as number
+
+        loadData = !loadData
     }
 
     if ( updateReaction ) {
