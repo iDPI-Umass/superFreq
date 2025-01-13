@@ -9,6 +9,7 @@ updated: 01/13/2025
 - Collections no longer appearing out of order in collection editor
 - Fixed bug in collection editor where an item would not always appear after added
 - Feed no longer double reports when someone likes your post
+- Feed at '/feed' no longer loops
 
 ### January 9, 2025
 #### Bug Fixes
