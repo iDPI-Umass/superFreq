@@ -169,7 +169,7 @@
 			</label>
 			<input 
 				class="text" 
-				type="text" 
+				type="text"
 				name="website" 
 				id="website" 
 				value={website} 
