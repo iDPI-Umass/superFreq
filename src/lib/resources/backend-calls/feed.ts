@@ -450,18 +450,20 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
 
             sessionUserPostsReactionsTotal = countSessionUserPostsReactions[0]['reactions_count']
 
-            /* count reactions by users sesssion user follows */
+            /* count reactions by users sesssion user follows on other users' posts */
             const countFollowingReactions = await trx
             .selectFrom('post_reactions')
-            .select((eb) => eb.fn.count<number>('id').as('reactions_count'))
-            .where('user_id', 'in', followingUserIds)
-            .where('active', '=', true)
-            .where((eb) => eb.between('updated_at', timestampStart, timestampEnd))
+            .innerJoin('posts', 'posts.id', 'post_reactions.post_id')
+            .select((eb) => eb.fn.count<number>('post_reactions.id').as('reactions_count'))
+            .where('post_reactions.user_id', 'in', followingUserIds)
+            .where('post_reactions.active', '=', true)
+            .where('posts.user_id', '!=', sessionUserId)
+            .where((eb) => eb.between('post_reactions.updated_at', timestampStart, timestampEnd))
             .execute()
 
             reactionsTotal = countFollowingReactions[0]['reactions_count']
 
-            /* Select followed users reactions to posts */
+            /* Select followed users reactions to other users' posts */
             const selectFollowingReactions = await trx
             .selectFrom('post_reactions as reaction')
             .innerJoin('posts as original_post', 'original_post.id', 'reaction.post_id')
@@ -488,6 +490,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             .where('reaction.user_id', 'in', followingUserIds)
             .where('active', '=', true)
             .where('parent_post_id', 'is', null)
+            .where('original_post.user_id', '!=', sessionUserId)
             .where((eb) => eb.between('reaction.updated_at', timestampStart, timestampEnd))
             .limit(batchSize)
             .offset(offset)
@@ -521,7 +524,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
 
             sessionUserCollectionsSocialTotal = countSessionUserCollectionsSocialTotal[0]['collection_follows_count']
 
-            /* count collections followed users follow */
+            /* count other users' collections that followed users follow */
             const countFollowingCollectionsSocial = await trx
             .selectFrom('collections_social')
             .innerJoin('collections_info as info', 'info.collection_id', 'collections_social.collection_id')
@@ -532,6 +535,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 eb('follows_now', '=', true),
                 eb('info.status', '!=', 'deleted')
             ]))
+            .where('info.owner_id', '!=', sessionUserId)
             .where((eb) => eb.between('collections_social.updated_at', timestampStart, timestampEnd))
             .execute()
 

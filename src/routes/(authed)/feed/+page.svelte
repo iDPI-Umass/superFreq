@@ -20,6 +20,7 @@
     sessionUserId={sessionUserId}
     feedItems={feedItems}
     mode="feed"
+    userActionSuccess={form?.userActionSuccess}
     remaining={remaining}
     collections={sessionUserCollections}
     showCollectionsListModal={showCollectionsListModal}
