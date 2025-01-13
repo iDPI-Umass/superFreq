@@ -37,7 +37,7 @@
 <div class="grid-background">
   <header>
     <a class="logo" href="/">
-      <img alt="Freq" src={logo} />
+      <img class="logo" alt="Freq" src={logo} />
     </a>
 
     <nav class="wide">
@@ -271,6 +271,9 @@
       height: 46px; 
       width: auto;
       margin: auto 1vw;
+  }
+  img.logo {
+    cursor: pointer;
   }
   nav {
     display: flex;
