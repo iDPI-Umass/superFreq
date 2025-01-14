@@ -250,7 +250,7 @@ span.search-tooltip {
 	max-width: 1fr;
 	height: auto;
 	align-items: top;
-	justify-content: center;
+	justify-content: top;
 	margin-left: -1px;
 }
 
