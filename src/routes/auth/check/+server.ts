@@ -14,13 +14,13 @@ export const GET: RequestHandler = async ({ locals: { safeGetSession }}) => {
     let display_name: string | null = null
     let avatar_url: string | null = null
     let select: any
-    
+
     try {
       select = await db
         .selectFrom("profiles")
         .select(['id', 'username', 'display_name', 'avatar_url'])
         .where("id", '=', sessionUserId)
-        .executeTakeFirst()
+        .executeTakeFirstOrThrow()
 
       const profile = await select
       userId = profile?.id as string
