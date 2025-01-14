@@ -368,7 +368,7 @@
     a.attribution {
         width: fit-content;
         background: var(--freq-color-background-badge-light);
-        margin: 0 0 0 auto;
+        margin: auto 0 0 auto;
         padding: var(--freq-height-spacer-quarter) var(--freq-width-spacer-quarter);
         color: var(--freq-color-text-medium);
         font-size: var(--freq-font-size-small);
