@@ -41,9 +41,9 @@ Currently configured to server Last.fm images on the client side by default on a
 
 <svelte:options runes={true} />
 
-{#if coverArtArchiveImgUrl ?? lastFmImgUrl}
-    <img src={coverArtArchiveImgUrl ?? lastFmImgUrl} alt={altText} class={imgClass} />
-{:else if coverArtItem['artist_name'] && coverArtItem['artist_name'] != null}
+<!-- {#if coverArtArchiveImgUrl ?? lastFmImgUrl}
+    <img src={lastFmImgUrl ?? coverArtArchiveImgUrl ?? wave} alt={altText} class={imgClass} /> -->
+{#if coverArtItem['artist_name'] && coverArtItem['artist_name'] != null}
     {#await getLastFmCoverArt(coverArtItem)}
         <img src={wave} alt="loading" class={imgClass} />
     {:then result}
