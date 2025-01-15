@@ -41,13 +41,12 @@ Currently configured to server Last.fm images on the client side by default on a
     let coverArt = $state(wave)
     let text = $state('loading')
 
-    onMount(async () => {
-        const getCoverArt = await getLastFmCoverArt(coverArtItem)
-        coverArt = getCoverArt ? getCoverArt : wave
-        text = getCoverArt ? altText : 'not found'
-        return coverArt
-    })
-
+    // onMount(async () => {
+    //     const getCoverArt = await getLastFmCoverArt(coverArtItem)
+    //     coverArt = getCoverArt ? getCoverArt : wave
+    //     text = getCoverArt ? altText : 'not found'
+    //     return coverArt
+    // })
 </script>
 
 <svelte:options runes={true} />
@@ -55,7 +54,7 @@ Currently configured to server Last.fm images on the client side by default on a
 <!-- {#if coverArtArchiveImgUrl ?? lastFmImgUrl}
     <img src={lastFmImgUrl ?? coverArtArchiveImgUrl ?? wave} alt={altText} class={imgClass} /> -->
 
-<!-- {#if coverArtItem['artist_name'] && coverArtItem['artist_name'] != null}
+{#if coverArtItem['artist_name'] && coverArtItem['artist_name'] != null}
     {#await getLastFmCoverArt(coverArtItem)}
         <img src={wave} alt="loading" class={imgClass} />
     {:then result}
@@ -65,9 +64,9 @@ Currently configured to server Last.fm images on the client side by default on a
     {/await}
 {:else}
     <img src={wave} alt="not found" class={imgClass}  />
-{/if} -->
+{/if}
 
-<img src={coverArt} alt={text} class={imgClass} />
+<!-- <img src={coverArt} alt={text} class={imgClass} /> -->
 
 <style>
     img {
