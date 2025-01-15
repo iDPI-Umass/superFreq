@@ -9,19 +9,30 @@ export const GET: RequestHandler = async ({ locals: { safeGetSession }}) => {
 
     const sessionUserId = session.user?.id as string
 
-    const select = await db
-    .selectFrom("profiles")
-    .select(['id', 'username', 'display_name', 'avatar_url'])
-    .where("id", '=', sessionUserId)
-    .executeTakeFirst()
+    let userId: string | null = null
+    let username: string | null = null
+    let display_name: string | null = null
+    let avatar_url: string | null = null
+    let select: any
 
-    const profile = await select
-    const userId = profile?.id ?? null
-    const username = profile?.username ?? null
-    const display_name = profile?.display_name ?? null
-    const avatar_url = profile?.avatar_url ?? null
+    try {
+      select = await db
+        .selectFrom("profiles")
+        .select(['id', 'username', 'display_name', 'avatar_url'])
+        .where("id", '=', sessionUserId)
+        .executeTakeFirstOrThrow()
 
-    if ( userId && username ) {
+      const profile = await select
+      userId = profile?.id as string
+      username = profile?.username as string
+      display_name = profile?.display_name as string
+      avatar_url = profile?.avatar_url as string
+    }
+    catch (error) {
+      select = null
+    }
+
+    if ( select ) {
       profileStoresObject.set({
         'username': username,
         'display_name': display_name,
