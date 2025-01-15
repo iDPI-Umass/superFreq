@@ -6,6 +6,7 @@ import { validStringCheck } from '$lib/resources/parseData'
 import { selectListSessionUserCollections, saveItemToCollection } from '$lib/resources/backend-calls/collections'
 import { add } from 'date-fns'
 
+let sessionUserId: string
 let loadData = true
 let updateReaction = false
 
@@ -22,9 +23,10 @@ let updatedReactionCount: number
 let saveItemPostId: string
 let sessionUserCollections = [] as App.RowData[]
 
-export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
-    const session = await safeGetSession()
-    const sessionUserId = session.user?.id as string
+export const load: PageServerLoad = async ({ parent }) => {
+    const {session} = await parent()
+    sessionUserId = session?.user.id as string
+
     const batchSize = 5
     const timestampEnd = new Date()
     const timestampStart = add(timestampEnd, {days: -300})
@@ -37,14 +39,17 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
         totalAvailableItems = totalRowCount as number
         remaining = remainingCount as number
 
+        for (const item of feedItems) {
+            console.log(item.reaction_active)
+        }
         loadData = !loadData
     }
 
     if ( updateReaction ) {
-        const reaction = feedItems.find((item) => (item.now_playing_post_id == nowPlayingPostId)) as App.RowData
+        const reactionPost = feedItems.find((item) => (item.now_playing_post_id == nowPlayingPostId)) as App.RowData
 
-        reaction.reaction_active = updatedReactionActive
-        reaction.reaction_count = updatedReactionCount
+        reactionPost.reaction_active = updatedReactionActive
+        reactionPost.reaction_count = updatedReactionCount
 
         updateReaction = false
         loadData = true
@@ -59,9 +64,7 @@ export const actions = {
         loadData = true
         return { loadData }
     },
-    submitReaction: async ({ request, locals: { safeGetSession }}) => {
-        const session = await safeGetSession()
-        const sessionUserId = session.user?.id as string
+    submitReaction: async ({ request }) => {
         const data = await request.formData()
         const postId = data.get('post-id') as string
         const reactionType = data.get('reaction-type') as string
@@ -77,10 +80,7 @@ export const actions = {
 
         return { updateReaction }
     },
-    flagPost: async ({ request, locals: { safeGetSession }}) => {
-        const session = await safeGetSession()
-        const sessionUserId = session.user?.id as string
-
+    flagPost: async ({ request }) => {
         const data = await request.formData()
         const postId = data.get('post-id') as string
 
@@ -90,10 +90,7 @@ export const actions = {
 
         return { userActionSuccess }
     },
-    deletePost: async ({ request, locals: { safeGetSession } }) => {
-        const session = await safeGetSession()
-        const sessionUserId = session.user?.id as string
-
+    deletePost: async ({ request }) => {
         const data = await request.formData()
         const postId = data.get('post-id') as string
 
@@ -103,10 +100,7 @@ export const actions = {
 
         return { success }
     },
-    getCollectionList: async ({ request, locals: { safeGetSession }}) => {
-        const session = await safeGetSession()
-        const sessionUserId = session.user?.id as string
-
+    getCollectionList: async ({ request }) => {
         const data = await request.formData()
         saveItemPostId = data.get('post-id') as string
 
@@ -115,10 +109,7 @@ export const actions = {
         }
         return { showCollectionsModal: true }
     },
-    saveToCollection: async ({ request, locals: { safeGetSession }}) => {
-        const session = await safeGetSession()
-        const sessionUserId = session.user?.id as string
-
+    saveToCollection: async ({ request }) => {
         const data = await request.formData()
         const collectionId = data.get('collection-id') as string
 
