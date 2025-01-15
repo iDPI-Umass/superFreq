@@ -32,7 +32,7 @@ export const GET: RequestHandler = async ({ locals: { safeGetSession }}) => {
       select = null
     }
 
-    if ( select ) {
+    if ( userId && username ) {
       profileStoresObject.set({
         'username': username,
         'display_name': display_name,
