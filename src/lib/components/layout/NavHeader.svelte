@@ -1,10 +1,7 @@
 <script lang="ts">
-  import { goto } from "$app/navigation"
   import { DropdownMenu } from "bits-ui"
   import ChevronDown from 'lucide-svelte/icons/chevron-down';
   import logo from "$lib/assets/images/logo/freq-logo-dark.svg"
-  import wave from "$lib/assets/images/logo/freq-wave.svg"
-  import { profileStoresObject } from "src/lib/stores"
 
   import CoverArt from "src/lib/components/CoverArt.svelte";
 
@@ -21,11 +18,6 @@
     displayName,
     avatarItem
   }: ComponentProps = $props()
-
-  // let profileObject = $state() as App.ProfileObject
-
-  // let profileObject = $derived($profileStoresObject)
-  // let storesUsername = $derived(profileObject.username) as string
 
 </script>
 

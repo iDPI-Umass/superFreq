@@ -1,22 +1,20 @@
 import type { PageServerLoad, Actions } from "../(authed)/account/$types"
-import { profileStoresObject } from "$lib/stores"
 import { newSessionProfile } from "$lib/resources/backend-calls/users"
 import wave from "$lib/assets/images/logo/freq-wave.svg"
 
+let sessionUserId: string
 let email: string
 
-export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
-    const session = await safeGetSession()
-    email =  session.user?.email as string
+export const load: PageServerLoad = async ({ parent }) => {
+    const { session } = await parent()
+    sessionUserId = session?.user.id as string
+    email =  session?.user.email as string
 
     return { email }
 }
 
 export const actions = {
-    create: async ({ request, locals: { safeGetSession }}) => {
-        const session = await safeGetSession()
-        const sessionUserId = session.user?.id as string
-
+    create: async ({ request }) => {
         const formData = await request.formData()
         const username = formData.get('username') as string
         const displayName = formData.get('display-name') as string
@@ -36,13 +34,6 @@ export const actions = {
         }
 
         const update = await newSessionProfile( sessionUserId, profileData, email, avatarItem )
-
-        profileStoresObject.set({
-            'username': username,
-            'display_name': displayName ?? username,
-            'avatar_url': avatarUrl ?? wave,
-          })
-
 
         const success = update.success as boolean
 
