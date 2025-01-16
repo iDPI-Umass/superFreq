@@ -140,10 +140,12 @@
                     ></LikeReact>
                     {#if mode == "feed"}
                         <a href={permalink}>
-                            <Reply size="16" color="var(--freq-color-text-muted)"></Reply>
-                            <span class="descriptor">
-                                reply
-                            </span>
+                            <div class="row-group-icon-description">
+                                <Reply size="16" color="var(--freq-color-text-muted)"></Reply>
+                                <span class="descriptor">
+                                    reply
+                                </span>
+                            </div>
                         </a>
                     {/if}
                     {#if post.artist_mbid || post.user_added_metadata_id }

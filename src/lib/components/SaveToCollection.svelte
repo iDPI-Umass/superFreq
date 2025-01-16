@@ -50,8 +50,12 @@
         class="like" 
         type="submit"
     >
-        <Save class="icon" size="16" color="var(--freq-color-text-muted)"></Save>
-        Save
+        <div class="row-group-icon-description">
+            <Save class="icon" size="16" color="var(--freq-color-text-muted)"></Save>
+            <span class="descriptor">
+                Save
+            </span>
+        </div>
     </button>
 </form>
 
