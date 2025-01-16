@@ -10,6 +10,15 @@
     gap: 0;
 }
 
+@media screen and (max-width: 600px) {
+    .post-panel {
+        width: inherit;
+        margin: var(--freq-spacing-medium);
+        padding: 0;
+        border: 0;
+    }
+}
+
 .post-body {
     width: inherit;
     padding: var(--freq-spacing-small) var(--freq-spacing-medium);
@@ -94,6 +103,14 @@
 .comment-panel {
     margin-top: var(--freq-spacing-large);
     margin-left: var(--freq-spacing-x-large);
+}
+
+
+@media screen and (max-width: 600px) {
+    .comment-panel {
+        max-width: 100%;
+        margin: var(--freq-spacing-small) var(--freq-spacing-small) 0 0;
+    }
 }
 
 .comment {

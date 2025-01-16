@@ -164,10 +164,11 @@
                     <Select.Trigger class="sort-options">
                         <span class="trigger-label">  
                             <Select.Value placeholder="sort order" />
+                        </span>
                             <span class="chevron">
                                 <ChevronDown size={16}></ChevronDown>
                             </span>
-                        </span>
+                        
                     </Select.Trigger>
                     <Select.Content>
                         {#each sortOptions as option}

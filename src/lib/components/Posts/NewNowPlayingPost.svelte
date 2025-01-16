@@ -122,7 +122,7 @@
             <div class="label-group">
                 <label 
                     class="text-label" 
-                    for="album-name"
+                    for="release-group-name"
                 >
                     album name
                 </label>
@@ -143,7 +143,7 @@
             <div class="label-group">
                 <label 
                     class="text-label" 
-                    for="album-name"
+                    for="release-group-name"
                 >
                     album name
                 </label>
@@ -161,7 +161,7 @@
             <div class="label-group">
                 <label
                     class="text-label" 
-                    for="track-name"
+                    for="recording-name"
                 >
                     track name
                 </label>
