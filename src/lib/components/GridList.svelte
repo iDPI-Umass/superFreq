@@ -372,6 +372,7 @@
         padding: var(--freq-height-spacer-quarter) var(--freq-width-spacer-quarter);
         color: var(--freq-color-text-medium);
         font-size: var(--freq-font-size-small);
+        text-align: right;
         text-decoration: underline;
     }
     @media screen and (max-width: 600px) {
@@ -382,6 +383,10 @@
         button.standard  {
            padding: 0;
            font-size: var(--freq-font-size-2x-small);
+        }
+        a.attribution {
+            padding: var(--freq-height-spacer-quarter) calc(var(--freq-width-spacer-quarter) * 0.75);
+            margin-bottom: -1px;
         }
     }
 </style>
