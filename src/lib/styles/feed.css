@@ -23,6 +23,12 @@
     font-size: var(--freq-font-size-medium);
 }
 
+@media screen and (max-width: 600px) {
+    .feed-item-now-playing {
+        width: 100%;
+    }
+}
+
 .feed-item-one-liner {
     display: flex;
     flex-direction: row;
