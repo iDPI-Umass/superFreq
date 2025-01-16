@@ -266,6 +266,7 @@
 
 [data-select-trigger].sort-options {
 	display: flex;
+	max-width: fit-content;
 	color: var( --freq-color-text-muted);
 	background: transparent;
 	font-family: 'Roboto', sans-serif;
@@ -275,12 +276,16 @@
     text-transform: uppercase;
 }
 
+@media screen and (max-width: 600px) {
+	[data-select-trigger].sort-options {
+		align-items: center;
+	}
+}
+
 [data-select-trigger].sort-options span.trigger-label {
 	display: flex;
 	flex-direction: row;
-	width: fit-content;
-	flex-wrap: nowrap;
-	align-items: center;
+	text-wrap: nowrap;
 	margin-left: var(--freq-spacing-small);
 	padding-right: var(--freq-spacing-3x-small);
 	gap: 0;
