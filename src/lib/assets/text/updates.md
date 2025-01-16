@@ -5,7 +5,7 @@ updated: 01/16/2025
 ---
 ### January 16, 2025
 #### Updates
-- Various styling tweaks on the feed, comments, and the collection view
+- Various styling tweaks on the feed, comments, and the collection viewer
 
 ### January 13, 2025
 #### Bug Fixes
