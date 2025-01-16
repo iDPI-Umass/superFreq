@@ -231,7 +231,7 @@
 [data-tabs-list] {
 	display: flex;
 	margin-top: var(--freq-spacing-medium);
-	padding-left: var(--freq-spacing-x-large);
+	padding: 0 var(--freq-spacing-x-large);
 	gap: var(--freq-spacer-gap);
 	border-bottom: var(--freq-border-panel);
 }
