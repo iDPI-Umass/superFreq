@@ -2,6 +2,22 @@ import { db } from 'src/database.ts'
 import { parseISO } from 'date-fns'
 import { prepareAvatarMetadataInsert } from '$lib/resources/parseData'
 
+/* If dot(s) in local-part of email address, output original as well as one without dot(s) */
+export const parsedEmailAddress = function (email: string) {
+    const emailAddressTokens = email.split('@')
+    const localPart = emailAddressTokens[0]
+    const domain = emailAddressTokens[1]
+    const reDot = /[.]/
+    let localPartParsed = localPart
+    if ( localPart.search(reDot) != -1 ) {
+        const localPartTokens = localPart.split('.')
+        localPartParsed = localPartTokens.join('')
+    }
+    const parsedEmail = localPartParsed.concat('@', domain)
+    const validEmailAddresses = [email, parsedEmail]
+    return validEmailAddresses
+}
+
 /* Check login/signup permission */
 
 export const checkLoginPermission = async function ( email: string ) {
@@ -9,7 +25,7 @@ export const checkLoginPermission = async function ( email: string ) {
         await db
         .selectFrom('approved_users')
         .select(['id'])
-        .where('email', '~*', email)
+        .where('email', 'ilike', email)
         .executeTakeFirstOrThrow()
 
         return true
@@ -290,7 +306,7 @@ export const newSessionProfile = async function ( sessionUserId: string, profile
             await trx
             .selectFrom('profiles')
             .select(['username', 'id'])
-            .where('username', '=', username)
+            .where('username', 'ilike', username)
             .where('id', '!=', sessionUserId)
             .executeTakeFirstOrThrow()
 
@@ -303,7 +319,7 @@ export const newSessionProfile = async function ( sessionUserId: string, profile
             .set({
                 user_id: sessionUserId
             })
-            .where('email', '=', email)
+            .where('email', 'ilike', email)
             .executeTakeFirst()
 
             // music metadata inserts for new avatar as release_group
@@ -498,16 +514,13 @@ export const updateSessionProfile = async function ( sessionUserId: string, prof
 export const updateUsername = async function ( sessionUserId: string, newUsername: string ) {
 
     const timestampISOString: string = new Date().toISOString()
-    const timestampISO: Date = parseISO(timestampISOString)
 
     const updateUsername = await db.transaction().execute(async (trx) => {
-        let success: boolean 
-
         try {
             await trx
             .selectFrom('profiles')
             .select(['display_name', 'username', 'id'])
-            .where('username', '=', newUsername)
+            .where('username', 'ilike', newUsername)
             .where('id', '!=', sessionUserId)
             .executeTakeFirstOrThrow()
 
