@@ -751,7 +751,7 @@ export const selectFirehoseFeed = async function ( sessionUserId: string, batchS
             userIds.push(id)
         }
 
-        /* count and fetch recent Now Playing posts by followed users */
+        /* count and fetch recent Now Playing posts */
         let postsTotal = 0
         let posts: App.RowData = []
 
@@ -766,7 +766,7 @@ export const selectFirehoseFeed = async function ( sessionUserId: string, batchS
 
         postsTotal = countPosts[0]['posts_count']
 
-        const selectFollowingPosts = await trx
+        const selectPosts = await trx
         .selectFrom('posts as post')
         .innerJoin('profiles as profile', 'post.user_id', 'profile.id')
         .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profile.avatar_mbid')
@@ -828,14 +828,14 @@ export const selectFirehoseFeed = async function ( sessionUserId: string, batchS
         .orderBy('feed_item_timestamp', 'desc')
         .execute()
 
-        posts = selectFollowingPosts
+        posts = selectPosts
 
         /* count and fetch collection edits */
         let collectionEditsTotal = 0
         let collectionEdits: App.RowData = []
         
         /* count collection edits by all users */
-        const countFollowingCollectionsEdits = await trx
+        const countCollectionsEdits = await trx
         .selectFrom('collections_updates')
         .innerJoin('collections_info as info', 'info.collection_id', 'collections_updates.collection_id')
         .select((eb) => eb.fn.count<number>('collections_updates.collection_id').as('collection_edits_count'))
@@ -844,10 +844,10 @@ export const selectFirehoseFeed = async function ( sessionUserId: string, batchS
         .where((eb) => eb.between('collections_updates.updated_at', timestampStart, timestampEnd))
         .execute()
 
-        collectionEditsTotal = countFollowingCollectionsEdits[0]['collection_edits_count']
+        collectionEditsTotal = countCollectionsEdits[0]['collection_edits_count']
 
         /* get info about those edits */
-        const selectFollowingCollectionsEdits = await trx
+        const selectCollectionsEdits = await trx
         .selectFrom('collections_updates')
         .innerJoin('collections_info as info', 'info.collection_id', 'collections_updates.collection_id')
         .innerJoin('profiles as profile', 'profile.id', 'collections_updates.updated_by')
@@ -859,6 +859,7 @@ export const selectFirehoseFeed = async function ( sessionUserId: string, batchS
             'collections_updates.updated_at as feed_item_timestamp', 
             'collections_updates.updated_by as updated_by',
             'info.title as title',  
+            'info.is_top_albums as is_top_albums',
             'profile.display_name as display_name', 
             'release_groups.img_url as avatar_url',
             'release_groups.last_fm_img_url as avatar_last_fm_img_url',
@@ -873,7 +874,7 @@ export const selectFirehoseFeed = async function ( sessionUserId: string, batchS
         .orderBy('feed_item_timestamp desc')
         .execute()
 
-        collectionEdits = selectFollowingCollectionsEdits
+        collectionEdits = selectCollectionsEdits
 
         const totalRowCount = Number(postsTotal) + Number (collectionEditsTotal)
 

@@ -39,9 +39,6 @@ export const load: PageServerLoad = async ({ parent }) => {
         totalAvailableItems = totalRowCount as number
         remaining = remainingCount as number
 
-        for (const item of feedItems) {
-            console.log(item.reaction_active)
-        }
         loadData = !loadData
     }
 
