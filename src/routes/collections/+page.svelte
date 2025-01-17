@@ -28,7 +28,7 @@
     </PanelHeader>
     <div class="spotlight">
         <h2>
-            <a href="/collection/111">Freq beta test listening club, December 2024</a>
+            <a href="/collection/177">Freq beta test listening club, January 2025</a>
         </h2>
     </div>
     
