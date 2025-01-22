@@ -1,8 +1,12 @@
 ---
 title: Updates
 layout: about
-updated: 01/16/2025
+updated: 01/22/2025
 ---
+### January 22, 2025
+#### Bug Fixes
+- Fixed hyperlink in "(User) updated their top albums collection" feed item
+
 ### January 16, 2025
 #### Updates
 - Various styling tweaks on the feed, comments, and the collection viewer
