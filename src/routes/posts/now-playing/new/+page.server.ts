@@ -4,7 +4,7 @@ import type { PageServerLoad, Actions } from './$types'
 import { insertPost } from '$lib/resources/backend-calls/posts'
 import { getListenUrlData, validStringCheck } from '$lib/resources/parseData'
 
-export const load: PageServerLoad = async ({ parent, locals: { safeGetSession}}) => {
+export const load: PageServerLoad = async ({ parent, locals: { safeGetSession }}) => {
     const session = await safeGetSession()
 
     const { profile } = await parent()

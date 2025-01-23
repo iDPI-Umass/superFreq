@@ -5,8 +5,8 @@ import wave from "$lib/assets/images/logo/freq-wave.svg"
 let sessionUserId: string
 let email: string
 
-export const load: PageServerLoad = async ({ parent }) => {
-    const { session } = await parent()
+export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
+    const { session } = await safeGetSession()
     sessionUserId = session?.user.id as string
     email =  session?.user.email as string
 

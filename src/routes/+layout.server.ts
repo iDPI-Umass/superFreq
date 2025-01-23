@@ -3,24 +3,24 @@ import { db } from 'src/database.ts'
 import wave from "$lib/assets/images/logo/freq-wave.svg"
 
 export const load: LayoutServerLoad = async ({ depends, locals: { safeGetSession }, cookies }) => {
-  const { session, user } = await safeGetSession()
+  const { session } = await safeGetSession()
 
   if ( session ) {
-    const sessionUserId = user?.id as string
+    const sessionUserId = session?.user.id as string
     const selectSessionProfile = await db
       .selectFrom('profiles')
       .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profiles.avatar_mbid')
       .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
       .select([
-        'username', 
-        'display_name', 
-        'website', 
-        'avatar_url',
+        'profiles.username as username', 
+        'profiles.display_name as display_name', 
+        'profiles.website as website', 
+        'profiles.avatar_url as avatar_url',
         'release_groups.last_fm_img_url as avatar_last_fm_img_url',
         'release_groups.release_group_name as avatar_release_group_name',
         'artists.artist_name as avatar_artist_name'
       ])
-      .where('profiles.id', '=', user?.id as string)
+      .where('profiles.id', '=', sessionUserId)
       .executeTakeFirst()
 
     const profile = await selectSessionProfile

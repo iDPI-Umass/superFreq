@@ -3,7 +3,7 @@ import { parseISO } from "date-fns"
 import type { PageServerLoad, Actions } from './$types'
 import { insertCollection } from 'src/lib/resources/backend-calls/collections'
 
-export const load: PageServerLoad = async ({ parent, locals: {safeGetSession} }) => {
+export const load: PageServerLoad = async ({ parent, locals: { safeGetSession }}) => {
   const session = await safeGetSession()
 
   const { profile } = await parent()

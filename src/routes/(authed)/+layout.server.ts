@@ -1,8 +1,9 @@
 import { redirect } from "@sveltejs/kit"
 
-export async function load ({ parent }) {
+export async function load ({ parent, locals: { safeGetSession } }) {
 
-    const { profile, session } = await parent()
+    const { session } = await safeGetSession()
+    const { profile } = await parent()
 
     const username = profile?.username ?? null
 

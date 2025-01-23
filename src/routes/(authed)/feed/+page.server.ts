@@ -22,8 +22,8 @@ let updatedReactionCount: number
 let saveItemPostId: string
 let sessionUserCollections = [] as App.RowData[]
 
-export const load: PageServerLoad = async ({ parent }) => {
-    const { session } = await parent()
+export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
+    const { session } = await safeGetSession()
     sessionUserId = session?.user.id as string
     const batchSize = 5
     const timestampEnd = new Date()
