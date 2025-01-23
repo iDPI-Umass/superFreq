@@ -25,9 +25,10 @@ let editedText: string
 let saveItemPostId: string
 let collections = [] as App.RowData[]
 
-export const load: PageServerLoad = async ({ params, parent }) => {
+export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSession } }) => {
 
-    const { profile, session } = await parent()
+    const { session } = await safeGetSession()
+    const { profile } = await parent()
 
     let username = profile?.username ?? null
 
