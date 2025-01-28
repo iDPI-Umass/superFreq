@@ -50,6 +50,7 @@
     {@render formInputs("submitReaction")}
     {@render formInputs("delete")}
     {@render formInputs("flagPost")}
+    {#if post?.status != 'deleted'}
     <NowPlayingPost
         sessionUserId={sessionUserId}
         post={post}
@@ -69,4 +70,11 @@
             ></PostReply>
         </div>
     {/each}
+    {:else}
+    <div class="panel">
+        <p>
+            This post has been deleted.
+        </p>
+    </div>
+    {/if}
 </div>
