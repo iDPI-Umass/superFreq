@@ -63,8 +63,6 @@
         'artist_name': post.avatar_artist_name,
         'release_group_name': post.avatar_release_group_name
     }
-
-    console.log(post.status)
 </script>
 
 <svelte:options runes={true} />
