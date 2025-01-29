@@ -5,7 +5,7 @@
     import PostMenuSessionUser from 'src/lib/components/menus/PostMenuSessionUser.svelte'
     import LikeReact from '$lib/components/Posts/LikeReact.svelte'
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte'
-    import { displayDate } from '$lib/resources/parseData'
+    import { displayDate, parseMarkdown } from '$lib/resources/parseData'
 
     import Reply from 'lucide-svelte/icons/reply'
     import Heart from 'lucide-svelte/icons/heart'
@@ -81,9 +81,11 @@
                 {/if}
             </div>
         </div>
-        <p class="comment-text">
-            {reply.text}
-        </p>
+        <div class="comment-text">
+            {#await parseMarkdown(reply.text) then text}
+            {@html text}
+            {/await}
+        </div>
         <div class="comment-reaction-row">
             <div class="row-group">
                 <!-- <Collapsible.Root bind:open={openState}>
