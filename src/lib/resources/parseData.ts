@@ -3,6 +3,7 @@ import { parseHTML } from 'linkedom'
 import rehypeStringify from 'rehype-stringify'
 import remarkGfm from 'remark-gfm'
 import remarkParse from 'remark-parse'
+import remarkUnlink from 'remark-unlink'
 import remarkStringify from 'remark-stringify'
 import remarkRehype from 'remark-rehype'
 import {unified} from 'unified'
@@ -62,6 +63,7 @@ export function parseTimestamp ( itemTimestamp: Date ) {
 export const parseMarkdown = async function ( text: string ) {
     const parsedText = await unified()
         .use(remarkParse)
+        .use(remarkUnlink)
         .use(remarkStringify)
         .use(remarkGfm)
         .use(remarkRehype, {allowDangerousHtml: true})
