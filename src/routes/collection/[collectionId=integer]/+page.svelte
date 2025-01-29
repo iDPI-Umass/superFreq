@@ -1,6 +1,7 @@
 <script lang="ts">
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
+    import { parseMarkdown } from '$lib/resources/parseData'
     
     import { Toolbar } from "bits-ui"
     import { Select } from "bits-ui"
@@ -155,7 +156,13 @@
                 </InfoBox>
                 {/if}
             </div>
-            <p class="collection-description-text">{collectionInfo?.description_text ?? ''}</p>
+            <div class="collection-description-text">
+                {#await collectionInfo.description_text then text}
+                    {@html text}
+                {:catch}
+                    {''}
+                {/await}
+            </div>
         </div>
 
         <div class="sort">

@@ -1,6 +1,12 @@
 import { parseISO } from "date-fns"
 import { parseHTML } from 'linkedom'
-
+import rehypeStringify from 'rehype-stringify'
+import remarkGfm from 'remark-gfm'
+import remarkParse from 'remark-parse'
+import remarkUnlink from 'remark-unlink'
+import remarkStringify from 'remark-stringify'
+import remarkRehype from 'remark-rehype'
+import {unified} from 'unified'
 
 export function validStringCheck ( value: string ) {
     if ( value && value.length > 0 ) {
@@ -46,6 +52,26 @@ export function parseTimestamp ( itemTimestamp: Date ) {
     const timestamp = Date.parse(timestampString).toString()
     return timestamp
 }
+
+/*
+//
+** Markdown parsing
+//
+*/
+
+/* Takes string from database and outputs html. Need to use {@html} tag in HTML to display what this funciton outputs */
+export const parseMarkdown = async function ( text: string ) {
+    const parsedText = await unified()
+        .use(remarkParse)
+        .use(remarkUnlink)
+        .use(remarkStringify)
+        .use(remarkGfm)
+        .use(remarkRehype, {allowDangerousHtml: true})
+        .use(rehypeStringify)
+        .process(text)
+
+        return parsedText
+} 
 
 /*
 //

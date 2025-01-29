@@ -3,7 +3,7 @@
     import EditPostBody from '$lib/components/Posts/EditPostBody.svelte'
     import LikeReact from '$lib/components/Posts/LikeReact.svelte'
     import SaveToCollection from '$lib/components/SaveToCollection.svelte'
-    import { displayDate } from '$lib/resources/parseData'
+    import { displayDate, parseMarkdown } from '$lib/resources/parseData'
 
     import Reply from 'lucide-svelte/icons/reply'
     import Link from 'lucide-svelte/icons/link-2'
@@ -111,7 +111,9 @@
             {/if}
             {#if !editState}
                 <p>
-                    {post.text}
+                    {#await parseMarkdown(post.text) then text}
+                    {@html text}
+                    {/await}
                 </p>
             {:else}
                 <EditPostBody
