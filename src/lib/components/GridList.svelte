@@ -72,23 +72,19 @@
 
     let items = $state(collectionContents)
 
-    // $effect(() => {
-    //     items = collectionContents
-    // })
+    $effect(() => {
+        items = collectionContents
+    })
 
     const flipDurationMs = 300;
 
     function handleSort( e: any ) {
         items = e.detail.items;
-        console.log(items)
     }
 
 	function handleFinalize( e: any ) {
-		// const { items: newItems } = e.detail;
-        items = e.detail.items
-        // items = newItems
-        // collectionContents = newItems
-        collectionContents = items
+		const { items: newItems } = e.detail;
+        collectionContents = newItems
 	}
 
     // delete item from collection editor
@@ -310,7 +306,7 @@
             onconsider={handleSort} 
             onfinalize={handleFinalize}
         >
-            {#each items as contentItem, index(contentItem.item_position)}
+            {#each items as contentItem(contentItem.id)}
                 <li 
                     aria-label={ariaLabel(contentItem, ( contentItem["item_type"] ?? collectionType ))} 
                     animate:flip="{{duration: flipDurationMs}}" 
