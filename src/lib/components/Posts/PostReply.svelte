@@ -5,6 +5,7 @@
     import PostMenuSessionUser from 'src/lib/components/menus/PostMenuSessionUser.svelte'
     import LikeReact from '$lib/components/Posts/LikeReact.svelte'
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte'
+    import InlineMarkdownText from '$lib/components/InlineMarkdownText.svelte'
     import { displayDate, parseMarkdown } from '$lib/resources/parseData'
 
     import Reply from 'lucide-svelte/icons/reply'
@@ -82,9 +83,7 @@
             </div>
         </div>
         <div class="comment-text">
-            {#await parseMarkdown(reply.text) then text}
-            {@html text}
-            {/await}
+            <InlineMarkdownText text={reply.text}></InlineMarkdownText>
         </div>
         <div class="comment-reaction-row">
             <div class="row-group">

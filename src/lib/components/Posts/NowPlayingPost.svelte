@@ -7,9 +7,10 @@
 
     import Reply from 'lucide-svelte/icons/reply'
     import Link from 'lucide-svelte/icons/link-2'
-	import ListenEmbed from './ListenEmbed.svelte'
-    import NowPlayingTag from './NowPlayingTag.svelte'
-    import CoverArt from '../CoverArt.svelte'
+	import ListenEmbed from '$lib/components/Posts/ListenEmbed.svelte'
+    import NowPlayingTag from '$lib/components/Posts/NowPlayingTag.svelte'
+    import CoverArt from '$lib/components/CoverArt.svelte'
+    import InlineMarkdownText from '$lib/components/InlineMarkdownText.svelte'
 
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
@@ -110,11 +111,7 @@
                 </NowPlayingTag>
             {/if}
             {#if !editState}
-                <p>
-                    {#await parseMarkdown(post.text) then text}
-                    {@html text}
-                    {/await}
-                </p>
+                <InlineMarkdownText text={post.text}></InlineMarkdownText>
             {:else}
                 <EditPostBody
                     postData={post}

@@ -1,7 +1,6 @@
 <script lang="ts">
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
-    import { parseMarkdown } from '$lib/resources/parseData'
     
     import { Toolbar } from "bits-ui"
     import { Select } from "bits-ui"
@@ -11,6 +10,7 @@
 
     import GridList from "$lib/components/GridList.svelte";
     import InfoBox from '$lib/components/InfoBox.svelte'
+    import InlineMarkdownText from '$lib/components/InlineMarkdownText.svelte'
 	import { tick } from 'svelte';
 
     // import { insertCollectionFollow, updateCollectionFollow } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions';
@@ -157,11 +157,7 @@
                 {/if}
             </div>
             <div class="collection-description-text">
-                {#await collectionInfo.description_text then text}
-                    {@html text}
-                {:catch}
-                    {''}
-                {/await}
+                <InlineMarkdownText text={collectionInfo?.description_text}></InlineMarkdownText>
             </div>
         </div>
 
