@@ -72,18 +72,23 @@
 
     let items = $state(collectionContents)
 
-    $effect(() => items = collectionContents)
+    // $effect(() => {
+    //     items = collectionContents
+    // })
 
     const flipDurationMs = 300;
 
     function handleSort( e: any ) {
         items = e.detail.items;
+        console.log(items)
     }
 
 	function handleFinalize( e: any ) {
-		const { items: newItems } = e.detail;
-        items = newItems
-        collectionContents = newItems
+		// const { items: newItems } = e.detail;
+        items = e.detail.items
+        // items = newItems
+        // collectionContents = newItems
+        collectionContents = items
 	}
 
     // delete item from collection editor

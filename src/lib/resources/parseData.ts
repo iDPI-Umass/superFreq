@@ -70,7 +70,9 @@ export const parseMarkdown = async function ( text: string ) {
         .use(rehypeStringify)
         .process(text)
 
-        return parsedText
+    const formattedText = parsedText ? parsedText : ''
+
+    return formattedText
 } 
 
 /*
