@@ -372,7 +372,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
 
             posts = selectFollowingPosts
         }
-        
+        // random comment
         /* count and fetch recent comments from one followed user on another followed user's post */
         let commentsTotal = 0
         let comments: App.RowData = []
