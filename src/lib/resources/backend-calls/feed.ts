@@ -6,6 +6,39 @@ Selects batches of data to populate session user's feed in batches within a part
 'options' specifices what type of data shows up in feed, expects an object formatted as {'options': [values]} containing any of the following values: ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits'] 
 */
 
+export const feedRewrite = async function ( sessionUserId: string, batchSize: number, batchIterator: number, timestampStart: Date, timestampEnd: Date, options: App.Lookup ) {
+    // need to figure out how to get sessionUserId into user following list
+    // need to figure out how to aggregate timestamps for each feed item into a feed_item_timestamp column for ordering
+
+    const offset = batchSize * batchIterator
+
+    const select = await db.transaction().execute(async (trx) => {
+        const selectFollowingList = await trx
+        .selectFrom('profile_display')
+        .select('users_following')
+        .where('user_id', '=', sessionUserId)
+        .executeTakeFirst()
+
+        const following = selectFollowingList?.users_following as string[]
+
+        const feedItems = await trx
+        .selectFrom('feed_items')
+        .selectAll()
+        .where('user_id', 'in', following)
+        .where((eb) => eb.between('timestamp', timestampStart, timestampEnd))
+        .limit(batchSize)
+        .orderBy('timestamp', 'desc')
+        .offset(offset)
+        .execute()
+
+        return { feedItems }
+    })
+
+    const feedData = await select
+
+    return { feedData }
+}
+
 export const selectFeedData = async function ( sessionUserId: string, batchSize: number, batchIterator: number, feedItemCount: number, timestampStart: Date, timestampEnd: Date, options: App.Lookup ) {
 
     const offset = batchSize * batchIterator
