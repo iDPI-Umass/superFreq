@@ -3,6 +3,11 @@ title: Updates
 layout: about
 updated: 01/29/2025
 ---
+
+### Feb 20, 2025
+#### Bug Fixes
+- Attempting to fix bug where people are posting to each other's profiles.
+
 ### January 29, 2025
 #### Updates
 - Markdown can now be used in posts and collection descriptions. Hyperlinking, image embeds, and other things involving embedded URLs are currently disabled.  
