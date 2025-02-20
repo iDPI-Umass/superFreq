@@ -45,7 +45,7 @@
         'release_date': null,
         'label': null,
         'episode_title': null,
-        'show_name': null,
+        'show_title': null,
         'listen_url': null,
         'item_position': null,
         'id': null
@@ -215,7 +215,7 @@
             <div class="label-group">
                 <label 
                     class="text-label" 
-                    for="show_name"
+                    for="show_title"
                 >
                    show name / mix series
                 </label>
@@ -226,9 +226,9 @@
             <input 
                 class="text" 
                 type="text" 
-                name="show_name" 
-                id="show_name" 
-                bind:value={newItem.show_name} required 
+                name="show_title" 
+                id="show_title" 
+                bind:value={newItem.show_title} required 
             />
             <div class="label-group">
                 <label 

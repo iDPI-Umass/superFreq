@@ -1,11 +1,12 @@
 ---
 title: Updates
 layout: about
-updated: 01/29/2025
+updated: 02/20/2025
 ---
 
 ### Feb 20, 2025
 #### Bug Fixes
+- Collection display 500 error addressed
 - Attempting to fix bug where people are posting to each other's profiles.
 
 ### January 29, 2025
