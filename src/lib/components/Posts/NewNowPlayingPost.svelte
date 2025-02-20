@@ -212,7 +212,7 @@
                 name="show" 
                 type="text"
                 placeholder="show" 
-                value={addedItem?.show_name ?? null}
+                value={addedItem?.show_title ?? null}
             />
         {/if}
         <label 

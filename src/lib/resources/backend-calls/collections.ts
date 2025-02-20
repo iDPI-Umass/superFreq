@@ -390,7 +390,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
             'user_added_metadata.release_group_name as user_added_release_group_name',
             'user_added_metadata.recording_name as user_added_recording_name',
             'user_added_metadata.episode_title as user_added_episode_title',
-            'user_added_metadata.show_name as user_added_show_name',
+            'user_added_metadata.show_title as user_added_show_title',
             'user_added_metadata.listen_url as user_added_listen_url',
             'insert_profile.username as inserted_by_username',
             'insert_profile.display_name as inserted_by_display_name',
@@ -478,7 +478,7 @@ export const selectEditableCollectionContents = async function ( collectionId: s
                 'user_added_metadata.release_group_name as user_added_release_group_name',
                 'user_added_metadata.recording_name as user_added_recording_name',
                 'user_added_metadata.episode_title as user_added_episode_title',
-                'user_added_metadata.show_name as user_added_show_name',
+                'user_added_metadata.show_title as user_added_show_title',
                 'insert_profile.username as inserted_by_username',
                 'insert_profile.display_name as inserted_by_display_name',
                 'update_user.username as updated_by_username',
@@ -633,7 +633,7 @@ export const insertCollection = async function ( sessionUserId: string, collecti
                     'release_group_name': item['release_group_name'],
                     'recording_name': item['recording_name'],
                     'episode_title': item['episode_title'],
-                    'show_name': item['show_name'],
+                    'show_title': item['show_title'],
                     'added_by': sessionUserId,
                     'added_at': timestampISO,
                     'listen_url': item['listen_url'],
@@ -712,14 +712,14 @@ export const insertCollection = async function ( sessionUserId: string, collecti
             const releaseGroupName = row['release_group_name']
             const recordingName = row['recording_name']
             const episodeTitle = row['episode_title']
-            const showName = row['show_name']
+            const showName = row['show_title']
 
             const collectionItemIndex = collectionItems.findIndex((item) => (
                 item['artist_name'] == artistName &&
                 item['release_group_name'] == releaseGroupName &&
                 item['recording_name'] == recordingName &&
                 item['episode_title'] == episodeTitle &&
-                item['show_name'] == showName
+                item['show_title'] == showName
             ))
 
             collectionItems[collectionItemIndex]['user_added_metadata_id'] = row['id']
@@ -770,7 +770,7 @@ export const updateCollection = async function ( sessionUserId: string, collecti
                 'release_group_name': item['release_group_name'],
                 'recording_name': item['recording_name'],
                 'episode_title': item['episode_title'],
-                'show_name': item['show_name'],
+                'show_title': item['show_title'],
                 'added_by': sessionUserId,
                 'added_at': timestampISO,
                 'listen_url': item['listen_url'],
@@ -862,14 +862,14 @@ export const updateCollection = async function ( sessionUserId: string, collecti
             const releaseGroupName = row['release_group_name']
             const recordingName = row['recording_name']
             const episodeTitle = row['episode_title']
-            const showName = row['show_name']
+            const showName = row['show_title']
 
             const collectionItemIndex = collectionItems.findIndex((item) => (
                 item['artist_name'] == artistName &&
                 item['release_group_name'] == releaseGroupName &&
                 item['recording_name'] == recordingName &&
                 item['episode_title'] == episodeTitle &&
-                item['show_name'] == showName
+                item['show_title'] == showName
             ))
 
             collectionItems[collectionItemIndex]['user_added_metadata_id'] = row['id']

@@ -76,7 +76,7 @@ export const insertPost = async function ( postData: any ) {
             "release_group_mbid": postData["release_group_mbid"],
             "recording_name": postData["recording_name"],
             "episode_title": postData["episode_title"],
-            "show_name": postData["show_name"],
+            "show_title": postData["show_title"],
             "listen_url": postData["listen_url"],
             "added_by": postData["user_id"]
         }]
