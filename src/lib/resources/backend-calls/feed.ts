@@ -1,3 +1,4 @@
+import { sql } from 'kysely'
 import { db } from 'src/database.ts'
 
 /* 
@@ -6,7 +7,48 @@ Selects batches of data to populate session user's feed in batches within a part
 'options' specifices what type of data shows up in feed, expects an object formatted as {'options': [values]} containing any of the following values: ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits'] 
 */
 
-export const selectFeedData = async function ( sessionUserId: string, batchSize: number, batchIterator: number, feedItemCount: number, timestampStart: Date, timestampEnd: Date, options: App.Lookup ) {
+export const selectFeedData = async function ( sessionUserId: string, batchSize: number, batchIterator: number, timestampStart: Date, timestampEnd: Date, options: App.Lookup ) {
+
+    const offset = batchSize * batchIterator
+
+    const feedOptions = options.options as string[]
+
+    const select = await db.transaction().execute(async (trx) => {
+        const selectFollowingList = await trx
+        .selectFrom('profile_display')
+        .select('users_following')
+        .where('user_id', '=', sessionUserId)
+        .executeTakeFirst()
+
+        const following = selectFollowingList?.users_following as string[]
+
+        const feedData = await trx
+        .selectFrom('feed_items')
+        .selectAll()
+        .where('user_id', 'in', following)
+        .where((eb) => eb.between('timestamp', timestampStart, timestampEnd))
+        .limit(batchSize)
+        .orderBy('timestamp', 'desc')
+        .offset(offset)
+        .execute()
+
+        const totalFeedItemsRows = await trx
+        .selectFrom('feed_items')
+        .select((eb) => eb.fn.count('timestamp').as('feed_rows_count'))
+        .where('user_id', 'in', following)
+        .where((eb) => eb.between('timestamp', timestampStart, timestampEnd))
+        .execute()
+        return { feedData, totalFeedItemsRows }
+    })
+
+    const { feedData, totalFeedItemsRows } = await select
+
+    const totalRowCount = totalFeedItemsRows[0]['feed_rows_count'] as number
+
+    return { feedData, totalRowCount }
+}
+
+export const oldFeed = async function ( sessionUserId: string, batchSize: number, batchIterator: number, feedItemCount: number, timestampStart: Date, timestampEnd: Date, options: App.Lookup ) {
 
     const offset = batchSize * batchIterator
 
@@ -372,7 +414,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
 
             posts = selectFollowingPosts
         }
-        
+        // random comment
         /* count and fetch recent comments from one followed user on another followed user's post */
         let commentsTotal = 0
         let comments: App.RowData = []
@@ -724,7 +766,58 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
     return { feedData, totalRowCount, remainingCount }
 }
 
-export const selectFirehoseFeed = async function ( sessionUserId: string, batchSize: number, batchIterator: number, feedItemCount: number, timestampStart: Date, timestampEnd: Date ) {
+export const selectFirehoseFeed = async function ( sessionUserId: string, batchSize: number, batchIterator: number, timestampStart: Date, timestampEnd: Date ) {
+
+    const offset = batchSize * batchIterator
+
+    const select = await db.transaction().execute(async (trx) => {
+        const selectFollowingList = await trx
+        .selectFrom('profiles')
+        .select('id')
+        .where(({not, exists, selectFrom}) => not(
+            exists(
+                selectFrom('user_moderation_actions')
+                .selectAll()
+                .whereRef('user_moderation_actions.user_id', '=', 'profiles.id')
+                .where('user_moderation_actions.target_user_id', '=', sessionUserId )
+                .where('type', '=', 'block')
+                .where('active', '=', true)
+        )))
+        .execute()
+
+        const following = [] as string[]
+
+        for ( const profile of selectFollowingList ) {
+            following.push(profile.id)
+        }
+
+        const feedData = await trx
+        .selectFrom('feed_items')
+        .selectAll()
+        .where('user_id', 'in', following)
+        .where((eb) => eb.between('timestamp', timestampStart, timestampEnd))
+        .limit(batchSize)
+        .orderBy('timestamp', 'desc')
+        .offset(offset)
+        .execute()
+
+        const totalFeedItemsRows = await trx
+        .selectFrom('feed_items')
+        .select((eb) => eb.fn.count('timestamp').as('feed_rows_count'))
+        .where('user_id', 'in', following)
+        .where((eb) => eb.between('timestamp', timestampStart, timestampEnd))
+        .execute()
+        return { feedData, totalFeedItemsRows }
+    })
+
+    const { feedData, totalFeedItemsRows } = await select
+
+    const totalRowCount = totalFeedItemsRows[0]['feed_rows_count'] as number
+
+    return { feedData, totalRowCount }
+}
+
+export const oldSelectFirehoseFeed = async function ( sessionUserId: string, batchSize: number, batchIterator: number, feedItemCount: number, timestampStart: Date, timestampEnd: Date ) {
 
     const offset = batchSize * batchIterator
 

@@ -15,7 +15,12 @@ let userAction = false
 let updateReaction = false
 
 let profileData: any = null
-let feedItems: any = null
+
+let batchIterator = 0
+const feedItems = [] as App.RowData[]
+let feedItemCount = 0
+let totalAvailableItems = 0
+let remaining = 0
 
 let nowPlayingPostId: string
 let updatedReactionActive: boolean
@@ -31,9 +36,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
 
     const profileUsername = params.username
     
-    const batchSize = 5
-    const batchIterator = 0
-    const feedItemCount = 0
+    const batchSize = 10
     const timestampEnd = new Date()
     const timestampStart = add(timestampEnd, {days: -300})
     const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
@@ -46,15 +49,20 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
             throw redirect(303, '/')
         }
         else if ( sessionUserId == profileData.profileUserData.id) {
-            const { feedData } = await selectFeedData( sessionUserId, batchSize, batchIterator, feedItemCount, timestampStart, timestampEnd, options)
+            const { feedData, totalRowCount } = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
 
-            feedItems = feedData
+            feedItems.push(...feedData)
+            feedItemCount = feedItems.length
+    
+            totalAvailableItems = totalRowCount as number
+            remaining = totalRowCount - feedItemCount
+            loadData = !loadData
         }
         else if ( sessionUserId != profileData.profileUserData.id ) {
             const selectPosts = await selectUserPostsSample( sessionUserId, profileUsername, batchSize )
     
             const { posts } = selectPosts as App.NestedObject
-            feedItems = posts
+            feedItems.push(...posts)
         }
     }
     
@@ -83,10 +91,15 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
         reaction.reaction_count = updatedReactionCount
     }
 
-    return { sessionUserId, profileData, feedItems, profileUsername, sessionUserCollections, updatesPageUpdatedAt }
+    return { sessionUserId, profileData, feedItems, totalAvailableItems, remaining, profileUsername, sessionUserCollections, updatesPageUpdatedAt }
 }
 
 export const actions = { 
+    loadMore: async() => {
+        batchIterator ++
+        loadData = true
+        return { loadData }
+    },
     blockUser: async({ request }) => {
         const data = await request.formData()
         const profileUserId = data.get('profile-user-id') as string

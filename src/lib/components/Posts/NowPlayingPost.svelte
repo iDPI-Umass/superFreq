@@ -36,7 +36,7 @@
         showSaveSucessModal = $bindable(false)
     }: ComponentProps = $props()
 
-    const permalinkTimestampString = (post?.created_at ?? post?.feed_item_timestamp).toISOString()
+    const permalinkTimestampString = (post?.created_at ?? post?.timestamp).toISOString()
     const permalinkTimestamp = Date.parse(permalinkTimestampString).toString()
 
     const permalink = `/posts/${post.username}/now-playing/${permalinkTimestamp}`
@@ -87,7 +87,7 @@
                     </a>
                     <a href={permalink}>
                         <span class="date" aria-label="permalink">
-                            {displayDate(post.created_at ?? post.feed_item_timestamp)}
+                            {displayDate(post.created_at ?? post.timestamp)}
                             <Link size="15" color=var(--freq-color-text-muted)></Link>
                         </span>
                     </a>
