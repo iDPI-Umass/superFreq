@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
     import Feed from '$lib/components/Feed.svelte'
 
     interface Props {
@@ -14,4 +14,4 @@
     sessionUserId={sessionUserId}
     feedItems={feedItems}
     mode="feed"
-></Feed>
+></Feed> -->
