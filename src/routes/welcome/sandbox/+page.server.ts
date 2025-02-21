@@ -11,10 +11,14 @@ export const load: PageServerLoad = async ( {locals: { safeGetSession }}) => {
     const timestampStart = add(timestampEnd, {days: -300})
     const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
 
-    const feedData = await feedRewrite( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
+    const {feedData} = await feedRewrite( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
+
+    const { feedItems } = feedData
+
+    console.log(feedItems.length)
 
     // console.log(feedData.length)
     // console.log(feedData)
 
-    return { feedData }
+    return { sessionUserId, feedItems }
 }

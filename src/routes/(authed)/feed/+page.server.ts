@@ -25,18 +25,18 @@ let sessionUserCollections = [] as App.RowData[]
 export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
     const { session } = await safeGetSession()
     sessionUserId = session?.user.id as string
-    const batchSize = 5
+    const batchSize = 20
     const timestampEnd = new Date()
     const timestampStart = add(timestampEnd, {days: -300})
     const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
 
     if ( loadData ) {
-        const { feedData, totalRowCount, remainingCount } = await selectFeedData( sessionUserId, batchSize, batchIterator, feedItemCount, timestampStart, timestampEnd, options )
+        const { feedData, totalRowCount } = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options )
         feedItems.push(...feedData)
         feedItemCount = feedItems.length
 
         totalAvailableItems = totalRowCount as number
-        remaining = remainingCount as number
+        remaining = totalRowCount - feedItemCount
         loadData = !loadData
     }
 
