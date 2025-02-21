@@ -24,10 +24,10 @@ let updatedReactionCount: number
 let saveItemPostId: string
 let sessionUserCollections = [] as App.RowData[]
 
-export const load: PageServerLoad = async ({ params, parent}) => {
+export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}) => {
 
-    const parentData = await parent()
-    sessionUserId = parentData.sessionUserId as string
+    const { session } = await safeGetSession()
+    sessionUserId = session?.user.id as string
 
     const profileUsername = params.username
     
