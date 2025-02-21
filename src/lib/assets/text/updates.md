@@ -1,8 +1,12 @@
 ---
 title: Updates
 layout: about
-updated: 02/20/2025
+updated: 02/21/2025
 ---
+
+### Feb 21, 2025
+#### Bug Fixes
+- Fixed feed so all items appear in correct reverse chronological order
 
 ### Feb 20, 2025
 #### Bug Fixes
