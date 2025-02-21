@@ -74,8 +74,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     }
 
     function findNowPlayingPost( item: App.RowData, nowPlayingPostId: string ) {
-        const keys = Object.keys(item)
-        if ( keys.includes('now_playing_post_id')  && item["now_playing_post_id"] == nowPlayingPostId ) { 
+        if ( item.post_id == nowPlayingPostId ) { 
             return true
         }
         return false
@@ -86,6 +85,8 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
         loadData = true
 
         const reaction = feedItems.find((element) => findNowPlayingPost(element, nowPlayingPostId)) as App.RowData
+
+        console.log(reaction)
 
         reaction.reaction_active = updatedReactionActive
         reaction.reaction_count = updatedReactionCount
