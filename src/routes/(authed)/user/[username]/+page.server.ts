@@ -22,7 +22,7 @@ let feedItemCount = 0
 let totalAvailableItems = 0
 let remaining = 0
 
-let nowPlayingPostId: string
+let postId: string
 let updatedReactionActive: boolean
 let updatedReactionCount: number
 
@@ -73,8 +73,8 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
         profileData = await selectProfilePageData( sessionUserId, profileUsername )
     }
 
-    function findNowPlayingPost( item: App.RowData, nowPlayingPostId: string ) {
-        if ( item.post_id == nowPlayingPostId ) { 
+    function findPost( item: App.RowData, postId: string ) {
+        if ( item.post_id == postId ) { 
             return true
         }
         return false
@@ -82,9 +82,8 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     
     if ( updateReaction ) {
         updateReaction = false 
-        loadData = true
 
-        const reaction = feedItems.find((element) => findNowPlayingPost(element, nowPlayingPostId)) as App.RowData
+        const reaction = feedItems.find((element) => findPost(element, postId)) as App.RowData
 
         console.log(reaction)
 
@@ -212,7 +211,7 @@ export const actions = {
     },
     flagPost: async ({ request }) => {
         const data = await request.formData()
-        const postId = data.get('post-id') as string
+        postId = data.get('post-id') as string
 
         const flag = await insertPostFlag( sessionUserId, postId )
 
@@ -222,7 +221,7 @@ export const actions = {
     },
     deletePost: async ({ request }) => {
         const data = await request.formData()
-        const postId = data.get('post-id') as string
+        postId = data.get('post-id') as string
 
         const submitDelete = await deletePost( sessionUserId, postId )
 
@@ -232,10 +231,10 @@ export const actions = {
     },
     submitReaction: async ({ request }) => {
         const data = await request.formData()
-        nowPlayingPostId = data.get('post-id') as string
+        postId = data.get('post-id') as string
         const reactionType = data.get('reaction-type') as string
 
-        const reaction = await insertUpdateReaction( sessionUserId, nowPlayingPostId, reactionType )
+        const reaction = await insertUpdateReaction( sessionUserId, postId, reactionType )
 
         const userActionSuccess = reaction ? true : false
 

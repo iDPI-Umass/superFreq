@@ -54,8 +54,9 @@
         editState = !editState
     }
 
-    let reactionActiveFeed = $derived(post?.reaction_user_ids ? post?.reaction_user_ids.includes(sessionUserId) : false) as boolean
-    let reactionActive = $derived(post?.reaction_active ?? false) as boolean
+    console.log(post?.reaction_user_ids.includes(sessionUserId))
+    let reactionActiveFeed = $derived(post?.reaction_user_ids ? post?.reaction_user_ids.includes(sessionUserId) : null) as boolean
+    let reactionActive = $derived(post?.reaction_active ?? null) as boolean
     let reactionCount = $derived(post?.reaction_count) as number
     let postId = $derived(post?.id ?? post?.post_id) as string
 
