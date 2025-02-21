@@ -58,9 +58,9 @@
     {/if}
     {#each feedItems as item}
     <div class="feed-item">
-        <!-- User's or followed user's Now Playing post -->
-        {#if Object.keys(item).includes( 'now_playing_post_id' )}      
-            <a href={`/posts/${item.username}/now-playing/${parseTimestamp(item.feed_item_timestamp)}`}>
+        <!-- Now Playing post -->
+        {#if item.item_type == 'now_playing_post'}      
+            <a href={`/posts/${item.username}/now-playing/${parseTimestamp(item.timestamp)}`}>
                 <div class="feed-item-user-data">
                         <CoverArt
                             item={avatarItem(item)}
@@ -86,7 +86,7 @@
                 </div>
             </div>
         <!-- Some user followed user -->
-        {:else if Object.keys(item).includes( 'new_follow_id' )}
+        {:else if item.item_type == 'social_follow' && item.target_user_id == sessionUserId}
             <a href={`/user/${item.username}`}>
                 <div class="feed-item-one-liner">
                         <CoverArt
@@ -97,68 +97,32 @@
                     {item.display_name} followed you
                 </div>
             </a>
-        <!-- Some user comment on user's post -->
-        {:else if Object.keys(item).includes( 'session_user_post_commenter_id' )}
-            <a href={`/posts/${item.original_poster_username}/now-playing/${parseTimestamp(item.original_post_created_at)}#${item.username?.concat(parseTimestamp(item.feed_item_timestamp))}`}>
-                <div class="feed-item-one-liner">
-                        <CoverArt
-                            item={avatarItem(item)}
-                            altText={`${item.session_user_post_commenter_display_name}'s avatar`}
-                            imgClass='feed-avatar'
-                        ></CoverArt>
-                    {item.session_user_post_commenter_display_name} commented on your post
-                </div>
-            </a>
-       <!-- Some user reacted to user's post -->
-       {:else if Object.keys(item).includes( 'session_user_post_react_user_id' )}
-        <a href={`/posts/${item.original_poster_username}/now-playing/${parseTimestamp(item.feed_item_timestamp)}`}>
-            <div class="feed-item-one-liner">
-                    <CoverArt
-                        item={avatarItem(item)}
-                        altText={`${item.session_user_post_react_user_display_name}'s avatar`}
-                        imgClass='feed-avatar'
-                    ></CoverArt>
-                {item.session_user_post_react_user_display_name} liked your post
-            </div>
-        </a>
-        <!-- User's comment on a post -->
-        {:else if Object.keys(item).includes( 'session_user_comment_id' )}
-            <a href={`/posts/${item.original_poster_username}/now-playing/${parseTimestamp(item.original_post_created_at)}#${item.username?.concat(parseTimestamp(item.feed_item_timestamp))}`}>
+        <!-- Comment -->
+        {:else if item.item_type == 'comment'}
+            <a href={`/posts/${item.parent_post_username}/now-playing/${parseTimestamp(item.parent_post_created_at)}#${item.username?.concat(parseTimestamp(item.timestamp))}`}>
                 <div class="feed-item-one-liner">
                         <CoverArt
                             item={avatarItem(item)}
                             altText={`${item.display_name}'s avatar`}
                             imgClass='feed-avatar'
                         ></CoverArt>
-                    You commented on {item.original_poster_display_name}'s post
+                    {item.user_id == sessionUserId ? 'You' : item.display_name} commented on {item.parent_post_user_id == sessionUserId ? 'your' : item.parent_post_display_name.concat(`'s`)} post
                 </div>
             </a>
-        <!-- Followed user's comment on another followed user's post -->
-        {:else if Object.keys(item).includes( 'followed_user_comment_id' )}
-            <a href={`/posts/${item.original_poster_username}/now-playing/${parseTimestamp(item.original_post_created_at)}#${item.username?.concat(parseTimestamp(item.feed_item_timestamp))}`}>
+        <!-- Reaction -->
+        {:else if item.item_type == 'reaction'}
+            <a href={`/posts/${item.parent_post_username}/now-playing/${parseTimestamp(item.parent_post_created_at)}`}>
                 <div class="feed-item-one-liner">
                         <CoverArt
                             item={avatarItem(item)}
                             altText={`${item.display_name}'s avatar`}
                             imgClass='feed-avatar'
                         ></CoverArt>
-                    {item.display_name} commented on {item.original_poster_display_name}'s post
+                    {item.user_id == sessionUserId ? 'You' : item.display_name} liked {item.parent_post_user_id == sessionUserId ? 'your' : item.parent_post_display_name.concat(`'s`)} post
                 </div>
             </a>
-        <!-- Followed user reacted to another user's post -->
-        {:else if Object.keys(item).includes( 'reaction_id' )}
-            <a href={`/posts/${item.original_poster_username}/now-playing/${parseTimestamp(item.original_post_created_at)}`}>
-                <div class="feed-item-one-liner">
-                        <CoverArt
-                            item={avatarItem(item)}
-                            altText={`${item.display_name}'s avatar`}
-                            imgClass='feed-avatar'
-                        ></CoverArt>
-                    {item.display_name} liked {item.original_poster_display_name}'s post
-                </div>
-            </a>
-        <!-- Some user followed user's collection -->
-            {:else if Object.keys(item).includes( 'session_user_owned_collection_follow_id' )}
+        <!-- Collection follow -->
+            {:else if item.item_type == 'collection_follow'}
             <a href={`/collection/${item.collection_id}`}>
                 <div class="feed-item-one-liner">
                     <CoverArt
@@ -167,16 +131,16 @@
                         imgClass='feed-avatar'
                     ></CoverArt>
                     <span class="blurb">
-                      {item.display_name}
-                      followed your collection: 
+                      {item.user_id == sessionUserId ? 'You' : item.display_name}
+                      followed {item.collection_owner_id == sessionUserId ? 'your' : 'a'} collection: 
                       <span class="feed-item-subject">
-                          {item.title}
+                          {item.collection_title}
                       </span>
                     </span>
                 </div>
             </a>
-        <!-- Followed user followed a collection -->
-        {:else if Object.keys(item).includes( 'followed_user_collection_follow_id' )}
+        <!-- Collection edit -->
+        {:else if item.item_type == 'collection_id' && !item.item_type.is_top_albums}
             <a href={`/collection/${item.collection_id}`}>
                 <div class="feed-item-one-liner">
                     <CoverArt
@@ -185,34 +149,16 @@
                         imgClass='feed-avatar'
                     ></CoverArt>
                     <span class="blurb">
-                      {item.display_name}
-                      followed a collection: 
-                      <span class="feed-item-subject">
-                          {item.title}
-                      </span>
-                    </span>
-                </div>
-            </a>
-        <!-- Followed user edited a collection -->
-        {:else if Object.keys(item).includes( 'collection_edit_id' ) && ( item.is_top_albums == false )}
-            <a href={`/collection/${item.collection_id}`}>
-                <div class="feed-item-one-liner">
-                    <CoverArt
-                        item={avatarItem(item)}
-                        altText={`${item.display_name}'s avatar`}
-                        imgClass='feed-avatar'
-                    ></CoverArt>
-                    <span class="blurb">
-                      {item.display_name}
+                      {item.user_id == sessionUserId ? 'You' : item.display_name}
                       edited the collection: 
                       <span class="feed-item-subject">
-                          {item.title}
+                          {item.collection_}
                       </span>
                     </span>
                 </div>
             </a>
-        <!-- Followed user edited top albums collection -->
-        {:else if Object.keys(item).includes( 'collection_edit_id' ) && ( item.is_top_albums == true )}
+        <!-- Top albums collection edit -->
+        {:else if item.item_type == 'collection_edit' && item.item_type.is_top_albums}
         <a href={`/user/${item.username}`}>
             <div class="feed-item-one-liner">
                 <CoverArt
@@ -221,7 +167,7 @@
                     imgClass='feed-avatar'
                 ></CoverArt>
                 <span class="blurb">
-                    {item.display_name}
+                    {item.user_id == sessionUserId ? 'You' : item.display_name}
                     edited their 
                     <span class="feed-item-subject">
                         Top Albums
@@ -235,12 +181,14 @@
     {/each}
     <form method="POST" action="?/loadMore" use:enhance>
         {#if remaining && remaining > 0}
+        <div class="button-spacer">
             <button
                 class="standard"
                 formaction="?/loadMore"
             >
-            load more
-        </button>
+                load more
+            </button>
+        </div>
         {/if}
     </form>
     {#if mode == 'mini'}
@@ -267,7 +215,7 @@
         flex-direction: row;
         align-items: center;
         justify-content: center;
-        margin: var(--freq-spacing-medium) auto;
+        margin: var(--freq-spacing-x-small) auto;
     }
     .standard {
         margin: 0;

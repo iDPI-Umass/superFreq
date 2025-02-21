@@ -18,10 +18,12 @@
 
     let { data, form }: Props = $props();
 
-    let { sessionUserId, profileData, feedItems, profileUsername, posts, sessionUserCollections, updatesPageUpdatedAt }: {
+    let { sessionUserId, profileData, feedItems, totalAvailableItems, remaining, profileUsername, posts, sessionUserCollections, updatesPageUpdatedAt }: {
         sessionUserId: string
         profileData: any
         feedItems: any
+        totalAvailableItems: number
+        remaining: number
         profileUsername: string
         posts: App.RowData[]
         sessionUserCollections: App.RowData[]
@@ -255,15 +257,16 @@
         <Feed
             sessionUserId={sessionUserId}
             feedItems={feedItems}
-            mode="mini"
+            mode="feed"
             userActionSuccess={form?.userActionSuccess}
+            remaining={remaining}
             collections={sessionUserCollections}
             showCollectionsListModal={showCollectionsListModal}
             showSaveSucessModal={showSaveSucessModal}
         ></Feed>
     {:else}
         <NowPlayingPostsSample
-            posts={feedItems}
+            posts={posts}
             displayName={displayName}
             username={profileUsername}
         ></NowPlayingPostsSample>
