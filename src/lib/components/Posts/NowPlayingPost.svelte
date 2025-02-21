@@ -54,9 +54,11 @@
         editState = !editState
     }
 
-    let reactionActive = $derived(post?.reaction_active) as boolean
+    console.log(post?.reaction_user_ids.includes(sessionUserId))
+    let reactionActiveFeed = $derived(post?.reaction_user_ids ? post?.reaction_user_ids.includes(sessionUserId) : null) as boolean
+    let reactionActive = $derived(post?.reaction_active ?? null) as boolean
     let reactionCount = $derived(post?.reaction_count) as number
-    let postId = $derived(post?.id ?? post?.now_playing_post_id) as string
+    let postId = $derived(post?.id ?? post?.post_id) as string
 
     let avatarItem = {
         'img_url': post.avatar_url,
@@ -134,7 +136,7 @@
                 <div class="row-group-icons">
                     <LikeReact
                         postId={postId}
-                        reactionActive={reactionActive}
+                        reactionActive={reactionActive ?? reactionActiveFeed}
                         reactionCount={reactionCount}
                     ></LikeReact>
                     {#if mode == "feed"}
