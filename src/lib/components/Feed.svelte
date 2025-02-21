@@ -181,12 +181,14 @@
     {/each}
     <form method="POST" action="?/loadMore" use:enhance>
         {#if remaining && remaining > 0}
+        <div class="button-spacer">
             <button
                 class="standard"
                 formaction="?/loadMore"
             >
-            load more
-        </button>
+                load more
+            </button>
+        </div>
         {/if}
     </form>
     {#if mode == 'mini'}
@@ -213,7 +215,7 @@
         flex-direction: row;
         align-items: center;
         justify-content: center;
-        margin: var(--freq-spacing-medium) auto;
+        margin: var(--freq-spacing-x-small) auto;
     }
     .standard {
         margin: 0;
