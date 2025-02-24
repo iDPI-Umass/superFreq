@@ -1,14 +1,18 @@
 ---
 title: Updates
 layout: about
-updated: 02/21/2025
+updated: 02/24/2025
 ---
 
-### Feb 21, 2025
+### Febraury 24, 2024
+#### Bug Fixes
+- Feed is working again. Sorry about that downtime.
+
+### Febraury 21, 2025
 #### Bug Fixes
 - Fixed feed so all items appear in correct reverse chronological order
 
-### Feb 20, 2025
+### Febraury 20, 2025
 #### Bug Fixes
 - Collection display 500 error addressed
 - Attempting to fix bug where people are posting to each other's profiles.
