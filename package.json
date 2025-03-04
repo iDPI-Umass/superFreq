@@ -37,7 +37,8 @@
 		"tslib": "^2.7.0",
 		"typescript": "^5.6.2",
 		"vite": "^5.4.4",
-		"vitest": "^1.6.0"
+		"vitest": "^1.6.0",
+		"wrangler": "^3.112.0"
 	},
 	"type": "module",
 	"dependencies": {
@@ -62,7 +63,6 @@
 		"remark-unlink": "^5.0.0",
 		"stable": "^0.1.8",
 		"svelte-dnd-action": "^0.9.50",
-		"unified": "^11.0.5",
-		"wrangler": "^3.112.0"
+		"unified": "^11.0.5"
 	}
 }
