@@ -1,0 +1,10 @@
+import * as server from '../entries/pages/(authed)/user/top-albums/_page.server.ts.js';
+
+export const index = 19;
+let component_cache;
+export const component = async () => component_cache ??= (await import('../entries/pages/(authed)/user/top-albums/_page.svelte.js')).default;
+export { server };
+export const server_id = "src/routes/(authed)/user/top-albums/+page.server.ts";
+export const imports = ["_app/immutable/nodes/19.zTHgYS2W.js","_app/immutable/chunks/Bg9kRutz.js","_app/immutable/chunks/CIC73nbL.js","_app/immutable/chunks/DIeogL5L.js","_app/immutable/chunks/CZBN_KMn.js","_app/immutable/chunks/D1sabymj.js","_app/immutable/chunks/DifRGFGW.js","_app/immutable/chunks/zPX_AMPA.js","_app/immutable/chunks/26D3B16x.js","_app/immutable/chunks/CBTFtqMS.js","_app/immutable/chunks/w9zPIjBD.js","_app/immutable/chunks/pfHeeLMb.js","_app/immutable/chunks/D8QYH9wd.js","_app/immutable/chunks/DOrtXGrH.js","_app/immutable/chunks/BShju2DL.js","_app/immutable/chunks/ChSzfhcg.js","_app/immutable/chunks/BdK7rzmN.js","_app/immutable/chunks/gG4CUbDX.js","_app/immutable/chunks/69_IOA4Y.js","_app/immutable/chunks/BwQo_Iph.js","_app/immutable/chunks/Cu7UW-DA.js","_app/immutable/chunks/CpzmMpJK.js","_app/immutable/chunks/B-_ULT65.js","_app/immutable/chunks/h0YdFdS4.js","_app/immutable/chunks/ChdiFDjO.js","_app/immutable/chunks/CbEe7K_5.js","_app/immutable/chunks/CpZvCGMu.js","_app/immutable/chunks/QnRASlD3.js","_app/immutable/chunks/CVs4c5cQ.js","_app/immutable/chunks/BadVv_ud.js","_app/immutable/chunks/acRpF1XP.js","_app/immutable/chunks/CRtoN-tp.js"];
+export const stylesheets = ["_app/immutable/assets/19.ie9H4eSB.css","_app/immutable/assets/GridList.JfRK9Ijy.css","_app/immutable/assets/CoverArt.DfTvHn-K.css","_app/immutable/assets/PanelHeader.BLMeWQlM.css","_app/immutable/assets/CollectionEditor.BuL0pOfi.css","_app/immutable/assets/MusicBrainzSearch.Cgw1AsnB.css","_app/immutable/assets/ListModal.Br41Prkx.css"];
+export const fonts = [];

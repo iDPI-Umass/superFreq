@@ -1,0 +1,1 @@
+import"../chunks/Bg9kRutz.js";import"../chunks/69_IOA4Y.js";import{t as r,a}from"../chunks/D1sabymj.js";var m=r('<form method="POST"><button class="standard" type="submit">run script</button></form>');function s(t){var o=m();a(t,o)}export{s as component};

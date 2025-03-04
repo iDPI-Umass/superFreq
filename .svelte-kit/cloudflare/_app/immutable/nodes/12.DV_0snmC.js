@@ -1,0 +1,3 @@
+import"../chunks/Bg9kRutz.js";import{p as c,b as u,$ as f,g as t,e as o}from"../chunks/CIC73nbL.js";import{h as g}from"../chunks/CZBN_KMn.js";import{F as h}from"../chunks/DnkLRlIL.js";function S(a,e){c(e,!0);let n=o(()=>e.data.sessionUserId),r=o(()=>e.data.feedItems),i=o(()=>e.data.remaining),d=o(()=>e.data.sessionUserCollections),l=o(()=>{var s;return((s=e.form)==null?void 0:s.showCollectionsModal)??!1}),m=o(()=>{var s;return((s=e.form)==null?void 0:s.updateSuccess)??!1});g(s=>{f.title=`
+		Firehose Feed
+	`}),h(a,{get sessionUserId(){return t(n)},get feedItems(){return t(r)},mode:"feed",get remaining(){return t(i)},get collections(){return t(d)},get showCollectionsListModal(){return t(l)},get showSaveSucessModal(){return t(m)}}),u()}export{S as component};
