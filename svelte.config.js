@@ -28,12 +28,6 @@ const config = {
 		routes: {
 			include: ['/*'],
 			exclude: ['<all>']
-		},
-		platformProxy: {
-			configPath: 'wrangler.jsonc',
-			environment: undefined,
-			experimentalJsonConfig: false,
-			persist: false
 		}
 	}
 };
