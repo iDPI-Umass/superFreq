@@ -25,6 +25,10 @@ const config = {
 			'src/*': 'src/*',
 			'./$types': './$types'
 		},
+		routes: {
+			include: ['/*'],
+			exclude: ['<all>']
+		},
 		platformProxy: {
 			configPath: 'wrangler.jsonc',
 			environment: undefined,
