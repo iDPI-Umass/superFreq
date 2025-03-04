@@ -5,6 +5,9 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "freq",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
 	"compatibility_date": "2025-02-24",
 	"pages_build_output_dir": ".svelte-kit/cloudflare",
 	"observability": {
