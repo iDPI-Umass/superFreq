@@ -61,6 +61,7 @@
 		"remark-unlink": "^5.0.0",
 		"stable": "^0.1.8",
 		"svelte-dnd-action": "^0.9.50",
-		"unified": "^11.0.5"
+		"unified": "^11.0.5",
+		"wrangler": "^3.112.0"
 	}
 }
