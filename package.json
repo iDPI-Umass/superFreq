@@ -3,8 +3,8 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build",
+		"dev": "vite dev && npm run dev",
+		"build": "vite build && npm run build",
 		"preview": "vite preview",
 		"test": "npm run test:integration && npm run test:unit",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -46,6 +46,7 @@
 		"@supabase/supabase-js": "^2.45.4",
 		"@sveltejs/kit": "^2.5.27",
 		"bits-ui": "^0.21.16",
+		"cloudflare": "^4.1.0",
 		"date-fns": "^3.6.0",
 		"kysely": "^0.27.4",
 		"linkedom": "^0.18.4",
