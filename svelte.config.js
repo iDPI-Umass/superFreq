@@ -24,6 +24,12 @@ const config = {
 		alias: {
 			'src/*': 'src/*',
 			'./$types': './$types'
+		},
+		platformProxy: {
+			configPath: 'wrangler.jsonc',
+			environment: undefined,
+			experimentalJsonConfig: false,
+			persist: false
 		}
 	}
 };
