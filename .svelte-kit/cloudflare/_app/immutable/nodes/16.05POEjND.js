@@ -1,3 +1,0 @@
-import"../chunks/Bg9kRutz.js";import{t as l,g as a,$ as h,e as n,r as s,c as p}from"../chunks/CIC73nbL.js";import{s as _}from"../chunks/zPX_AMPA.js";import{e as x,i as g}from"../chunks/ChSzfhcg.js";import{t as d,a as c}from"../chunks/D1sabymj.js";import{h as b}from"../chunks/CZBN_KMn.js";import{s as y}from"../chunks/pfHeeLMb.js";var w=d("<li><a> </a></li>"),C=d("<ul></ul>");function E(f,i){let u=n(()=>i.data.collections),v=n(()=>i.data.username);var t=C();b(m=>{l(()=>h.title=`
-		Collections $${a(v)??""} follows
-	`)}),x(t,21,()=>a(u),g,(m,e)=>{var r=w(),o=p(r),$=p(o);s(o),s(r),l(()=>{y(o,"href",`/collection/${a(e).id??""}`),_($,`${a(e).title??""} by ${a(e).display_name??""}`)}),c(m,r)}),s(t),c(f,t)}export{E as component};

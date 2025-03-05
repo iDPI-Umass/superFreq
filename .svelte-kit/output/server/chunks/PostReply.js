@@ -1,230 +1,192 @@
-import { u as setContext, q as getContext, k as sanitize_props, r as rest_props, b as push, v as store_get, n as slot, l as spread_attributes, w as unsubscribe_stores, j as bind_props, p as pop, c as copy_payload, a as assign_payload, f as attr, e as escape_html, s as stringify } from "./index2.js";
+import { o as once, b as push, k as spread_attributes, j as bind_props, p as pop, c as copy_payload, a as assign_payload, f as attr, e as escape_html, s as stringify } from "./index2.js";
 import "clsx";
 /* empty css                                                  */
-import "dequal";
-import { o as omit, m as makeElement, j as disabledAttr, d as createElHelpers, g as addMeltEventListener, c as styleToString } from "./create.js";
-import { f as fallback } from "./utils.js";
-import { d as derived, w as writable } from "./index3.js";
-import { t as toWritableStores, o as overridable, c as createBitAttrs, e as removeUndefined, f as getOptionUpdater } from "./helpers.js";
 import "./client.js";
 import { L as Link_2, U as UserActionsMenu } from "./NowPlayingPost.js";
 import { I as InlineMarkdownText } from "./InlineMarkdownText.js";
 import { e as displayDate } from "./parseData.js";
-const defaults = {
-  defaultOpen: false,
-  disabled: false,
-  forceVisible: false
-};
-const { name } = createElHelpers("collapsible");
-function createCollapsible(props) {
-  const withDefaults = { ...defaults, ...props };
-  const options = toWritableStores(omit(withDefaults, "open", "defaultOpen", "onOpenChange"));
-  const { disabled, forceVisible } = options;
-  const openWritable = withDefaults.open ?? writable(withDefaults.defaultOpen);
-  const open = overridable(openWritable, withDefaults?.onOpenChange);
-  const root = makeElement(name(), {
-    stores: [open, disabled],
-    returned: ([$open, $disabled]) => ({
-      "data-state": $open ? "open" : "closed",
-      "data-disabled": disabledAttr($disabled)
-    })
-  });
-  const trigger = makeElement(name("trigger"), {
-    stores: [open, disabled],
-    returned: ([$open, $disabled]) => ({
-      "data-state": $open ? "open" : "closed",
-      "data-disabled": disabledAttr($disabled),
-      disabled: disabledAttr($disabled)
-    }),
-    action: (node) => {
-      const unsub = addMeltEventListener(node, "click", () => {
-        const disabled2 = node.dataset.disabled !== void 0;
-        if (disabled2)
-          return;
-        open.update(($open) => !$open);
-      });
-      return {
-        destroy: unsub
-      };
-    }
-  });
-  const isVisible = derived([open, forceVisible], ([$open, $forceVisible]) => $open || $forceVisible);
-  const content = makeElement(name("content"), {
-    stores: [isVisible, disabled],
-    returned: ([$isVisible, $disabled]) => ({
-      "data-state": $isVisible ? "open" : "closed",
-      "data-disabled": disabledAttr($disabled),
-      hidden: $isVisible ? void 0 : true,
-      style: styleToString({
-        display: $isVisible ? void 0 : "none"
-      })
-    })
-  });
-  return {
-    elements: {
-      root,
-      trigger,
-      content
+import { C as Context, u as useRefById, w as watch, p as getDataDisabled, g as getDataOpenClosed, q as afterTick, j as useId, d as box, n as noop, m as mergeProps, r as Presence_layer } from "./popper-layer-force-mount.js";
+import "style-to-object";
+const COLLAPSIBLE_ROOT_ATTR = "data-collapsible-root";
+const COLLAPSIBLE_CONTENT_ATTR = "data-collapsible-content";
+class CollapsibleRootState {
+  opts;
+  contentNode = null;
+  constructor(opts) {
+    this.opts = opts;
+    this.toggleOpen = this.toggleOpen.bind(this);
+    useRefById(opts);
+  }
+  toggleOpen() {
+    this.opts.open.current = !this.opts.open.current;
+  }
+  #props = once(() => ({
+    id: this.opts.id.current,
+    "data-state": getDataOpenClosed(this.opts.open.current),
+    "data-disabled": getDataDisabled(this.opts.disabled.current),
+    [COLLAPSIBLE_ROOT_ATTR]: ""
+  }));
+  get props() {
+    return this.#props();
+  }
+}
+class CollapsibleContentState {
+  opts;
+  root;
+  #originalStyles;
+  #isMountAnimationPrevented = false;
+  #width = 0;
+  #height = 0;
+  #present = once(() => this.opts.forceMount.current || this.root.opts.open.current);
+  get present() {
+    return this.#present();
+  }
+  constructor(opts, root) {
+    this.opts = opts;
+    this.root = root;
+    this.#isMountAnimationPrevented = root.opts.open.current;
+    useRefById({
+      ...opts,
+      deps: () => this.present,
+      onRefChange: (node) => {
+        this.root.contentNode = node;
+      }
+    });
+    watch(
+      [
+        () => this.opts.ref.current,
+        () => this.present
+      ],
+      ([node]) => {
+        if (!node) return;
+        afterTick(() => {
+          if (!this.opts.ref.current) return;
+          this.#originalStyles = this.#originalStyles || {
+            transitionDuration: node.style.transitionDuration,
+            animationName: node.style.animationName
+          };
+          node.style.transitionDuration = "0s";
+          node.style.animationName = "none";
+          const rect = node.getBoundingClientRect();
+          this.#height = rect.height;
+          this.#width = rect.width;
+          if (!this.#isMountAnimationPrevented) {
+            const { animationName, transitionDuration } = this.#originalStyles;
+            node.style.transitionDuration = transitionDuration;
+            node.style.animationName = animationName;
+          }
+        });
+      }
+    );
+  }
+  #snippetProps = once(() => ({ open: this.root.opts.open.current }));
+  get snippetProps() {
+    return this.#snippetProps();
+  }
+  #props = once(() => ({
+    id: this.opts.id.current,
+    style: {
+      "--bits-collapsible-content-height": this.#height ? `${this.#height}px` : void 0,
+      "--bits-collapsible-content-width": this.#width ? `${this.#width}px` : void 0
     },
-    states: {
-      open
-    },
-    options
-  };
+    "data-state": getDataOpenClosed(this.root.opts.open.current),
+    "data-disabled": getDataDisabled(this.root.opts.disabled.current),
+    [COLLAPSIBLE_CONTENT_ATTR]: ""
+  }));
+  get props() {
+    return this.#props();
+  }
 }
-function getCollapsibleData() {
-  const NAME = "collapsible";
-  const PARTS = ["root", "content", "trigger"];
-  return {
-    NAME,
-    PARTS
-  };
+const CollapsibleRootContext = new Context("Collapsible.Root");
+function useCollapsibleRoot(props) {
+  return CollapsibleRootContext.set(new CollapsibleRootState(props));
 }
-function setCtx(props) {
-  const { NAME, PARTS } = getCollapsibleData();
-  const getAttrs = createBitAttrs(NAME, PARTS);
-  const collapsible = { ...createCollapsible(removeUndefined(props)), getAttrs };
-  setContext(NAME, collapsible);
-  return {
-    ...collapsible,
-    updateOption: getOptionUpdater(collapsible.options)
-  };
-}
-function getCtx() {
-  const { NAME } = getCollapsibleData();
-  return getContext(NAME);
+function useCollapsibleContent(props) {
+  return new CollapsibleContentState(props, CollapsibleRootContext.get());
 }
 function Collapsible($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
-  const $$restProps = rest_props($$sanitized_props, [
-    "disabled",
-    "open",
-    "onOpenChange",
-    "asChild",
-    "el"
-  ]);
   push();
-  var $$store_subs;
-  let builder;
-  let disabled = fallback($$props["disabled"], () => void 0, true);
-  let open = fallback($$props["open"], () => void 0, true);
-  let onOpenChange = fallback($$props["onOpenChange"], () => void 0, true);
-  let asChild = fallback($$props["asChild"], false);
-  let el = fallback($$props["el"], () => void 0, true);
-  const {
-    elements: { root },
-    states: { open: localOpen },
-    updateOption,
-    getAttrs
-  } = setCtx({
-    disabled,
-    forceVisible: true,
-    defaultOpen: open,
-    onOpenChange: ({ next }) => {
-      if (open !== next) {
-        onOpenChange?.(next);
-        open = next;
-      }
-      return next;
-    }
+  let {
+    children,
+    child,
+    id = useId(),
+    ref = null,
+    open = false,
+    disabled = false,
+    onOpenChange = noop,
+    $$slots,
+    $$events,
+    ...restProps
+  } = $$props;
+  const rootState = useCollapsibleRoot({
+    open: box.with(() => open, (v) => {
+      open = v;
+      onOpenChange(v);
+    }),
+    disabled: box.with(() => disabled),
+    id: box.with(() => id),
+    ref: box.with(() => ref, (v) => ref = v)
   });
-  const attrs = getAttrs("root");
-  open !== void 0 && localOpen.set(open);
-  updateOption("disabled", disabled);
-  builder = store_get($$store_subs ??= {}, "$root", root);
-  Object.assign(builder, attrs);
-  if (asChild) {
+  const mergedProps = mergeProps(restProps, rootState.props);
+  if (child) {
     $$payload.out += "<!--[-->";
-    $$payload.out += `<!---->`;
-    slot($$payload, $$props, "default", { builder }, null);
+    child($$payload, { props: mergedProps });
     $$payload.out += `<!---->`;
   } else {
     $$payload.out += "<!--[!-->";
-    $$payload.out += `<div${spread_attributes({ ...builder, ...$$restProps })}><!---->`;
-    slot($$payload, $$props, "default", { builder }, null);
+    $$payload.out += `<div${spread_attributes({ ...mergedProps })}>`;
+    children?.($$payload);
     $$payload.out += `<!----></div>`;
   }
   $$payload.out += `<!--]-->`;
-  if ($$store_subs) unsubscribe_stores($$store_subs);
-  bind_props($$props, { disabled, open, onOpenChange, asChild, el });
+  bind_props($$props, { ref, open });
   pop();
 }
 function Collapsible_content($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
-  const $$restProps = rest_props($$sanitized_props, [
-    "transition",
-    "transitionConfig",
-    "inTransition",
-    "inTransitionConfig",
-    "outTransition",
-    "outTransitionConfig",
-    "asChild",
-    "el"
-  ]);
   push();
-  var $$store_subs;
-  let builder;
-  let transition = fallback($$props["transition"], () => void 0, true);
-  let transitionConfig = fallback($$props["transitionConfig"], () => void 0, true);
-  let inTransition = fallback($$props["inTransition"], () => void 0, true);
-  let inTransitionConfig = fallback($$props["inTransitionConfig"], () => void 0, true);
-  let outTransition = fallback($$props["outTransition"], () => void 0, true);
-  let outTransitionConfig = fallback($$props["outTransitionConfig"], () => void 0, true);
-  let asChild = fallback($$props["asChild"], false);
-  let el = fallback($$props["el"], () => void 0, true);
-  const {
-    elements: { content },
-    states: { open },
-    getAttrs
-  } = getCtx();
-  const attrs = getAttrs("content");
-  builder = store_get($$store_subs ??= {}, "$content", content);
-  Object.assign(builder, attrs);
-  if (asChild && store_get($$store_subs ??= {}, "$open", open)) {
-    $$payload.out += "<!--[-->";
-    $$payload.out += `<!---->`;
-    slot($$payload, $$props, "default", { builder }, null);
-    $$payload.out += `<!---->`;
-  } else if (transition && store_get($$store_subs ??= {}, "$open", open)) {
-    $$payload.out += "<!--[1-->";
-    $$payload.out += `<div${spread_attributes({ ...builder, ...$$restProps })}><!---->`;
-    slot($$payload, $$props, "default", { builder }, null);
-    $$payload.out += `<!----></div>`;
-  } else if (inTransition && outTransition && store_get($$store_subs ??= {}, "$open", open)) {
-    $$payload.out += "<!--[2-->";
-    $$payload.out += `<div${spread_attributes({ ...builder, ...$$restProps })}><!---->`;
-    slot($$payload, $$props, "default", { builder }, null);
-    $$payload.out += `<!----></div>`;
-  } else if (inTransition && store_get($$store_subs ??= {}, "$open", open)) {
-    $$payload.out += "<!--[3-->";
-    $$payload.out += `<div${spread_attributes({ ...builder, ...$$restProps })}><!---->`;
-    slot($$payload, $$props, "default", { builder }, null);
-    $$payload.out += `<!----></div>`;
-  } else if (outTransition && store_get($$store_subs ??= {}, "$open", open)) {
-    $$payload.out += "<!--[4-->";
-    $$payload.out += `<div${spread_attributes({ ...builder, ...$$restProps })}><!---->`;
-    slot($$payload, $$props, "default", { builder }, null);
-    $$payload.out += `<!----></div>`;
-  } else if (store_get($$store_subs ??= {}, "$open", open)) {
-    $$payload.out += "<!--[5-->";
-    $$payload.out += `<div${spread_attributes({ ...builder, ...$$restProps })}><!---->`;
-    slot($$payload, $$props, "default", { builder }, null);
-    $$payload.out += `<!----></div>`;
-  } else {
-    $$payload.out += "<!--[!-->";
-  }
-  $$payload.out += `<!--]-->`;
-  if ($$store_subs) unsubscribe_stores($$store_subs);
-  bind_props($$props, {
-    transition,
-    transitionConfig,
-    inTransition,
-    inTransitionConfig,
-    outTransition,
-    outTransitionConfig,
-    asChild,
-    el
+  let {
+    child,
+    ref = null,
+    forceMount = false,
+    children,
+    id = useId(),
+    $$slots,
+    $$events,
+    ...restProps
+  } = $$props;
+  const contentState = useCollapsibleContent({
+    id: box.with(() => id),
+    forceMount: box.with(() => forceMount),
+    ref: box.with(() => ref, (v) => ref = v)
   });
+  {
+    let presence = function($$payload2, { present }) {
+      const mergedProps = mergeProps(restProps, contentState.props, {
+        hidden: forceMount ? void 0 : !present.current
+      });
+      if (child) {
+        $$payload2.out += "<!--[-->";
+        child($$payload2, {
+          ...contentState.snippetProps,
+          props: mergedProps
+        });
+        $$payload2.out += `<!---->`;
+      } else {
+        $$payload2.out += "<!--[!-->";
+        $$payload2.out += `<div${spread_attributes({ ...mergedProps })}>`;
+        children?.($$payload2);
+        $$payload2.out += `<!----></div>`;
+      }
+      $$payload2.out += `<!--]-->`;
+    };
+    Presence_layer($$payload, {
+      forceMount: true,
+      present: contentState.present,
+      id,
+      presence
+    });
+  }
+  bind_props($$props, { ref });
   pop();
 }
 function cubic_out(t) {

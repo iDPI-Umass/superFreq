@@ -1,10 +1,11 @@
 import { clsx as clsx$1 } from "clsx";
-import { s as subscribe_to_store, i as is_promise, n as noop } from "./utils.js";
+import { i as is_promise, n as noop } from "./utils.js";
 const HYDRATION_START = "[";
 const HYDRATION_END = "]";
 const HYDRATION_ERROR = {};
 const ELEMENT_IS_NAMESPACED = 1;
 const ELEMENT_PRESERVE_ATTRIBUTE_CASE = 1 << 1;
+const UNINITIALIZED = Symbol();
 function lifecycle_outside_component(name) {
   {
     throw new Error(`https://svelte.dev/e/lifecycle_outside_component`);
@@ -133,6 +134,12 @@ function getContext(key) {
 function setContext(key, context) {
   get_or_init_context_map().set(key, context);
   return context;
+}
+function hasContext(key) {
+  return get_or_init_context_map().has(key);
+}
+function getAllContexts() {
+  return get_or_init_context_map();
 }
 function get_or_init_context_map(name) {
   if (current_component === null) {
@@ -285,50 +292,6 @@ function spread_props(props) {
 function stringify(value) {
   return typeof value === "string" ? value : value == null ? "" : value + "";
 }
-function store_get(store_values, store_name, store) {
-  if (store_name in store_values && store_values[store_name][0] === store) {
-    return store_values[store_name][2];
-  }
-  store_values[store_name]?.[1]();
-  store_values[store_name] = [store, null, void 0];
-  const unsub = subscribe_to_store(
-    store,
-    /** @param {any} v */
-    (v) => store_values[store_name][2] = v
-  );
-  store_values[store_name][1] = unsub;
-  return store_values[store_name][2];
-}
-function unsubscribe_stores(store_values) {
-  for (const store_name in store_values) {
-    store_values[store_name][1]();
-  }
-}
-function slot(payload, $$props, name, slot_props, fallback_fn) {
-  var slot_fn = $$props.$$slots?.[name];
-  if (slot_fn === true) {
-    slot_fn = $$props["children"];
-  }
-  if (slot_fn !== void 0) {
-    slot_fn(payload, slot_props);
-  } else {
-    fallback_fn?.();
-  }
-}
-function rest_props(props, rest) {
-  const rest_props2 = {};
-  let key;
-  for (key in props) {
-    if (!rest.includes(key)) {
-      rest_props2[key] = props[key];
-    }
-  }
-  return rest_props2;
-}
-function sanitize_props(props) {
-  const { children, $$slots, ...sanitized } = props;
-  return sanitized;
-}
 function bind_props(props_parent, props_now) {
   for (const key in props_now) {
     const initial_value = props_parent[key];
@@ -354,9 +317,19 @@ function ensure_array_like(array_like_or_iterator) {
   }
   return [];
 }
+function once(get_value) {
+  let value = (
+    /** @type {V} */
+    UNINITIALIZED
+  );
+  return () => {
+    if (value === UNINITIALIZED) {
+      value = get_value();
+    }
+    return value;
+  };
+}
 export {
-  render as A,
-  current_component as B,
   HYDRATION_ERROR as H,
   assign_payload as a,
   push as b,
@@ -368,20 +341,19 @@ export {
   head as h,
   clsx as i,
   bind_props as j,
-  sanitize_props as k,
-  spread_attributes as l,
-  element as m,
-  slot as n,
-  spread_props as o,
+  spread_attributes as k,
+  element as l,
+  spread_props as m,
+  getContext as n,
+  once as o,
   pop as p,
-  getContext as q,
-  rest_props as r,
+  HYDRATION_START as q,
+  HYDRATION_END as r,
   stringify as s,
   to_class as t,
-  setContext as u,
-  store_get as v,
-  unsubscribe_stores as w,
-  HYDRATION_START as x,
-  HYDRATION_END as y,
-  is_passive_event as z
+  is_passive_event as u,
+  render as v,
+  setContext as w,
+  getAllContexts as x,
+  hasContext as y
 };

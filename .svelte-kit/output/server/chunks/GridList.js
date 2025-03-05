@@ -1,8 +1,8 @@
-import { k as sanitize_props, o as spread_props, n as slot, b as push, p as pop, g as await_block, j as bind_props, d as ensure_array_like, f as attr, t as to_class, i as clsx, e as escape_html, s as stringify } from "./index2.js";
-import { I as Icon } from "./Icon.js";
+import { b as push, m as spread_props, p as pop, g as await_block, j as bind_props, d as ensure_array_like, f as attr, t as to_class, i as clsx, e as escape_html, s as stringify } from "./index2.js";
 import { w as wave } from "./freq-wave.js";
 import { C as CoverArt } from "./CoverArt.js";
 import "clsx";
+import { I as Icon } from "./Icon.js";
 import { D as Disc_2, M as Music, B as Boom_box } from "./boom-box.js";
 import { l as listenUrlWhitelistCheck } from "./parseData.js";
 function _defineProperty(obj, key, value) {
@@ -30,7 +30,8 @@ var INSTRUCTION_IDs$1 = {
 };
 _ID_TO_INSTRUCTION = {}, _defineProperty(_ID_TO_INSTRUCTION, INSTRUCTION_IDs$1.DND_ZONE_ACTIVE, "Tab to one the items and press space-bar or enter to start dragging it"), _defineProperty(_ID_TO_INSTRUCTION, INSTRUCTION_IDs$1.DND_ZONE_DRAG_DISABLED, "This is a disabled drag and drop list"), _ID_TO_INSTRUCTION;
 function Grip($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
+  push();
+  let { $$slots, $$events, ...props } = $$props;
   const iconNode = [
     ["circle", { "cx": "12", "cy": "5", "r": "1" }],
     ["circle", { "cx": "19", "cy": "5", "r": "1" }],
@@ -56,20 +57,21 @@ function Grip($$payload, $$props) {
   ];
   Icon($$payload, spread_props([
     { name: "grip" },
-    $$sanitized_props,
+    props,
     {
       iconNode,
       children: ($$payload2) => {
-        $$payload2.out += `<!---->`;
-        slot($$payload2, $$props, "default", {}, null);
+        props.children?.($$payload2);
         $$payload2.out += `<!---->`;
       },
       $$slots: { default: true }
     }
   ]));
+  pop();
 }
 function Palette($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
+  push();
+  let { $$slots, $$events, ...props } = $$props;
   const iconNode = [
     [
       "circle",
@@ -116,17 +118,17 @@ function Palette($$payload, $$props) {
   ];
   Icon($$payload, spread_props([
     { name: "palette" },
-    $$sanitized_props,
+    props,
     {
       iconNode,
       children: ($$payload2) => {
-        $$payload2.out += `<!---->`;
-        slot($$payload2, $$props, "default", {}, null);
+        props.children?.($$payload2);
         $$payload2.out += `<!---->`;
       },
       $$slots: { default: true }
     }
   ]));
+  pop();
 }
 function CollectionItemTag($$payload, $$props) {
   push();

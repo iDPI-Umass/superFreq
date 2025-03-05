@@ -1,8 +1,6 @@
-import { k as sanitize_props, o as spread_props, n as slot, c as copy_payload, a as assign_payload, j as bind_props, p as pop, b as push, f as attr, e as escape_html, d as ensure_array_like, s as stringify } from "./index2.js";
+import { b as push, m as spread_props, p as pop, c as copy_payload, a as assign_payload, j as bind_props, f as attr, e as escape_html, d as ensure_array_like, s as stringify } from "./index2.js";
 import "./client.js";
-import "dequal";
-import "./create.js";
-import { P as Popover, a as Popover_trigger, b as Popover_content } from "./popover-trigger.js";
+import { P as Popover, a as Popover_trigger, b as Popover_content } from "./popover.js";
 import { I as Icon } from "./Icon.js";
 import { L as ListModal } from "./ListModal.js";
 import { N as NotificationModal } from "./NotificationModal.js";
@@ -47,7 +45,8 @@ function flyAndScale(node, params) {
   };
 }
 function Ban($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
+  push();
+  let { $$slots, $$events, ...props } = $$props;
   const iconNode = [
     [
       "circle",
@@ -57,20 +56,21 @@ function Ban($$payload, $$props) {
   ];
   Icon($$payload, spread_props([
     { name: "ban" },
-    $$sanitized_props,
+    props,
     {
       iconNode,
       children: ($$payload2) => {
-        $$payload2.out += `<!---->`;
-        slot($$payload2, $$props, "default", {}, null);
+        props.children?.($$payload2);
         $$payload2.out += `<!---->`;
       },
       $$slots: { default: true }
     }
   ]));
+  pop();
 }
 function Circle($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
+  push();
+  let { $$slots, $$events, ...props } = $$props;
   const iconNode = [
     [
       "circle",
@@ -79,20 +79,21 @@ function Circle($$payload, $$props) {
   ];
   Icon($$payload, spread_props([
     { name: "circle" },
-    $$sanitized_props,
+    props,
     {
       iconNode,
       children: ($$payload2) => {
-        $$payload2.out += `<!---->`;
-        slot($$payload2, $$props, "default", {}, null);
+        props.children?.($$payload2);
         $$payload2.out += `<!---->`;
       },
       $$slots: { default: true }
     }
   ]));
+  pop();
 }
 function Ellipsis($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
+  push();
+  let { $$slots, $$events, ...props } = $$props;
   const iconNode = [
     [
       "circle",
@@ -106,20 +107,21 @@ function Ellipsis($$payload, $$props) {
   ];
   Icon($$payload, spread_props([
     { name: "ellipsis" },
-    $$sanitized_props,
+    props,
     {
       iconNode,
       children: ($$payload2) => {
-        $$payload2.out += `<!---->`;
-        slot($$payload2, $$props, "default", {}, null);
+        props.children?.($$payload2);
         $$payload2.out += `<!---->`;
       },
       $$slots: { default: true }
     }
   ]));
+  pop();
 }
 function Flag($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
+  push();
+  let { $$slots, $$events, ...props } = $$props;
   const iconNode = [
     [
       "path",
@@ -139,45 +141,47 @@ function Flag($$payload, $$props) {
   ];
   Icon($$payload, spread_props([
     { name: "flag" },
-    $$sanitized_props,
+    props,
     {
       iconNode,
       children: ($$payload2) => {
-        $$payload2.out += `<!---->`;
-        slot($$payload2, $$props, "default", {}, null);
+        props.children?.($$payload2);
         $$payload2.out += `<!---->`;
       },
       $$slots: { default: true }
     }
   ]));
+  pop();
 }
 function Pen_line($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
+  push();
+  let { $$slots, $$events, ...props } = $$props;
   const iconNode = [
     ["path", { "d": "M12 20h9" }],
     [
       "path",
       {
-        "d": "M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"
+        "d": "M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"
       }
     ]
   ];
   Icon($$payload, spread_props([
     { name: "pen-line" },
-    $$sanitized_props,
+    props,
     {
       iconNode,
       children: ($$payload2) => {
-        $$payload2.out += `<!---->`;
-        slot($$payload2, $$props, "default", {}, null);
+        props.children?.($$payload2);
         $$payload2.out += `<!---->`;
       },
       $$slots: { default: true }
     }
   ]));
+  pop();
 }
 function Trash_2($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
+  push();
+  let { $$slots, $$events, ...props } = $$props;
   const iconNode = [
     ["path", { "d": "M3 6h18" }],
     [
@@ -209,17 +213,17 @@ function Trash_2($$payload, $$props) {
   ];
   Icon($$payload, spread_props([
     { name: "trash-2" },
-    $$sanitized_props,
+    props,
     {
       iconNode,
       children: ($$payload2) => {
-        $$payload2.out += `<!---->`;
-        slot($$payload2, $$props, "default", {}, null);
+        props.children?.($$payload2);
         $$payload2.out += `<!---->`;
       },
       $$slots: { default: true }
     }
   ]));
+  pop();
 }
 function UserActionsMenu($$payload, $$props) {
   push();
@@ -416,7 +420,8 @@ function EditPostBody($$payload, $$props) {
   pop();
 }
 function Heart($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
+  push();
+  let { $$slots, $$events, ...props } = $$props;
   const iconNode = [
     [
       "path",
@@ -427,17 +432,17 @@ function Heart($$payload, $$props) {
   ];
   Icon($$payload, spread_props([
     { name: "heart" },
-    $$sanitized_props,
+    props,
     {
       iconNode,
       children: ($$payload2) => {
-        $$payload2.out += `<!---->`;
-        slot($$payload2, $$props, "default", {}, null);
+        props.children?.($$payload2);
         $$payload2.out += `<!---->`;
       },
       $$slots: { default: true }
     }
   ]));
+  pop();
 }
 function LikeReact($$payload, $$props) {
   let { postId, reactionCount = 0, reactionActive } = $$props;
@@ -471,7 +476,8 @@ function LikeReact($$payload, $$props) {
   $$payload.out += `<!--]--></div></button></form>`;
 }
 function Save($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
+  push();
+  let { $$slots, $$events, ...props } = $$props;
   const iconNode = [
     [
       "path",
@@ -489,17 +495,17 @@ function Save($$payload, $$props) {
   ];
   Icon($$payload, spread_props([
     { name: "save" },
-    $$sanitized_props,
+    props,
     {
       iconNode,
       children: ($$payload2) => {
-        $$payload2.out += `<!---->`;
-        slot($$payload2, $$props, "default", {}, null);
+        props.children?.($$payload2);
         $$payload2.out += `<!---->`;
       },
       $$slots: { default: true }
     }
   ]));
+  pop();
 }
 function SaveToCollection($$payload, $$props) {
   let {
@@ -577,27 +583,29 @@ function SaveToCollection($$payload, $$props) {
   bind_props($$props, { showCollectionsListModal, showSuccessModal });
 }
 function Reply($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
+  push();
+  let { $$slots, $$events, ...props } = $$props;
   const iconNode = [
     ["polyline", { "points": "9 17 4 12 9 7" }],
     ["path", { "d": "M20 18v-2a4 4 0 0 0-4-4H4" }]
   ];
   Icon($$payload, spread_props([
     { name: "reply" },
-    $$sanitized_props,
+    props,
     {
       iconNode,
       children: ($$payload2) => {
-        $$payload2.out += `<!---->`;
-        slot($$payload2, $$props, "default", {}, null);
+        props.children?.($$payload2);
         $$payload2.out += `<!---->`;
       },
       $$slots: { default: true }
     }
   ]));
+  pop();
 }
 function Link_2($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
+  push();
+  let { $$slots, $$events, ...props } = $$props;
   const iconNode = [
     ["path", { "d": "M9 17H7A5 5 0 0 1 7 7h2" }],
     ["path", { "d": "M15 7h2a5 5 0 1 1 0 10h-2" }],
@@ -613,17 +621,17 @@ function Link_2($$payload, $$props) {
   ];
   Icon($$payload, spread_props([
     { name: "link-2" },
-    $$sanitized_props,
+    props,
     {
       iconNode,
       children: ($$payload2) => {
-        $$payload2.out += `<!---->`;
-        slot($$payload2, $$props, "default", {}, null);
+        props.children?.($$payload2);
         $$payload2.out += `<!---->`;
       },
       $$slots: { default: true }
     }
   ]));
+  pop();
 }
 function ListenEmbed($$payload, $$props) {
   let { embedInfo } = $$props;
@@ -715,7 +723,6 @@ function NowPlayingPost($$payload, $$props) {
     "account": post?.embed_account,
     "url": post?.listen_url
   };
-  console.log(post?.reaction_user_ids.includes(sessionUserId));
   let reactionActiveFeed = post?.reaction_user_ids ? post?.reaction_user_ids.includes(sessionUserId) : null;
   let reactionActive = post?.reaction_active ?? null;
   let reactionCount = post?.reaction_count;
