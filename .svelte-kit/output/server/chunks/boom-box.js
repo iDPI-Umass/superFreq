@@ -1,7 +1,8 @@
-import { k as sanitize_props, o as spread_props, n as slot } from "./index2.js";
+import { b as push, m as spread_props, p as pop } from "./index2.js";
 import { I as Icon } from "./Icon.js";
 function Music($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
+  push();
+  let { $$slots, $$events, ...props } = $$props;
   const iconNode = [
     ["path", { "d": "M9 18V5l12-2v13" }],
     ["circle", { "cx": "6", "cy": "18", "r": "3" }],
@@ -12,20 +13,21 @@ function Music($$payload, $$props) {
   ];
   Icon($$payload, spread_props([
     { name: "music" },
-    $$sanitized_props,
+    props,
     {
       iconNode,
       children: ($$payload2) => {
-        $$payload2.out += `<!---->`;
-        slot($$payload2, $$props, "default", {}, null);
+        props.children?.($$payload2);
         $$payload2.out += `<!---->`;
       },
       $$slots: { default: true }
     }
   ]));
+  pop();
 }
 function Disc_2($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
+  push();
+  let { $$slots, $$events, ...props } = $$props;
   const iconNode = [
     [
       "circle",
@@ -39,20 +41,21 @@ function Disc_2($$payload, $$props) {
   ];
   Icon($$payload, spread_props([
     { name: "disc-2" },
-    $$sanitized_props,
+    props,
     {
       iconNode,
       children: ($$payload2) => {
-        $$payload2.out += `<!---->`;
-        slot($$payload2, $$props, "default", {}, null);
+        props.children?.($$payload2);
         $$payload2.out += `<!---->`;
       },
       $$slots: { default: true }
     }
   ]));
+  pop();
 }
 function Boom_box($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
+  push();
+  let { $$slots, $$events, ...props } = $$props;
   const iconNode = [
     [
       "path",
@@ -79,17 +82,17 @@ function Boom_box($$payload, $$props) {
   ];
   Icon($$payload, spread_props([
     { name: "boom-box" },
-    $$sanitized_props,
+    props,
     {
       iconNode,
       children: ($$payload2) => {
-        $$payload2.out += `<!---->`;
-        slot($$payload2, $$props, "default", {}, null);
+        props.children?.($$payload2);
         $$payload2.out += `<!---->`;
       },
       $$slots: { default: true }
     }
   ]));
+  pop();
 }
 export {
   Boom_box as B,

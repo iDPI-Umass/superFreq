@@ -1,1 +1,0 @@
-import{L as a}from"../chunks/D4u8frmK.js";const o=()=>({infoBoxText:{open:"This is an open collection. Anyone can edit it.",private:"This is a private collection. Only you can see it."}}),t=Object.freeze(Object.defineProperty({__proto__:null,load:o},Symbol.toStringTag,{value:"Module"}));export{a as component,t as universal};

@@ -7,6 +7,7 @@ import { g as getListenUrlData, v as validStringCheck } from "../../../../../chu
 import { add, parseISO } from "date-fns";
 import { m as metadata } from "../../../../../chunks/updates.js";
 let sessionUserId;
+let username = null;
 let loadData = true;
 let userAction = false;
 let updateReaction = false;
@@ -25,6 +26,7 @@ const load = async ({ params, locals: { safeGetSession } }) => {
   const { session } = await safeGetSession();
   sessionUserId = session?.user.id;
   const profileUsername = params.username;
+  loadData = profileUsername != username ? true : false;
   const batchSize = 10;
   const timestampEnd = /* @__PURE__ */ new Date();
   const timestampStart = add(timestampEnd, { days: -300 });
@@ -32,6 +34,7 @@ const load = async ({ params, locals: { safeGetSession } }) => {
   const updatesPageUpdatedAt = metadata.updated;
   if (loadData) {
     profileData = await selectProfilePageData(sessionUserId, profileUsername);
+    username = profileData.profileUserData ? profileData.profileUserData.username : null;
     if (!profileData.profileUserData) {
       throw redirect(303, "/");
     } else if (sessionUserId == profileData.profileUserData.id) {
@@ -45,6 +48,8 @@ const load = async ({ params, locals: { safeGetSession } }) => {
       const selectPosts = await selectUserPostsSample(sessionUserId, profileUsername, batchSize);
       const { posts } = selectPosts;
       feedItems.push(...posts);
+      feedItemCount = feedItems.length;
+      console.log(feedItemCount);
     }
   }
   if (userAction) {
@@ -153,13 +158,13 @@ const actions = {
       embed_source: embedInfo?.source ?? null,
       embed_account: embedInfo?.account ?? null
     };
-    const { username, createdAt } = await insertPost(postData);
+    const { username: username2, createdAt } = await insertPost(postData);
     const timestampSlug = createdAt?.toISOString();
     const timestamp = Date.parse(timestampSlug).toString();
     if (!timestampSlug) {
       return { success: false };
     } else {
-      redirect(303, `/posts/${username}/now-playing/${timestamp}`);
+      redirect(303, `/posts/${username2}/now-playing/${timestamp}`);
     }
   },
   flagPost: async ({ request }) => {

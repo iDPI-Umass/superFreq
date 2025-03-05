@@ -1,369 +1,335 @@
-import { u as setContext, q as getContext, k as sanitize_props, r as rest_props, b as push, v as store_get, n as slot, l as spread_attributes, w as unsubscribe_stores, j as bind_props, p as pop, c as copy_payload, a as assign_payload, f as attr, e as escape_html } from "./index2.js";
+import { o as once, b as push, k as spread_attributes, j as bind_props, p as pop, c as copy_payload, a as assign_payload, f as attr, e as escape_html } from "./index2.js";
 import "./client.js";
 import { P as PanelHeader } from "./PanelHeader.js";
 import { M as MusicBrainzSearch } from "./MusicBrainzSearch.js";
 import { T as Tooltip } from "./Tooltip.js";
-import "dequal";
-import { o as omit, m as makeElement, d as createElHelpers, f as executeCallbacks, g as addMeltEventListener, j as disabledAttr, b as isBrowser, a as isHTMLElement, l as getDirectionalKeys, k as kbd } from "./create.js";
-import { f as fallback } from "./utils.js";
+import { C as Context, s as SvelteMap, u as useRefById, w as watch, S as SPACE, e as ENTER, t as getDataOrientation, p as getDataDisabled, v as getAriaOrientation, x as getDisabled, y as getAriaSelected, z as getHidden, j as useId, d as box, n as noop, m as mergeProps } from "./popper-layer-force-mount.js";
+import "style-to-object";
 import "clsx";
-import { t as toWritableStores, o as overridable, n as next, p as prev, l as last, c as createBitAttrs, e as removeUndefined, f as getOptionUpdater } from "./helpers.js";
-import { w as writable } from "./index3.js";
-function getElemDirection(elem) {
-  const style = window.getComputedStyle(elem);
-  const direction = style.getPropertyValue("direction");
-  return direction;
+import { u as useRovingFocus } from "./use-roving-focus.svelte.js";
+const TABS_ROOT_ATTR = "data-tabs-root";
+const TABS_LIST_ATTR = "data-tabs-list";
+const TABS_TRIGGER_ATTR = "data-tabs-trigger";
+const TABS_CONTENT_ATTR = "data-tabs-content";
+class TabsRootState {
+  opts;
+  rovingFocusGroup;
+  triggerIds = [];
+  // holds the trigger ID for each value to associate it with the content
+  valueToTriggerId = new SvelteMap();
+  // holds the content ID for each value to associate it with the trigger
+  valueToContentId = new SvelteMap();
+  constructor(opts) {
+    this.opts = opts;
+    useRefById(opts);
+    this.rovingFocusGroup = useRovingFocus({
+      candidateAttr: TABS_TRIGGER_ATTR,
+      rootNodeId: this.opts.id,
+      loop: this.opts.loop,
+      orientation: this.opts.orientation
+    });
+  }
+  registerTrigger(id, value) {
+    this.triggerIds.push(id);
+    this.valueToTriggerId.set(value, id);
+    return () => {
+      this.triggerIds = this.triggerIds.filter((triggerId) => triggerId !== id);
+      this.valueToTriggerId.delete(value);
+    };
+  }
+  registerContent(id, value) {
+    this.valueToContentId.set(value, id);
+    return () => {
+      this.valueToContentId.delete(value);
+    };
+  }
+  setValue(v) {
+    this.opts.value.current = v;
+  }
+  #props = once(() => ({
+    id: this.opts.id.current,
+    "data-orientation": getDataOrientation(this.opts.orientation.current),
+    [TABS_ROOT_ATTR]: ""
+  }));
+  get props() {
+    return this.#props();
+  }
 }
-const defaults = {
-  orientation: "horizontal",
-  activateOnFocus: true,
-  loop: true,
-  autoSet: true
-};
-const { name, selector } = createElHelpers("tabs");
-function createTabs(props) {
-  const withDefaults = { ...defaults, ...props };
-  const options = toWritableStores(omit(withDefaults, "defaultValue", "value", "onValueChange", "autoSet"));
-  const { orientation, activateOnFocus, loop } = options;
-  const valueWritable = withDefaults.value ?? writable(withDefaults.defaultValue);
-  const value = overridable(valueWritable, withDefaults?.onValueChange);
-  let ssrValue = withDefaults.defaultValue ?? value.get();
-  const root = makeElement(name(), {
-    stores: orientation,
-    returned: ($orientation) => {
-      return {
-        "data-orientation": $orientation
-      };
-    }
-  });
-  const list = makeElement(name("list"), {
-    stores: orientation,
-    returned: ($orientation) => {
-      return {
-        role: "tablist",
-        "aria-orientation": $orientation,
-        "data-orientation": $orientation
-      };
-    }
-  });
-  const parseTriggerProps = (props2) => {
-    if (typeof props2 === "string") {
-      return { value: props2 };
-    } else {
-      return props2;
-    }
-  };
-  const trigger = makeElement(name("trigger"), {
-    stores: [value, orientation],
-    returned: ([$value, $orientation]) => {
-      return (props2) => {
-        const { value: tabValue, disabled } = parseTriggerProps(props2);
-        if (!$value && !ssrValue && withDefaults.autoSet) {
-          ssrValue = tabValue;
-          $value = tabValue;
-          value.set(tabValue);
-        }
-        const sourceOfTruth = isBrowser ? $value : ssrValue;
-        const isActive = sourceOfTruth === tabValue;
-        return {
-          type: "button",
-          role: "tab",
-          "data-state": isActive ? "active" : "inactive",
-          tabindex: isActive ? 0 : -1,
-          "data-value": tabValue,
-          "data-orientation": $orientation,
-          "data-disabled": disabledAttr(disabled),
-          disabled: disabledAttr(disabled)
-        };
-      };
-    },
-    action: (node) => {
-      const unsub = executeCallbacks(addMeltEventListener(node, "focus", () => {
-        const disabled = node.dataset.disabled === "true";
-        const tabValue = node.dataset.value;
-        if (activateOnFocus.get() && !disabled && tabValue !== void 0) {
-          value.set(tabValue);
-        }
-      }), addMeltEventListener(node, "click", (e) => {
-        node.focus();
-        e.preventDefault();
-        const disabled = node.dataset.disabled === "true";
-        if (disabled)
-          return;
-        const tabValue = node.dataset.value;
-        node.focus();
-        if (tabValue !== void 0) {
-          value.set(tabValue);
-        }
-      }), addMeltEventListener(node, "keydown", (e) => {
-        const tabValue = node.dataset.value;
-        if (!tabValue)
-          return;
-        const el = e.currentTarget;
-        if (!isHTMLElement(el))
-          return;
-        const rootEl = el.closest(selector());
-        if (!isHTMLElement(rootEl))
-          return;
-        const $loop = loop.get();
-        const triggers = Array.from(rootEl.querySelectorAll('[role="tab"]')).filter((trigger2) => isHTMLElement(trigger2));
-        const enabledTriggers = triggers.filter((el2) => !el2.hasAttribute("data-disabled"));
-        const triggerIdx = enabledTriggers.findIndex((el2) => el2 === e.target);
-        const dir = getElemDirection(rootEl);
-        const { nextKey, prevKey } = getDirectionalKeys(dir, orientation.get());
-        if (e.key === nextKey) {
-          e.preventDefault();
-          const nextEl = next(enabledTriggers, triggerIdx, $loop);
-          nextEl.focus();
-        } else if (e.key === prevKey) {
-          e.preventDefault();
-          const prevEl = prev(enabledTriggers, triggerIdx, $loop);
-          prevEl.focus();
-        } else if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
-          e.preventDefault();
-          value.set(tabValue);
-        } else if (e.key === kbd.HOME) {
-          e.preventDefault();
-          const firstTrigger = enabledTriggers[0];
-          firstTrigger.focus();
-        } else if (e.key === kbd.END) {
-          e.preventDefault();
-          const lastTrigger = last(enabledTriggers);
-          lastTrigger.focus();
-        }
-      }));
-      return {
-        destroy: unsub
-      };
-    }
-  });
-  const content = makeElement(name("content"), {
-    stores: value,
-    returned: ($value) => {
-      return (tabValue) => {
-        return {
-          role: "tabpanel",
-          // TODO: improve
-          "aria-labelledby": tabValue,
-          hidden: isBrowser ? $value === tabValue ? void 0 : true : ssrValue === tabValue ? void 0 : true,
-          tabindex: 0
-        };
-      };
-    }
-  });
-  return {
-    elements: {
-      root,
-      list,
-      trigger,
-      content
-    },
-    states: {
-      value
-    },
-    options
-  };
+class TabsListState {
+  opts;
+  root;
+  #isDisabled = once(() => this.root.opts.disabled.current);
+  constructor(opts, root) {
+    this.opts = opts;
+    this.root = root;
+    useRefById(opts);
+  }
+  #props = once(() => ({
+    id: this.opts.id.current,
+    role: "tablist",
+    "aria-orientation": getAriaOrientation(this.root.opts.orientation.current),
+    "data-orientation": getDataOrientation(this.root.opts.orientation.current),
+    [TABS_LIST_ATTR]: "",
+    "data-disabled": getDataDisabled(this.#isDisabled())
+  }));
+  get props() {
+    return this.#props();
+  }
 }
-function getTabsData() {
-  const NAME = "tabs";
-  const PARTS = ["root", "content", "list", "trigger"];
-  return {
-    NAME,
-    PARTS
-  };
+class TabsTriggerState {
+  opts;
+  root;
+  #isActive = once(() => this.root.opts.value.current === this.opts.value.current);
+  #isDisabled = once(() => this.opts.disabled.current || this.root.opts.disabled.current);
+  #tabIndex = 0;
+  #ariaControls = once(() => this.root.valueToContentId.get(this.opts.value.current));
+  constructor(opts, root) {
+    this.opts = opts;
+    this.root = root;
+    useRefById(opts);
+    watch(
+      [
+        () => this.opts.id.current,
+        () => this.opts.value.current
+      ],
+      ([id, value]) => {
+        return this.root.registerTrigger(id, value);
+      }
+    );
+    this.onfocus = this.onfocus.bind(this);
+    this.onclick = this.onclick.bind(this);
+    this.onkeydown = this.onkeydown.bind(this);
+  }
+  #activate() {
+    if (this.root.opts.value.current === this.opts.value.current) return;
+    this.root.setValue(this.opts.value.current);
+  }
+  onfocus(_) {
+    if (this.root.opts.activationMode.current !== "automatic" || this.#isDisabled()) return;
+    this.#activate();
+  }
+  onclick(_) {
+    if (this.#isDisabled()) return;
+    this.#activate();
+  }
+  onkeydown(e) {
+    if (this.#isDisabled()) return;
+    if (e.key === SPACE || e.key === ENTER) {
+      e.preventDefault();
+      this.#activate();
+      return;
+    }
+    this.root.rovingFocusGroup.handleKeydown(this.opts.ref.current, e);
+  }
+  #props = once(() => ({
+    id: this.opts.id.current,
+    role: "tab",
+    "data-state": getTabDataState(this.#isActive()),
+    "data-value": this.opts.value.current,
+    "data-orientation": getDataOrientation(this.root.opts.orientation.current),
+    "data-disabled": getDataDisabled(this.#isDisabled()),
+    "aria-selected": getAriaSelected(this.#isActive()),
+    "aria-controls": this.#ariaControls(),
+    [TABS_TRIGGER_ATTR]: "",
+    disabled: getDisabled(this.#isDisabled()),
+    tabindex: this.#tabIndex,
+    //
+    onclick: this.onclick,
+    onfocus: this.onfocus,
+    onkeydown: this.onkeydown
+  }));
+  get props() {
+    return this.#props();
+  }
 }
-function setCtx(props) {
-  const { NAME, PARTS } = getTabsData();
-  const getAttrs = createBitAttrs(NAME, PARTS);
-  const tabs = { ...createTabs(removeUndefined(props)), getAttrs };
-  setContext(NAME, tabs);
-  return {
-    ...tabs,
-    updateOption: getOptionUpdater(tabs.options)
-  };
+class TabsContentState {
+  opts;
+  root;
+  #isActive = once(() => this.root.opts.value.current === this.opts.value.current);
+  #ariaLabelledBy = once(() => this.root.valueToTriggerId.get(this.opts.value.current));
+  constructor(opts, root) {
+    this.opts = opts;
+    this.root = root;
+    useRefById(opts);
+    watch(
+      [
+        () => this.opts.id.current,
+        () => this.opts.value.current
+      ],
+      ([id, value]) => {
+        return this.root.registerContent(id, value);
+      }
+    );
+  }
+  #props = once(() => ({
+    id: this.opts.id.current,
+    role: "tabpanel",
+    hidden: getHidden(!this.#isActive()),
+    tabindex: 0,
+    "data-value": this.opts.value.current,
+    "data-state": getTabDataState(this.#isActive()),
+    "aria-labelledby": this.#ariaLabelledBy(),
+    [TABS_CONTENT_ATTR]: ""
+  }));
+  get props() {
+    return this.#props();
+  }
 }
-function getCtx() {
-  const { NAME } = getTabsData();
-  return getContext(NAME);
+const TabsRootContext = new Context("Tabs.Root");
+function useTabsRoot(props) {
+  return TabsRootContext.set(new TabsRootState(props));
+}
+function useTabsTrigger(props) {
+  return new TabsTriggerState(props, TabsRootContext.get());
+}
+function useTabsList(props) {
+  return new TabsListState(props, TabsRootContext.get());
+}
+function useTabsContent(props) {
+  return new TabsContentState(props, TabsRootContext.get());
+}
+function getTabDataState(condition) {
+  return condition ? "active" : "inactive";
 }
 function Tabs($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
-  const $$restProps = rest_props($$sanitized_props, [
-    "orientation",
-    "activateOnFocus",
-    "loop",
-    "autoSet",
-    "value",
-    "onValueChange",
-    "asChild",
-    "el"
-  ]);
   push();
-  var $$store_subs;
-  let builder;
-  let orientation = fallback($$props["orientation"], () => void 0, true);
-  let activateOnFocus = fallback($$props["activateOnFocus"], () => void 0, true);
-  let loop = fallback($$props["loop"], () => void 0, true);
-  let autoSet = fallback($$props["autoSet"], () => void 0, true);
-  let value = fallback($$props["value"], () => void 0, true);
-  let onValueChange = fallback($$props["onValueChange"], () => void 0, true);
-  let asChild = fallback($$props["asChild"], false);
-  let el = fallback($$props["el"], () => void 0, true);
-  const {
-    elements: { root },
-    states: { value: localValue },
-    updateOption,
-    getAttrs
-  } = setCtx({
-    orientation,
-    activateOnFocus,
-    loop,
-    autoSet,
-    defaultValue: value,
-    onValueChange: ({ next: next2 }) => {
-      if (value !== next2) {
-        onValueChange?.(next2);
-        value = next2;
-      }
-      return next2;
-    }
+  let {
+    id = useId(),
+    ref = null,
+    value = "",
+    onValueChange = noop,
+    orientation = "horizontal",
+    loop = true,
+    activationMode = "automatic",
+    disabled = false,
+    children,
+    child,
+    $$slots,
+    $$events,
+    ...restProps
+  } = $$props;
+  const rootState = useTabsRoot({
+    id: box.with(() => id),
+    value: box.with(() => value, (v) => {
+      value = v;
+      onValueChange(v);
+    }),
+    orientation: box.with(() => orientation),
+    loop: box.with(() => loop),
+    activationMode: box.with(() => activationMode),
+    disabled: box.with(() => disabled),
+    ref: box.with(() => ref, (v) => ref = v)
   });
-  const attrs = getAttrs("root");
-  value !== void 0 && localValue.set(value);
-  updateOption("orientation", orientation);
-  updateOption("activateOnFocus", activateOnFocus);
-  updateOption("loop", loop);
-  updateOption("autoSet", autoSet);
-  builder = store_get($$store_subs ??= {}, "$root", root);
-  Object.assign(builder, attrs);
-  if (asChild) {
+  const mergedProps = mergeProps(restProps, rootState.props);
+  if (child) {
     $$payload.out += "<!--[-->";
-    $$payload.out += `<!---->`;
-    slot(
-      $$payload,
-      $$props,
-      "default",
-      {
-        builder,
-        value: store_get($$store_subs ??= {}, "$localValue", localValue)
-      },
-      null
-    );
+    child($$payload, { props: mergedProps });
     $$payload.out += `<!---->`;
   } else {
     $$payload.out += "<!--[!-->";
-    $$payload.out += `<div${spread_attributes({ ...builder, ...$$restProps })}><!---->`;
-    slot(
-      $$payload,
-      $$props,
-      "default",
-      {
-        builder,
-        value: store_get($$store_subs ??= {}, "$localValue", localValue)
-      },
-      null
-    );
+    $$payload.out += `<div${spread_attributes({ ...mergedProps })}>`;
+    children?.($$payload);
     $$payload.out += `<!----></div>`;
   }
   $$payload.out += `<!--]-->`;
-  if ($$store_subs) unsubscribe_stores($$store_subs);
-  bind_props($$props, {
-    orientation,
-    activateOnFocus,
-    loop,
-    autoSet,
-    value,
-    onValueChange,
-    asChild,
-    el
-  });
+  bind_props($$props, { ref, value });
   pop();
 }
 function Tabs_content($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
-  const $$restProps = rest_props($$sanitized_props, ["value", "asChild", "el"]);
   push();
-  var $$store_subs;
-  let builder;
-  let value = $$props["value"];
-  let asChild = fallback($$props["asChild"], false);
-  let el = fallback($$props["el"], () => void 0, true);
-  const { elements: { content }, getAttrs } = getCtx();
-  const attrs = getAttrs("content");
-  builder = store_get($$store_subs ??= {}, "$content", content)(value);
-  Object.assign(builder, attrs);
-  if (asChild) {
+  let {
+    children,
+    child,
+    id = useId(),
+    ref = null,
+    value,
+    $$slots,
+    $$events,
+    ...restProps
+  } = $$props;
+  const contentState = useTabsContent({
+    value: box.with(() => value),
+    id: box.with(() => id),
+    ref: box.with(() => ref, (v) => ref = v)
+  });
+  const mergedProps = mergeProps(restProps, contentState.props);
+  if (child) {
     $$payload.out += "<!--[-->";
-    $$payload.out += `<!---->`;
-    slot($$payload, $$props, "default", { builder }, null);
+    child($$payload, { props: mergedProps });
     $$payload.out += `<!---->`;
   } else {
     $$payload.out += "<!--[!-->";
-    $$payload.out += `<div${spread_attributes({ ...builder, ...$$restProps })}><!---->`;
-    slot($$payload, $$props, "default", { builder }, null);
+    $$payload.out += `<div${spread_attributes({ ...mergedProps })}>`;
+    children?.($$payload);
     $$payload.out += `<!----></div>`;
   }
   $$payload.out += `<!--]-->`;
-  if ($$store_subs) unsubscribe_stores($$store_subs);
-  bind_props($$props, { value, asChild, el });
+  bind_props($$props, { ref });
   pop();
 }
 function Tabs_list($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
-  const $$restProps = rest_props($$sanitized_props, ["asChild", "el"]);
   push();
-  var $$store_subs;
-  let builder;
-  let asChild = fallback($$props["asChild"], false);
-  let el = fallback($$props["el"], () => void 0, true);
-  const { elements: { list }, getAttrs } = getCtx();
-  const attrs = getAttrs("list");
-  builder = store_get($$store_subs ??= {}, "$list", list);
-  Object.assign(builder, attrs);
-  if (asChild) {
+  let {
+    child,
+    children,
+    id = useId(),
+    ref = null,
+    $$slots,
+    $$events,
+    ...restProps
+  } = $$props;
+  const listState = useTabsList({
+    id: box.with(() => id),
+    ref: box.with(() => ref, (v) => ref = v)
+  });
+  const mergedProps = mergeProps(restProps, listState.props);
+  if (child) {
     $$payload.out += "<!--[-->";
-    $$payload.out += `<!---->`;
-    slot($$payload, $$props, "default", { builder }, null);
+    child($$payload, { props: mergedProps });
     $$payload.out += `<!---->`;
   } else {
     $$payload.out += "<!--[!-->";
-    $$payload.out += `<div${spread_attributes({ ...builder, ...$$restProps })}><!---->`;
-    slot($$payload, $$props, "default", { builder }, null);
+    $$payload.out += `<div${spread_attributes({ ...mergedProps })}>`;
+    children?.($$payload);
     $$payload.out += `<!----></div>`;
   }
   $$payload.out += `<!--]-->`;
-  if ($$store_subs) unsubscribe_stores($$store_subs);
-  bind_props($$props, { asChild, el });
+  bind_props($$props, { ref });
   pop();
 }
 function Tabs_trigger($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
-  const $$restProps = rest_props($$sanitized_props, ["value", "disabled", "asChild", "el"]);
   push();
-  var $$store_subs;
-  let builder;
-  let value = $$props["value"];
-  let disabled = fallback($$props["disabled"], () => void 0, true);
-  let asChild = fallback($$props["asChild"], false);
-  let el = fallback($$props["el"], () => void 0, true);
-  const { elements: { trigger }, getAttrs } = getCtx();
-  const attrs = getAttrs("trigger");
-  builder = store_get($$store_subs ??= {}, "$trigger", trigger)({ value, disabled });
-  Object.assign(builder, attrs);
-  if (asChild) {
+  let {
+    child,
+    children,
+    disabled = false,
+    id = useId(),
+    type = "button",
+    value,
+    ref = null,
+    $$slots,
+    $$events,
+    ...restProps
+  } = $$props;
+  const triggerState = useTabsTrigger({
+    id: box.with(() => id),
+    disabled: box.with(() => disabled ?? false),
+    value: box.with(() => value),
+    ref: box.with(() => ref, (v) => ref = v)
+  });
+  const mergedProps = mergeProps(restProps, triggerState.props, { type });
+  if (child) {
     $$payload.out += "<!--[-->";
-    $$payload.out += `<!---->`;
-    slot($$payload, $$props, "default", { builder }, null);
+    child($$payload, { props: mergedProps });
     $$payload.out += `<!---->`;
   } else {
     $$payload.out += "<!--[!-->";
-    $$payload.out += `<button${spread_attributes({ ...builder, type: "button", ...$$restProps })}><!---->`;
-    slot($$payload, $$props, "default", { builder }, null);
+    $$payload.out += `<button${spread_attributes({ ...mergedProps })}>`;
+    children?.($$payload);
     $$payload.out += `<!----></button>`;
   }
   $$payload.out += `<!--]-->`;
-  if ($$store_subs) unsubscribe_stores($$store_subs);
-  bind_props($$props, { value, disabled, asChild, el });
+  bind_props($$props, { ref });
   pop();
 }
 function NewNowPlayingPost($$payload, $$props) {
@@ -420,6 +386,7 @@ function NewNowPlayingPost($$payload, $$props) {
     }
     $$payload2.out += `<!----> <!---->`;
     Tabs($$payload2, {
+      value: "album",
       children: ($$payload3) => {
         $$payload3.out += `<!---->`;
         Tabs_list($$payload3, {

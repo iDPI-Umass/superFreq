@@ -71,9 +71,9 @@
     "name": "GridList",
     "imports": [
       "_index2.js",
-      "_Icon.js",
       "_freq-wave.js",
       "_CoverArt.js",
+      "_Icon.js",
       "_boom-box.js",
       "_parseData.js"
     ],
@@ -85,8 +85,7 @@
     "file": "chunks/Icon.js",
     "name": "Icon",
     "imports": [
-      "_index2.js",
-      "_utils.js"
+      "_index2.js"
     ]
   },
   "_InfoBox.js": {
@@ -136,10 +135,8 @@
       "_PanelHeader.js",
       "_MusicBrainzSearch.js",
       "_Tooltip.js",
-      "_create.js",
-      "_utils.js",
-      "_helpers.js",
-      "_index3.js"
+      "_popper-layer-force-mount.js",
+      "_use-roving-focus.svelte.js"
     ],
     "css": [
       "_app/immutable/assets/NewNowPlayingPost.DIMotF6f.css"
@@ -161,8 +158,7 @@
     "imports": [
       "_index2.js",
       "_client.js",
-      "_create.js",
-      "_popover-trigger.js",
+      "_popover.js",
       "_Icon.js",
       "_ListModal.js",
       "_NotificationModal.js",
@@ -194,14 +190,11 @@
     "name": "PostReply",
     "imports": [
       "_index2.js",
-      "_create.js",
-      "_utils.js",
-      "_index3.js",
-      "_helpers.js",
       "_client.js",
       "_NowPlayingPost.js",
       "_InlineMarkdownText.js",
-      "_parseData.js"
+      "_parseData.js",
+      "_popper-layer-force-mount.js"
     ],
     "css": [
       "_app/immutable/assets/PostMenuSessionUser.BeF7SClh.css"
@@ -226,8 +219,7 @@
     "file": "chunks/Tooltip.js",
     "name": "Tooltip",
     "imports": [
-      "_create.js",
-      "_popover-trigger.js",
+      "_popover.js",
       "_index2.js",
       "_Icon.js"
     ]
@@ -244,9 +236,7 @@
     "file": "chunks/chevron-down.js",
     "name": "chevron-down",
     "imports": [
-      "_index3.js",
-      "_helpers.js",
-      "_create.js",
+      "_popper-layer-force-mount.js",
       "_index2.js",
       "_Icon.js"
     ]
@@ -269,15 +259,6 @@
       "_musicbrainz.js"
     ]
   },
-  "_create.js": {
-    "file": "chunks/create.js",
-    "name": "create",
-    "imports": [
-      "_index3.js",
-      "_index2.js",
-      "_utils.js"
-    ]
-  },
   "_data-consent.js": {
     "file": "chunks/data-consent.js",
     "name": "data-consent"
@@ -290,6 +271,13 @@
     "file": "chunks/equality.js",
     "name": "equality"
   },
+  "_events.js": {
+    "file": "chunks/events.js",
+    "name": "events",
+    "imports": [
+      "_utils.js"
+    ]
+  },
   "_exports.js": {
     "file": "chunks/exports.js",
     "name": "exports"
@@ -301,14 +289,6 @@
       "_database.js"
     ]
   },
-  "_focus.js": {
-    "file": "chunks/focus.js",
-    "name": "focus",
-    "imports": [
-      "_create.js",
-      "_helpers.js"
-    ]
-  },
   "_freq-logo-dark.js": {
     "file": "chunks/freq-logo-dark.js",
     "name": "freq-logo-dark"
@@ -318,14 +298,6 @@
     "name": "freq-wave",
     "assets": [
       "_app/immutable/assets/freq-wave.BxfgvkIv.svg"
-    ]
-  },
-  "_helpers.js": {
-    "file": "chunks/helpers.js",
-    "name": "helpers",
-    "imports": [
-      "_create.js",
-      "_index3.js"
     ]
   },
   "_index.js": {
@@ -351,8 +323,9 @@
     "file": "chunks/internal.js",
     "name": "internal",
     "imports": [
-      "_utils.js",
+      "_events.js",
       "_equality.js",
+      "_utils.js",
       "_index2.js"
     ],
     "dynamicImports": [
@@ -378,16 +351,20 @@
     "file": "chunks/parseData.js",
     "name": "parseData"
   },
-  "_popover-trigger.js": {
-    "file": "chunks/popover-trigger.js",
-    "name": "popover-trigger",
+  "_popover.js": {
+    "file": "chunks/popover.js",
+    "name": "popover",
     "imports": [
       "_index2.js",
-      "_index3.js",
-      "_utils.js",
-      "_create.js",
-      "_helpers.js",
-      "_focus.js"
+      "_popper-layer-force-mount.js"
+    ]
+  },
+  "_popper-layer-force-mount.js": {
+    "file": "chunks/popper-layer-force-mount.js",
+    "name": "popper-layer-force-mount",
+    "imports": [
+      "_index2.js",
+      "_events.js"
     ]
   },
   "_posts.js": {
@@ -416,6 +393,13 @@
   "_updates.js": {
     "file": "chunks/updates.js",
     "name": "updates"
+  },
+  "_use-roving-focus.svelte.js": {
+    "file": "chunks/use-roving-focus.svelte.js",
+    "name": "use-roving-focus.svelte",
+    "imports": [
+      "_popper-layer-force-mount.js"
+    ]
   },
   "_users.js": {
     "file": "chunks/users.js",
@@ -451,7 +435,7 @@
     "src": "node_modules/@sveltejs/kit/src/runtime/server/index.js",
     "isEntry": true,
     "imports": [
-      "_utils.js",
+      "_events.js",
       "_internal.js",
       "_index.js",
       "_exports.js",
@@ -660,7 +644,6 @@
       "_index2.js",
       "_client.js",
       "_PanelHeader.js",
-      "_create.js",
       "_NotificationModal.js",
       "_RedirectModal.js"
     ],
@@ -750,7 +733,6 @@
       "_GridList.js",
       "_NewNowPlayingPost.js",
       "_Feed.js",
-      "_create.js",
       "_parseData.js",
       "_CoverArt.js",
       "_InfoBox.js"
@@ -895,17 +877,17 @@
     "imports": [
       "_index2.js",
       "_client.js",
-      "_create.js",
-      "_utils.js",
-      "_index3.js",
-      "_helpers.js",
+      "_CoverArt.js",
+      "_popper-layer-force-mount.js",
       "_chevron-down.js",
-      "_focus.js",
+      "_use-roving-focus.svelte.js",
+      "_events.js",
       "_freq-logo-dark.js",
-      "_CoverArt.js"
+      "_parseData.js"
     ],
     "css": [
-      "_app/immutable/assets/_layout.Cc3DIoSf.css"
+      "_app/immutable/assets/_layout.B6l7Scav.css",
+      "_app/immutable/assets/CoverArt.DfTvHn-K.css"
     ],
     "assets": [
       "_app/immutable/assets/Roboto-BlackItalic.Cd5WMiKN.ttf",
@@ -1088,15 +1070,17 @@
     "imports": [
       "_index2.js",
       "_client.js",
-      "_create.js",
-      "_index3.js",
-      "_helpers.js",
-      "_chevron-down.js",
-      "_utils.js",
-      "_Icon.js",
       "_GridList.js",
       "_InfoBox.js",
-      "_InlineMarkdownText.js"
+      "_InlineMarkdownText.js",
+      "_popper-layer-force-mount.js",
+      "_events.js",
+      "_chevron-down.js",
+      "_use-roving-focus.svelte.js",
+      "_Icon.js"
+    ],
+    "css": [
+      "_app/immutable/assets/_page.BOgK02wW.css"
     ]
   },
   "src/routes/collection/[collectionId=integer]/edit/+page.server.ts": {

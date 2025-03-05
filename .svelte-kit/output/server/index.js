@@ -1,4 +1,4 @@
-import { P as BROWSER } from "./chunks/utils.js";
+import { H as BROWSER } from "./chunks/events.js";
 import { a as assets, b as base, c as app_dir, p as public_env, s as safe_public_env, o as override, r as reset, d as read_implementation, e as options, g as get_hooks, f as set_private_env, h as prerendering, i as set_public_env, j as set_safe_public_env, k as set_read_implementation } from "./chunks/internal.js";
 import { H as HttpError, S as SvelteKitError, j as json, t as text, R as Redirect, A as ActionFailure } from "./chunks/index.js";
 import * as devalue from "devalue";

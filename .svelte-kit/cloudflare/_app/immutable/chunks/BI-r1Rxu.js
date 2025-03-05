@@ -1,1 +1,0 @@
-import{i as n,a as t}from"./CentS020.js";import{ak as c}from"./CIC73nbL.js";import{s as f}from"./C1qF14Wh.js";async function p(i){const{prop:o,defaultEl:e}=i;if(await Promise.all([f(1),c]),o===void 0){e==null||e.focus();return}const s=n(o)?o(e):o;if(typeof s=="string"){const r=document.querySelector(s);if(!t(r))return;r.focus()}else t(s)&&s.focus()}export{p as h};
