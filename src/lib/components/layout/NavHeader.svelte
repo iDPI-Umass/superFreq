@@ -1,6 +1,7 @@
 <script lang="ts">
   import { DropdownMenu } from "bits-ui"
-  import ChevronDown from 'lucide-svelte/icons/chevron-down';
+  import Dropdown from '$lib/components/menus/ReuseableDropdownMenu.svelte'
+  import ChevronDown from '@lucide/svelte/icons/chevron-down';
   import logo from "$lib/assets/images/logo/freq-logo-dark.svg"
 
   import CoverArt from "src/lib/components/CoverArt.svelte";
@@ -31,7 +32,6 @@
     <a class="logo" href="/">
       <img class="logo" alt="Freq" src={logo} />
     </a>
-
     <nav class="wide">
       {#if sessionUserId}
       <a href="/feed">
@@ -39,96 +39,93 @@
           feed
         </button>
       </a>
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger>
-          create
-          <ChevronDown></ChevronDown>
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Content>
-            <DropdownMenu.Item href={"/posts/now-playing/new"}>
-              new post
-            </DropdownMenu.Item>
-            <DropdownMenu.Item href={"/collection/new"}>
-              new collection
-            </DropdownMenu.Item>
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger>
-          discover
-          <ChevronDown></ChevronDown>
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Content>
-            <DropdownMenu.Item href={"/feed/firehose"}>
-              universal feed
-            </DropdownMenu.Item>
-            <DropdownMenu.Item href={"/collections"}>
-              collections
-            </DropdownMenu.Item>
-            <DropdownMenu.Item href={"/users"}>
-              users
-            </DropdownMenu.Item>
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger>
-          about
-          <ChevronDown></ChevronDown>
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Content>
-          <DropdownMenu.Item href={"/about"}>
-            about
-          </DropdownMenu.Item>
-          <DropdownMenu.Item href={"/about/updates"}>
-            updates
-          </DropdownMenu.Item>
-          <DropdownMenu.Item href={"/about/guidelines"}>
-            community guidlines
-          </DropdownMenu.Item>
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger>
-          <CoverArt
-            item={avatarItem}
-            altText={avatarItem['release_group_name']}
-          ></CoverArt>
-          {displayName ?? 'display name'} 
-          <ChevronDown></ChevronDown>
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Content>
-          <DropdownMenu.Item href={`/user/${username}`}>
-            profile
-          </DropdownMenu.Item>
-          <DropdownMenu.Item href={`/user/${username}/collections`}>
-            my collections
-          </DropdownMenu.Item>
-          <DropdownMenu.Item href={`/user/${username}/now-playing-posts`}>
-            my posts
-          </DropdownMenu.Item>
-          <DropdownMenu.Item href={"/account"}>
-            account
-          </DropdownMenu.Item>
-          <DropdownMenu.Item href={"/sign-out"}>
-            sign out
-          </DropdownMenu.Item>
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
+      <Dropdown
+        buttonText="create"
+        items={[
+          {
+            'text': 'new post',
+            'url': '/posts/now-playing/new'
+          },
+          {
+            'text': 'new collection',
+            'url': '/collection/new'
+          },
+        ]}
+      ></Dropdown>
+      <Dropdown
+        buttonText="discover"
+        items={[
+          {
+            'text': 'universal feed',
+            'url': '/feed/firehose'
+          },
+          {
+            'text': 'collections',
+            'url': '/collections'
+          },
+          {
+            'text': 'users',
+            'url': '/users'
+          },
+        ]}
+      ></Dropdown>
+      <Dropdown
+        buttonText="about"
+        items={[
+          {
+            'text': 'about',
+            'url': '/about'
+          },
+          {
+            'text': 'updates',
+            'url': '/about/updates'
+          },
+          {
+            'text': 'community guidelines',
+            'url': '/about/guidelines'
+          },
+        ]}
+      ></Dropdown>
+      <Dropdown
+        avatar={avatarItem}
+        buttonText={displayName ?? 'display name'} 
+        items={[
+          {
+            'text': 'profile',
+            'url': `/user/${username}`
+          },
+          {
+            'text': 'my collections',
+            'url': `/user/${username}/collections`
+          },
+          {
+            'text': 'my posts',
+            'url': `/user/${username}/now-playing-posts`
+          },
+          {
+            'text': 'account',
+            'url': `/account`
+          },
+          {
+            'text': 'sign out',
+            'url': `/sign-out`
+          },
+        ]}
+      ></Dropdown>
       {:else}
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger>
-            Explore
-            <ChevronDown></ChevronDown>
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content>
-            <DropdownMenu.Item href={"/collections"}>
-              Collections
-            </DropdownMenu.Item>
-            <DropdownMenu.Item href={"/posts"}>
-              Posts
-            </DropdownMenu.Item>
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
+        <Dropdown
+          buttonText="explore"
+          items={[
+            {
+              'text': 'collections',
+              'url': '/collections'
+            },
+            {
+              'text': 'posts',
+              'url': '/posts'
+            },
+          ]}
+        ></Dropdown>
         <a href="/about">
           <button class="nav">
             about
@@ -143,83 +140,87 @@
     </nav>
     <nav class="narrow">
       {#if sessionUserId}
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger>
-          explore
-          <ChevronDown></ChevronDown>
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Content>
-            <DropdownMenu.Item href={"/feed"}>
-              feed
-            </DropdownMenu.Item>
-            <DropdownMenu.Item href={"/feed/firehose"}>
-              universal feed
-            </DropdownMenu.Item>
-            <DropdownMenu.Item href={"/posts/now-playing/new"}>
-              new post
-            </DropdownMenu.Item>
-            <DropdownMenu.Item href={"/collection/new"}>
-              new collection
-            </DropdownMenu.Item>
-            <DropdownMenu.Item href={"/about"}>
-              about
-            </DropdownMenu.Item>
-            <DropdownMenu.Item href={"/about/updates"}>
-              updates
-            </DropdownMenu.Item>
-            <DropdownMenu.Item href={"/collections"}>
-              discover collections
-            </DropdownMenu.Item>
-            <DropdownMenu.Item href={"/users"}>
-              discover users
-            </DropdownMenu.Item>
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger>
-          <CoverArt
-            item={avatarItem}
-            altText={avatarItem['release_group_name']}
-          ></CoverArt>
-          {displayName ?? 'display name'} 
-          <ChevronDown></ChevronDown>
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Content>
-          <DropdownMenu.Item href={`/user/${username}`}>
-            profile
-          </DropdownMenu.Item>
-          <DropdownMenu.Item href={"/account"}>
-            account
-          </DropdownMenu.Item>
-          <DropdownMenu.Item href={`/user/${username}/collections`}>
-            my collections
-          </DropdownMenu.Item>
-          <DropdownMenu.Item href={`/user/${username}/now-playing-posts`}>
-            my posts
-          </DropdownMenu.Item>
-          <DropdownMenu.Item href={"/sign-out"}>
-            sign out
-          </DropdownMenu.Item>
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
+        <Dropdown
+          buttonText="explore"
+          items={[
+            {
+              'text': 'feed',
+              'url': `/feed`
+            },
+            {
+              'text': 'universal feed',
+              'url': `/feed/firehose`
+            },
+            {
+              'text': 'new post',
+              'url': `/posts/now-playing/new`
+            },
+            {
+              'text': 'new collection',
+              'url': `/collection/new`
+            },
+            {
+              'text': 'about',
+              'url': `/about`
+            },
+            {
+              'text': 'updates',
+              'url': `/about/updates`
+            },
+            {
+              'text': 'discover collections',
+              'url': `/collections`
+            },
+            {
+              'text': 'discover users',
+              'url': `/users`
+            },
+          ]}
+        ></Dropdown>
+        <Dropdown
+          avatar={avatarItem}
+          buttonText={displayName ?? 'display name'} 
+          items={[
+            {
+              'text': 'profile',
+              'url': `/user/${username}`
+            },
+            {
+              'text': 'my collections',
+              'url': `/user/${username}/collections`
+            },
+            {
+              'text': 'my posts',
+              'url': `/user/${username}/now-playing-posts`
+            },
+            {
+              'text': 'account',
+              'url': `/account`
+            },
+            {
+              'text': 'sign out',
+              'url': `/sign-out`
+            },
+          ]}
+        ></Dropdown>
       {:else}
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger>
-            Explore
-            <ChevronDown></ChevronDown>
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content>
-            <DropdownMenu.Item href={"/about"}>
-              About
-            </DropdownMenu.Item>
-            <DropdownMenu.Item href={"/collections"}>
-              Collections
-            </DropdownMenu.Item>
-            <DropdownMenu.Item href={"/posts"}>
-              Posts
-            </DropdownMenu.Item>
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
+        <Dropdown
+          buttonText="explore"
+          items={[
+            {
+              'text': 'about',
+              'url': '/about'
+            },
+            {
+              'text': 'collections',
+              'url': '/collections'
+            },
+            {
+              'text': 'posts',
+              'url': '/posts'
+            },
+          ]}
+        ></Dropdown>
         <a href="/welcome">
           <button class="nav">
             log in/sign up

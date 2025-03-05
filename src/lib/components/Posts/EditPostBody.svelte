@@ -17,7 +17,7 @@
     let editPromise = $state(false)
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 <form 
     method="POST" 

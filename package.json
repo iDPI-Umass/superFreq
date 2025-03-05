@@ -42,6 +42,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@lucide/svelte": "^0.477.0-rc.0",
 		"@supabase/auth-ui-shared": "^0.1.8",
 		"@supabase/ssr": "^0.5.1",
 		"@supabase/supabase-js": "^2.45.4",
@@ -51,7 +52,6 @@
 		"date-fns": "^3.6.0",
 		"kysely": "^0.27.4",
 		"linkedom": "^0.18.4",
-		"lucide-svelte": "^0.377.0",
 		"n": "^10.0.0",
 		"npm": "^10.8.3",
 		"pg": "^8.12.0",

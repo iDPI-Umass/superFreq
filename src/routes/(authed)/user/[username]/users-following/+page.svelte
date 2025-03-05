@@ -9,7 +9,7 @@
     let { profiles, profileDisplayName, username } = $derived(data)
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 <svelte:head>
 	<title>
 		Users {username} follows

@@ -13,7 +13,7 @@
     let email: string | null = $state(null)
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 <svelte:head>
 	<title>

@@ -1,10 +1,10 @@
 <script lang="ts">
     import { Popover } from "bits-ui"
-    import Info from 'lucide-svelte/icons/info'
+    import Info from '@lucide/svelte/icons/info'
 
     let { children } = $props()
 </script>
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 <Popover.Root>
     <Popover.Trigger>

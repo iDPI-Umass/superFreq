@@ -49,7 +49,7 @@
 	})
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 <Header
 	sessionUserId={sessionUserId}

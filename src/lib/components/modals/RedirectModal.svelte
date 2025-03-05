@@ -38,7 +38,7 @@
 
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 <dialog class="notification"
     aria-label="redirect-modal"

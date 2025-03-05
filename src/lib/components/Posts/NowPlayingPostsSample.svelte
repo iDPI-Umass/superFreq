@@ -20,7 +20,7 @@
     
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 {#if posts && posts.length > 0}
 <div class="panel-medium">

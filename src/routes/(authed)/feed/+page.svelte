@@ -8,7 +8,7 @@
     let showSaveSucessModal = $derived(form?.updateSuccess ?? false)
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 <svelte:head>
 	<title>

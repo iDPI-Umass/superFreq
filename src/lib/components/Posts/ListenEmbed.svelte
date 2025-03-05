@@ -5,7 +5,7 @@
     let { id, source } = $derived( embedInfo )
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 {#if source == 'bandcamp'}
     <iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/{id}/size=small/bgcol=333333/linkcol=ffffff/transparent=true/" title="Bandcamp player" seamless></iframe>

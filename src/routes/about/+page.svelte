@@ -10,7 +10,7 @@
 	</title>
 </svelte:head>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 <div class="panel">
 	<PanelHeader>

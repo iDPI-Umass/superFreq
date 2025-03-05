@@ -71,7 +71,7 @@
     }
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 <svelte:window
 	on:keydown={(e) => {
