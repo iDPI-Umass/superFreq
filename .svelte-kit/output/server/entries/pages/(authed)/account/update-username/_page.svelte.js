@@ -1,8 +1,6 @@
 import { h as head, f as attr, p as pop, b as push, e as escape_html } from "../../../../../chunks/index2.js";
 import "../../../../../chunks/client.js";
 import { P as PanelHeader } from "../../../../../chunks/PanelHeader.js";
-import "dequal";
-import "../../../../../chunks/create.js";
 import { N as NotificationModal } from "../../../../../chunks/NotificationModal.js";
 import { R as RedirectModal } from "../../../../../chunks/RedirectModal.js";
 function _page($$payload, $$props) {

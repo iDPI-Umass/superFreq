@@ -1,6 +1,7 @@
-import { a as increment_write_version, D as DIRTY, b as set_signal_status, C as CLEAN, U as UNOWNED, c as DERIVED, d as schedule_effect, e as active_reaction, u as untracking, g as is_runes, B as BLOCK_EFFECT, h as derived_sources, j as state_unsafe_mutation, k as active_effect, l as BRANCH_EFFECT, R as ROOT_EFFECT, m as untracked_writes, o as set_untracked_writes, M as MAYBE_DIRTY, p as get_next_sibling, q as define_property, t as set_active_reaction, v as set_active_effect, w as is_array, x as init_operations, y as get_first_child, z as hydration_failed, A as clear_text_content, E as array_from, F as component_root, G as create_text, H as branch, I as push, J as component_context, K as pop, L as LEGACY_PROPS, N as get, O as flushSync } from "./utils.js";
+import { i as increment_write_version, D as DIRTY, s as set_signal_status, C as CLEAN, U as UNOWNED, a as DERIVED, b as schedule_effect, c as active_reaction, u as untracking, d as is_runes, B as BLOCK_EFFECT, e as derived_sources, f as state_unsafe_mutation, g as active_effect, h as BRANCH_EFFECT, R as ROOT_EFFECT, j as untracked_writes, k as set_untracked_writes, M as MAYBE_DIRTY, l as get_next_sibling, m as init_operations, n as get_first_child, o as hydration_failed, p as clear_text_content, q as all_registered_events, r as root_event_handles, t as component_root, v as handle_event_propagation, w as create_text, x as branch, y as push, z as component_context, A as pop, L as LEGACY_PROPS, E as get, F as flushSync } from "./events.js";
 import { a as safe_equals, e as equals } from "./equality.js";
-import { H as HYDRATION_ERROR, x as HYDRATION_START, y as HYDRATION_END, z as is_passive_event, A as render, b as push$1, u as setContext, p as pop$1 } from "./index2.js";
+import { c as array_from, d as define_property } from "./utils.js";
+import { H as HYDRATION_ERROR, q as HYDRATION_START, r as HYDRATION_END, u as is_passive_event, v as render, b as push$1, w as setContext, p as pop$1 } from "./index2.js";
 import "clsx";
 let base = "";
 let assets = base;
@@ -118,96 +119,6 @@ function hydrate_next() {
     /** @type {TemplateNode} */
     get_next_sibling(hydrate_node)
   );
-}
-const all_registered_events = /* @__PURE__ */ new Set();
-const root_event_handles = /* @__PURE__ */ new Set();
-function handle_event_propagation(event) {
-  var handler_element = this;
-  var owner_document = (
-    /** @type {Node} */
-    handler_element.ownerDocument
-  );
-  var event_name = event.type;
-  var path = event.composedPath?.() || [];
-  var current_target = (
-    /** @type {null | Element} */
-    path[0] || event.target
-  );
-  var path_idx = 0;
-  var handled_at = event.__root;
-  if (handled_at) {
-    var at_idx = path.indexOf(handled_at);
-    if (at_idx !== -1 && (handler_element === document || handler_element === /** @type {any} */
-    window)) {
-      event.__root = handler_element;
-      return;
-    }
-    var handler_idx = path.indexOf(handler_element);
-    if (handler_idx === -1) {
-      return;
-    }
-    if (at_idx <= handler_idx) {
-      path_idx = at_idx;
-    }
-  }
-  current_target = /** @type {Element} */
-  path[path_idx] || event.target;
-  if (current_target === handler_element) return;
-  define_property(event, "currentTarget", {
-    configurable: true,
-    get() {
-      return current_target || owner_document;
-    }
-  });
-  var previous_reaction = active_reaction;
-  var previous_effect = active_effect;
-  set_active_reaction(null);
-  set_active_effect(null);
-  try {
-    var throw_error;
-    var other_errors = [];
-    while (current_target !== null) {
-      var parent_element = current_target.assignedSlot || current_target.parentNode || /** @type {any} */
-      current_target.host || null;
-      try {
-        var delegated = current_target["__" + event_name];
-        if (delegated !== void 0 && (!/** @type {any} */
-        current_target.disabled || // DOM could've been updated already by the time this is reached, so we check this as well
-        // -> the target could not have been disabled because it emits the event in the first place
-        event.target === current_target)) {
-          if (is_array(delegated)) {
-            var [fn, ...data] = delegated;
-            fn.apply(current_target, [event, ...data]);
-          } else {
-            delegated.call(current_target, event);
-          }
-        }
-      } catch (error) {
-        if (throw_error) {
-          other_errors.push(error);
-        } else {
-          throw_error = error;
-        }
-      }
-      if (event.cancelBubble || parent_element === handler_element || parent_element === null) {
-        break;
-      }
-      current_target = parent_element;
-    }
-    if (throw_error) {
-      for (let error of other_errors) {
-        queueMicrotask(() => {
-          throw error;
-        });
-      }
-      throw throw_error;
-    }
-  } finally {
-    event.__root = handler_element;
-    delete event.currentTarget;
-    set_active_reaction(previous_reaction);
-    set_active_effect(previous_effect);
-  }
 }
 function assign_nodes(start, end) {
   var effect = (
@@ -640,7 +551,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "kzuql1"
+  version_hash: "wdjy3d"
 };
 async function get_hooks() {
   let handle;

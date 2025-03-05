@@ -6,8 +6,6 @@ import { G as GridList } from "../../../../../chunks/GridList.js";
 import { N as NewNowPlayingPost } from "../../../../../chunks/NewNowPlayingPost.js";
 import { F as Feed } from "../../../../../chunks/Feed.js";
 /* empty css                                                                      */
-import "dequal";
-import "../../../../../chunks/create.js";
 import "../../../../../chunks/parseData.js";
 import { C as CoverArt } from "../../../../../chunks/CoverArt.js";
 import { I as InfoBox } from "../../../../../chunks/InfoBox.js";
@@ -17,6 +15,7 @@ function NowPlayingPostsSample($$payload, $$props) {
     posts,
     username,
     displayName,
+    moreItemsAvailable,
     sessionUserId = null
   } = $$props;
   if (posts && posts.length > 0) {
@@ -34,7 +33,14 @@ function NowPlayingPostsSample($$payload, $$props) {
       let post = each_array[$$index];
       NowPlayingPost($$payload, { post, sessionUserId, mode: "feed" });
     }
-    $$payload.out += `<!--]--></div> <div class="button-spacer svelte-1mvojoo"><button class="standard svelte-1mvojoo">see more</button></div></div>`;
+    $$payload.out += `<!--]--></div> `;
+    if (moreItemsAvailable) {
+      $$payload.out += "<!--[-->";
+      $$payload.out += `<div class="button-spacer svelte-1mvojoo"><button class="standard svelte-1mvojoo">see more</button></div>`;
+    } else {
+      $$payload.out += "<!--[!-->";
+    }
+    $$payload.out += `<!--]--></div>`;
   } else if (!posts || posts.length == 0) {
     $$payload.out += "<!--[1-->";
     $$payload.out += `<div class="panel-medium"><div class="panel-button-buffer svelte-1mvojoo"><p class="svelte-1mvojoo">This user hasn't posted anything yet.</p></div></div>`;
@@ -65,6 +71,8 @@ function _page($$payload, $$props) {
     profileUserBlockInfo,
     profileUserFlagInfo
   } = profileData;
+  console.log(profileUserData);
+  const moreItemsAvailable = totalAvailableItems > feedItems.length ? true : false;
   const profileUserId = profileUserData?.id;
   let collectionCount = permission ? profileData?.collectionCount : null;
   let collectionFollowingCount = permission ? profileData?.collectionFollowingCount : null;
@@ -106,7 +114,7 @@ function _page($$payload, $$props) {
   } else {
     $$payload.out += "<!--[!-->";
   }
-  $$payload.out += `<!--]--></div> <div class="profile-info-box-column"><div class="profile-user-data-column"><div class="profile-displayname-username-column"><h2>${escape_html(profileUserData?.display_name)}</h2> <p class="data-muted">${escape_html(profileUserData?.username)}</p></div> <p>${escape_html(profileUserData?.about ?? "")}</p></div></div></div> <div class="profile-buttons-group">`;
+  $$payload.out += `<!--]--></div> <div class="profile-info-box-column"><div class="profile-user-data-column"><div class="profile-displayname-username-column"><h2>${escape_html(profileUserData?.display_name)}</h2> <p class="data-muted">${escape_html(profileUserData?.username)}</p></div> <p>${escape_html(profileUserData?.about ?? "")}</p> <a class="about-website"${attr("href", profileUserData?.website)}>${escape_html(profileUserData?.website)}</a></div></div></div> <div class="profile-buttons-group">`;
   if (isSessionUserProfile) {
     $$payload.out += "<!--[-->";
     $$payload.out += `<button class="double-border-top"><div class="inner-border-condensed">edit profile</div></button>`;
@@ -201,9 +209,10 @@ function _page($$payload, $$props) {
   } else {
     $$payload.out += "<!--[!-->";
     NowPlayingPostsSample($$payload, {
-      posts,
+      posts: feedItems,
       displayName,
-      username: profileUsername
+      username: profileUsername,
+      moreItemsAvailable
     });
   }
   $$payload.out += `<!--]--></div>`;

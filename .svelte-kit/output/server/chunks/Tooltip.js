@@ -1,11 +1,10 @@
 import "clsx";
-import "dequal";
-import "./create.js";
-import { P as Popover, a as Popover_trigger, b as Popover_content } from "./popover-trigger.js";
-import { k as sanitize_props, o as spread_props, n as slot } from "./index2.js";
+import { P as Popover, a as Popover_trigger, b as Popover_content } from "./popover.js";
+import { b as push, m as spread_props, p as pop } from "./index2.js";
 import { I as Icon } from "./Icon.js";
 function Info($$payload, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
+  push();
+  let { $$slots, $$events, ...props } = $$props;
   const iconNode = [
     [
       "circle",
@@ -16,17 +15,17 @@ function Info($$payload, $$props) {
   ];
   Icon($$payload, spread_props([
     { name: "info" },
-    $$sanitized_props,
+    props,
     {
       iconNode,
       children: ($$payload2) => {
-        $$payload2.out += `<!---->`;
-        slot($$payload2, $$props, "default", {}, null);
+        props.children?.($$payload2);
         $$payload2.out += `<!---->`;
       },
       $$slots: { default: true }
     }
   ]));
+  pop();
 }
 function Tooltip($$payload, $$props) {
   let { children } = $$props;
