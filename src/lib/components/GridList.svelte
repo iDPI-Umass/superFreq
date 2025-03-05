@@ -6,7 +6,7 @@
     import {flip} from "svelte/animate";
     import {dragHandleZone, dndzone, dragHandle} from "svelte-dnd-action";
 
-    import Grip from 'lucide-svelte/icons/grip'
+    import Grip from '@lucide/svelte/icons/grip'
 
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
@@ -126,7 +126,7 @@
 
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 {#snippet editorInteractions(item: any, labelText: string)}
     <div class="editor-interactions">

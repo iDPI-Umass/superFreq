@@ -49,7 +49,7 @@ Currently configured to server Last.fm images on the client side by default on a
     // })
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 <!-- {#if coverArtArchiveImgUrl ?? lastFmImgUrl}
     <img src={lastFmImgUrl ?? coverArtArchiveImgUrl ?? wave} alt={altText} class={imgClass} /> -->

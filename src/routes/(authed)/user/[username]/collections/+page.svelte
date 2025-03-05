@@ -11,7 +11,7 @@
     let displayName = $derived(collections[0]["display_name"])
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 <svelte:head>
 	<title>
 		{username}'s collections

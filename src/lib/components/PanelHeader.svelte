@@ -4,7 +4,7 @@
 
     let { headerText, button }: { headerText: Snippet, button?: Snippet } = $props()
 </script>
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 <div class="panel-header">
     <img src={decoration} alt="decoration" />

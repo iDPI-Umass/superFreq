@@ -7,11 +7,11 @@
 /* Dropdown Menu */
 
 
-[data-menu-root] {
+[data-dropdown-menu-root] {
     background: none;
 }
 
-[data-menu-trigger] {
+[data-dropdown-menu-trigger] {
 	display: flex;
 	flex-direction: row;
 	color: var( --freq-color-text-muted);
@@ -24,21 +24,21 @@
     text-transform: uppercase;
 }
 
-[data-menu-trigger]:is(:hover, :focus) {
+[data-dropdown-menu-trigger]:is(:hover, :focus) {
 	background: var(--freq-color-button-lens);
 	border: none;
     background: var(--freq-color-button-lens-active);
 	color: var(--freq-color-text-dark);
 }
 
-[data-menu-trigger]:active {
+[data-dropdown-menu-trigger]:active {
 	scale: 98%;
 	background: var(--freq-color-button-lens-active);
 	border: none;
 	color: var(--freq-color-text);
 }
 
-[data-menu-content] {
+[data-dropdown-menu-content] {
 	display: flex;
 	flex-direction: column;
 	color: var( --freq-color-text-muted);
@@ -52,29 +52,30 @@
 	overflow: visible;
 }
 
-[data-menu-content] a {
+[data-dropdown-menu-content] a,
+[data-dropdown-menu-item] a {
 	color: var( --freq-color-text-muted);
 	text-decoration: none;
 }
 
-[data-menu-item] {
+[data-dropdown-menu-item] {
 	background: var(--freq-color-panel-background);
 	border: none;
 	text-decoration: none;
 }
 
-[data-menu-item]:is(:hover, :focus) {
+[data-dropdown-menu-item]:is(:hover, :focus) {
 	background: var(--freq-color-button-lens-active);
 	color: var(--freq-color-text);
 }
 
-[data-menu-item]:active {
+[data-dropdown-menu-item]:active {
 	scale: 98%;
 	background: var(--freq-color-button-lens-active);
 	color: var(--freq-color-text-dark);
 }
 
-[data-menu-item]:enabled > * {
+[data-dropdown-menu-item]:enabled > * {
     border: none;
 }
 
@@ -100,6 +101,7 @@
 	border: var(--freq-border-panel);
 	margin: 0;
 	padding: 0;
+	cursor: pointer;
 }
 
 [data-toolbar-group] .toolbar-icon { 
@@ -271,7 +273,7 @@
 	background: transparent;
 	font-family: 'Roboto', sans-serif;
 	border: var(--freq-border-panel);
-	align-items: end;
+	align-items: center;
 	justify-content: center;
     text-transform: uppercase;
 }
@@ -328,6 +330,7 @@
 	background: var(--freq-color-button-lens);
     background: var(--freq-color-button-lens-active);
 	color: var(--freq-color-text-dark);
+	cursor: pointer;
 }
 
 [data-select-item][data-highlighted] {

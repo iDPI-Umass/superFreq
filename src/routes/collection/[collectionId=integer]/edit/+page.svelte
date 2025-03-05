@@ -38,7 +38,7 @@
     let showModal = $state(false)
 
 </script>
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 <svelte:head>
 	<title>

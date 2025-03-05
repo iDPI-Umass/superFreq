@@ -3,7 +3,7 @@
     let { children } = $props();
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 <main>
     {@render children?.()}

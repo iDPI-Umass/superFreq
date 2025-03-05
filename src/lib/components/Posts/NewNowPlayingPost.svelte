@@ -21,7 +21,7 @@
     let imgUrl = $derived(addedItem["img_url"]) as string
     let lastFmImgUrl = $derived(addedItem["last_fm_img_url"]) as string
 </script>
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 {#snippet postForm( itemType: string, addedItem: App.RowData )}
     <form method="POST" action="?/post" class="vertical" use:enhance>
@@ -243,7 +243,7 @@
             </span>
         {/snippet}
     </PanelHeader>
-    <Tabs.Root>
+    <Tabs.Root value="album">
         <Tabs.List>
             <Tabs.Trigger value="album">
                 album

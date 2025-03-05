@@ -4,9 +4,9 @@
     
     import { Toolbar } from "bits-ui"
     import { Select } from "bits-ui"
-    import ChevronDown from 'lucide-svelte/icons/chevron-down'
-    import LayoutGrid from 'lucide-svelte/icons/layout-grid'
-    import AlignJustify from 'lucide-svelte/icons/align-justify'
+    import ChevronDown from '@lucide/svelte/icons/chevron-down'
+    import LayoutGrid from '@lucide/svelte/icons/layout-grid'
+    import AlignJustify from '@lucide/svelte/icons/align-justify'
 
     import GridList from "$lib/components/GridList.svelte";
     import InfoBox from '$lib/components/InfoBox.svelte'
@@ -26,7 +26,7 @@
 
     let gridListSelect = $state("grid")
 
-    let selected = $state() as any
+    let selected = $state('sort order') as any
 
     const categories: App.Lookup = {
         "artists": "artists",
@@ -34,12 +34,11 @@
         "recordings": "tracks"
     }
 
-    
     const updatedAt = $derived(new Date(collectionUpdatedAt).toLocaleDateString())
 
     const sortOptions = ['default', 'reverse', 'artist A --> Z', 'artist Z --> A'] as any
 
-    let sortOption = $derived(selected?.value ?? collectionInfo.default_view_sort ?? 'default') as string
+    let sortOption = $derived(selected ?? collectionInfo.default_view_sort ?? 'default') as string
 
     let sortedItems = $state()
 
@@ -90,7 +89,7 @@
 
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 <svelte:head>
 	<title>
 		{collectionInfo?.title}
@@ -163,23 +162,24 @@
 
         <div class="sort">
             <div class="sort-column">
-                <Select.Root bind:selected>
+                <Select.Root type="single" bind:value={selected}>
                     <Select.Trigger class="sort-options">
                         <span class="trigger-label">  
-                            <Select.Value placeholder="sort order" />
+                            {selected ?? 'sort order'}
                         </span>
-                            <span class="chevron">
-                                <ChevronDown size={16}></ChevronDown>
-                            </span>
-                        
+                        <span class="chevron">
+                            <ChevronDown size={16}></ChevronDown>
+                        </span>
                     </Select.Trigger>
-                    <Select.Content>
-                        {#each sortOptions as option}
-                        <Select.Item value={option} label={option}>
-                            {option}
-                        </Select.Item>
-                        {/each}
-                    </Select.Content>
+                    <Select.Portal>
+                        <Select.Content>
+                            {#each sortOptions as option}
+                            <Select.Item value={option} label={option}>
+                                {option}
+                            </Select.Item>
+                            {/each}
+                        </Select.Content>
+                    </Select.Portal>
                 </Select.Root>
             </div>
             <div class="sort-column">
@@ -206,7 +206,7 @@
                         </Toolbar.GroupItem>
                     </Toolbar.Group>
                 </Toolbar.Root>
-                <span>view mode: {gridListSelect}</span>
+                <span class="view-mode">view mode: {gridListSelect}</span>
             </div>
         </div>
         <GridList
@@ -220,3 +220,10 @@
         </GridList>
     </div>
 </div>
+
+<style>
+    span.view-mode {
+        padding-top: 0;
+        margin-top: 0;
+    }
+</style>

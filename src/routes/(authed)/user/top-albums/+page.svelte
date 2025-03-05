@@ -20,7 +20,7 @@
 	let itemAdded = $state(false)
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 <svelte:head>
 	<title>
 		Choose Top Albums

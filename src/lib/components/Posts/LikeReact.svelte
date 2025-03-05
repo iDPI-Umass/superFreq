@@ -1,6 +1,6 @@
 <script lang="ts">
     import { enhance } from '$app/forms'
-    import Heart from 'lucide-svelte/icons/heart'
+    import Heart from '@lucide/svelte/icons/heart'
 
     interface ComponentProps {
         postId: string
@@ -17,7 +17,7 @@
     let reactionPromise = $state(false)
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 <form 
     method="POST" 

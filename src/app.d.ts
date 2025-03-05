@@ -45,6 +45,11 @@ declare global {
     interface Embed {
       [index: string]: string | null
     }
+    interface Platform {
+      env: Env
+      cf: CfProperties
+      ctx: ExecutionContext
+    }
   }
 }
 

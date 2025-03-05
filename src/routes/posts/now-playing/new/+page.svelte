@@ -9,7 +9,7 @@
 	let imgPromise = $state(null)
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 <svelte:head>
 	<title>

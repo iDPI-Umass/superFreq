@@ -44,7 +44,7 @@
 	let placeholderText = "Search for items to add to your collection"
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 <svelte:head>
 	<title>
 		New Collection
