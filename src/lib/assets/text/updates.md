@@ -1,18 +1,10 @@
 ---
 title: Updates
 layout: about
-updated: 03/05/2025
+updated: 02/24/2025
 ---
-### March 5, 2025
-#### Bug Fixes
-- Profiles
-    - Can successfully navigate to other users' profiles again
-    - Other user's profile now displaying a sample of their posts again
-    - Website link in user about section now working
-    - Mobile styling adjusted
-- Fixed 500 error on viewing posts
 
-### Febraury 24, 2025
+### Febraury 24, 2024
 #### Bug Fixes
 - Feed is working again. Sorry about that downtime.
 
