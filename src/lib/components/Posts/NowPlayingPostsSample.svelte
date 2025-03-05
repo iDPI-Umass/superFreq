@@ -8,6 +8,7 @@
         posts: any
         username: string
         displayName: string
+        moreItemsAvailable: boolean
         sessionUserId?: string | null
     }
     
@@ -15,6 +16,7 @@
         posts,
         username,
         displayName,
+        moreItemsAvailable,
         sessionUserId = null
     }: ComponentProps = $props()
     
@@ -41,11 +43,13 @@
         </NowPlayingPost>
     {/each}
     </div>
-    <div class="button-spacer">
-        <button class="standard" onclick={() => goto(`/user/${username}/now-playing-posts`)}>
-            see more
-        </button>
-    </div>
+    {#if moreItemsAvailable}
+        <div class="button-spacer">
+            <button class="standard" onclick={() => goto(`/user/${username}/now-playing-posts`)}>
+                see more
+            </button>
+        </div>
+    {/if}
 </div>
 {:else if !posts || posts.length == 0}
 <div class="panel-medium">

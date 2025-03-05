@@ -101,6 +101,7 @@
 	border: var(--freq-border-panel);
 	margin: 0;
 	padding: 0;
+	cursor: pointer;
 }
 
 [data-toolbar-group] .toolbar-icon { 
@@ -272,7 +273,7 @@
 	background: transparent;
 	font-family: 'Roboto', sans-serif;
 	border: var(--freq-border-panel);
-	align-items: end;
+	align-items: center;
 	justify-content: center;
     text-transform: uppercase;
 }
@@ -329,6 +330,7 @@
 	background: var(--freq-color-button-lens);
     background: var(--freq-color-button-lens-active);
 	color: var(--freq-color-text-dark);
+	cursor: pointer;
 }
 
 [data-select-item][data-highlighted] {
