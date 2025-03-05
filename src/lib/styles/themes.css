@@ -76,7 +76,7 @@ html.freq-font-arial {
 html {
     --freq-desktop-width: 1500px;
     --freq-laptop-width: 1000px;
-    --freq-tablet-width: 880px;
+    --freq-tablet-width: 770px;
     --freq-narrow-tablet-width: 600px;
     --freq-mobile-width: 470px;
 }

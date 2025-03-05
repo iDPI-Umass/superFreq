@@ -9,7 +9,6 @@ import { add, parseISO } from 'date-fns'
 import { metadata } from '$lib/assets/text/updates.md'
 
 let sessionUserId: string
-let username = null as string | null
 
 let loadData = true
 let userAction = false
@@ -36,8 +35,6 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     sessionUserId = session?.user.id as string
 
     const profileUsername = params.username
-
-    loadData = ( profileUsername != username ) ? true : false
     
     const batchSize = 10
     const timestampEnd = new Date()
@@ -47,8 +44,6 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
 
     if ( loadData ) {
         profileData = await selectProfilePageData( sessionUserId, profileUsername )
-
-        username = ( profileData.profileUserData ? profileData.profileUserData.username : null )
 
         if (!profileData.profileUserData) {
             throw redirect(303, '/')
@@ -68,9 +63,6 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     
             const { posts } = selectPosts as App.NestedObject
             feedItems.push(...posts)
-            feedItemCount = feedItems.length
-
-            console.log(feedItemCount)
         }
     }
     

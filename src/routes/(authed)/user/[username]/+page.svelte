@@ -32,10 +32,6 @@
 
     let { profileUserData, followInfo, permission, profileUserBlockInfo, profileUserFlagInfo } = $derived(profileData)
 
-    console.log(profileUserData)
-
-    const moreItemsAvailable = $derived(totalAvailableItems > feedItems.length ? true : false )
-
     const profileUserId = $derived(profileUserData?.id as string)
 
     let collectionCount = $derived(permission ? profileData?.collectionCount as number : null)
@@ -104,7 +100,6 @@
                         <p class="data-muted">{profileUserData?.username}</p>
                     </div>
                     <p>{profileUserData?.about ?? ''}</p>
-                    <a class="about-website" href={profileUserData?.website}>{profileUserData?.website}</a>
                 </div>
             </div>
         </div>
@@ -271,10 +266,9 @@
         ></Feed>
     {:else}
         <NowPlayingPostsSample
-            posts={feedItems}
+            posts={posts}
             displayName={displayName}
             username={profileUsername}
-            moreItemsAvailable={moreItemsAvailable}
         ></NowPlayingPostsSample>
     {/if}
 </div>
