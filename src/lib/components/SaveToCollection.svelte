@@ -1,6 +1,6 @@
 <script lang="ts">
     import { enhance } from '$app/forms'
-    import Save from 'lucide-svelte/icons/save'
+    import Save from '@lucide/svelte/icons/save'
 
     import ListModal from '$lib/components/modals/ListModal.svelte'
     import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
@@ -33,7 +33,7 @@
 
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 <form 
     method="POST"

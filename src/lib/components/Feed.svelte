@@ -41,7 +41,7 @@
     }
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 <div class="feed-panel">
     <PanelHeader>

@@ -1,8 +1,8 @@
 <script lang="ts">
-    import BoomBox from 'lucide-svelte/icons/boom-box'
-    import Disc from 'lucide-svelte/icons/disc-2'
-    import MusicNote from 'lucide-svelte/icons/music'
-    import Palette from 'lucide-svelte/icons/palette'
+    import BoomBox from '@lucide/svelte/icons/boom-box'
+    import Disc from '@lucide/svelte/icons/disc-2'
+    import MusicNote from '@lucide/svelte/icons/music'
+    import Palette from '@lucide/svelte/icons/palette'
 
     interface ComponentProps {
         display?: boolean
@@ -14,7 +14,7 @@
         itemType
     }: ComponentProps = $props()
 </script>
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 {#if display}
     <span class="inline-block">

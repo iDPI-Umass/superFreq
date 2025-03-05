@@ -4,12 +4,12 @@
     import { Popover } from "bits-ui";
     import { flyAndScale } from "$lib/utils/transitions.ts"
 
-    import Ban from 'lucide-svelte/icons/ban'
-    import Circle from 'lucide-svelte/icons/circle'
-    import Ellipsis from 'lucide-svelte/icons/ellipsis'
-    import Flag from 'lucide-svelte/icons/flag'
-    import PenLine from 'lucide-svelte/icons/pen-line'
-    import Trash2 from 'lucide-svelte/icons/trash-2'
+    import Ban from '@lucide/svelte/icons/ban'
+    import Circle from '@lucide/svelte/icons/circle'
+    import Ellipsis from '@lucide/svelte/icons/ellipsis'
+    import Flag from '@lucide/svelte/icons/flag'
+    import PenLine from '@lucide/svelte/icons/pen-line'
+    import Trash2 from '@lucide/svelte/icons/trash-2'
 
     interface ComponentProps {
         editState?: boolean | null | undefined
@@ -126,7 +126,7 @@
 	    if (dialog && !showModal) dialog.close()
 	})
 </script>
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 <svelte:window
 	onkeydown={(e) => {

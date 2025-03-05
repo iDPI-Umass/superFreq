@@ -4,9 +4,9 @@
     
     import { Toolbar } from "bits-ui"
     import { Select } from "bits-ui"
-    import ChevronDown from 'lucide-svelte/icons/chevron-down'
-    import LayoutGrid from 'lucide-svelte/icons/layout-grid'
-    import AlignJustify from 'lucide-svelte/icons/align-justify'
+    import ChevronDown from '@lucide/svelte/icons/chevron-down'
+    import LayoutGrid from '@lucide/svelte/icons/layout-grid'
+    import AlignJustify from '@lucide/svelte/icons/align-justify'
 
     import GridList from "$lib/components/GridList.svelte";
     import InfoBox from '$lib/components/InfoBox.svelte'
@@ -90,7 +90,7 @@
 
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 <svelte:head>
 	<title>
 		{collectionInfo?.title}

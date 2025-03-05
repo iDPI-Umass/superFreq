@@ -2,9 +2,9 @@
     import { Popover } from "bits-ui";
     import { flyAndScale } from "$lib/utils/transitions.ts"
 
-    import Ellipsis from 'lucide-svelte/icons/ellipsis'
-    import PenLine from 'lucide-svelte/icons/pen-line'
-    import Trash2 from 'lucide-svelte/icons/trash-2'
+    import Ellipsis from '@lucide/svelte/icons/ellipsis'
+    import PenLine from '@lucide/svelte/icons/pen-line'
+    import Trash2 from '@lucide/svelte/icons/trash-2'
 
     let { editState = $bindable(false) }: { editState: boolean } = $props()
 
@@ -44,7 +44,7 @@
 	})
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 <svelte:window
 	onkeydown={(e) => {
 		if (e.key === 'Escape') {

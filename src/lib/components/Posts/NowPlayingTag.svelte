@@ -1,7 +1,7 @@
 <script lang="ts">
-    import MusicNote from 'lucide-svelte/icons/music'
-    import Disc from 'lucide-svelte/icons/disc-2'
-    import BoomBox from 'lucide-svelte/icons/boom-box'
+    import MusicNote from '@lucide/svelte/icons/music'
+    import Disc from '@lucide/svelte/icons/disc-2'
+    import BoomBox from '@lucide/svelte/icons/boom-box'
 
     interface ComponentProps {
         artistName: string
@@ -15,7 +15,7 @@
         itemType
     }: ComponentProps = $props()
 </script>
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 {#if itemType == "release_group"}
     <span 

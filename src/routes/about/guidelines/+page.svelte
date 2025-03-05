@@ -11,7 +11,7 @@
 	</title>
 </svelte:head>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 <InfoBox
 	mode="compact"

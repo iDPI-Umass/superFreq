@@ -8,10 +8,10 @@
     import InlineMarkdownText from '$lib/components/InlineMarkdownText.svelte'
     import { displayDate, parseMarkdown } from '$lib/resources/parseData'
 
-    import Reply from 'lucide-svelte/icons/reply'
-    import Heart from 'lucide-svelte/icons/heart'
-    import Flag from 'lucide-svelte/icons/flag'
-    import Link from 'lucide-svelte/icons/link-2'
+    import Reply from '@lucide/svelte/icons/reply'
+    import Heart from '@lucide/svelte/icons/heart'
+    import Flag from '@lucide/svelte/icons/flag'
+    import Link from '@lucide/svelte/icons/link-2'
 
     import { Collapsible } from "bits-ui"
 
@@ -39,7 +39,7 @@
 
 </script>
 
-<svelte:options runes={true} />
+<!-- <svelte:options runes={true} /> -->
 
 <input 
     type="hidden"
