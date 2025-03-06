@@ -232,28 +232,29 @@ export const selectListProfileUserFollowingCollections = async function ( userna
 
         const profileUserId = selectProfile?.id as string
 
-        const selectInfo = await trx
+        const selectCollectionsList = await trx
+        .selectFrom('profile_display_dev')
+        .select('viewable_collection_follows')
+        .where('user_id', '=', profileUserId)
+        .executeTakeFirst()
+
+        const collectionList = await selectCollectionsList?.viewable_collection_follows
+
+        const selectCollections = await trx
         .selectFrom('collections_info as info')
-        .innerJoin('collections_social as social', 'social.collection_id', 'info.collection_id')
-        .innerJoin('profiles', 'profiles.id', 'info.owner_id')
+        .leftJoin('profiles', 'profiles.id', 'info.owner_id')
         .select([
-            'info.collection_id as id',
-            'info.title as title',
+            'info.collection_id as collection_id', 
+            'info.title as title', 
             'info.updated_at as updated_at',
+            'profiles.username as username',
             'profiles.display_name as display_name'
         ])
-        .where(({eb, and, or}) => and([
-            eb('social.user_id', '=', profileUserId),
-            or([
-                eb('info.status', '=', 'public'),
-                eb('info.status', '=', 'open')
-            ]),
-            eb('user_role', '=', 'follower'),
-            eb('follows_now', '=', true)
-        ]))
+        .where('info.collection_id', 'in', collectionList)
+        .orderBy('info.updated_at desc')
         .execute()
 
-        const info = selectInfo
+        const info = selectCollections
         return info
     })
 

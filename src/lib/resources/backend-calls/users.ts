@@ -862,23 +862,30 @@ export const selectListUserFollowing = async function( sessionUserId: string, us
             .executeTakeFirstOrThrow()
 
             if ( blockInfo ) {
-                return { permission: false, profiles: null, profileDisplayName: null }
+                return { permission: false, profiles: null, profileDisplayName}
             }
         }
         catch ( error ) {
+            const selectProfileList = await trx
+            .selectFrom('profile_display')
+            .select('users_following')
+            .where('user_id', '=', profileUserId)
+            .executeTakeFirst()
+
+            const profileList = selectProfileList?.users_following as string[]
+
             const selectProfiles = await trx
-            .selectFrom('profiles')
-            .innerJoin('social_graph as following', 'following.target_user_id', 'profiles.id')
+            .selectFrom('profile_display')
             .select([
-                'profiles.id as user_id',
-                'profiles.username as username',
-                'profiles.display_name as display_name',
-                'profiles.avatar_url as avatar_url',
+                'user_id',
+                'username',
+                'display_name',
+                'avatar_url',
+                'last_fm_avatar_url',
+                'avatar_release_group_name',
+                'avatar_artist_name'
             ])
-            .where(({eb, and}) => and([
-                eb('following.user_id', '=', profileUserId),
-                eb('following.follows_now', '=', true)
-            ]))
+            .where('user_id', 'in', profileList)
             .execute()
 
             const profiles = selectProfiles
@@ -887,6 +894,6 @@ export const selectListUserFollowing = async function( sessionUserId: string, us
         }
     })
 
-    const { permission, profiles, profileDisplayName } = selectUserList
+    const { permission, profiles, profileDisplayName } = await selectUserList
     return { permission, profiles, profileDisplayName } 
 }

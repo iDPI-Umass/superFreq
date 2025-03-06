@@ -13,6 +13,7 @@ Currently configured to server Last.fm images on the client side by default on a
     interface ComponentProps {
         item?: any
         imgUrl?: string | null
+        lastFmImgUrl?: string | null
         artistName?: string | null
         releaseGroupName?: string | null
         altText: string
@@ -22,6 +23,7 @@ Currently configured to server Last.fm images on the client side by default on a
     let {
         item,
         imgUrl,
+        lastFmImgUrl = null,
         artistName,
         releaseGroupName,
         altText,
@@ -30,13 +32,13 @@ Currently configured to server Last.fm images on the client side by default on a
 
     const coverArtItem = $derived(( item != null ) ? item : {
         'img_url': imgUrl ?? null,
-        'last_fm_img_url': null,
+        'last_fm_img_url': lastFmImgUrl ?? null,
         'artist_name': artistName,
         'release_group_name': releaseGroupName
     })
 
     const coverArtArchiveImgUrl = $derived(item ? coverArtItem['img_url'] : null)
-    const lastFmImgUrl = $derived(item ? (item['last_fm_img_url'] ?? item['last_fm_avatar_img_url']) : null)
+    // const lastFmImgUrl = $derived(item ? (item['last_fm_img_url'] ?? item['last_fm_avatar_img_url']) : lastFmImgUrl)
 
     let coverArt = $state(wave)
     let text = $state('loading')

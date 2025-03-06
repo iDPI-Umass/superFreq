@@ -14,5 +14,5 @@ export const load = async ({ params, locals: { safeGetSession } }: Parameters<Pa
         throw redirect(303, `/user/${username}`)
     }
 
-    return { profiles, profileDisplayName, username }
+    return { users: profiles, profileDisplayName, username }
 }

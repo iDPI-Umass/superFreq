@@ -1,6 +1,6 @@
 <script lang="ts">
     import PanelHeader from "$lib/components/PanelHeader.svelte"
-    import CoverArt from "$lib/components/CoverArt.svelte";
+    import CoverArt from "$lib/components/CoverArt.svelte"
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
     let { data } = $props();
@@ -57,7 +57,6 @@
         </ul>
     {/each}
 </div>
-<h1>users</h1>
 
 
 <style>
