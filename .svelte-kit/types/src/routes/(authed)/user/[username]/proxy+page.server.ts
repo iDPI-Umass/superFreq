@@ -94,7 +94,7 @@ export const load = async ({ params, locals: { safeGetSession }}: Parameters<Pag
         reaction.reaction_count = updatedReactionCount
     }
 
-    console.log(batchIterator, totalAvailableItems)
+    console.log(feedItems)
     return { sessionUserId, profileData, feedItems, totalAvailableItems, remaining, profileUsername, sessionUserCollections, updatesPageUpdatedAt }
 }
 

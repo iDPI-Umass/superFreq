@@ -9,6 +9,8 @@ Selects batches of data to populate session user's feed in batches within a part
 
 export const selectFeedData = async function ( sessionUserId: string, batchSize: number, batchIterator: number, timestampStart: Date, timestampEnd: Date, options: App.Lookup ) {
 
+    console.log(sessionUserId)
+
     const offset = batchSize * batchIterator
 
     const feedOptions = options.options as string[]
@@ -21,6 +23,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
         .executeTakeFirst()
 
         const following = selectFollowingList?.users_following as string[]
+        following.push(sessionUserId)
 
         const feedData = await trx
         .selectFrom('feed_items')
