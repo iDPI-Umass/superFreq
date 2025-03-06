@@ -76,7 +76,7 @@ html.freq-font-arial {
 html {
     --freq-desktop-width: 1500px;
     --freq-laptop-width: 1000px;
-    --freq-tablet-width: 770px;
+    --freq-tablet-width: 880px;
     --freq-narrow-tablet-width: 600px;
     --freq-mobile-width: 470px;
 }
@@ -96,14 +96,14 @@ html {
     --freq-height-spacer-flex: var(--freq-height-spacer-half);
 }
 
-@media( min-width: 770px ) {
+@media( min-width: 880px ) {
     html {
         --freq-width-spacer-flex: var(--freq-width-spacer);
         --freq-height-spacer-flex: var(--freq-height-spacer);
     }
 }
 
-@media( max-width: 770px ) {
+@media( max-width: 880px ) {
     html {
         --freq-max-width-primary: calc(var(--freq-tablet-width) * 0.9);
     }

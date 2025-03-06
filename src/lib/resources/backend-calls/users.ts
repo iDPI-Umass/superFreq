@@ -59,7 +59,7 @@ export const selectSessionUserProfileData = async function ( sessionUserId: stri
 
 /* Select data for a user's profile page. Data returned depends on if user has blocked session user. */
 
-export const selectProfilePageData = async function ( sessionUserId: string, profileUsername: string ) {
+export const selectProfilePageData = async function ( sessionUserId: string, profileUsername: string | null) {
 
     const selectProfileData = await db.transaction().execute(async (trx) => {
         const profileUserData = await trx

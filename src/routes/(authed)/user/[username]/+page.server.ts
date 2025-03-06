@@ -36,9 +36,6 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     sessionUserId = session?.user.id as string
 
     const urlUsername = params.username
-
-    console.log(urlUsername)
-    console.log(profileUsername)
     
     const batchSize = 10
     const timestampEnd = new Date()
@@ -46,7 +43,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
     const updatesPageUpdatedAt = metadata.updated as string
 
-    loadData = ( urlUsername == profileUsername ) ? false : true
+    loadData = ( !loadData && urlUsername == profileUsername ) ? false : true
 
     if ( loadData ) {
         profileData = await selectProfilePageData( sessionUserId, urlUsername )
@@ -92,12 +89,11 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
 
         const reaction = feedItems.find((element) => findPost(element, postId)) as App.RowData
 
-        console.log(reaction)
-
         reaction.reaction_active = updatedReactionActive
         reaction.reaction_count = updatedReactionCount
     }
 
+    console.log(batchIterator, totalAvailableItems)
     return { sessionUserId, profileData, feedItems, totalAvailableItems, remaining, profileUsername, sessionUserCollections, updatesPageUpdatedAt }
 }
 
@@ -213,6 +209,7 @@ export const actions = {
             return { success: false }
         }
         else {
+            loadData = true
             redirect(303, `/posts/${username}/now-playing/${timestamp}`)
         }
     },
