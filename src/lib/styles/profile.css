@@ -92,8 +92,22 @@
     background: var(--freq-color-panel-background); 
     padding: 0px 10px;
 }
+p.profile-about {
+    word-break: break-word;
+}
+a.profile-website {
+    color: var(--freq-color-primary-text);
+    text-decoration: underline;
+}
+a.profile-website:hover,
+a.profile-website:focus {
+    background-color: var(--freq-color-button-lens-active);
+}
+a.profile-website:active {
+    color: var(--freq-color-text-dark);
+}
 
-@media screen and (max-width: 770px) {
+@media screen and (max-width: 880px) {
     .profile-info {
         display: flex;
         flex-direction: column;

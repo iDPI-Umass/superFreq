@@ -243,7 +243,7 @@
             </span>
         {/snippet}
     </PanelHeader>
-    <Tabs.Root>
+    <Tabs.Root value="album">
         <Tabs.List>
             <Tabs.Trigger value="album">
                 album

@@ -18,14 +18,13 @@
 
     let { data, form }: Props = $props();
 
-    let { sessionUserId, profileData, feedItems, totalAvailableItems, remaining, profileUsername, posts, sessionUserCollections, updatesPageUpdatedAt }: {
+    let { sessionUserId, profileData, feedItems, totalAvailableItems, remaining, profileUsername, sessionUserCollections, updatesPageUpdatedAt }: {
         sessionUserId: string
         profileData: any
         feedItems: any
         totalAvailableItems: number
         remaining: number
         profileUsername: string
-        posts: App.RowData[]
         sessionUserCollections: App.RowData[]
         updatesPageUpdatedAt: string
     } = $derived(data)
@@ -99,7 +98,8 @@
                         <h2>{profileUserData?.display_name}</h2>
                         <p class="data-muted">{profileUserData?.username}</p>
                     </div>
-                    <p>{profileUserData?.about ?? ''}</p>
+                    <p class="profile-about">{profileUserData?.about ?? ''}</p>
+                    <a class="profile-website" href={profileUserData?.website ?? ''}>{profileUserData?.website ?? ''}</a>
                 </div>
             </div>
         </div>
@@ -266,7 +266,7 @@
         ></Feed>
     {:else}
         <NowPlayingPostsSample
-            posts={posts}
+            posts={feedItems}
             displayName={displayName}
             username={profileUsername}
         ></NowPlayingPostsSample>

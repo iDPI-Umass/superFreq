@@ -9,6 +9,7 @@ import { add, parseISO } from 'date-fns'
 import { metadata } from '$lib/assets/text/updates.md'
 
 let sessionUserId: string
+let profileUsername = null as string | null
 
 let loadData = true
 let userAction = false
@@ -34,7 +35,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     const { session } = await safeGetSession()
     sessionUserId = session?.user.id as string
 
-    const profileUsername = params.username
+    const urlUsername = params.username
     
     const batchSize = 10
     const timestampEnd = new Date()
@@ -42,8 +43,11 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
     const updatesPageUpdatedAt = metadata.updated as string
 
+    loadData = ( !loadData && urlUsername == profileUsername ) ? false : true
+
     if ( loadData ) {
-        profileData = await selectProfilePageData( sessionUserId, profileUsername )
+        profileData = await selectProfilePageData( sessionUserId, urlUsername )
+        profileUsername = profileData.profileUserData.username as string
 
         if (!profileData.profileUserData) {
             throw redirect(303, '/')
@@ -85,12 +89,11 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
 
         const reaction = feedItems.find((element) => findPost(element, postId)) as App.RowData
 
-        console.log(reaction)
-
         reaction.reaction_active = updatedReactionActive
         reaction.reaction_count = updatedReactionCount
     }
 
+    console.log(batchIterator, totalAvailableItems)
     return { sessionUserId, profileData, feedItems, totalAvailableItems, remaining, profileUsername, sessionUserCollections, updatesPageUpdatedAt }
 }
 
@@ -206,6 +209,7 @@ export const actions = {
             return { success: false }
         }
         else {
+            loadData = true
             redirect(303, `/posts/${username}/now-playing/${timestamp}`)
         }
     },
