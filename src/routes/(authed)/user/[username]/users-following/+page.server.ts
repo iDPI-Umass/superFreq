@@ -13,5 +13,5 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession } 
         throw redirect(303, `/user/${username}`)
     }
 
-    return { profiles, profileDisplayName, username }
+    return { users: profiles, profileDisplayName, username }
 }
