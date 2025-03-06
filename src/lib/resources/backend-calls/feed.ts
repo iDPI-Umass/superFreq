@@ -21,6 +21,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
         .executeTakeFirst()
 
         const following = selectFollowingList?.users_following as string[]
+        following.push(sessionUserId)
 
         const feedData = await trx
         .selectFrom('feed_items')
