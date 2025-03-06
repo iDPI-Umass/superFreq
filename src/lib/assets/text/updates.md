@@ -1,10 +1,15 @@
 ---
 title: Updates
 layout: about
-updated: 02/24/2025
+updated: 03/06/2025
 ---
+### March 06, 2025
+Back after some downtime.... whoops!
+#### Bug Fixes
+- Data accurately updates when visiting someone's profile
+- Navigating to a post was broken but now it works again
 
-### Febraury 24, 2024
+### Febraury 24, 2025
 #### Bug Fixes
 - Feed is working again. Sorry about that downtime.
 
