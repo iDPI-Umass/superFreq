@@ -1,4 +1,6 @@
 <script lang="ts">
+    import PanelHeader from '$lib/components/PanelHeader.svelte';
+
     interface Props {
         data: any;
     }
@@ -11,16 +13,23 @@
 <!-- <svelte:options runes={true} /> -->
 <svelte:head>
 	<title>
-		Collections ${username} follows
+		Collections {username} follows
 	</title>
 </svelte:head>
 
-<ul>
-    {#each collections as collection}
-    <li>
-        <a href="/collection/{collection.id}">
-            {collection.title} by {collection.display_name}
-        </a>
-    </li>
-    {/each}
-</ul>
+<div class="panel">
+    <PanelHeader>
+        {#snippet headerText()}
+        Collections {username} follows
+        {/snippet}
+    </PanelHeader>
+    <ul>
+        {#each collections as collection}
+            <li>
+                <a href='/collection/{collection.collection_id}'>
+                    {collection.title} by {collection.username} (updated {new Date(collection.updated_at).toLocaleDateString()})
+                </a>
+            </li>
+        {/each}
+    </ul>
+</div>

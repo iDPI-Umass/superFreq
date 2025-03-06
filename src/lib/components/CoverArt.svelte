@@ -23,7 +23,7 @@ Currently configured to server Last.fm images on the client side by default on a
     let {
         item,
         imgUrl,
-        lastFmImgUrl,
+        lastFmImgUrl = null,
         artistName,
         releaseGroupName,
         altText,
@@ -38,7 +38,7 @@ Currently configured to server Last.fm images on the client side by default on a
     })
 
     const coverArtArchiveImgUrl = $derived(item ? coverArtItem['img_url'] : null)
-    const lastFmImgUrl = $derived(item ? (item['last_fm_img_url'] ?? item['last_fm_avatar_img_url']) : null)
+    // const lastFmImgUrl = $derived(item ? (item['last_fm_img_url'] ?? item['last_fm_avatar_img_url']) : lastFmImgUrl)
 
     let coverArt = $state(wave)
     let text = $state('loading')
