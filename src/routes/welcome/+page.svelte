@@ -94,7 +94,7 @@
     {/snippet}
     {#snippet message()}
         <span >
-            <p>You are not yet approved to sign up for Freq. You can <a href="https://forms.gle/sGF4yjkubeorrBRH9">request an invite.</a></p>
+            <p>You are not yet approved to sign up for Freq. You can <a href="/welcome/invite-request">request an invite.</a></p>
         </span>
     {/snippet}
 </NotificationModal>

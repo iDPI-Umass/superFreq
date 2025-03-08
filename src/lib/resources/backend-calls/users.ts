@@ -23,7 +23,7 @@ export const parsedEmailAddress = function (email: string) {
 export const checkLoginPermission = async function ( email: string ) {
     try {
         await db
-        .selectFrom('approved_users')
+        .selectFrom('invites')
         .select(['id'])
         .where('email', 'ilike', email)
         .executeTakeFirstOrThrow()
@@ -280,6 +280,46 @@ export const selectSessionProfile = async function ( sessionUserId: string ) {
     return profile
 }
 
+/* Logs invite request after checking if email is associated with approved invite or active account */
+export const inviteRequest = async function ( email: string, referredBy: string ) {
+
+    const invite = await db.transaction().execute(async (trx) => {
+        try {
+            const selectInvite = await trx
+            .selectFrom('invites')
+            .select([
+                'email',
+                'approved',
+                'user_id'
+            ])
+            .where('email', '=', email)
+            .executeTakeFirstOrThrow()
+
+            const { approved, user_id }: {approved: boolean | null, user_id: string | null} = await selectInvite
+            
+            return { approved, user_id }
+        }
+        catch {
+            const insertInviteRequest = await trx
+            .insertInto('invites')
+            .values({
+                email: email,
+                referred_by: referredBy
+            })
+            .returning(['approved', 'user_id'])
+            .executeTakeFirst()
+
+            const approved = insertInviteRequest?.approved ?? false
+            const user_id = insertInviteRequest?.user_id ?? null
+
+            return { approved, user_id }
+        }
+    })
+    const { approved, user_id }: { approved: boolean | null, user_id: string | null } = await invite
+
+    return { approved, user_id }
+}
+
 /* New profile for session user updating row generated during account confirmation. Checks if username is already taken. */
 
 export const newSessionProfile = async function ( sessionUserId: string, profileData: App.RowData, email: string, avatarItem: App.RowData ) {
@@ -313,9 +353,9 @@ export const newSessionProfile = async function ( sessionUserId: string, profile
             return { success: false }
         }
         catch ( error ) {
-            // associate profile with approved_users table
+            // associate profile with invites table
             await trx
-            .updateTable('approved_users')
+            .updateTable('invites')
             .set({
                 user_id: sessionUserId
             })
