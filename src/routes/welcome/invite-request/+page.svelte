@@ -9,6 +9,7 @@
     let email = $state(null) as string | null
     let referredBy = $state(null) as string | null
 	let success = $derived(form?.success ?? false) as boolean
+    let authError = $derived(form?.authError ?? false) as boolean
     let approved = $derived(form?.approved ?? false) as boolean
     let userId = $derived(form?.user_id ?? null) as string | null
     let quizAnswer = $state() as string
@@ -23,17 +24,23 @@
         else if ( approved && userId ) {
             return 'check your inbox'
         }
+        else if ( authError && approved || userId ) {
+            return 'login error'
+        }
     }
 
     function modalBody ( approved: boolean, userId: string | null ) {
         if ( !approved && !userId) {
             return `Thank you for your interest in joining the Freq beta test! You'll receive an email soon once your invite has been approved.`
         }
-        else if ( approved && !userId ) {
+        else if ( !authError && approved && !userId ) {
             return 'Check your inbox for a sign in link to finish creating your profile.'
         }
-        else if ( approved && userId ) {
+        else if ( !authError && approved && userId ) {
             return 'You already have an account! Check your inbox for a sign-in link.'
+        }
+        else if ( authError && approved || userId ) {
+            return 'You have an approved invite or an active account, but there was some issue with signing you in. Please visit the home page and try signing in again.'
         }
     }
 
