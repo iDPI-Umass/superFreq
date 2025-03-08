@@ -6,6 +6,8 @@
 
 	let { form } = $props()
 
+    let email = $state(null) as string | null
+    let referredBy = $state(null) as string | null
 	let success = $derived(form?.success ?? false) as boolean
     let approved = $derived(form?.approved ?? false) as boolean
     let userId = $derived(form?.user_id ?? null) as string | null
@@ -59,7 +61,6 @@
 	</PanelHeader>
 	<div class="form-wrapper">
 		<form
-			id="account-data"
 			class="form-column"
 			method="post"
             action="?/invite"
@@ -68,7 +69,6 @@
 				<label 
 					class="text-label" 
 					for="email"
-					form="account-data"
 				>
 					Email address
 				</label>
@@ -78,13 +78,12 @@
 				type="email" 
 				name="email" 
 				id="email"
-				form="account-data"
+                bind:value={email}
 			/>
 			<div class="label-group">
 				<label 
 					class="text-label"  
 					for="referred-by"
-					form="account-data"
 				>
 					How did you hear about Freq?
 				</label>
@@ -94,7 +93,7 @@
 				type="text"
 				name="referred-by"
 				id="referred-by"
-				form="account-data"
+                bind:value={referredBy}
 			/>
             <fieldset class="search">
                 <p>
@@ -158,7 +157,7 @@
             <button
                 class='standard'
                 type='submit'
-                disabled={quizAnswer != 'PLUR'}
+                disabled={!( email && referredBy && (quizAnswer == 'PLUR'))}
             >
                 request invite
             </button>
@@ -188,20 +187,6 @@
 		gap: var(--freq-width-spacer);
 		margin: var(--freq-height-spacer) var(--freq-width-spacer);
 	}
-	.mb-search {
-		margin: var(--freq-height-spacer-half) 0;
-	}
-	.actions {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: space-between;
-		margin: var(--freq-height-spacer-quarter) 0;
-	}
-	img {
-		margin: var(--freq-height-spacer-half) 0 0 0;
-		width: 90%;
-	}
 	@media screen and (max-width: 700px) {
 		.form-wrapper {
 			max-width: 700px;
@@ -209,9 +194,6 @@
 			flex-direction: column;
 			gap: var(--freq-width-spacer);
 			margin: var(--freq-height-spacer) var(--freq-width-spacer);
-		}
-		img {
-			width: 50%;
 		}
 	}
 </style>
