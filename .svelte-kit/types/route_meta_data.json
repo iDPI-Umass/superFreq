@@ -188,6 +188,11 @@
 		"src/routes/+layout.ts",
 		"src/routes/+layout.server.ts"
 	],
+	"/welcome/invite-request": [
+		"src/routes/welcome/invite-request/+page.server.ts",
+		"src/routes/+layout.ts",
+		"src/routes/+layout.server.ts"
+	],
 	"/welcome/sandbox": [
 		"src/routes/welcome/sandbox/+page.server.ts",
 		"src/routes/+layout.ts",
