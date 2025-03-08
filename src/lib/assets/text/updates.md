@@ -1,8 +1,12 @@
 ---
 title: Updates
 layout: about
-updated: 03/06/2025
+updated: 03/07/2025
 ---
+### March 07, 2025
+#### Updates
+- <a href='/welcome/invite-request'>Invite request page</a> added
+
 ### March 06, 2025
 Back after some downtime.... whoops!
 #### Bug Fixes
