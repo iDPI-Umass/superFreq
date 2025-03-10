@@ -16,9 +16,9 @@
 	import Header from "src/lib/components/layout/NavHeader.svelte"
 	import type { Snippet } from 'svelte'
 	import type { LayoutData } from "./$types"
-	const logo = "https://freq.social/src/lib/assets/images/logo/freq-logo-dark.png"
+	const logoUrl = "https://freq.social/src/lib/assets/images/logo/freq-logo-dark.png"
 
-	
+	import logo from "$lib/assets/images/logo/freq-logo-dark.svg"
 
 	let { data, children }: { data: LayoutData, children: Snippet} = $props()
 	let { session, sessionUserId, supabase } = $derived(data)
@@ -58,13 +58,13 @@
 	<meta property="og:url" content="https://freq.social">
 	<meta property="og:type" content="website">
 	<meta property="og:title" content="Freq">
-	<meta property="og:image" content={logo}>
+	<meta property="og:image" content={logoUrl}>
   
-	<meta name="twitter:card" content={logo}>
+	<meta name="twitter:card" content={logoUrl}>
 	<meta property="twitter:domain" content="freq.social">
 	<meta property="twitter:url" content="https://freq.social">
 	<meta name="twitter:title" content="Freq">
-	<meta name="twitter:image" content={logo}>
+	<meta name="twitter:image" content={logoUrl}>
 </svelte:head>
 
 <Header
@@ -78,6 +78,8 @@
 
 <div class="buffer"></div>
 
+<img class="hidden-logo" alt="logo" src={logo} />
+
 <style>
     .bottom-double-border {
         padding-top: var(--freq-spacing-3x-small);
@@ -85,4 +87,7 @@
     .buffer {
         padding-bottom: var(--freq-spacing-large);
     }
+	img.hidden-logo {
+		display: none;
+	}
 </style>
