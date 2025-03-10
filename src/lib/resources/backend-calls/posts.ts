@@ -407,7 +407,146 @@ export const selectPostReplies = async function ( sessionUserId: string, postId:
 
 /* Select post and replies session user has permission to see */
 
-export const selectPostAndReplies = async function( sessionUserId: string, username: string, timestampString: string, postType: string ) {
+export const selectPostAndReplies = async function( sessionUserId: string, username: string, timestampString: string ) {
+    const select = await db.transaction().execute(async(trx) => {
+        try {
+            await trx
+            .selectFrom('blocks')
+            .innerJoin('profiles as post_user', 'post_user.id', 'blocks.user_id')
+            .selectAll()
+            .where(({eb, and}) => and([
+                eb('blocks.username', '=', username),
+                eb('blocks.target_user_id', '=', sessionUserId)
+            ]))
+            .executeTakeFirstOrThrow()
+
+            return { permission: false, post: null, replies: null }
+        }
+        catch {
+            const blocks = await trx
+            .selectFrom('blocks')
+            .select(sql<string[]>`array_agg(DISTINCT user_id)`.as('blocking_users'))
+            .where('target_user_id', '=', sessionUserId)
+            .execute()
+
+            const blockingUsers = blocks[0]['blocking_users'] ?? [] as string[]
+
+            const selectPost = await trx
+            .selectFrom('posts_and_engagement as post')
+            .select([
+                'id',
+                'user_id',
+                'username',
+                'display_name',
+                'avatar_url',
+                'last_fm_avatar_url',
+                'avatar_release_group_name',
+                'avatar_artist_name',
+                'created_at',
+                'updated_at',
+                'text',
+                'reaction_count',
+                'reaction_user_ids',
+                'artist_mbid',
+                'artist_name',
+                'user_added_artist_name',
+                'release_group_mbid',
+                'release_group_name',
+                'user_added_release_group_name',
+                'recording_mbid',
+                'recording_name',
+                'user_added_recording_name',
+                'episode_title',
+                'show_title',
+                'user_added_metadata_id',
+                'embed_id',
+                'embed_source',
+                'item_type',
+                'type',
+                'replies'
+            ])
+            .where(({eb, and}) => and([
+                eb('post.username', '=', username),
+                eb('post.created_at', '=', parseISO(timestampString)),
+            ]))
+            .executeTakeFirst()
+
+            const post = selectPost
+            const postId = post?.id as string
+            const postReplies = post?.replies as string[]
+            console.log(postReplies)
+
+            if ( postReplies.length > 0  && blockingUsers.length > 0 ) {
+                const selectReplies = await trx
+                .selectFrom('posts_and_engagement as reply')
+                .select([
+                    'id',
+                    'user_id',
+                    'username',
+                    'display_name',
+                    'avatar_url',
+                    'last_fm_avatar_url',
+                    'avatar_release_group_name',
+                    'reply.avatar_artist_name',
+                    'created_at',
+                    'updated_at',
+                    'text',
+                    'reaction_count',
+                    'reaction_user_ids',
+                    'type',
+                    'parent_post_id',
+                    'reply_to'
+                ])
+                .where('parent_post_id', '=', postId)
+                .where('user_id', 'not in', blockingUsers)
+                .orderBy('created_at asc')
+                .execute()
+
+                const replies = selectReplies
+
+                return { permission: true, post, replies}
+            }
+            else if ( postReplies.length > 0 && blockingUsers.length == 0 ) {
+                const selectReplies = await trx
+                .selectFrom('posts_and_engagement as reply')
+                .select([
+                    'id',
+                    'user_id',
+                    'username',
+                    'display_name',
+                    'avatar_url',
+                    'last_fm_avatar_url',
+                    'avatar_release_group_name',
+                    'reply.avatar_artist_name',
+                    'created_at',
+                    'updated_at',
+                    'text',
+                    'reaction_count',
+                    'reaction_user_ids',
+                    'type',
+                    'parent_post_id',
+                    'reply_to'
+                ])
+                .where('parent_post_id', '=', postId)
+                .orderBy('created_at asc')
+                .execute()
+
+                const replies = selectReplies
+                return { permission: true, post, replies}
+            }
+            else {
+                return { permission: true, post, replies: null}
+            }
+            
+        }
+    })
+    const { permission, post, replies } = await select
+    return { permission, post, replies }
+}
+
+/* OLD Select post and replies session user has permission to see */
+
+export const oldSelectPostsAndReplies = async function( sessionUserId: string, username: string, timestampString: string, postType: string ) {
 
     const select = await db.transaction().execute(async(trx) => {
         try {

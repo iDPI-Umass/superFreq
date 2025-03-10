@@ -31,11 +31,13 @@ Currently configured to server Last.fm images on the client side by default on a
     }: ComponentProps = $props()
 
     const coverArtItem = $derived(( item != null ) ? item : {
-        'img_url': imgUrl ?? null,
-        'last_fm_img_url': lastFmImgUrl ?? null,
-        'artist_name': artistName,
-        'release_group_name': releaseGroupName
+        'img_url': imgUrl ?? item.avatar_url ?? null,
+        'last_fm_img_url': lastFmImgUrl ?? item.last_fm_avatar_url ?? null,
+        'artist_name': artistName ?? item.avatar_artist_name,
+        'release_group_name': releaseGroupName ?? item.avatar_release_group_name
     })
+
+    console.log(coverArtItem)
 
     const coverArtArchiveImgUrl = $derived(item ? coverArtItem['img_url'] : null)
     // const lastFmImgUrl = $derived(item ? (item['last_fm_img_url'] ?? item['last_fm_avatar_img_url']) : lastFmImgUrl)
@@ -56,7 +58,7 @@ Currently configured to server Last.fm images on the client side by default on a
 <!-- {#if coverArtArchiveImgUrl ?? lastFmImgUrl}
     <img src={lastFmImgUrl ?? coverArtArchiveImgUrl ?? wave} alt={altText} class={imgClass} /> -->
 
-{#if coverArtItem['artist_name'] && coverArtItem['artist_name'] != null}
+{#if coverArtItem['artist_name'] && coverArtItem['artist_name'] != null && coverArtItem['last_fm_img_url'] == null }
     {#await getLastFmCoverArt(coverArtItem)}
         <img src={wave} alt="loading" class={imgClass} />
     {:then result}
@@ -64,6 +66,8 @@ Currently configured to server Last.fm images on the client side by default on a
     {:catch}
         <img src={wave} alt="not found" class={imgClass}  />
     {/await}
+{:else if coverArtItem['avatar_url'] != null || coverArtItem['last_fm_avatar_url'] != null}
+    <img src={coverArtItem['last_fm_avatar_url'] ?? coverArtItem['avatar_url']} alt={altText} class={imgClass}/>
 {:else}
     <img src={wave} alt="not found" class={imgClass}  />
 {/if}
