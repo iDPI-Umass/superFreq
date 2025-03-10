@@ -3,6 +3,7 @@
 -->
 
 <script lang="ts">
+    import SEO from '$lib/components/layout/SEO.svelte'
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import GridList from '$lib/components/GridList.svelte'
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
@@ -44,12 +45,7 @@
 	let placeholderText = "Search for items to add to your collection"
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-<svelte:head>
-	<title>
-		New Collection
-	</title>
-</svelte:head>
+<SEO title="New collection"></SEO>
 
 <InfoBox mode="compact">
     A collection is a list of albums, tracks, mixes, or artists. Among many other things, you can make a colleciton to keep track of music you want to listen to or create a resource for other people who might want to learn more about music you love.

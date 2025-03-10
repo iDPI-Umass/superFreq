@@ -1,4 +1,5 @@
 <script lang="ts">
+    import SEO from '$lib/components/layout/SEO.svelte'
     import Feed from '$lib/components/Feed.svelte'
 
     let { data, form } = $props()
@@ -8,13 +9,7 @@
     let showSaveSucessModal = $derived(form?.updateSuccess ?? false)
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-
-<svelte:head>
-	<title>
-		Feed
-	</title>
-</svelte:head>
+<SEO title="Feed"></SEO>
 
 <Feed
     sessionUserId={sessionUserId}

@@ -3,6 +3,7 @@
 	import { invalidateAll } from "$app/navigation"
 	import { enhance } from "$app/forms"
 
+	import SEO from '$lib/components/layout/SEO.svelte'
     import PanelHeader from "$lib/components/PanelHeader.svelte"
     import MusicBrainzSearch from "$lib/components/MusicBrainzSearch.svelte"
     import NotificationModal from "src/lib/components/modals/NotificationModal.svelte"
@@ -59,13 +60,7 @@
     })
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-
-<svelte:head>
-	<title>
-		Create Profile
-	</title>
-</svelte:head>
+<SEO title="Create profile"></SEO>
 
 {#snippet editorItemImage(avatarItem: any, altText: string)}
     {#await imgPromise}

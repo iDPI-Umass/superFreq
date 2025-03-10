@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { ActionData } from './$types'
+	import SEO from '$lib/components/layout/SEO.svelte'
     import NewNowPlayingPost from '$lib/components/Posts/NewNowPlayingPost.svelte'
 	
 	// export let form: ActionData
@@ -11,12 +12,7 @@
 
 <!-- <svelte:options runes={true} /> -->
 
-<svelte:head>
-	<title>
-		New Now Playing Post
-	</title>
-</svelte:head>
-
+<SEO title="New Now Playing post"></SEO>
 
 <NewNowPlayingPost
 	bind:addedItem={addedItem}

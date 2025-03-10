@@ -1,5 +1,7 @@
 <script lang="ts">
-    import type { PageData, ActionData } from './$types';
+    import type { PageData, ActionData } from './$types'
+
+    import SEO from '$lib/components/layout/SEO.svelte'
     import PanelHeader from "$lib/components/PanelHeader.svelte"
 
     interface Props {
@@ -16,13 +18,7 @@
 
 </script>
 
-<svelte:head>
-	<title>
-		Update Email
-	</title>
-</svelte:head>
-
-<!-- <svelte:options runes={true} /> -->
+<SEO title="Update email"></SEO>
 
 <div class="panel" id="profile-info">
     <PanelHeader>

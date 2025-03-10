@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { PageData } from './$types';
 
+    import SEO from '$lib/components/layout/SEO.svelte'
     import CollectionEditor from '$lib/components/CollectionEditor.svelte'
     import Tooltip from '$lib/components/Tooltip.svelte'
     import InfoBox from '$lib/components/InfoBox.svelte'
@@ -38,14 +39,8 @@
     let showModal = $state(false)
 
 </script>
-<!-- <svelte:options runes={true} /> -->
 
-<svelte:head>
-	<title>
-		Edit {collectionInfo.title}
-	</title>
-</svelte:head>
-
+<SEO title="Edit {collectionInfo.title}"></SEO>
 
 <div class="collection-container">
     <PanelHeader>

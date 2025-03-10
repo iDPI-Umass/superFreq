@@ -1,5 +1,7 @@
 <script lang="ts">
     import type { PageData, ActionData } from './$types'
+
+    import SEO from '$lib/components/layout/SEO.svelte'
     import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
     import PostReply from '$lib/components/Posts/PostReply.svelte'
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
@@ -19,12 +21,7 @@
     let showSaveSucessModal = $derived(form?.updateSuccess ?? false)
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-<svelte:head>
-	<title>
-		{username}'s' Now Playing posts
-	</title>
-</svelte:head>
+<SEO title="{username}'s' Now Playing posts"></SEO>
 
 <div class="panel-medium">
     <PanelHeader>

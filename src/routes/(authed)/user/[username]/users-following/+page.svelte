@@ -1,4 +1,5 @@
 <script lang="ts">
+    import SEO from '$lib/components/layout/SEO.svelte'
     import PanelHeader from "$lib/components/PanelHeader.svelte"
     import CoverArt from "$lib/components/CoverArt.svelte"
     import wave from "$lib/assets/images/logo/freq-wave.svg"
@@ -11,12 +12,7 @@
     let { users, profileDisplayName, username } = $derived(data)
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-<svelte:head>
-	<title>
-		Users {profileDisplayName} follows
-	</title>
-</svelte:head>
+<SEO title="Users {profileDisplayName} follows"></SEO>
 
 <div class="panel">
     <PanelHeader>

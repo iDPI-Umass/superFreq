@@ -2,6 +2,8 @@
     import type { ActionData, PageData } from './$types.js'
     import { goto } from '$app/navigation'
     import { enhance } from '$app/forms'
+
+    import SEO from '$lib/components/layout/SEO.svelte'
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte';
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import GridList from "$lib/components/GridList.svelte"
@@ -66,12 +68,7 @@
 
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-<svelte:head>
-	<title>
-		{displayName}'s Profile
-	</title>
-</svelte:head>
+<SEO title="{displayName}'s Profile"></SEO>
 
 <div class="profile-info">
     <div class="profile-info-box-left">

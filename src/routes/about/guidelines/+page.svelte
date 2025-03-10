@@ -1,17 +1,12 @@
 <script lang="ts">
+	import SEO from '$lib/components/layout/SEO.svelte'
 	import PanelHeader from "$lib/components/PanelHeader.svelte"
 	import InfoBox from "$lib/components/InfoBox.svelte";
 	import Guidelines from '$lib/assets/text/community-guidelines.md'
     import Consent from '$lib/assets/text/data-consent.md'
 </script>
 
-<svelte:head>
-	<title>
-		Guidelines
-	</title>
-</svelte:head>
-
-<!-- <svelte:options runes={true} /> -->
+<SEO title="Community guidelines"></SEO>
 
 <InfoBox
 	mode="compact"

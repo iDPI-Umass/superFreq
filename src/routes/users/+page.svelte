@@ -1,4 +1,5 @@
 <script lang="ts">
+    import SEO from '$lib/components/layout/SEO.svelte'
     import PanelHeader from "$lib/components/PanelHeader.svelte"
     import CoverArt from "$lib/components/CoverArt.svelte"
     import wave from "$lib/assets/images/logo/freq-wave.svg"
@@ -26,12 +27,7 @@
 
 <!-- <svelte:options runes={true} /> -->
 
-<svelte:head>
-	<title>
-		Explore Users
-	</title>
-</svelte:head>
-
+<SEO title="Explore users"></SEO>
 
 <div class="panel">
     <PanelHeader>

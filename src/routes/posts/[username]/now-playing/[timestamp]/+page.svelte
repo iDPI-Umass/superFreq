@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { PageData, ActionData } from './$types'
+    import SEO from '$lib/components/layout/SEO.svelte'
     import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
     import PostReply from '$lib/components/Posts/PostReply.svelte'
     import PostReplyEditor from '$lib/components/Posts/PostReplyEditor.svelte'
@@ -27,13 +28,7 @@
     }
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-
-<svelte:head>
-	<title>
-		{post?.display_name}'s Now Playing post
-	</title>
-</svelte:head>
+<SEO title="{post?.display_name}'s Now Playing post"></SEO>
 
 {#snippet formInputs(formName: string)}
     <input 

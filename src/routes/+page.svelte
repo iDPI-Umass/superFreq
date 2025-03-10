@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { ActionData } from './$types'
     import { enhance } from '$app/forms'
+    import SEO from '$lib/components/layout/SEO.svelte'
 	import PanelHeader from "$lib/components/PanelHeader.svelte"
     import NotificationModal from "src/lib/components/modals/NotificationModal.svelte"
 
@@ -11,13 +12,7 @@
     let { form }: Props = $props();
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-<svelte:head>
-	<title>
-		Welcome to Freq | Freq
-	</title>
-</svelte:head>
-
+<SEO title="Welcome to Freq!"></SEO>
 
 <div class="panel-medium">
     <PanelHeader>
