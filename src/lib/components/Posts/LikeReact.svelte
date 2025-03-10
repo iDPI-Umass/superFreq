@@ -17,8 +17,6 @@
     let reactionPromise = $state(false)
     let currentReactionActive = $state( reactionActive ) as boolean
     let currentReactionCount = $state( reactionCount ) as number
-
-    console.log(currentReactionCount)
 </script>
 
 <!-- <svelte:options runes={true} /> -->

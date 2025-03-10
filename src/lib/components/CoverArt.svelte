@@ -37,8 +37,6 @@ Currently configured to server Last.fm images on the client side by default on a
         'release_group_name': releaseGroupName ?? item.avatar_release_group_name
     })
 
-    console.log(coverArtItem)
-
     const coverArtArchiveImgUrl = $derived(item ? coverArtItem['img_url'] : null)
     // const lastFmImgUrl = $derived(item ? (item['last_fm_img_url'] ?? item['last_fm_avatar_img_url']) : lastFmImgUrl)
 
