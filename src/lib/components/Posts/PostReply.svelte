@@ -34,6 +34,8 @@
 
     let openState = $state() as boolean
 
+    const reactionActive = $derived( reply.reaction_user_ids.includes(sessionUserId) ? true : false )
+
     const parentPostTimestampString = parentPost?.created_at.toISOString()
     const parentPostTimestamp = Date.parse(parentPostTimestampString).toString()
     const permalinkTimestampString = reply?.created_at.toISOString()
@@ -97,8 +99,8 @@
                 <div class="row-group-icons">
                     <LikeReact
                         postId={reply.id}
-                        reactionActive={reply.reaction_active}
-                        reactionCount={reply.reaction_action}
+                        reactionActive={reactionActive}
+                        reactionCount={reply.reaction_count}
                     ></LikeReact>
                 </div>
                 <!-- <Collapsible.Root bind:open={openState}>
