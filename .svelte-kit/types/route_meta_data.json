@@ -193,10 +193,6 @@
 		"src/routes/+layout.ts",
 		"src/routes/+layout.server.ts"
 	],
-	"/welcome/logo": [
-		"src/routes/+layout.ts",
-		"src/routes/+layout.server.ts"
-	],
 	"/welcome/sandbox": [
 		"src/routes/welcome/sandbox/+page.server.ts",
 		"src/routes/+layout.ts",

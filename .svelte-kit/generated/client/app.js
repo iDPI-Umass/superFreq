@@ -38,8 +38,7 @@ export const nodes = [
 	() => import('./nodes/34'),
 	() => import('./nodes/35'),
 	() => import('./nodes/36'),
-	() => import('./nodes/37'),
-	() => import('./nodes/38')
+	() => import('./nodes/37')
 ];
 
 export const server_loads = [0,3,2];
@@ -76,9 +75,8 @@ export const dictionary = {
 		"/(authed)/user/[username]/users-following": [~18,[3]],
 		"/welcome": [~34],
 		"/welcome/invite-request": [~35],
-		"/welcome/logo": [36],
-		"/welcome/sandbox": [~37],
-		"/welcome/scripts": [~38]
+		"/welcome/sandbox": [~36],
+		"/welcome/scripts": [~37]
 	};
 
 export const hooks = {
