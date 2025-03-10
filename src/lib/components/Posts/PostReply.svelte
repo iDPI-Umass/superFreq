@@ -14,6 +14,8 @@
     import Flag from '@lucide/svelte/icons/flag'
     import Link from '@lucide/svelte/icons/link-2'
 
+    import { parseTimestamp } from '$lib/resources/parseData'
+
     import { Collapsible } from "bits-ui"
 
     interface ComponentProps {
@@ -40,7 +42,7 @@
     const parentPostTimestamp = Date.parse(parentPostTimestampString).toString()
     const permalinkTimestampString = reply?.created_at.toISOString()
     const permalinkTimestamp = Date.parse(permalinkTimestampString).toString()
-    const permalink = `/posts/${reply.original_poster_username}/now-playing/${parentPostTimestamp}#${reply.username?.concat(permalinkTimestamp)}`
+    const permalink = `/posts/${parentPost.username}/now-playing/${parentPostTimestamp}#${reply.username?.concat(permalinkTimestamp)}`
 
 </script>
 
