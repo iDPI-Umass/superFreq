@@ -1,1 +1,1 @@
-export { default as component } from "../../../../src/routes/(authed)/feed/firehose/+page.svelte";
+export { default as component } from "../../../../src/routes/(authed)/account/update-username/+page.svelte";

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SEO from '$lib/components/layout/SEO.svelte'
     import PanelHeader from '$lib/components/PanelHeader.svelte'
 	import CollectionEditor from '$lib/components/CollectionEditor.svelte'
 
@@ -20,12 +21,7 @@
 	let itemAdded = $state(false)
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-<svelte:head>
-	<title>
-		Choose Top Albums
-	</title>
-</svelte:head>
+<SEO title="Choose top albums"></SEO>
 
 
 <div class="panel">

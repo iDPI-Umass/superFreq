@@ -1,6 +1,8 @@
 <script lang="ts">
     import { invalidateAll } from '$app/navigation'
     import type { PageData, ActionData } from './$types'
+
+    import SEO from '$lib/components/layout/SEO.svelte'
     import PanelHeader from "$lib/components/PanelHeader.svelte"
     import Tooltip from '$lib/components/Tooltip.svelte'
     import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
@@ -38,11 +40,7 @@
 
 <!-- <svelte:options runes={true} /> -->
 
-<svelte:head>
-	<title>
-		Update Username
-	</title>
-</svelte:head>
+<SEO title="Update username"></SEO>
 
 
 <div class="panel" id="profile-info">

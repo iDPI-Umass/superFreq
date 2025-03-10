@@ -8,10 +8,11 @@
     import LayoutGrid from '@lucide/svelte/icons/layout-grid'
     import AlignJustify from '@lucide/svelte/icons/align-justify'
 
-    import GridList from "$lib/components/GridList.svelte";
+    import SEO from '$lib/components/layout/SEO.svelte'
+    import GridList from "$lib/components/GridList.svelte"
     import InfoBox from '$lib/components/InfoBox.svelte'
     import InlineMarkdownText from '$lib/components/InlineMarkdownText.svelte'
-	import { tick } from 'svelte';
+	import { tick } from 'svelte'
 
     // import { insertCollectionFollow, updateCollectionFollow } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions';
 
@@ -95,6 +96,7 @@
 		{collectionInfo?.title}
 	</title>
 </svelte:head>
+<SEO title={collectionInfo?.title}"></SEO>
 
 
 <div class="two-column">

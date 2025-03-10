@@ -1,16 +1,11 @@
 <script lang="ts">
+	import SEO from '$lib/components/layout/SEO.svelte'
 	import PanelHeader from "$lib/components/PanelHeader.svelte"
     import { metadata } from '$lib/assets/text/about.md'
 	import About from '$lib/assets/text/about.md'
 </script>
 
-<svelte:head>
-	<title>
-		About
-	</title>
-</svelte:head>
-
-<!-- <svelte:options runes={true} /> -->
+<SEO title="About"></SEO>
 
 <div class="panel">
 	<PanelHeader>

@@ -131,6 +131,18 @@
 		"src/routes/+layout.ts",
 		"src/routes/+layout.server.ts"
 	],
+	"/(admin)/sandbox": [
+		"src/routes/(admin)/sandbox/+page.server.ts",
+		"src/routes/(admin)/+layout.server.ts",
+		"src/routes/+layout.ts",
+		"src/routes/+layout.server.ts"
+	],
+	"/(admin)/scripts": [
+		"src/routes/(admin)/scripts/+page.server.ts",
+		"src/routes/(admin)/+layout.server.ts",
+		"src/routes/+layout.ts",
+		"src/routes/+layout.server.ts"
+	],
 	"/(authed)/sign-out": [
 		"src/routes/(authed)/sign-out/+page.server.ts",
 		"src/routes/(authed)/+layout.server.ts",
@@ -190,16 +202,6 @@
 	],
 	"/welcome/invite-request": [
 		"src/routes/welcome/invite-request/+page.server.ts",
-		"src/routes/+layout.ts",
-		"src/routes/+layout.server.ts"
-	],
-	"/welcome/sandbox": [
-		"src/routes/welcome/sandbox/+page.server.ts",
-		"src/routes/+layout.ts",
-		"src/routes/+layout.server.ts"
-	],
-	"/welcome/scripts": [
-		"src/routes/welcome/scripts/+page.server.ts",
 		"src/routes/+layout.ts",
 		"src/routes/+layout.server.ts"
 	]

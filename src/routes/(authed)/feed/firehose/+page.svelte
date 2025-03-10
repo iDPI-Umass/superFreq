@@ -1,4 +1,5 @@
 <script lang="ts">
+    import SEO from '$lib/components/layout/SEO.svelte'
     import Feed from '$lib/components/Feed.svelte'
 
     let { data, form } = $props()
@@ -10,11 +11,7 @@
 
 <!-- <svelte:options runes={true} /> -->
 
-<svelte:head>
-	<title>
-		Firehose Feed
-	</title>
-</svelte:head>
+<SEO title="Universal feed"></SEO>
 
 <Feed
     sessionUserId={sessionUserId}

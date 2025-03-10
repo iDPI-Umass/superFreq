@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms'
 	import { invalidate, invalidateAll } from '$app/navigation'
+    import SEO from '$lib/components/layout/SEO.svelte';
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
 	import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
 
@@ -49,14 +50,7 @@
 	})
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-
-<svelte:head>
-	<title>
-		Invite Request
-	</title>
-</svelte:head>
-
+<SEO title="Invite request"></SEO>
  
 <div class="panel" id="profile-info">
 	<PanelHeader>

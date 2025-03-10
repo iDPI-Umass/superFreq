@@ -1,4 +1,5 @@
 <script lang="ts">
+    import SEO from '$lib/components/layout/SEO.svelte'
     import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
     import PanelHeader from '$lib/components/PanelHeader.svelte'
 
@@ -10,12 +11,7 @@
 
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-<svelte:head>
-	<title>
-		Anonymous Posts
-	</title>
-</svelte:head>
+<SEO title="Anonymous posts"></SEO>
 
 <div class="panel-medium">
     <PanelHeader>

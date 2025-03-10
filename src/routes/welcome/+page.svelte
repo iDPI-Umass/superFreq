@@ -3,6 +3,7 @@
     import { onMount } from 'svelte'
     import { enhance } from '$app/forms'
     import { invalidateAll } from '$app/navigation'
+    import SEO from '$lib/components/layout/SEO.svelte';
 	import PanelHeader from "$lib/components/PanelHeader.svelte"
     import NotificationModal from "src/lib/components/modals/NotificationModal.svelte"
 
@@ -13,7 +14,7 @@
     let email: string | null = $state(null)
 </script>
 
-<!-- <svelte:options runes={true} /> -->
+<SEO title="Welcome to Freq!"></SEO>
 
 <svelte:head>
 	<title>

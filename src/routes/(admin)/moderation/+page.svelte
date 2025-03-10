@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms'
     import { parseTimestamp } from 'src/lib/resources/parseData'
+
+    import SEO from '$lib/components/layout/SEO.svelte'
     import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
 
     let { data } = $props()
@@ -26,6 +28,8 @@
         Moderation Dashboard
     </title>
 </svelte:head>
+
+<SEO title="Moderation Dashboard"></SEO>
 
 <div class="panel">
     <h1>Moderation Dashboard</h1>

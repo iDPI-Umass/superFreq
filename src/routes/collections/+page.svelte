@@ -1,4 +1,5 @@
 <script lang="ts">
+    import SEO from '$lib/components/layout/SEO.svelte'
     import PanelHeader from '$lib/components/PanelHeader.svelte';
     import type { PageData, ActionData } from './$types'
     import { enhance } from '$app/forms'
@@ -12,13 +13,7 @@
     let { collections, remaining, totalCollections, batchSize, batchIterator } = $derived(data)
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-
-<svelte:head>
-	<title>
-		Explore Collections
-	</title>
-</svelte:head>
+<SEO title="Explore collections"></SEO>
 
 <div class="panel">
     <PanelHeader>

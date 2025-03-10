@@ -1,4 +1,5 @@
 <script lang="ts">
+    import SEO from '$lib/components/layout/SEO.svelte'
     import PanelHeader from "$lib/components/PanelHeader.svelte"
     interface Props {
         data: any;
@@ -11,12 +12,7 @@
     let displayName = $derived(collections[0]["display_name"])
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-<svelte:head>
-	<title>
-		{username}'s collections
-	</title>
-</svelte:head>
+<SEO title="{username}'s collections"></SEO>
 
 <div class="panel">
     <PanelHeader
