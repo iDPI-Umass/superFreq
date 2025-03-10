@@ -111,7 +111,7 @@
                             bind:group={quizAnswer}
                         />
                         <label for="listen">
-                            listen to music
+                            Listen to music
                         </label>
                     </li>
                     <li>
@@ -137,7 +137,7 @@
                             bind:group={quizAnswer}
                         />
                         <label for="fight">
-                            start a fight with a stranger
+                            Start a fight with a stranger
                         </label>
                     </li>
                     <li>
@@ -150,7 +150,7 @@
                             bind:group={quizAnswer}
                         />
                         <label for="doubt">
-                            sit with your doubt
+                            Sit with your doubt
                         </label>
                     </li>
                 </ul>
@@ -197,4 +197,7 @@
 			margin: var(--freq-height-spacer) var(--freq-width-spacer);
 		}
 	}
+    li {
+        text-transform: none;
+    }
 </style>
