@@ -3,7 +3,7 @@
     const logoUrl = "/images/logo/freq-logo-dark.png"
     const logoSocialCard = "/images/logo/freq-logo-dark-social-card.png"
 
-    const description = 'A place to find music with friends, new and old.'
+    const description = 'A place to find music with friends.'
 </script>
 
 <svelte:head>
