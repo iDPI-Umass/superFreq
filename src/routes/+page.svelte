@@ -14,7 +14,7 @@
 <!-- <svelte:options runes={true} /> -->
 <svelte:head>
 	<title>
-		Welcome to Freq
+		Welcome to Freq | Freq
 	</title>
 </svelte:head>
 
