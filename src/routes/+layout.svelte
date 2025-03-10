@@ -16,9 +16,7 @@
 	import Header from "src/lib/components/layout/NavHeader.svelte"
 	import type { Snippet } from 'svelte'
 	import type { LayoutData } from "./$types"
-	const logoUrl = "/images/logo/freq-logo-dark.png"
-
-	import logo from "$lib/assets/images/logo/freq-logo-dark.svg"
+	const logoUrl = "/images/logo/freq-logo-dark-social-card.png"
 
 	let { data, children }: { data: LayoutData, children: Snippet} = $props()
 	let { session, sessionUserId, supabase } = $derived(data)
@@ -77,8 +75,6 @@
 {@render children()}
 
 <div class="buffer"></div>
-
-<img class="hidden-logo" alt="logo" src={logo} />
 
 <style>
     .bottom-double-border {
