@@ -16,6 +16,8 @@
 	import Header from "src/lib/components/layout/NavHeader.svelte"
 	import type { Snippet } from 'svelte'
 	import type { LayoutData } from "./$types"
+	import logo from "$lib/assets/images/logo/freq-logo-dark.svg"
+
 	
 
 	let { data, children }: { data: LayoutData, children: Snippet} = $props()
@@ -50,6 +52,20 @@
 </script>
 
 <!-- <svelte:options runes={true} /> -->
+
+<svelte:head>
+	<meta property="og_site_name" content=“freq.social”>
+	<meta property="og:url" content="https://freq.social">
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="Freq">
+	<meta property="og:image" content={logo}>
+  
+	<meta name="twitter:card" content={logo}>
+	<meta property="twitter:domain" content="freq.social">
+	<meta property="twitter:url" content="https://freq.social">
+	<meta name="twitter:title" content="Freq">
+	<meta name="twitter:image" content={logo}>
+</svelte:head>
 
 <Header
 	sessionUserId={sessionUserId}
