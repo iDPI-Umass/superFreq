@@ -474,8 +474,7 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
             const post = selectPost
             const postId = post?.id as string
             const postReplies = post?.replies as string[]
-            console.log(postReplies)
-
+            
             if ( postReplies.length > 0  && blockingUsers.length > 0 ) {
                 const selectReplies = await trx
                 .selectFrom('posts_and_engagement as reply')

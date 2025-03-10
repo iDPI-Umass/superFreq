@@ -1,8 +1,12 @@
 ---
 title: Updates
 layout: about
-updated: 03/07/2025
+updated: 03/10/2025
 ---
+### March 10, 2025
+#### Updates
+- You can now 'like' a reply
+
 ### March 07, 2025
 #### Updates
 - <a href='/welcome/invite-request'>Invite request page</a> added

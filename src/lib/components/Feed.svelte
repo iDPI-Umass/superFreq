@@ -111,14 +111,14 @@
             </a>
         <!-- Reaction -->
         {:else if item.item_type == 'reaction'}
-            <a href={`/posts/${item.parent_post_username}/now-playing/${parseTimestamp(item.parent_post_created_at)}`}>
+            <a href={ item.reaction_post_type == 'now_playing' ? `/posts/${item.reaction_post_username}/now-playing/${parseTimestamp(item.reaction_post_created_at)}` : `/posts/${item.parent_post_username}/now-playing/${parseTimestamp(item.parent_post_created_at)}#${item.reaction_post_username?.concat(parseTimestamp(item.reaction_post_created_at))}`}>
                 <div class="feed-item-one-liner">
                         <CoverArt
                             item={avatarItem(item)}
                             altText={`${item.display_name}'s avatar`}
                             imgClass='feed-avatar'
                         ></CoverArt>
-                    {item.user_id == sessionUserId ? 'You' : item.display_name} liked {item.parent_post_user_id == sessionUserId ? 'your' : item.parent_post_display_name.concat(`'s`)} post
+                    {item.user_id == sessionUserId ? 'You' : item.display_name} liked {item.reaction_post_user_id == sessionUserId ? 'your' : item.reaction_post_display_name.concat(`'s`)} { item.reaction_post_type == 'now_playing ' ? 'post' : 'reply' }
                 </div>
             </a>
         <!-- Collection follow -->

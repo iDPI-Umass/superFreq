@@ -15,6 +15,8 @@
     }: ComponentProps = $props()
 
     let reactionPromise = $state(false)
+    let currentReactionActive = $state( reactionActive ) as boolean
+    let currentReactionCount = $state( reactionCount ) as number
 </script>
 
 <!-- <svelte:options runes={true} /> -->
@@ -25,6 +27,8 @@
     action="?/submitReaction" 
     use:enhance={() => {
         reactionPromise = true
+        currentReactionActive = !currentReactionActive
+        currentReactionCount = currentReactionActive ? ( currentReactionCount + 1 ) : ( currentReactionCount - 1)
         return async ({ update }) => {
             await update()
             reactionPromise = false
@@ -49,12 +53,12 @@
         disabled={reactionPromise}
     >
         <div class="row-group-icon-description">
-            {#if reactionCount > 0 }
+            {#if currentReactionCount > 0 }
                 <span>
-                    {reactionCount}
+                    {currentReactionCount}
                 </span>
             {/if}
-            {#if !reactionActive}
+            {#if !currentReactionActive}
                 <Heart class="icon" size="16" color="var(--freq-color-text-muted)"></Heart>
                 <span class="descriptor">
                     like
