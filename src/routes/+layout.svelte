@@ -16,7 +16,7 @@
 	import Header from "src/lib/components/layout/NavHeader.svelte"
 	import type { Snippet } from 'svelte'
 	import type { LayoutData } from "./$types"
-	const logoUrl = "https://freq.social/src/lib/assets/images/logo/freq-logo-dark.png"
+	const logoUrl = "$lib/assets/images/logo/freq-logo-dark.png"
 
 	import logo from "$lib/assets/images/logo/freq-logo-dark.svg"
 
