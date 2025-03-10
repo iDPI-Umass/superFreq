@@ -36,6 +36,13 @@
 </svelte:head>
 
 {#snippet formInputs(formName: string)}
+    <input 
+        type="hidden"
+        name="post-id"
+        id="post-id"
+        form={formName}
+        value={post?.id}
+    />
     <input
         type="hidden"
         name="reaction-type"
@@ -65,6 +72,7 @@
         <div id={ replyId( reply.username, reply.created_at )}>
             <PostReply
                 reply={reply}
+                parentPost={post}
                 sessionUserId={sessionUserId}
                 userActionSuccess={actionSuccess}
             ></PostReply>

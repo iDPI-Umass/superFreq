@@ -44,13 +44,12 @@ export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSe
     username = params.username
     const timestamp = parseInt(params.timestamp)
     const timestampString = new Date(timestamp).toISOString()
-    const postType = "now_playing"
 
     let replies: App.RowData[] = []
     let permission: boolean = true
 
     if ( loadData ) {
-        const select = await selectPostAndReplies( sessionUserId, username, timestampString, postType )
+        const select = await selectPostAndReplies( sessionUserId, username, timestampString )
 
         post = select.post as App.RowData
         replies = select.replies as App.RowData[]
@@ -101,6 +100,7 @@ export const actions = {
             created_at: timestampISO,
             updated_at: timestampISO,
             parent_post_id: postId,
+            reply_to: postId
         }
 
         const { username, createdAt} = await insertPost( postData )
@@ -119,6 +119,7 @@ export const actions = {
     submitReaction: async ({ request }) => {
         const data = await request.formData()
         const reactionType = data.get('reaction-type') as string
+        const postId = data.get('post-id') as string
 
         const { reaction, reactionCount } = await insertUpdateReaction( sessionUserId, postId, reactionType )
 

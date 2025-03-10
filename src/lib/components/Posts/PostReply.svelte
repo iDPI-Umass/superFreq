@@ -1,6 +1,7 @@
 <script lang="ts">
     import { slide } from 'svelte/transition'
 
+    import CoverArt from '$lib/components/CoverArt.svelte'
     import PostReplyEditor from '$lib/components/Posts/PostReplyEditor.svelte'
     import PostMenuSessionUser from 'src/lib/components/menus/PostMenuSessionUser.svelte'
     import LikeReact from '$lib/components/Posts/LikeReact.svelte'
@@ -17,6 +18,7 @@
 
     interface ComponentProps {
         reply: any
+        parentPost: any
         sessionUserId?: string | null
         editState?: boolean
         userActionSuccess?: boolean | null
@@ -24,6 +26,7 @@
 
     let {
         reply,
+        parentPost,
         sessionUserId,
         editState = $bindable(false),
         userActionSuccess = $bindable(null)
@@ -31,11 +34,11 @@
 
     let openState = $state() as boolean
 
-    const originalPostTimestampString = reply?.original_post_date.toISOString()
-    const originalPostTimestamp = Date.parse(originalPostTimestampString).toString()
+    const parentPostTimestampString = parentPost?.created_at.toISOString()
+    const parentPostTimestamp = Date.parse(parentPostTimestampString).toString()
     const permalinkTimestampString = reply?.created_at.toISOString()
     const permalinkTimestamp = Date.parse(permalinkTimestampString).toString()
-    const permalink = `/posts/${reply.original_poster_username}/now-playing/${originalPostTimestamp}#${reply.username?.concat(permalinkTimestamp)}`
+    const permalink = `/posts/${reply.original_poster_username}/now-playing/${parentPostTimestamp}#${reply.username?.concat(permalinkTimestamp)}`
 
 </script>
 
@@ -60,7 +63,11 @@
     <div class="comment">
         <div class="comment-metadata">
             <div class="row-group-user-data">
-                <img class="comment-avatar" src={reply.avatar_url} alt={`${reply.display_name}'s avatar`} />
+                <CoverArt
+                    item={reply}
+                    altText={`${reply.display_name}'s avatar`}
+                    imgClass="avatar"
+                ></CoverArt>
                 <div class="row-group-column">
                     <a href="/user/{reply.username}">
                         <span class="comment-display-name">
@@ -87,6 +94,13 @@
         </div>
         <div class="comment-reaction-row">
             <div class="row-group">
+                <div class="row-group-icons">
+                    <LikeReact
+                        postId={reply.id}
+                        reactionActive={reply.reaction_active}
+                        reactionCount={reply.reaction_action}
+                    ></LikeReact>
+                </div>
                 <!-- <Collapsible.Root bind:open={openState}>
                     <Collapsible.Trigger>
                         <div class="row-group-icon-description">
