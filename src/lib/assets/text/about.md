@@ -61,6 +61,8 @@ When a music listener wants to hear new music, how do they discover it? Some rel
 What’s missing is a purpose-built place to talk about, listen to, and spread knowledge about music with the people you would already call your community. Those might be your fellow DJs at your college radio station, your group of friends who goes to dance parties together, or the people in your town you run into at shows all the time.
 
 A lot of natural and incredible music discovery comes from the sharing of music within small communities and social groups, and Freq works to provide that small community structure on a platform-wide scale. Music communities are among the most vibrant groups across the world, and we provide a community-focused structure on our platform. 
+
+Got a question or just want to say hey? Reach out to <a href="mailto:hello@freq.social">hello@freq.social</a>
 <hr />
 
 <h2 id="features">
