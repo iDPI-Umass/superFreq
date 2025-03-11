@@ -970,7 +970,49 @@ export const selectUserPostsAndComments = async function ( sessionUserId: string
 
 /* Select a user's posts sample */
 
-export const selectUserPostsSample = async function ( sessionUserId: string, username: string, batchSize: number ) {
+export const selectUserPostsSample = async function ( sessionUserId: string, username: string, batchSize: number, iterator: number ) {
+    const selectPosts = await db.transaction().execute(async(trx) => {
+        try {
+            await trx
+            .selectFrom('blocks')
+            .selectAll()
+            .where(({eb, and}) => and([
+                eb('target_user_id', '=', sessionUserId),
+                eb('username', '=', username)
+            ]))
+            .executeTakeFirstOrThrow()
+
+            return { permission: false, feedData: [], totalRowCount: 0 }
+        }
+        catch {
+            const selectItems = await trx
+            .selectFrom('feed_items')
+            .selectAll()
+            .where('username', '=', username)
+            .where('item_type', '=', 'now_playing_post')
+            .orderBy('timestamp desc')
+            .limit(batchSize)
+            .offset(iterator)
+            .execute()
+
+            const totalItems = await trx
+            .selectFrom('feed_items')
+            .select((eb) => eb.fn.count('timestamp').as('feed_rows_count'))
+            .where('username', '=', username)
+            .where('item_type', '=', 'now_playing_post')
+            .execute()
+
+            return { permission: true, feedData: selectItems, totalRowCount: totalItems }
+        }
+    })
+
+    const { permission, feedData, totalRowCount } = selectPosts
+    return { permission, feedData, totalRowCount }
+}
+
+/* OLD Select a user's posts sample */
+
+export const oldSelectUserPostsSample = async function ( sessionUserId: string, username: string, batchSize: number ) {
     const selectPosts = await db.transaction().execute(async(trx) => {
 
         const userProfile = await trx

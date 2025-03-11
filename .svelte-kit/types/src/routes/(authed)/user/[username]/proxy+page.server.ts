@@ -11,6 +11,7 @@ import { metadata } from '$lib/assets/text/updates.md'
 
 let sessionUserId: string
 let profileUsername = null as string | null
+let profileUserId = null as string | null
 
 let loadData = true
 let userAction = false
@@ -49,6 +50,13 @@ export const load = async ({ params, locals: { safeGetSession }}: Parameters<Pag
     if ( loadData ) {
         profileData = await selectProfilePageData( sessionUserId, urlUsername )
         profileUsername = profileData.profileUserData.username as string
+    
+        if ( profileUserId != profileData.profileUserData.id ) {
+            console.log (profileUserId, profileData.profileUserData.id, profileUsername)
+            feedItems.length = 0
+        }
+
+        profileUserId = profileData.profileUserData.id as string
 
         if (!profileData.profileUserData) {
             throw redirect(303, '/')
@@ -63,11 +71,16 @@ export const load = async ({ params, locals: { safeGetSession }}: Parameters<Pag
             remaining = totalRowCount - feedItemCount
             loadData = !loadData
         }
-        else if ( sessionUserId != profileData.profileUserData.id ) {
-            const selectPosts = await selectUserPostsSample( sessionUserId, profileUsername, batchSize )
+        else if ( sessionUserId != profileData.profileUserData.id || profileUserId != profileData.profileUserData.id) {
+
+            const { feedData, totalRowCount } = await selectUserPostsSample( sessionUserId, profileUsername, batchSize, batchIterator )
     
-            const { posts } = selectPosts as App.NestedObject
-            feedItems.push(...posts)
+            feedItems.push(...feedData)
+            feedItemCount = feedItems.length
+
+            totalAvailableItems = totalRowCount as number
+            remaining = totalRowCount - feedItemCount
+            loadData = !loadData
         }
     }
     
