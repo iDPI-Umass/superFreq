@@ -33,7 +33,7 @@
     function avatarItem ( item: App.RowData ) {
         const avatar = {
             'img_url': item.avatar_url,
-            'last_fm_img_url': item.avatar_last_fm_img_url,
+            'last_fm_img_url': item.last_fm_avatar_url,
             'artist_name': item.avatar_artist_name,
             'release_group_name': item.avatar_release_group_name
         }

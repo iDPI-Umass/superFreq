@@ -59,12 +59,15 @@
     let reactionCount = $derived(post?.reaction_count) as number
     let postId = $derived(post?.id ?? post?.post_id) as string
 
+    console.log(post)
     let avatarItem = {
         'img_url': post.avatar_url,
-        'last_fm_img_url': post.avatar_last_fm_img_url,
+        'last_fm_img_url': post.last_fm_avatar_url,
         'artist_name': post.avatar_artist_name,
         'release_group_name': post.avatar_release_group_name
     }
+
+    console.log('avatarItem: ', avatarItem)
 </script>
 
 <!-- <svelte:options runes={true} /> -->
@@ -75,9 +78,7 @@
             <div class="row-group-user-data">
                 <CoverArt
                     item={avatarItem}
-                    artistName={post.avatar_artist_name}
-                    releaseGroupName={post.avatar_release_group_name}
-                    altText={`${post.display_name}'s avatar`}
+                    altText={`${post.display_name}'s avatar: ${post.avatar_release_group_name} by ${post.avatar_artist_name}`}
                     imgClass="avatar"
                 ></CoverArt>
                 <div class="row-group-column">
