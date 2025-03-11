@@ -80,8 +80,6 @@ export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSe
         post.text = editedText
     }
 
-    console.log(replies)
-
     return { sessionUserId, post, replies, collections }
 }
 

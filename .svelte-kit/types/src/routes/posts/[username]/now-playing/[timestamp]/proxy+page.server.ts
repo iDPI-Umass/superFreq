@@ -81,8 +81,6 @@ export const load = async ({ params, parent, locals: { safeGetSession } }: Param
         post.text = editedText
     }
 
-    console.log(replies)
-
     return { sessionUserId, post, replies, collections }
 }
 
