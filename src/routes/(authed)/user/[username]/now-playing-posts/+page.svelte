@@ -17,6 +17,8 @@
 
     let { posts, username, sessionUserId, sessionUserCollections } =  $state(data)
 
+    console.log(posts)
+
     let showCollectionsListModal = $derived(form?.showCollectionsModal ?? false)
     let showSaveSucessModal = $derived(form?.updateSuccess ?? false)
 </script>
@@ -68,7 +70,6 @@
             form="submitReaction"
             value="like"
         />
-        {#if post.type == 'now_playing'}
         <NowPlayingPost
             sessionUserId={sessionUserId}
             post={post}
@@ -79,12 +80,11 @@
             showSaveSucessModal={showSaveSucessModal}
         >
         </NowPlayingPost>
-        {:else if post.type == "reply"}
+        <!-- {:else if post.type == "reply"}
         <PostReply
             reply={post}
             sessionUserId={sessionUserId}
-        ></PostReply>
-        {/if}
+        ></PostReply> -->
     {/each}
     </div>
 </div>

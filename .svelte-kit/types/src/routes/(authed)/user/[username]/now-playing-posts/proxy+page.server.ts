@@ -1,7 +1,7 @@
 // @ts-nocheck
 import type { PageServerLoad, Actions } from "./$types"
 import { redirect  } from "@sveltejs/kit"
-import { selectUserNowPlayingPosts, updatePost, deletePost, insertUpdateReaction } from "$lib/resources/backend-calls/posts"
+import { selectUserNowPlayingPosts, updatePost, deletePost, insertUpdateReaction, selectUserPostsSample } from "$lib/resources/backend-calls/posts"
 import { insertPostFlag } from "$lib/resources/backend-calls/users"
 import { validStringCheck } from "$lib/resources/parseData"
 import { selectListSessionUserCollections, saveItemToCollection } from "$lib/resources/backend-calls/collections"
@@ -13,10 +13,10 @@ export const load = async ({ params, locals: { safeGetSession } }: Parameters<Pa
     const sessionUserId = session.user?.id as string
     const username = params.username
     
-    const selectPosts = await selectUserNowPlayingPosts( sessionUserId, username )
+    const selectPosts = await selectUserPostsSample( sessionUserId, username, 100, 0 )
 
     const permission = selectPosts?.permission as boolean
-    const posts = selectPosts?.posts as App.RowData[]
+    const posts = selectPosts?.feedData as App.RowData[]
 
     if ( posts.length == 0 || !permission ) {
         throw redirect(303, `/user/${username}`)
