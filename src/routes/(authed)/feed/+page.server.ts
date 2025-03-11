@@ -40,15 +40,15 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
         loadData = !loadData
     }
 
-    if ( updateReaction ) {
-        const reaction = feedItems.find((item) => (item.now_playing_post_id == nowPlayingPostId)) as App.RowData
+    // if ( updateReaction ) {
+    //     const reaction = feedItems.find((item) => (item.now_playing_post_id == nowPlayingPostId)) as App.RowData
 
-        reaction.reaction_active = updatedReactionActive
-        reaction.reaction_count = updatedReactionCount
+    //     reaction.reaction_active = updatedReactionActive
+    //     reaction.reaction_count = updatedReactionCount
 
-        updateReaction = false
-        loadData = true
-    }
+    //     updateReaction = false
+    //     loadData = true
+    // }
 
     return { sessionUserId, feedItems, totalAvailableItems, remaining, sessionUserCollections } 
 }

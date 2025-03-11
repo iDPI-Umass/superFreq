@@ -1,8 +1,14 @@
 ---
 title: Updates
 layout: about
-updated: 03/10/2025
+updated: 03/11/2025
 ---
+### March 11, 2025
+#### Bug Fixes
+- Fixed bug crashing avatar image loading
+- Fixed bug with likes
+Both of these were the result of major backend updates I made to the feed. There may be others, just let me know with a bug report.
+
 ### March 10, 2025
 #### Updates
 - You can now 'like' a reply

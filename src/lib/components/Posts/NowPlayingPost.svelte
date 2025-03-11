@@ -54,12 +54,11 @@
         editState = !editState
     }
 
-    let reactionActiveFeed = $derived(post?.reaction_user_ids ? post?.reaction_user_ids.includes(sessionUserId) : null) as boolean
-    let reactionActive = $derived(post?.reaction_active ?? null) as boolean
+    let reactionActive = $derived(post?.reaction_user_ids ? post?.reaction_user_ids.includes(sessionUserId) : null) as boolean
     let reactionCount = $derived(post?.reaction_count) as number
     let postId = $derived(post?.id ?? post?.post_id) as string
 
-    console.log(post)
+
     let avatarItem = {
         'img_url': post.avatar_url,
         'last_fm_img_url': post.last_fm_avatar_url,
@@ -67,7 +66,6 @@
         'release_group_name': post.avatar_release_group_name
     }
 
-    console.log('avatarItem: ', avatarItem)
 </script>
 
 <!-- <svelte:options runes={true} /> -->
@@ -136,7 +134,7 @@
                 <div class="row-group-icons">
                     <LikeReact
                         postId={postId}
-                        reactionActive={reactionActive ?? reactionActiveFeed}
+                        reactionActive={reactionActive}
                         reactionCount={reactionCount}
                     ></LikeReact>
                     {#if mode == "feed"}

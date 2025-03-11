@@ -90,7 +90,7 @@ export const load = async ({ params, locals: { safeGetSession }}: Parameters<Pag
 
         const reaction = feedItems.find((element) => findPost(element, postId)) as App.RowData
 
-        reaction.reaction_active = updatedReactionActive
+        // reaction.reaction_active = updatedReactionActive
         reaction.reaction_count = updatedReactionCount
     }
 

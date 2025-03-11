@@ -56,7 +56,7 @@ export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSe
         permission = select.permission as boolean
     
         if ( !permission ) {
-            return { sessionUserId: null, post: null, postReactionActive: null, replies: null }
+            return { sessionUserId: null, post: {}, replies: [], collections }
         }
     
         postId = post?.id as string
@@ -70,7 +70,6 @@ export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSe
         updateReaction = false
         loadData = true
 
-        post.reaction_active = reactionActive
         post.reaction_count = postReactionCount
     }
 
@@ -81,7 +80,9 @@ export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSe
         post.text = editedText
     }
 
-    return { sessionUserId, post, postReplies, collections }
+    console.log(replies)
+
+    return { sessionUserId, post, replies, collections }
 }
 
 export const actions = {
