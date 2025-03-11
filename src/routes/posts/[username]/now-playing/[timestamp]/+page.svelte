@@ -7,10 +7,10 @@
 
     let { data, form } = $props();
 
-    let { post, postReplies, collections }: {
+    let { post, replies, collections }: {
         post: App.RowData
-        postReplies: App.RowData[]
-        collections: App.RowData[]
+        replies?: App.RowData[]
+        collections?: App.RowData[]
     } = $derived(data)
 
     let sessionUserId = data?.sessionUserId as string
@@ -63,7 +63,7 @@
         showSaveSucessModal={showSaveSucessModal}
     ></NowPlayingPost>
     <PostReplyEditor></PostReplyEditor>
-    {#each postReplies as reply}
+    {#each replies as reply}
         <div id={ replyId( reply.username, reply.created_at )}>
             <PostReply
                 reply={reply}

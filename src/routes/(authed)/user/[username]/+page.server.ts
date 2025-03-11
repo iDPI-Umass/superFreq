@@ -89,7 +89,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
 
         const reaction = feedItems.find((element) => findPost(element, postId)) as App.RowData
 
-        reaction.reaction_active = updatedReactionActive
+        // reaction.reaction_active = updatedReactionActive
         reaction.reaction_count = updatedReactionCount
     }
 

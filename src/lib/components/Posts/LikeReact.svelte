@@ -17,6 +17,7 @@
     let reactionPromise = $state(false)
     let currentReactionActive = $state( reactionActive ) as boolean
     let currentReactionCount = $state( reactionCount ) as number
+    
 </script>
 
 <!-- <svelte:options runes={true} /> -->
@@ -28,7 +29,7 @@
     use:enhance={() => {
         reactionPromise = true
         currentReactionActive = !currentReactionActive
-        currentReactionCount = currentReactionActive ? ( currentReactionCount + 1 ) : ( currentReactionCount - 1)
+        currentReactionCount = currentReactionActive ? ( ++currentReactionCount ) : ( --currentReactionCount )
         return async ({ update }) => {
             await update()
             reactionPromise = false
