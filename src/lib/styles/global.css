@@ -57,19 +57,19 @@ body {
 }
 
 .border-full-vw {
-	width: 100vw;
+	max-width: 100vw;
 	border-top: var(--freq-border-panel);
 }
 
 .double-border-full-vw {
-	width: 100vw;
+	max-width: 100%;
 	border-top: var(--freq-border-panel);
 	border-bottom: var(--freq-border-panel);
 	padding-top: 4px;
 }
 
 .double-border-panel {
-	width: 100vw;
+	max-width: 100vw;
 	border-top: var(--freq-border-panel);
 	border-bottom: var(--freq-border-panel);
 	padding-top: 4px;
