@@ -26,6 +26,7 @@ export const checkLoginPermission = async function ( email: string ) {
         .selectFrom('invites')
         .select(['id'])
         .where('email', 'ilike', email)
+        .where('approved', '=', true)
         .executeTakeFirstOrThrow()
 
         return true

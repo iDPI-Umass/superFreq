@@ -14,16 +14,15 @@ export const load = async ({ locals: { safeGetSession }}: Parameters<PageServerL
 export const actions = { 
     sendMagicLink: async({ request, locals: { supabase }}) => {
 
-        const data = await request.formData()
-        const email = data.get('email') as string
+        const formData = await request.formData()
+        const email = formData.get('email') as string
 
         const permission = await checkLoginPermission( email )
 
         let authResponse
 
         if ( permission ) {
-            authResponse = await supabase.auth.signInWithOtp({ email: email })
-        }
+            authResponse = await supabase.auth.signInWithOtp({ email: email })        }
         else {
             return {
                 permission: false,
