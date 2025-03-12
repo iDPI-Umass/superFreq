@@ -16,6 +16,7 @@ export const selectAllOpenPublicCollections = async function ( batchSize: number
             eb('status', '=', 'open'),
             eb('status', '=', 'public')
         ]))
+        .where('is_top_albums', '=', false)
         .execute()
 
         const collections = await trx
@@ -38,6 +39,7 @@ export const selectAllOpenPublicCollections = async function ( batchSize: number
                 eb('collections_info.status', '=', 'open'),
                 eb('collections_info.status', '=', 'public')
             ]))
+        .where('is_top_albums', '=', false)
         .orderBy('collections_info.updated_at desc')
         .limit(batchSize)
         .offset(offset)
