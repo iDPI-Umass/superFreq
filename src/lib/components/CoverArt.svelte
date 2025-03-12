@@ -21,11 +21,11 @@ Currently configured to server Last.fm images on the client side by default on a
     }
 
     let {
-        item,
-        imgUrl,
+        item = null,
+        imgUrl = null,
         lastFmImgUrl = null,
-        artistName,
-        releaseGroupName,
+        artistName = null,
+        releaseGroupName = null,
         altText,
         imgClass
     }: ComponentProps = $props()
@@ -37,42 +37,28 @@ Currently configured to server Last.fm images on the client side by default on a
         'release_group_name': releaseGroupName ?? item.release_group_name ?? item.avatar_release_group_name ?? null
     })
 
+    const lastFmSearchTerms = $derived({
+        'artist_name': artistName,
+        'release_group_name': releaseGroupName
+    })
+
     const coverArtArchiveImgUrl = $derived(item ? coverArtItem['img_url'] : null)
-    // const lastFmImgUrl = $derived(item ? (item['last_fm_img_url'] ?? item['last_fm_avatar_img_url']) : lastFmImgUrl)
 
-    let coverArt = $state(wave)
-    let text = $state('loading')
-
-    // onMount(async () => {
-    //     const getCoverArt = await getLastFmCoverArt(coverArtItem)
-    //     coverArt = getCoverArt ? getCoverArt : wave
-    //     text = getCoverArt ? altText : 'not found'
-    //     return coverArt
-    // })
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-
-<!-- {#if coverArtArchiveImgUrl ?? lastFmImgUrl}
-    <img src={lastFmImgUrl ?? coverArtArchiveImgUrl ?? wave} alt={altText} class={imgClass} /> -->
-
-{#if coverArtItem['img_url'] || coverArtItem['last_fm_img_url']}
-    <img src={coverArtItem['last_fm_img_url'] ?? coverArtItem['img_url']} alt={altText} class={imgClass}  />
-{:else if coverArtItem['artist_name'] && (coverArtItem['artist_name'] != null) && !coverArtItem['last_fm_img_url'] }
-    {#await getLastFmCoverArt(coverArtItem)}
+{#if item && (coverArtItem['last_fm_img_url'] || coverArtItem['img_url']) } 
+    <img src={coverArtItem['last_fm_img_url'] ?? coverArtItem['img_url']} alt={altText} class={imgClass}  /> 
+{:else if !item || (item && (!coverArtItem['last_fm_img_url'] && !coverArtItem['img_url'])) }
+    {#await getLastFmCoverArt(lastFmSearchTerms)}
         <img src={wave} alt="loading" class={imgClass} />
     {:then result}
         <img src={result ? result : wave} alt={result ? altText : 'not found'} class={imgClass}  />
     {:catch}
         <img src={wave} alt="not found" class={imgClass}  />
     {/await}
-<!-- {:else if coverArtItem['avatar_url'] || coverArtItem['last_fm_avatar_url'] }
-    <img src={coverArtItem['avatar_url'] ?? coverArtItem['last_fm_avatar_url']} alt={altText} class={imgClass}/> -->
 {:else}
     <img src={wave} alt="not found" class={imgClass}  />
 {/if}
-
-<!-- <img src={coverArt} alt={text} class={imgClass} /> -->
 
 <style>
     img {
