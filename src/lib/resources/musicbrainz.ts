@@ -1,6 +1,7 @@
 import { categoriesTable, mbidCategoryTable, itemTypeTable } from "$lib/resources/parseData"
 
 import { PUBLIC_LAST_FM_API_KEY } from '$env/static/public'
+import wave from "$lib/assets/images/logo/freq-wave.svg"
 
 const lastFmApiKey = PUBLIC_LAST_FM_API_KEY
 
@@ -77,12 +78,14 @@ export const mbidCateogory = function ( searchCategory: string ) {
 }
 
 export const artistMbid = function ( searchCategory: string, item: App.RowData ) {
+    console.log(item)
     let mbid = null
     if ( searchCategory == 'artists' ) {
         mbid = item["id"] ?? null
     }
     else if ( searchCategory == 'release_groups' ) {
         mbid = item["artist-credit"][0]["artist"]["id"] ?? null
+        console.log(mbid)
     }
     else if ( searchCategory == 'recordings' ) {
         mbid = item["artist-credit"][0]["artist"]["id"] ?? null
@@ -224,24 +227,37 @@ export const getLastFmCoverArt = async function ( releaseGroup: App.RowData ) {
 }
 
 export const getCoverArt = async function ( releaseGroup: App.RowData ) {
-    const coverArtArchiveEndpoint = `https://coverartarchive.org/release-group/${releaseGroup.mbid}/front`
+    console.log(releaseGroup)
+    const coverArtArchiveEndpoint = releaaseGroup.release_group_mbid ? `https://coverartarchive.org/release-group/${releaseGroup.release_group_mbid}/front` : null
 
     try {
-        const coverArtArchiveRes = await fetch(coverArtArchiveEndpoint, { signal: AbortSignal.timeout(3000) })
-        const coverArtArchiveUrl = coverArtArchiveRes["url"]
-        const lastFmCoverArtUrl = await getLastFmCoverArt( releaseGroup )
+        let coverArtArchiveUrl = null as string | null
+        if (coverArtArchiveEndpoint) {
+            const coverArtArchiveRes = await fetch(coverArtArchiveEndpoint, { signal: AbortSignal.timeout(3000) })
+            const coverArtArchiveResUrl = coverArtArchiveRes["url"]
+           
+            const httpCoverArtArchive = new XMLHttpRequest()
+            httpCoverArtArchive.open('HEAD', coverArtArchiveResUrl, false)
+            httpCoverArtArchive.send()
+    
+            coverArtArchiveUrl = ( httpCoverArtArchive.status == 404 ) ?  null :  coverArtArchiveResUrl
+        }
 
-        return  { coverArtArchiveUrl, lastFmCoverArtUrl, success: true }
+        const lastFmResUrl = await getLastFmCoverArt( releaseGroup ) as string
+
+        const httpLastFm = new XMLHttpRequest()
+        httpLastFm.open('HEAD', lastFmResUrl, false)
+        httpLastFm.send()
+        const lastFmCoverArtUrl = ( httpLastFm.status == 404 ) ? null : lastFmResUrl
+
+        if ( !coverArtArchiveUrl && !lastFmResUrl ) {
+            throw Error
+        }
+
+        return  { coverArtArchiveUrl, lastFmCoverArtUrl, wave: wave, success: true }
     }
     catch ( error ) {
-        const lastFmCoverArtUrl = await getLastFmCoverArt( releaseGroup )
-        if ( lastFmCoverArtUrl ) {
-
-            return { coverArtArchiveUrl: null, lastFmCoverArtUrl, success: true }
-        }
-        else {
-            return { coverArtArchiveUrl: null, lastFmCoverArtUrl: null, success: false }
-        }
+        throw Error
     }
 }
 

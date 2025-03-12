@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ListModal from 'src/lib/components/modals/ListModal.svelte'
-	import { mbSearch, addCollectionItemNoImg, getCoverArt, addSingleItemNoImg, mbidCateogory, artistName, releaseGroupName, releaseGroupMbid, releaseGroupMetadata, recordingName, itemDate, artistOrigin } from '$lib/resources/musicbrainz'
+	import { mbSearch, addCollectionItemNoImg, getCoverArt, addSingleItemNoImg, mbidCateogory, artistName, artistMbid, releaseGroupName, releaseGroupMbid, releaseGroupMetadata, recordingName, itemDate, artistOrigin } from '$lib/resources/musicbrainz'
 	import CoverArt from './CoverArt.svelte';
 
 	interface ComponentProps {
@@ -92,6 +92,17 @@
 			return { addedItems, deletedItems, query, searchComplete, newItemAdded, showModal, imgPromise }
 		}
 	}
+
+	function coverArtItem( searchItem: any, searchCategory: string ) {
+		const item = {
+			'artist_name': artistName(searchCategory, searchItem),
+			'release_group_name': releaseGroupName(searchCategory, searchItem),
+			'artist_mbid': artistMbid(searchCategory, searchItem),
+			'release_group_mbid': releaseGroupMbid(searchCategory, searchItem)
+
+		}
+		return item
+	}
 </script>
 
 <!-- <svelte:options runes={true} /> -->
@@ -162,6 +173,7 @@
 							{#if searchCategory == "release_groups" || searchCategory == "recordings"}
 								<div class="result-image">
 									<CoverArt
+										item={coverArtItem(item, searchCategory)}
 										artistName={artistName(searchCategory, item)}
 										releaseGroupName={releaseGroupName(searchCategory, item)}
 										altText='album {releaseGroupName(searchCategory, item)} by artist {artistName(searchCategory, item)}'
