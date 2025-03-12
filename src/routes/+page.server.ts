@@ -41,7 +41,6 @@ export const actions = {
               showModal: true
           }
       }
-
       
       if ( authResponse.error ) {
           return { 

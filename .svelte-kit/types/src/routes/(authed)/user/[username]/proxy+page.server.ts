@@ -52,7 +52,6 @@ export const load = async ({ params, locals: { safeGetSession }}: Parameters<Pag
         profileUsername = profileData.profileUserData.username as string
     
         if ( profileUserId != profileData.profileUserData.id ) {
-            console.log (profileUserId, profileData.profileUserData.id, profileUsername)
             feedItems.length = 0
         }
 
