@@ -67,9 +67,11 @@
             value={JSON.stringify(form?.collections ?? collections)}
         />
         {#if (form?.remaining ?? remaining) > 0}
-            <button class="standard" formaction="?/loadMore">
-                load more
-            </button>
+            <div class="button-spacer">
+                <button class="standard" formaction="?/loadMore">
+                    load more
+                </button>
+            </div>
         {/if}
     </form>
 </div>
