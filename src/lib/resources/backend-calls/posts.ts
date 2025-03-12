@@ -35,6 +35,7 @@ postData template for new comments:
 */
 
 export const insertPost = async function ( postData: any ) {
+
     let artistsMetadata = []
     let releaseGroupsMetadata = []
     let recordingsMetadata = []
@@ -60,6 +61,7 @@ export const insertPost = async function ( postData: any ) {
             "recording_name": postData["recording_name"],
             "remixer_artist_mbid": postData["remixer_artist_mbid"],
             "item_type": postData["item_type"],
+            "added_by": postData["user_id"]
         }] as App.RowData[]
 
         const preparedMetadata = await prepareMusicMetadataInsert(metadata)
