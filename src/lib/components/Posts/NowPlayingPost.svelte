@@ -13,6 +13,7 @@
     import InlineMarkdownText from '$lib/components/InlineMarkdownText.svelte'
 
     import wave from "$lib/assets/images/logo/freq-wave.svg"
+	import { itemDate } from 'src/lib/resources/musicbrainz';
 
     interface ComponentProps {
         sessionUserId?: string | null
@@ -36,6 +37,7 @@
         showSaveSucessModal = $bindable(false)
     }: ComponentProps = $props()
 
+    console.log(post.username, post.artist_name, post.reaction_count, post.reaction_user_ids)
     const permalinkTimestampString = (post?.created_at ?? post?.timestamp).toISOString()
     const permalinkTimestamp = Date.parse(permalinkTimestampString).toString()
 
