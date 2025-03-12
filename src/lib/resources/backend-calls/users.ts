@@ -285,6 +285,7 @@ export const selectSessionProfile = async function ( sessionUserId: string ) {
 export const inviteRequest = async function ( email: string, referredBy: string ) {
 
     const invite = await db.transaction().execute(async (trx) => {
+        
         try {
             const selectInvite = await trx
             .selectFrom('invites')

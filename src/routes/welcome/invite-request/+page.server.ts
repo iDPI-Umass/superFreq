@@ -13,7 +13,7 @@ export const actions = {
         const { approved, user_id } = invite
 
 
-        if ( approved ) {
+        if ( approved == true ) {
             const authResponse = await supabase.auth.signInWithOtp({ email: email })
             
             if ( authResponse.error ) {
@@ -24,7 +24,7 @@ export const actions = {
             }
         }
         else {
-            return { success: false, approved: false, user_id: null, authError: false }
+            return { success: true, approved: false, user_id: null, authError: false }
         }
         
     }

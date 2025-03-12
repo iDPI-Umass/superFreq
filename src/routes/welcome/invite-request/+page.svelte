@@ -31,7 +31,7 @@
     }
 
     function modalBody ( approved: boolean, userId: string | null ) {
-        if ( !approved && !userId) {
+        if ( !approved ) {
             return `Thank you for your interest in joining the Freq beta test! You'll receive an email soon once your invite has been approved.`
         }
         else if ( !authError && approved && !userId ) {
@@ -65,6 +65,7 @@
 			class="form-column"
 			method="post"
             action="?/invite"
+            use:enhance
 		>
 			<div class="label-group">
 				<label 
