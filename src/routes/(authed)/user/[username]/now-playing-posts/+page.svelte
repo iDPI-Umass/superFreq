@@ -17,8 +17,6 @@
 
     let { posts, username, sessionUserId, sessionUserCollections } =  $state(data)
 
-    console.log(posts)
-
     let showCollectionsListModal = $derived(form?.showCollectionsModal ?? false)
     let showSaveSucessModal = $derived(form?.updateSuccess ?? false)
 </script>

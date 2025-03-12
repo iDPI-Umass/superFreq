@@ -10,10 +10,10 @@ export const actions = {
 
         const invite = await inviteRequest( email, referredBy )
 
+        const { approved, user_id } = invite
 
-        if ( invite ) {
-            const { approved, user_id } = invite
 
+        if ( approved ) {
             const authResponse = await supabase.auth.signInWithOtp({ email: email })
             
             if ( authResponse.error ) {
