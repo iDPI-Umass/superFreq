@@ -16,7 +16,7 @@ let feedItemCount = 0
 let totalAvailableItems = 0
 let remaining = 0
 
-let nowPlayingPostId: string
+let postId: string
 let updatedReactionActive: boolean
 let updatedReactionCount: number
 
@@ -43,13 +43,20 @@ export const load = async ({ locals: { safeGetSession } }: Parameters<PageServer
     }
 
     if ( updateReaction ) {
-        const reactionPost = feedItems.find((item) => (item.now_playing_post_id == nowPlayingPostId)) as App.RowData
-
-        reactionPost.reaction_active = updatedReactionActive
-        reactionPost.reaction_count = updatedReactionCount
 
         updateReaction = false
         loadData = true
+
+        const postIndex = feedItems.findIndex((element) => element.post_id == postId)
+        feedItems[postIndex]['reaction_count'] = updatedReactionCount
+
+        if ( updatedReactionActive ) {
+            feedItems[postIndex]['reaction_user_ids'].push(sessionUserId)
+        }
+        else if ( !updatedReactionActive ) {
+            const reactionIndex = feedItems[postIndex]['reaction_user_ids'].findIndex((element) => {element == sessionUserId})
+            feedItems[postIndex]['reaction_user_ids'].splice(reactionIndex, 1)
+        }
     }
 
     return { sessionUserId, feedItems, totalAvailableItems, remaining, sessionUserCollections } 
@@ -66,12 +73,11 @@ export const actions = {
         const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
-        const postId = data.get('post-id') as string
+        postId = data.get('post-id') as string
         const reactionType = data.get('reaction-type') as string
 
         const { reaction, reactionCount } = await insertUpdateReaction( sessionUserId, postId, reactionType )
 
-        nowPlayingPostId = postId
         updatedReactionActive = reaction.active as boolean
         updatedReactionCount = reactionCount as number
 
