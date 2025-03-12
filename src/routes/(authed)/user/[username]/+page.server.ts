@@ -63,10 +63,6 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
 
             feedItems.push(...feedData)
             feedItemCount = feedItems.length
-
-            for (const item of feedItems) {
-                console.log(item.post_id, item.username, item.reaction_count, item. reaction_user_ids, sessionUserId)
-            }
     
             totalAvailableItems = totalRowCount as number
             remaining = totalRowCount - feedItemCount

@@ -37,7 +37,6 @@
         showSaveSucessModal = $bindable(false)
     }: ComponentProps = $props()
 
-    console.log(post.username, post.artist_name, post.reaction_count, post.reaction_user_ids)
     const permalinkTimestampString = (post?.created_at ?? post?.timestamp).toISOString()
     const permalinkTimestamp = Date.parse(permalinkTimestampString).toString()
 
