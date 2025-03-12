@@ -78,14 +78,12 @@ export const mbidCateogory = function ( searchCategory: string ) {
 }
 
 export const artistMbid = function ( searchCategory: string, item: App.RowData ) {
-    console.log(item)
     let mbid = null
     if ( searchCategory == 'artists' ) {
         mbid = item["id"] ?? null
     }
     else if ( searchCategory == 'release_groups' ) {
         mbid = item["artist-credit"][0]["artist"]["id"] ?? null
-        console.log(mbid)
     }
     else if ( searchCategory == 'recordings' ) {
         mbid = item["artist-credit"][0]["artist"]["id"] ?? null
