@@ -45,7 +45,6 @@ export const load = async ({ locals: { safeGetSession } }: Parameters<PageServer
     if ( updateReaction ) {
         const reactionPost = feedItems.find((item) => (item.now_playing_post_id == nowPlayingPostId)) as App.RowData
 
-        reactionPost.reaction_active = updatedReactionActive
         reactionPost.reaction_count = updatedReactionCount
 
         updateReaction = false
