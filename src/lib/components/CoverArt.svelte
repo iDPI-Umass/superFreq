@@ -40,10 +40,10 @@ Currently configured to server Last.fm images on the client side by default on a
     })
 
     const coverArtSearchTerms = $derived({
-        'artist_name': artistName ?? item.artist_name ?? item.avatar_artist_name,
-        'release_group_name': releaseGroupName ?? item.release_group_name?? item.avatar_release_group_name,
-        'artist_mbid': item.artist_mbid,
-        'release_group_mbid': item.release_group_mbid
+        'artist_name': artistName ?? item.artist_name ?? item.avatar_artist_name ?? null,
+        'release_group_name': releaseGroupName ?? item.release_group_name?? item.avatar_release_group_name ?? null,
+        'artist_mbid': item.artist_mbid ?? null,
+        'release_group_mbid': item.release_group_mbid ?? null
     })
 
     const coverArtArchiveImgUrl = $derived(item ? coverArtItem['img_url'] : null)

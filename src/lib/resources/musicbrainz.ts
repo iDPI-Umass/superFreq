@@ -227,8 +227,11 @@ export const getLastFmCoverArt = async function ( releaseGroup: App.RowData ) {
 }
 
 export const getCoverArt = async function ( releaseGroup: App.RowData ) {
-    console.log(releaseGroup)
-    const coverArtArchiveEndpoint = releaaseGroup.release_group_mbid ? `https://coverartarchive.org/release-group/${releaseGroup.release_group_mbid}/front` : null
+    if ( releaseGroup.release_group_name == null && releaseGroup.release_group_mbid == null ) {
+        throw Error
+    }
+
+    const coverArtArchiveEndpoint = `https://coverartarchive.org/release-group/${releaseGroup.release_group_mbid}/front`
 
     try {
         let coverArtArchiveUrl = null as string | null
