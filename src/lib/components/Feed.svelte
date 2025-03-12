@@ -39,6 +39,8 @@
         }
         return avatar
     }
+
+    console.log(feedItems.slice(0,5))
 </script>
 
 <!-- <svelte:options runes={true} /> -->
@@ -122,7 +124,7 @@
                 </div>
             </a>
         <!-- Collection follow -->
-            {:else if item.item_type == 'collection_follow'}
+            {:else if item.item_type == 'collection_follow' && ( item.user_id != item.collection_owner_id )}
             <a href={`/collection/${item.collection_id}`}>
                 <div class="feed-item-one-liner">
                     <CoverArt
@@ -140,7 +142,7 @@
                 </div>
             </a>
         <!-- Collection edit -->
-        {:else if item.item_type == 'collection_id' && !item.item_type.is_top_albums}
+        {:else if item.item_type == 'collection_edit' && !item.item_type.is_top_albums}
             <a href={`/collection/${item.collection_id}`}>
                 <div class="feed-item-one-liner">
                     <CoverArt
@@ -152,7 +154,7 @@
                       {item.user_id == sessionUserId ? 'You' : item.display_name}
                       edited the collection: 
                       <span class="feed-item-subject">
-                          {item.collection_}
+                          {item.collection_title}
                       </span>
                     </span>
                 </div>
