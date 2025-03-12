@@ -63,6 +63,7 @@
 		bind:deletedItems={deletedItems}
 		collectionStatus="public"
 		collectionType={collectionType}
+		limit="8"
 		mode="release_group"
 		itemAdded={itemAdded}
 		bind:imgPromise={imgPromise}

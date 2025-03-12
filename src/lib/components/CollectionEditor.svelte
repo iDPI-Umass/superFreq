@@ -9,6 +9,7 @@
         collectionType: string
         collectionStatus: string
         mode?: string
+        limit?: string
         collectionItems: App.RowData[]
         deletedItems?: App.RowData[]
         itemAdded: boolean
@@ -20,6 +21,7 @@
         collectionType,
         collectionStatus,
         mode = '', // artists || release_groups || recordings
+        limit,
         collectionItems = $bindable([]),
         deletedItems = $bindable([]),
         itemAdded = $bindable(false),
@@ -161,6 +163,7 @@
                     searchCategory={searchCategoryLookup[itemType]}
                     bind:addedItems={collectionItems}
                     bind:deletedItems={deletedItems}
+                    limit={limit}
                     bind:newItemAdded={itemAdded}
                     searchButtonText={`search ${categoryLookup[itemType]}`}
                     searchPlaceholder={`search ${categoryLookup[itemType]}`}
