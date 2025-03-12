@@ -116,7 +116,7 @@ export const actions = {
     },
     blockUser: async({ request, locals: { safeGetSession } }) => {
         const { session } = await safeGetSession()
-        sessionUserId = session?.user.id as string
+        const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
         const profileUserId = data.get('profile-user-id') as string
@@ -132,7 +132,7 @@ export const actions = {
     },
     reportUser: async({ request, locals: { safeGetSession } }) => {
         const { session } = await safeGetSession()
-        sessionUserId = session?.user.id as string
+        const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
         const profileUserId = data.get('profile-user-id') as string
@@ -148,7 +148,7 @@ export const actions = {
     },
     followUser: async({ request, locals: { safeGetSession } }) => {
         const { session } = await safeGetSession()
-        sessionUserId = session?.user.id as string
+        const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
         const profileUserId = data.get('profile-user-id') as string
@@ -172,7 +172,7 @@ export const actions = {
     },
 	post:async ({ request, locals: { safeGetSession } }) => {
         const { session } = await safeGetSession()
-        sessionUserId = session?.user.id as string
+        const sessionUserId = session?.user.id as string
 
         const timestampISOString: string = new Date().toISOString()
         const timestampISO: Date = parseISO(timestampISOString)
@@ -238,7 +238,7 @@ export const actions = {
     },
     flagPost: async ({ request, locals: { safeGetSession } }) => {
         const { session } = await safeGetSession()
-        sessionUserId = session?.user.id as string
+        const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
         postId = data.get('post-id') as string
@@ -251,7 +251,7 @@ export const actions = {
     },
     deletePost: async ({ request, locals: { safeGetSession } }) => {
         const { session } = await safeGetSession()
-        sessionUserId = session?.user.id as string
+        const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
         postId = data.get('post-id') as string
@@ -264,7 +264,7 @@ export const actions = {
     },
     submitReaction: async ({ request, locals: { safeGetSession } }) => {
         const { session } = await safeGetSession()
-        sessionUserId = session?.user.id as string
+        const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
         postId = data.get('post-id') as string
@@ -283,7 +283,7 @@ export const actions = {
     },
     getCollectionList: async ({ request, locals: { safeGetSession } }) => {
         const { session } = await safeGetSession()
-        sessionUserId = session?.user.id as string
+        const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
         saveItemPostId = data.get('post-id') as string
@@ -295,7 +295,7 @@ export const actions = {
     },
     saveToCollection: async ({ request, locals: { safeGetSession } }) => {
         const { session } = await safeGetSession()
-        sessionUserId = session?.user.id as string
+        const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
         const collectionId = data.get('collection-id') as string
