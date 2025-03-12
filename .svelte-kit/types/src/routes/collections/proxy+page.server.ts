@@ -3,7 +3,7 @@ import type { PageServerLoad, Actions } from './$types'
 import { selectAllOpenPublicCollections } from '$lib/resources/backend-calls/collections'
 
 export const load = async () => {
-    const batchSize = 5
+    const batchSize = 25
     const batchIterator = 0
 
     const { batch, remainingCount } = await selectAllOpenPublicCollections( batchSize, batchIterator )
