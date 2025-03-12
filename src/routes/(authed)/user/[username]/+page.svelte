@@ -279,11 +279,11 @@
     }
     .avatar-image {
         position: relative;
-        z-index: 0;
+        z-index: -1;
     }
     button.mini {
         position: absolute;
-        z-index: 1;
+        z-index: 0;
         top: 0;
     }
 </style>
