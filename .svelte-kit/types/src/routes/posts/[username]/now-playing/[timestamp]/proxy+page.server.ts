@@ -7,7 +7,6 @@ import { insertPostFlag } from '$lib/resources/backend-calls/users'
 import { selectListSessionUserCollections, saveItemToCollection } from 'src/lib/resources/backend-calls/collections.js'
 import { validStringCheck } from '$lib/resources/parseData'
 
-let sessionUserId: string
 let loadData = true
 
 let post: App.RowData = {}
@@ -40,7 +39,7 @@ export const load = async ({ params, parent, locals: { safeGetSession } }: Param
         throw redirect(307, '/create-profile')
     }
     
-    sessionUserId = session?.user.id as string
+    const sessionUserId = session?.user.id as string
 
     username = params.username
     const timestamp = parseInt(params.timestamp)
@@ -85,7 +84,10 @@ export const load = async ({ params, parent, locals: { safeGetSession } }: Param
 }
 
 export const actions = {
-    submitReply: async ({ request })=> {
+    submitReply: async ({ request, locals: { safeGetSession } })=> {
+        const { session } = await safeGetSession()
+        const sessionUserId = session?.user.id as string
+
         const timestampISOString: string = new Date().toISOString()
         const timestampISO: Date = parseISO(timestampISOString)
 
@@ -116,7 +118,10 @@ export const actions = {
             return { success: false }
         }
     },
-    submitReaction: async ({ request }) => {
+    submitReaction: async ({ request, locals: { safeGetSession } }) => {
+        const { session } = await safeGetSession()
+        const sessionUserId = session?.user.id as string
+
         const data = await request.formData()
         const reactionType = data.get('reaction-type') as string
         const postId = data.get('post-id') as string
@@ -134,7 +139,10 @@ export const actions = {
         return { success, reactionActive, reactionCount }
 
     },
-    editPost: async ({ request }) => {
+    editPost: async ({ request, locals: { safeGetSession } }) => {
+        const { session } = await safeGetSession()
+        const sessionUserId = session?.user.id as string
+
         const data = await request.formData()
         editedText = data.get('edited-text') as string
         const postData = JSON.parse(data.get('post-data') as string) as App.RowData
@@ -150,7 +158,10 @@ export const actions = {
 
         return { success, editState }
     },
-    deletePost: async ({ request }) => {
+    deletePost: async ({ request, locals: { safeGetSession } }) => {
+        const { session } = await safeGetSession()
+        const sessionUserId = session?.user.id as string
+
         const data = await request.formData()
         const postId = data.get('post-reply-id') as string ?? data.get('post-id') as string
 
@@ -167,7 +178,10 @@ export const actions = {
             return { success: false }
         }
     },
-    flagPost: async ({ request }) => {
+    flagPost: async ({ request, locals: { safeGetSession } }) => {
+        const { session } = await safeGetSession()
+        const sessionUserId = session?.user.id as string
+
         const data = await request.formData()
         const postId = data.get('post-reply-id') as string ?? data.get('post-id') as string
 
@@ -177,16 +191,22 @@ export const actions = {
 
         return { success }
     },
-    getCollectionList: async ({ request }) => {
-           const data = await request.formData()
-           saveItemPostId = data.get('post-id') as string
-   
-           if ( collections.length == 0 ) {
+    getCollectionList: async ({ request, locals: { safeGetSession } }) => {
+        const { session } = await safeGetSession()
+        const sessionUserId = session?.user.id as string
+
+        const data = await request.formData()
+        saveItemPostId = data.get('post-id') as string
+
+        if ( collections.length == 0 ) {
             collections = await selectListSessionUserCollections(sessionUserId)
-           }
-           return { showCollectionsModal: true }
+        }
+        return { showCollectionsModal: true }
        },
-    saveToCollection: async ({ request }) => {
+    saveToCollection: async ({ request, locals: { safeGetSession } }) => {
+        const { session } = await safeGetSession()
+        const sessionUserId = session?.user.id as string
+        
         const data = await request.formData()
         const collectionId = data.get('collection-id') as string
 
