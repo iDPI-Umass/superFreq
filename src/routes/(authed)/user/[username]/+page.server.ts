@@ -8,7 +8,6 @@ import { getListenUrlData, validStringCheck } from '$lib/resources/parseData'
 import { add, parseISO } from 'date-fns'
 import { metadata } from '$lib/assets/text/updates.md'
 
-let sessionUserId: string
 let profileUsername = null as string | null
 let profileUserId = null as string | null
 
@@ -34,7 +33,7 @@ let sessionUserCollections = [] as App.RowData[]
 export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}) => {
 
     const { session } = await safeGetSession()
-    sessionUserId = session?.user.id as string
+    const sessionUserId = session?.user.id as string
 
     const urlUsername = params.username
     
@@ -114,7 +113,10 @@ export const actions = {
         loadData = true
         return { loadData }
     },
-    blockUser: async({ request }) => {
+    blockUser: async({ request, locals: { safeGetSession } }) => {
+        const { session } = await safeGetSession()
+        sessionUserId = session?.user.id as string
+
         const data = await request.formData()
         const profileUserId = data.get('profile-user-id') as string
 
@@ -127,7 +129,10 @@ export const actions = {
 
         return { userActionSuccess }
     },
-    reportUser: async({ request }) => {
+    reportUser: async({ request, locals: { safeGetSession } }) => {
+        const { session } = await safeGetSession()
+        sessionUserId = session?.user.id as string
+
         const data = await request.formData()
         const profileUserId = data.get('profile-user-id') as string
 
@@ -140,7 +145,10 @@ export const actions = {
 
         return { userActionSuccess }
     },
-    followUser: async({ request }) => {
+    followUser: async({ request, locals: { safeGetSession } }) => {
+        const { session } = await safeGetSession()
+        sessionUserId = session?.user.id as string
+
         const data = await request.formData()
         const profileUserId = data.get('profile-user-id') as string
 
@@ -161,7 +169,10 @@ export const actions = {
 
         return { embedInfo, success: true }
     },
-	post:async ({ request, }) => {
+	post:async ({ request, locals: { safeGetSession } }) => {
+        const { session } = await safeGetSession()
+        sessionUserId = session?.user.id as string
+
         const timestampISOString: string = new Date().toISOString()
         const timestampISO: Date = parseISO(timestampISOString)
 
@@ -224,7 +235,10 @@ export const actions = {
             redirect(303, `/posts/${username}/now-playing/${timestamp}`)
         }
     },
-    flagPost: async ({ request }) => {
+    flagPost: async ({ request, locals: { safeGetSession } }) => {
+        const { session } = await safeGetSession()
+        sessionUserId = session?.user.id as string
+
         const data = await request.formData()
         postId = data.get('post-id') as string
 
@@ -234,7 +248,10 @@ export const actions = {
 
         return { userActionSuccess }
     },
-    deletePost: async ({ request }) => {
+    deletePost: async ({ request, locals: { safeGetSession } }) => {
+        const { session } = await safeGetSession()
+        sessionUserId = session?.user.id as string
+
         const data = await request.formData()
         postId = data.get('post-id') as string
 
@@ -244,7 +261,10 @@ export const actions = {
 
         return { success }
     },
-    submitReaction: async ({ request }) => {
+    submitReaction: async ({ request, locals: { safeGetSession } }) => {
+        const { session } = await safeGetSession()
+        sessionUserId = session?.user.id as string
+
         const data = await request.formData()
         postId = data.get('post-id') as string
         const reactionType = data.get('reaction-type') as string
@@ -260,7 +280,10 @@ export const actions = {
 
         return { userActionSuccess }
     },
-    getCollectionList: async ({ request }) => {
+    getCollectionList: async ({ request, locals: { safeGetSession } }) => {
+        const { session } = await safeGetSession()
+        sessionUserId = session?.user.id as string
+
         const data = await request.formData()
         saveItemPostId = data.get('post-id') as string
 
@@ -269,7 +292,10 @@ export const actions = {
         }
         return { showCollectionsModal: true }
     },
-    saveToCollection: async ({ request }) => {
+    saveToCollection: async ({ request, locals: { safeGetSession } }) => {
+        const { session } = await safeGetSession()
+        sessionUserId = session?.user.id as string
+
         const data = await request.formData()
         const collectionId = data.get('collection-id') as string
 
