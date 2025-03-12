@@ -117,8 +117,8 @@
         <div class="post-body">
             {#if post.artist_name}
                 <NowPlayingTag
-                    artistName={post.artist_name}
-                    itemTitle={post.recording_name ?? post.release_group_name ?? post.episode_title}
+                    artistName={post.artist_name ?? post.user_added_artist_name}
+                    itemTitle={post.recording_name ?? post.user_added_recording_name ?? post.release_group_name ?? post.user_added_release_group_name ?? post.episode_title}
                     itemType={postItemType(post)}
                 >
                 </NowPlayingTag>

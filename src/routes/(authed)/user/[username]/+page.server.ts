@@ -96,12 +96,19 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     }
     
     if ( updateReaction ) {
-        updateReaction = false 
+        updateReaction = false
+        loadData = true
 
-        const reaction = feedItems.find((element) => findPost(element, postId)) as App.RowData
+        const postIndex = feedItems.findIndex((element) => element.post_id == postId)
+        feedItems[postIndex]['reaction_count'] = updatedReactionCount
 
-        // reaction.reaction_active = updatedReactionActive
-        reaction.reaction_count = updatedReactionCount
+        if ( updatedReactionActive ) {
+            feedItems[postIndex]['reaction_user_ids'].push(sessionUserId)
+        }
+        else if ( !updatedReactionActive ) {
+            const reactionIndex = feedItems[postIndex]['reaction_user_ids'].findIndex((element) => {element == sessionUserId})
+            feedItems[postIndex]['reaction_user_ids'].splice(reactionIndex, 1)
+        }
     }
 
     return { sessionUserId, profileData, feedItems, totalAvailableItems, remaining, profileUsername, sessionUserCollections, updatesPageUpdatedAt }

@@ -71,6 +71,14 @@ export const load = async ({ params, parent, locals: { safeGetSession } }: Param
         loadData = true
 
         post.reaction_count = postReactionCount
+
+        if ( reactionActive ) {
+            post.reaction_user_ids.push(sessionUserId)
+        }
+        else if ( !reactionActive ) {
+            const reactionIndex = post.reaction_user_ids.findIndex((element) => {element == sessionUserId})
+            post.reaction_user_ids.splice(reactionIndex, 1)
+        }
     }
 
     if ( editPost ) {
