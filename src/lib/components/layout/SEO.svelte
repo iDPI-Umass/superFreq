@@ -11,8 +11,8 @@
 	<meta property="og:url" content="https://freq.social">
 	<meta property="og:type" content="website">
 	<meta property="og:title" content="{title} | Freq">
-	<meta property="og:image" content={logoUrl}>
-    <meta propery="og:description" content={description}>
+	<meta property="og:image" content={logoSocialCard}>
+    <meta property="og:description" content={description}>
   
 	<meta name="twitter:card" content={logoSocialCard}>
 	<meta property="twitter:domain" content="freq.social">
