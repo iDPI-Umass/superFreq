@@ -39,7 +39,8 @@
 
     const sortOptions = ['default', 'reverse', 'artist A --> Z', 'artist Z --> A'] as any
 
-    let sortOption = $derived(selected ?? collectionInfo.default_view_sort ?? 'default') as string
+    console.log(collectionInfo)
+    let sortOption = $derived(collectionInfo.default_view_sort ?? 'default') as string
 
     let sortedItems = $state()
 
@@ -87,6 +88,8 @@
     $effect(() => {
         sortedItems =  sort(sortOption)
     })
+
+    
 
 </script>
 

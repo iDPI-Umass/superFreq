@@ -39,8 +39,6 @@
         }
         return avatar
     }
-
-    console.log(feedItems.slice(0,5))
 </script>
 
 <!-- <svelte:options runes={true} /> -->
