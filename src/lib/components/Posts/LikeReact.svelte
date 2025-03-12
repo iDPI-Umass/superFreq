@@ -26,6 +26,12 @@
     method="POST" 
     id="submitReaction"
     action="?/submitReaction" 
+    use:enhance
+>
+<!-- <form 
+    method="POST" 
+    id="submitReaction"
+    action="?/submitReaction" 
     use:enhance={() => {
         reactionPromise = true
         currentReactionActive = !currentReactionActive
@@ -35,7 +41,7 @@
             reactionPromise = false
         }}
     }
->
+> -->
     <input
         type="hidden"
         name="post-id"
@@ -52,6 +58,10 @@
         class="like" 
         formaction="?/submitReaction"
         disabled={reactionPromise}
+        onclick={() => {
+            currentReactionActive = !currentReactionActive
+            currentReactionCount = currentReactionActive ? ( ++currentReactionCount ) : ( --currentReactionCount )
+        }}
     >
         <div class="row-group-icon-description">
             {#if currentReactionCount > 0 }
