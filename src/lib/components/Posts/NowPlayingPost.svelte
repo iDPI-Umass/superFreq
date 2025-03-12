@@ -66,6 +66,18 @@
         'release_group_name': post.avatar_release_group_name
     }
 
+    function postItemType( post: any ) {
+        if ( post.release_group_name && !post.recording_name ) {
+            return 'release_group' as string
+        }
+        else if ( post.recording_name ) {
+            return 'recording' as string
+        }
+        else if ( post.episode_title ) {
+            return 'episode' as string
+        }
+    }
+
 </script>
 
 <!-- <svelte:options runes={true} /> -->
@@ -106,7 +118,7 @@
                 <NowPlayingTag
                     artistName={post.artist_name}
                     itemTitle={post.recording_name ?? post.release_group_name ?? post.episode_title}
-                    itemType={post.item_type}
+                    itemType={postItemType(post)}
                 >
                 </NowPlayingTag>
             {/if}
