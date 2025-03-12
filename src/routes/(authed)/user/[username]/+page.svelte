@@ -39,7 +39,7 @@
     let collectionFollowingCount = $derived(permission ? profileData?.collectionFollowingCount as number : null)
     let userFollowingCount = $derived(permission ? profileData?.userFollowingCount as number : null)
     let nowPlayingPostsCount = $derived(permission ? profileData?.nowPlayingPostsCount as number : null)
-    let topAlbumsCollection = $derived(permission ? profileData?.topAlbumsCollection as App.ProfileObject[] : null)
+    let topAlbumsCollection = $derived(permission ? profileData?.topAlbumsCollection.slice(0, 8) as App.ProfileObject[] : null)
 
     let topAlbumsReturned = $derived( topAlbumsCollection ? true : false)
     
