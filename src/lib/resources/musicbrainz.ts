@@ -229,7 +229,7 @@ export const getCoverArt = async function ( releaseGroup: App.RowData ) {
         throw Error
     }
 
-    const coverArtArchiveEndpoint = `https://coverartarchive.org/release-group/${releaseGroup.release_group_mbid}/front`
+    const coverArtArchiveEndpoint = `https://coverartarchive.org/release-group/${releaseGroup.release_group_mbid ?? releaseGroup.mbid}/front`
 
     try {
         let coverArtArchiveUrl = null as string | null
