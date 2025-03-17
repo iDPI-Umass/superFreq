@@ -98,6 +98,7 @@
 		{collectionInfo?.title}
 	</title>
 </svelte:head>
+
 <SEO title={collectionInfo?.title}></SEO>
 
 

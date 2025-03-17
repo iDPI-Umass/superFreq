@@ -115,7 +115,7 @@ export const artistOrigin = function ( searchCategory: string, item: App.RowData
 
 export const releaseGroupMetadata =  function ( searchCategory: string, item: App.RowData ) {
     let releaseGroup = {           
-        mbid: null,
+        release_group_mbid: null,
         release_date: null,
         artist_name: null,
         release_group_name: null
@@ -123,7 +123,7 @@ export const releaseGroupMetadata =  function ( searchCategory: string, item: Ap
 
     if ( searchCategory == 'release_groups' ) {
         releaseGroup = {
-            mbid: item["id"],
+            release_group_mbid: item["id"],
             release_date: item["first-release-date"],
             artist_name: item["artist-credit"][0]["artist"]["name"],
             release_group_name: item["title"]
@@ -131,7 +131,7 @@ export const releaseGroupMetadata =  function ( searchCategory: string, item: Ap
     }
     else if ( searchCategory == 'recordings' ) {
         releaseGroup = {
-            mbid: item["releases"][0]["release-group"]["id"],
+            release_group_mbid: item["releases"][0]["release-group"]["id"],
             release_date: null,
             artist_name: item["artist-credit"][0]["artist"]["name"],
             release_group_name: item["releases"][0]["release-group"]["title"]

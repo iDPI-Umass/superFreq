@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { enhance } from '$app/forms'
 	import ListModal from 'src/lib/components/modals/ListModal.svelte'
 	import { mbSearch, addCollectionItemNoImg, getCoverArt, addSingleItemNoImg, mbidCateogory, artistName, artistMbid, releaseGroupName, releaseGroupMbid, releaseGroupMetadata, recordingName, itemDate, artistOrigin } from '$lib/resources/musicbrainz'
 	import CoverArt from './CoverArt.svelte';
@@ -60,7 +61,7 @@
 			showModal = false
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
 				const releaseGroup = {
-					mbid: releaseGroupMbid(searchCategory, item),
+					release_group_mbid: releaseGroupMbid(searchCategory, item),
 					artist_name: artistName(searchCategory, item),
 					release_group_name: releaseGroupName(searchCategory, item)
 				}
@@ -83,7 +84,7 @@
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
 				const releaseGroup = releaseGroupMetadata( searchCategory, item )
 				const { success, coverArtArchiveUrl, lastFmCoverArtUrl } = await getCoverArt(releaseGroup)
-				const thisItemIndex = addedItems.findIndex((item) => item['release_group_mbid'] == releaseGroup.mbid)
+				const thisItemIndex = addedItems.findIndex((item) => item['release_group_mbid'] == releaseGroup.release_group_mbid)
 				addedItems[thisItemIndex]["img_url"] = success ? coverArtArchiveUrl : null
 				addedItems[thisItemIndex]["last_fm_img_url"] = success ? lastFmCoverArtUrl : null
 				imgPromise = new Promise ((resolve) => resolve(success))
@@ -99,7 +100,6 @@
 			'release_group_name': releaseGroupName(searchCategory, searchItem),
 			'artist_mbid': artistMbid(searchCategory, searchItem),
 			'release_group_mbid': releaseGroupMbid(searchCategory, searchItem)
-
 		}
 		return item
 	}
@@ -174,8 +174,6 @@
 								<div class="result-image">
 									<CoverArt
 										item={coverArtItem(item, searchCategory)}
-										artistName={artistName(searchCategory, item)}
-										releaseGroupName={releaseGroupName(searchCategory, item)}
 										altText='album {releaseGroupName(searchCategory, item)} by artist {artistName(searchCategory, item)}'
 									></CoverArt>
 								</div>
