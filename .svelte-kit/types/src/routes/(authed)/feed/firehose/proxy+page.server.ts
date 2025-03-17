@@ -31,7 +31,7 @@ export const load = async ({ locals: { safeGetSession } }: Parameters<PageServer
     const timestampEnd = new Date()
     const timestampStart = add(timestampEnd, {days: -300})
 
-    if ( loadData ) {
+    if ( loadData && ( batchSize * ( batchIterator + 1 ) != feedItems.length )) {
         const { feedData, totalRowCount } = await selectFirehoseFeed( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd )
         feedItems.push(...feedData)
         feedItemCount = feedItems.length
@@ -43,9 +43,7 @@ export const load = async ({ locals: { safeGetSession } }: Parameters<PageServer
     }
 
     if ( updateReaction ) {
-
         updateReaction = false
-        loadData = true
 
         const postIndex = feedItems.findIndex((element) => element.post_id == postId)
         feedItems[postIndex]['reaction_count'] = updatedReactionCount

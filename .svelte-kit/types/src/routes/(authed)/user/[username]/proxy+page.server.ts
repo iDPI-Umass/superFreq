@@ -46,7 +46,7 @@ export const load = async ({ params, locals: { safeGetSession }}: Parameters<Pag
 
     loadData = ( !loadData && urlUsername == profileUsername ) ? false : true
 
-    if ( loadData ) {
+    if ( loadData && ( batchSize * ( batchIterator + 1 ) != feedItems.length )) {
         profileData = await selectProfilePageData( sessionUserId, urlUsername )
         profileUsername = profileData.profileUserData.username as string
     
@@ -98,7 +98,6 @@ export const load = async ({ params, locals: { safeGetSession }}: Parameters<Pag
     
     if ( updateReaction ) {
         updateReaction = false
-        loadData = true
 
         const postIndex = feedItems.findIndex((element) => element.post_id == postId)
         feedItems[postIndex]['reaction_count'] = updatedReactionCount
