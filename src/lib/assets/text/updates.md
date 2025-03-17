@@ -1,8 +1,12 @@
 ---
 title: Updates
 layout: about
-updated: 03/11/2025
+updated: 03/17/2025
 ---
+### March 17, 2025
+#### Updates
+- Reply count added to Now Playing Posts
+
 ### March 11, 2025
 #### Bug Fixes
 - Fixed bug crashing avatar image loading

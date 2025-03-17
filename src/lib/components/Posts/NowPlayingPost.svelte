@@ -79,6 +79,8 @@
         }
     }
 
+    console.log(post)
+
 </script>
 
 <!-- <svelte:options runes={true} /> -->
@@ -153,10 +155,20 @@
                     {#if mode == "feed"}
                         <a href={permalink}>
                             <div class="row-group-icon-description">
-                                <Reply size="16" color="var(--freq-color-text-muted)"></Reply>
-                                <span class="descriptor">
-                                    reply
-                                </span>
+                                {#if post.replies && post.replies.length > 0 && post.replies[0]}
+                                    <span class="descriptor">
+                                        {post.replies.length}
+                                    </span>
+                                    <Reply size="16" color="var(--freq-color-text-muted)"></Reply>
+                                    <span class="descriptor">
+                                        {post.replies.length >= 2 ? 'replies': 'reply'}
+                                    </span>
+                                {:else}
+                                    <Reply size="16" color="var(--freq-color-text-muted)"></Reply>
+                                    <span class="descriptor">
+                                        reply
+                                    </span>
+                                {/if}
                             </div>
                         </a>
                     {/if}
