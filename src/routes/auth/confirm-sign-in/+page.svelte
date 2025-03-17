@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { onMount } from "svelte";
+    import { invalidate, invalidateAll } from "$app/navigation"
     import type { PageData } from "./$types"
 
     interface Props {
@@ -8,6 +10,8 @@
     let { data }: Props = $props();
 
     const urlString = data?.urlString as string
+
+    $effect(() => {invalidateAll()})
 </script>
 <!-- <svelte:options runes={true} /> -->
 

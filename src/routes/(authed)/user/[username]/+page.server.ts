@@ -45,7 +45,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
 
     loadData = ( !loadData && urlUsername == profileUsername ) ? false : true
 
-    if ( loadData && ( batchSize * ( batchIterator + 1 ) != feedItems.length )) {
+    if ( loadData ) {
         profileData = await selectProfilePageData( sessionUserId, urlUsername )
         profileUsername = profileData.profileUserData.username as string
     
