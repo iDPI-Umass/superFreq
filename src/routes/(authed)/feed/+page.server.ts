@@ -29,8 +29,9 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
     const timestampStart = add(timestampEnd, {days: -300})
     const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
 
-    if ( loadData ) {
+    if ( loadData && ( batchSize * ( batchIterator + 1 ) != feedItems.length )) {
         const { feedData, totalRowCount } = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options )
+
         feedItems.push(...feedData)
         feedItemCount = feedItems.length
 
@@ -41,7 +42,6 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 
     if ( updateReaction ) {
         updateReaction = false
-        loadData = true
 
         const postIndex = feedItems.findIndex((element) => element.post_id == postId)
         feedItems[postIndex]['reaction_count'] = updatedReactionCount
