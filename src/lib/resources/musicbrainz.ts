@@ -115,7 +115,7 @@ export const artistOrigin = function ( searchCategory: string, item: App.RowData
 
 export const releaseGroupMetadata =  function ( searchCategory: string, item: App.RowData ) {
     let releaseGroup = {           
-        mbid: null,
+        release_group_mbid: null,
         release_date: null,
         artist_name: null,
         release_group_name: null
@@ -123,7 +123,7 @@ export const releaseGroupMetadata =  function ( searchCategory: string, item: Ap
 
     if ( searchCategory == 'release_groups' ) {
         releaseGroup = {
-            mbid: item["id"],
+            release_group_mbid: item["id"],
             release_date: item["first-release-date"],
             artist_name: item["artist-credit"][0]["artist"]["name"],
             release_group_name: item["title"]
@@ -131,7 +131,7 @@ export const releaseGroupMetadata =  function ( searchCategory: string, item: Ap
     }
     else if ( searchCategory == 'recordings' ) {
         releaseGroup = {
-            mbid: item["releases"][0]["release-group"]["id"],
+            release_group_mbid: item["releases"][0]["release-group"]["id"],
             release_date: null,
             artist_name: item["artist-credit"][0]["artist"]["name"],
             release_group_name: item["releases"][0]["release-group"]["title"]
@@ -229,7 +229,7 @@ export const getCoverArt = async function ( releaseGroup: App.RowData ) {
         throw Error
     }
 
-    const coverArtArchiveEndpoint = `https://coverartarchive.org/release-group/${releaseGroup.release_group_mbid ?? releaseGroup.mbid}/front`
+    const coverArtArchiveEndpoint = `https://coverartarchive.org/release-group/${releaseGroup.release_group_mbid}/front`
 
     try {
         let coverArtArchiveUrl = null as string | null
