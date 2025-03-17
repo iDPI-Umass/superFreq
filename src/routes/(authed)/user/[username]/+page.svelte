@@ -65,7 +65,6 @@
 
     let showCollectionsListModal = $derived(form?.showCollectionsModal ?? false)
     let showSaveSucessModal = $derived(form?.updateSuccess ?? false)
-
 </script>
 
 <SEO title="{displayName}'s Profile"></SEO>

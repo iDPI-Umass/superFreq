@@ -47,7 +47,6 @@ Currently configured to server Last.fm images on the client side by default on a
     })
 
     const coverArtArchiveImgUrl = $derived(item ? coverArtItem['img_url'] : null)
-
 </script>
 
 {#if item && (coverArtItem['last_fm_img_url'] || coverArtItem['img_url']) } 
