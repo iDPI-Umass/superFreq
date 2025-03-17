@@ -5,7 +5,7 @@ updated: 03/17/2025
 ---
 ### March 17, 2025
 #### Updates
-- Reply count added to Now Playing Posts
+- Reply count added to Now Playing
 
 ### March 11, 2025
 #### Bug Fixes
