@@ -79,8 +79,6 @@
         }
     }
 
-    console.log(post)
-
 </script>
 
 <!-- <svelte:options runes={true} /> -->
