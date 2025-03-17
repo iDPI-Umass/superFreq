@@ -1,0 +1,1 @@
+import"../chunks/CWj6FrbW.js";import{t as r,a}from"../chunks/DCT9fmD9.js";var m=r('<form method="POST"><button class="standard" type="submit">run script</button></form>');function e(t){var o=m();a(t,o)}export{e as component};
