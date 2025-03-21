@@ -123,7 +123,7 @@ export const insertPost = async function ( postData: any ) {
         }
 
         let userAdddedMetadataRow = {} as App.RowData
-        if ( !postData["artist_mbid"] ) {
+        if ( !postData["artist_mbid"] && postData["artist_name"] ) {
             userAdddedMetadataRow = await trx
                 .insertInto('user_added_metadata')
                 .values(metadata)
