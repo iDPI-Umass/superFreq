@@ -1,8 +1,12 @@
 ---
 title: Updates
 layout: about
-updated: 03/17/2025
+updated: 03/21/2025
 ---
+### March 21, 2025
+#### Bug Fixes
+- Metadata now appears in post where user added metadata themselves
+
 ### March 17, 2025
 #### Updates
 - Reply count added to Now Playing
