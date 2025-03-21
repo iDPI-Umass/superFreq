@@ -80,7 +80,14 @@ export const insertPost = async function ( postData: any ) {
             "episode_title": postData["episode_title"],
             "show_title": postData["show_title"],
             "listen_url": postData["listen_url"],
-            "added_by": postData["user_id"]
+            "added_by": postData["user_id"],
+            "embed_source": postData["embed_source"],
+            "embed_account": postData["embed_account"],
+            "embed_id": postData["embed_id"],
+            "img_url": postData["img_url"],
+            "release_date": postData["release_date"],
+            "tracklist": postData["tracklist"]
+
         }]
     }
 
@@ -89,6 +96,7 @@ export const insertPost = async function ( postData: any ) {
     delete postData.remixer_artist_mbid
     delete postData.img_url
     delete postData.last_fm_img_url
+    delete postData.tracklist
 
     const post = await db.transaction().execute(async(trx) => {
         if ( postData["artist_mbid"] ) {
