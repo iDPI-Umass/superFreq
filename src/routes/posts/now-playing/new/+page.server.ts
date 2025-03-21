@@ -64,13 +64,13 @@ export const actions = {
             artist_mbid: validStringCheck(artistMbid),
             release_group_mbid: validStringCheck(releaseGroupMbid),
             recording_mbid: validStringCheck(recordingMbid),
-            artist_name: validStringCheck(artistName),
+            artist_name: validStringCheck(artistName) ?? embedInfo?.artist,
             release_group_name: validStringCheck(releaseGroupName),
             recording_name: validStringCheck(recordingName),
             remixer_artist_mbid: validStringCheck(remixerArtistMbid),
-            release_date: validStringCheck(releaseDate),
+            release_date: validStringCheck(releaseDate) ?? embedInfo?.release_date,
             label: validStringCheck(label),
-            img_url: validStringCheck(imgUrl),
+            img_url: validStringCheck(imgUrl) ?? embedInfo?.img_url ?? null,
             last_fm_img_url: validStringCheck(lastFmImgUrl),
             episode_title: validStringCheck(episodeName),
             show_title: validStringCheck(showName),
@@ -79,7 +79,8 @@ export const actions = {
             updated_at: timestampISO,
             embed_id: embedInfo?.id ?? null,
             embed_source: embedInfo?.source ?? null,
-            embed_account: embedInfo?.account ?? null
+            embed_account: embedInfo?.account ?? null,
+            tracklist: embedInfo?.tracklist ?? null,
         } as App.RowData
 
         const { username, createdAt } = await insertPost( postData )

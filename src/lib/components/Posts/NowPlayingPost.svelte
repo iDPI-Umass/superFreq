@@ -68,10 +68,10 @@
     }
 
     function postItemType( post: any ) {
-        if ( post.release_group_name && !post.recording_name ) {
+        if ( ( post.release_group_name || post.user_added_release_group_name ) && !post.recording_name ) {
             return 'release_group' as string
         }
-        else if ( post.recording_name ) {
+        else if ( post.recording_name || post.user_added_recording_name ) {
             return 'recording' as string
         }
         else if ( post.episode_title ) {
@@ -79,6 +79,7 @@
         }
     }
 
+    const artistName = $derived(post.artist_name ?? post.user_added_artist_name) as string
 </script>
 
 <!-- <svelte:options runes={true} /> -->
@@ -115,9 +116,9 @@
             </div>
         </div>
         <div class="post-body">
-            {#if post.artist_name}
+            {#if artistName}
                 <NowPlayingTag
-                    artistName={post.artist_name ?? post.user_added_artist_name}
+                    artistName={artistName}
                     itemTitle={post.recording_name ?? post.user_added_recording_name ?? post.release_group_name ?? post.user_added_release_group_name ?? post.episode_title}
                     itemType={postItemType(post)}
                 >

@@ -1,4 +1,4 @@
-import { parseISO } from "date-fns"
+import { parseISO, getDate, parse, format } from "date-fns"
 import { parseHTML } from 'linkedom'
 import rehypeStringify from 'rehype-stringify'
 import remarkGfm from 'remark-gfm'
@@ -417,6 +417,75 @@ export const listenUrlWhitelistCheck = function ( urlString: string ) {
 
 /* Gets data for populating embed. Works with Bandcamp, Soundcloud, YouTube. Mixcloud needs to be debugged. */
 
+export const fetchHtml = async function ( listnUrl: string ) {
+    const url = new URL(listnUrl)
+    const response = await fetch(url)
+    if (!response.ok) {
+        throw new Error(`Failed to fetch: ${response.status}`)
+    }
+    const html = await response.text()
+    const { document } = await parseHTML(html)
+    return document
+}
+
+export const parseBandcampHtml  = async function ( listenUrlString: string ) { 
+
+    const document = await fetchHtml(listenUrlString)
+
+    const embedLink = document.head.querySelector('meta[property=og:video]')?.content as string
+    const embedAccount = document.head.querySelector('meta[property=og:site_name]')?.content as string
+    const embedElements = embedLink.split('/')
+    const coverArt = document.head.querySelector('meta[property=og:image]')?.content as string
+    const description = document.head.querySelector('meta[name=description]')?.content
+
+    const lines = description.split('\n')
+    let titleArtistReleaseDate: string
+    const tracklist = [] as string[]
+    for (const line of lines) {
+        if ( line.includes(' by ') && line.includes(', released')) {
+            titleArtistReleaseDate = line
+        }
+        if (parseInt(line[0]) && line.split(' ')[0].includes('.')) {
+            let lineItem = line
+            if ( line.includes('&#39;')) {
+                lineItem = line.replace('&#39;', '\'')
+            }
+            tracklist.push(lineItem)
+        }
+    }
+
+    const releaseDateString = titleArtistReleaseDate.split(' released ')[1]
+
+    let id = ''
+    let itemType = ''
+
+    for ( const element of embedElements ) {
+        if ( element.includes('album=') || element.includes('track=') ) {
+            id = element
+            itemType = element.includes('album=') ? 'album' : 'track'
+            break
+        }
+    }
+
+    const pageTitle = document.title
+    const titleElements = pageTitle.split(' | ')
+    const itemTitle = titleElements[0]
+    const itemArtist = titleElements[1]
+    const itemInfo = {
+        'url': listenUrlString,
+        'id': id,
+        'source': 'bandcamp',
+        'title': itemTitle,
+        'item_type': itemType,
+        'artist': itemArtist,
+        'account': embedAccount,
+        'img_url': coverArt,
+        'tracklist': tracklist,
+        'release_date': releaseDateString,
+    } 
+    return itemInfo
+}
+
 export const getListenUrlData = async function ( listenUrlString: string ) { 
 
     if ( !listenUrlString ) {
@@ -424,8 +493,12 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
             'id': null,
             'source': null,
             'title': null,
+            'itemType': null,
             'artist': null,
-            'account': null
+            'account': null,
+            'img_url': null,
+            'tracklist': null,
+            'release_date': null,
         }
         return embedInfo 
     }
@@ -438,36 +511,6 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
             throw new Error(`Failed to fetch: ${response.status}`)
         }
         return await response.text()
-    }
-
-    async function parseBandcampHtml( html: any ) {
-        const {document} = await parseHTML(html)
-        const embedLink = document.head.querySelector('meta[property="og:video"]').content
-        const embedAccount = document.head.querySelector('meta[property="og:site_name"]').content
-        const embedElements = embedLink.split('/')
-
-        let id = ''
-
-        for ( const element of embedElements ) {
-            if ( element.includes('album=') || element.includes('track=') ) {
-                id = element
-                break
-            }
-        }
-
-        const pageTitle = document.title
-        const titleElements = pageTitle.split(' | ')
-        const itemTitle = titleElements[0]
-        const itemArtist = titleElements[1]
-        const itemInfo = {
-            'url': listenUrlString,
-            'id': id,
-            'source': 'bandcamp',
-            'title': itemTitle,
-            'artist': itemArtist,
-            'account': embedAccount
-        } 
-        return itemInfo
     }
 
     async function parseSoundcloudHtml ( html: any ) {
@@ -485,8 +528,12 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
             'id': itemId,
             'source': 'soundcloud',
             'title': itemTitle,
+            'itemType': null,
             'artist': null,
-            'account': itemAccount
+            'account': itemAccount,
+            'img_url': null,
+            'tracklist': null,
+            'release_date': null,
         } 
         return itemInfo
     }
@@ -515,8 +562,12 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
             'id': itemId,
             'source': 'youtube',
             'title': title ?? pageTitle,
+            'itemType': null,
             'artist': artist,
-            'account': null
+            'account': null,
+            'img_url': null,
+            'tracklist': null,
+            'release_date': null,
         }
         return itemInfo
     }
@@ -533,16 +584,18 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
             'id': itemId,
             'source': 'mixcloud',
             'title': itemTitle,
+            'itemType': null,
             'artist': null,
-            'account': itemAccount
+            'account': itemAccount,
+            'img_url': null,
+            'tracklist': null,
+            'release_date': null,
         }
         return itemInfo
     }
 
     if ( urlSource == 'bandcamp' ) {
-        const listenUrl = new URL(listenUrlString)
-        const html = await getHtml(listenUrl)
-        const embedInfo = await parseBandcampHtml(html)
+        const embedInfo = await parseBandcampHtml(listenUrlString)
         return embedInfo
     }
     else if ( urlSource == 'soundcloud') {
@@ -568,9 +621,14 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
             'id': null,
             'source': null,
             'title': null,
+            'itemType': null,
             'artist': null,
-            'account': null
+            'account': null,
+            'img_url': null,
+            'tracklist': null,
+            'release_date': null,
         }
         return embedInfo
     }
 }
+ 
