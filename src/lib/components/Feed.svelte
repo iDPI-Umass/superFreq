@@ -118,7 +118,7 @@
                             altText={`${item.display_name}'s avatar`}
                             imgClass='feed-avatar'
                         ></CoverArt>
-                    {item.user_id == sessionUserId ? 'You' : item.display_name} liked {item.reaction_post_user_id == sessionUserId ? 'your' : item.reaction_post_display_name.concat(`'s`)} { item.reaction_post_type == 'now_playing ' ? 'post' : 'reply' }
+                    {item.user_id == sessionUserId ? 'You' : item.display_name} liked {item.reaction_post_user_id == sessionUserId ? 'your' : item.reaction_post_display_name.concat(`'s`)} { item.reaction_post_type == 'now_playing' ? 'post' : 'reply' }
                 </div>
             </a>
         <!-- Collection follow -->
