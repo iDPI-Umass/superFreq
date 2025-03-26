@@ -2,6 +2,7 @@
 	import SEO from '$lib/components/layout/SEO.svelte'
     import PanelHeader from '$lib/components/PanelHeader.svelte'
 	import CollectionEditor from '$lib/components/CollectionEditor.svelte'
+	import { enhance } from '$app/forms';
 
 	interface Props {
 		data: any;
@@ -19,6 +20,8 @@
 	let deletedItems = $state(deletedCollectionContents ? deletedCollectionContents : [] as App.RowData[])
 
 	let itemAdded = $state(false)
+
+	let loadingSubmission = $state(false)
 </script>
 
 <SEO title="Choose top albums"></SEO>
@@ -32,7 +35,13 @@
 			</span>
 		{/snippet}
     </PanelHeader>
-    <form class="horizontal" method="POST" action='?/submitCollection'>
+    <form class="horizontal" method="POST" action='?/submitCollection' use:enhance={( form ) => {
+		loadingSubmission = true
+		return async ({ update }) => {
+			await update();
+			loadingSubmission = false
+		}
+	}}>
 		<p>Pick your top 8 albums to display on your profile.</p>
 		{#key collectionItems?.length}
 		<input 
@@ -52,6 +61,7 @@
         <button 
             class="double-border-top" 
             type="submit"
+			disabled={loadingSubmission}
         >
             <div class="inner-border">             
                 submit
