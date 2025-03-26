@@ -129,7 +129,7 @@
         <!-- Comment -->
         {:else if item.item_type == 'comment'}
             <a href={`/posts/${item.parent_post_username}/now-playing/${parseTimestamp(item.parent_post_created_at)}#${item.username?.concat(parseTimestamp(item.timestamp))}`}>
-                <div class="feed-item-two-liner">
+                <div class="feed-item">
                     <div class="feed-item-two-liner-user-row">
                             <CoverArt
                                 item={avatarItem(item)}
@@ -144,8 +144,8 @@
         <!-- Reaction -->
         {:else if item.item_type == 'reaction'}
             <a href={ item.reaction_post_type == 'now_playing' ? `/posts/${item.reaction_post_username}/now-playing/${parseTimestamp(item.reaction_post_created_at)}` : `/posts/${item.parent_post_username}/now-playing/${parseTimestamp(item.parent_post_created_at)}#${item.reaction_post_username?.concat(parseTimestamp(item.reaction_post_created_at))}`}>
-                <div class="feed-item-two-liner">
-                    <div class="feed-item-two-liner-row">
+                <div class="feed-item">
+                    <div class="feed-item-two-liner-user-row">
                         <CoverArt
                             item={avatarItem(item)}
                             altText={`${item.display_name}'s avatar`}
