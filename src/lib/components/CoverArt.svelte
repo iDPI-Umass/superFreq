@@ -7,7 +7,7 @@ Currently configured to server Last.fm images on the client side by default on a
 
 <script lang="ts">
     import { onMount } from "svelte"
-    import { checkFetchedCoverArt, getLastFmCoverArt, getCoverArt } from "$lib/resources/musicbrainz"
+    import { checkFetchedCoverArt, getLastFmCoverArt, getCoverArt, getCoverArtClientSide } from "$lib/resources/musicbrainz"
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
     interface ComponentProps {
@@ -18,6 +18,7 @@ Currently configured to server Last.fm images on the client side by default on a
         releaseGroupName?: string | null
         altText: string
         imgClass?: string | null
+        continuePromise?: boolean
     }
 
     let {
@@ -27,7 +28,8 @@ Currently configured to server Last.fm images on the client side by default on a
         artistName = null,
         releaseGroupName = null,
         altText,
-        imgClass
+        imgClass,
+        continuePromise = $bindable(true)
     }: ComponentProps = $props()
 
     const coverArtItem = $derived({
@@ -52,10 +54,10 @@ Currently configured to server Last.fm images on the client side by default on a
 {#if item && (coverArtItem['last_fm_img_url'] || coverArtItem['img_url']) } 
     <img src={coverArtItem['last_fm_img_url'] ?? coverArtItem['img_url']} alt={altText} class={imgClass}  /> 
 {:else if !item || (item && (!coverArtItem['last_fm_img_url'] && !coverArtItem['img_url'])) }
-    {#await getCoverArt(coverArtSearchTerms)}
+    {#await getCoverArtClientSide(coverArtSearchTerms, continuePromise)}
         <img src={wave} alt="loading" class={imgClass} />
     {:then result}
-        <img src={result.coverArtArchiveUrl ?? result.lastFmCoverArtUrl ?? result.wave} alt={result ? altText : 'not found'} class={imgClass}  />
+        <img src={result.lastFmCoverArtUrl ?? result.coverArtArchiveUrl ??  result.wave} alt={result ? altText : 'not found'} class={imgClass}  />
     {:catch}
         <img src={wave} alt="not found" class={imgClass}  />
     {/await}

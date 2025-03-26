@@ -4,6 +4,9 @@ layout: about
 updated: 03/26/2025
 ---
 ### March 26, 2025
+#### Bug Fixes
+- Image loading has been causing slow performance. Working on tweaking that little by little.
+
 #### Updates
 - Added more info to feed items about comments and likes
 

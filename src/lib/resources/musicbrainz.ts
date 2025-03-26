@@ -225,7 +225,8 @@ export const getLastFmCoverArt = async function ( releaseGroup: App.RowData ) {
 }
 
 export const getCoverArt = async function ( releaseGroup: App.RowData ) {
-    if ( releaseGroup.release_group_name == null && releaseGroup.release_group_mbid == null ) {
+    const validReleaseGroup = ( releaseGroup.release_group_name == null && releaseGroup.release_group_mbid == null ) ? false : true
+    if ( !validReleaseGroup ) {
         throw Error
     }
 
@@ -233,7 +234,7 @@ export const getCoverArt = async function ( releaseGroup: App.RowData ) {
 
     try {
         let coverArtArchiveUrl = null as string | null
-        if (coverArtArchiveEndpoint) {
+        if (validReleaseGroup) {
             const coverArtArchiveRes = await fetch(coverArtArchiveEndpoint, { signal: AbortSignal.timeout(3000) })
             const coverArtArchiveResUrl = coverArtArchiveRes["url"]
            
@@ -262,25 +263,56 @@ export const getCoverArt = async function ( releaseGroup: App.RowData ) {
     }
 }
 
-export const checkFetchedCoverArt = async function( item: App.RowData ){
-    try {
-        const imgUrl =  item["img_url"] as string
-        const coverArt = await fetch( imgUrl, { signal: AbortSignal.timeout(5000)} )
-        return coverArt
+export const getCoverArtClientSide = async function ( releaseGroup: App.RowData, continuePromise: boolean ) {
+    const validReleaseGroup = ( releaseGroup.release_group_name == null && releaseGroup.release_group_mbid == null ) ? false : true
+    if ( !validReleaseGroup ) {
+        throw Error
     }
-    catch ( error ) {
-        const releaseGroup = {
-            artist_name: item["artist_name"],
-            release_group_name: item["release_group_name"]
-        }
-        const coverArt = await getLastFmCoverArt(releaseGroup)
-        if (coverArt) {
-            return coverArt
+
+    const coverArtArchiveUrl = releaseGroup.release_group_mbid ? `https://coverartarchive.org/release-group/${releaseGroup.release_group_mbid}/front` : null
+    
+    const lastFmCoverArtUrl = null as string | null
+    const lastFmResUrl = await getLastFmCoverArt( releaseGroup ) as string
+
+    if ( !continuePromise ) {
+        return  { coverArtArchiveUrl, lastFmCoverArtUrl, wave: wave, success: false }
+    }
+
+    try {
+        const httpLastFm = new XMLHttpRequest()
+        httpLastFm.open('HEAD', lastFmResUrl, false)
+        httpLastFm.send()
+        const lastFmCoverArtUrl = ( httpLastFm.status == 404 ) ? null : lastFmResUrl
+
+        if ( !lastFmCoverArtUrl ) {
+            throw Error
         }
         else {
-            throw new Error('request failed')
+            return { coverArtArchiveUrl, lastFmCoverArtUrl, wave: wave, success: true }
         }
     }
+    catch ( error ) {
+        return  { coverArtArchiveUrl, lastFmCoverArtUrl, wave: wave, success: false }
+    }
+}
+
+export const checkFetchedCoverArt = async function( item: App.RowData ){
+
+    const coverArtArchiveResUrl =  item['img_url'] as string
+    const lastFmResUrl = item['last_fm_img_url']
+    
+    const httpCoverArtArchive = new XMLHttpRequest()
+    httpCoverArtArchive.open('HEAD', coverArtArchiveResUrl, false)
+    httpCoverArtArchive.send()
+
+    const coverArtArchiveUrl = ( httpCoverArtArchive.status == 404 ) ?  null :  coverArtArchiveResUrl
+
+    const httpLastFm = new XMLHttpRequest()
+    httpLastFm.open('HEAD', lastFmResUrl, false)
+    httpLastFm.send()
+    const lastFmCoverArtUrl = ( httpLastFm.status == 404 ) ? null : lastFmResUrl
+
+    return { coverArtArchiveUrl, lastFmCoverArtUrl }
 }
 
 /*

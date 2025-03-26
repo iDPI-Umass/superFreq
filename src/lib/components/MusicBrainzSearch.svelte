@@ -14,7 +14,8 @@
 		mode: string,
 		limit?: string,
 		query?: string,
-		imgPromise?: any
+		imgPromise?: any,
+		continuePromise? : boolean
 	}
 
 	let {
@@ -27,7 +28,8 @@
 		mode, // "single" | "collection" | "avatar-search"
 		limit = '25',
 		query = '',
-		imgPromise = $bindable(null)
+		imgPromise = $bindable(null),
+		continuePromise = $bindable(true)
 	}: ComponentProps = $props()
 
 	let showModal = $state(false)
@@ -71,6 +73,8 @@
 				imgPromise = new Promise ((resolve) => resolve(success)) 
 			}
 			addingItem = false
+			continuePromise = true
+
 			return { addedItems, query, searchComplete, newItemAdded, showModal }
 		}
 		if ( mode == 'collection' ) {
@@ -90,6 +94,7 @@
 				imgPromise = new Promise ((resolve) => resolve(success))
 			}
 			addingItem = false
+			continuePromise = true
 			return { addedItems, deletedItems, query, searchComplete, newItemAdded, showModal, imgPromise }
 		}
 	}
@@ -130,10 +135,10 @@
 										class="add"
 										aria-label="add item"
 										onclick={() => {
+											continuePromise = false
 											addItem(mode, item)
 											}}
 										disabled={addingItem}
-					
 									>
 										+ add
 									</button>
@@ -175,6 +180,7 @@
 									<CoverArt
 										item={coverArtItem(item, searchCategory)}
 										altText='album {releaseGroupName(searchCategory, item)} by artist {artistName(searchCategory, item)}'
+										continuePromise={continuePromise}
 									></CoverArt>
 								</div>
 							{/if}
