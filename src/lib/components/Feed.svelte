@@ -39,6 +39,8 @@
         }
         return avatar
     }
+
+    let loadingMore = $state(false)
 </script>
 
 <!-- <svelte:options runes={true} /> -->
@@ -179,12 +181,19 @@
         {/if}
         </div>
     {/each}
-    <form method="POST" action="?/loadMore" use:enhance>
+    <form method="POST" action="?/loadMore" use:enhance={(form) => {
+        loadingMore = true
+        return async ({ update }) => {
+            await update()
+            loadingMore = false
+        }
+    }}>
         {#if remaining && remaining > 0}
         <div class="button-spacer">
             <button
                 class="standard"
                 formaction="?/loadMore"
+                disabled={loadingMore}
             >
                 load more
             </button>
@@ -193,7 +202,7 @@
     </form>
     {#if mode == 'mini'}
         <div class="button-spacer">
-            <button class="standard" onclick={() => goto('/feed')}>
+            <button class="standard" onclick={() => goto('/feed')} disabled={loadingMore}>
                 see more
             </button>
         </div>
