@@ -141,9 +141,9 @@
             </div>
         </div>
     </div>
-    <Collapsible.Root open={openState}>
+    <!-- <Collapsible.Root open={openState}>
         <Collapsible.Content transition={slide}>
             <PostReplyEditor></PostReplyEditor>
         </Collapsible.Content>
-    </Collapsible.Root>
+    </Collapsible.Root> -->
 </div>

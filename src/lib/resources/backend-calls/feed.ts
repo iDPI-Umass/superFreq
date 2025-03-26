@@ -26,7 +26,11 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
         const feedData = await trx
         .selectFrom('feed_items')
         .selectAll()
-        .where('user_id', 'in', following)
+        .where(({eb, or}) => or([
+            eb('user_id', 'in', following),
+            eb('parent_post_user_id', '=', sessionUserId),
+            eb('reaction_post_user_id', '=', sessionUserId),
+        ]))
         .where((eb) => eb.between('timestamp', timestampStart, timestampEnd))
         .limit(batchSize)
         .orderBy('timestamp', 'desc')
@@ -798,6 +802,10 @@ export const selectFirehoseFeed = async function ( sessionUserId: string, batchS
         .selectFrom('feed_items')
         .selectAll()
         .where('user_id', 'in', following)
+        .where(({eb, and}) => and([
+            eb('item_type', '!=', 'reaction'),
+            eb('item_type', '!=', 'comment')
+        ]))
         .where((eb) => eb.between('timestamp', timestampStart, timestampEnd))
         .limit(batchSize)
         .orderBy('timestamp', 'desc')

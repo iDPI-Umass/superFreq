@@ -3,6 +3,10 @@ title: Updates
 layout: about
 updated: 03/21/2025
 ---
+### March 26, 2025
+#### Updates
+- Added more info to feed items about comments and likes
+
 ### March 21, 2025
 #### Bug Fixes
 - Metadata now appears in post where user added metadata themselves
