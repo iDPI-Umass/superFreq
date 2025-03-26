@@ -31,9 +31,32 @@
 
 .feed-item-one-liner {
     display: flex;
-    flex-direction: row;
+    flex-flow: row;
     padding: var(--freq-spacing-large) var(--freq-spacing-x-large);
     align-items: center;
+    gap: var(--freq-inline-gap-double);
+}
+
+.feed-item-two-liner {
+    display: flex;
+    flex-flow: column;
+    padding: var(--freq-spacing-small) var(--freq-spacing-x-large);
+    align-items: start;
+    gap: var(--freq-inline-gap-double);
+}
+
+.feed-item-two-liner-user-row {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    gap: var(--freq-inline-gap-double);
+}
+
+.feed-item-two-liner-tag-row {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    padding: var(--freq-spacing-small);
     gap: var(--freq-inline-gap-double);
 }
 
