@@ -1,6 +1,7 @@
 <script lang="ts">
+    import { onMount } from 'svelte'
     import type { ActionData, PageData } from './$types.js'
-    import { goto } from '$app/navigation'
+    import { goto, invalidateAll } from '$app/navigation'
     import { enhance } from '$app/forms'
 
     import SEO from '$lib/components/layout/SEO.svelte'
@@ -65,7 +66,6 @@
 
     let showCollectionsListModal = $derived(form?.showCollectionsModal ?? false)
     let showSaveSucessModal = $derived(form?.updateSuccess ?? false)
-    console.log(feedItems)
 </script>
 
 <SEO title="{displayName}'s Profile"></SEO>
@@ -255,6 +255,7 @@
             sessionUserId={sessionUserId}
             feedItems={feedItems}
             mode="feed"
+            postEditState={form?.editState}
             userActionSuccess={form?.userActionSuccess}
             remaining={remaining}
             collections={sessionUserCollections}
