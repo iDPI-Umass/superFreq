@@ -10,6 +10,10 @@
         displayName: string
         sessionUserId?: string | null
         remaining?: number
+        userActionSuccess?: boolean | null
+        collections?: App.RowData[]
+        showCollectionsListModal?: boolean
+        showSaveSucessModal?: boolean
     }
     
     let {
@@ -17,7 +21,11 @@
         username,
         displayName,
         sessionUserId = null,
-        remaining = 0
+        remaining = 0,
+        userActionSuccess = null,
+        collections = [],
+        showCollectionsListModal = $bindable(false),
+        showSaveSucessModal = $bindable(false)
     }: ComponentProps = $props()
     
 </script>
@@ -39,6 +47,10 @@
             post={post}
             sessionUserId={sessionUserId}
             mode="feed"
+            userActionSuccess={userActionSuccess}
+            collections={collections}
+            bind:showCollectionsModal={showCollectionsListModal}
+            bind:showSaveSucessModal={showSaveSucessModal}
         >
         </NowPlayingPost>
     {/each}
