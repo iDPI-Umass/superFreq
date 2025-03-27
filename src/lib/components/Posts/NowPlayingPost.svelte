@@ -56,6 +56,7 @@
     }
 
     let reactionActive = $derived(post?.reaction_user_ids ? post?.reaction_user_ids.includes(sessionUserId) : null) as boolean
+
     let reactionCount = $derived(post?.reaction_count) as number
     let postId = $derived(post?.id ?? post?.post_id) as string
 
@@ -67,7 +68,7 @@
         'release_group_name': post.avatar_release_group_name
     }
 
-    function postItemType( post: any ) {
+    function postItemType( post: App.RowData ) {
         if ( ( post.release_group_name || post.user_added_release_group_name ) && !post.recording_name ) {
             return 'release_group' as string
         }
@@ -77,6 +78,7 @@
         else if ( post.episode_title ) {
             return 'episode' as string
         }
+        else { return '' as string}
     }
 
     const artistName = $derived(post.artist_name ?? post.user_added_artist_name) as string

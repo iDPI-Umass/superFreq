@@ -65,6 +65,7 @@
 
     let showCollectionsListModal = $derived(form?.showCollectionsModal ?? false)
     let showSaveSucessModal = $derived(form?.updateSuccess ?? false)
+    console.log(feedItems)
 </script>
 
 <SEO title="{displayName}'s Profile"></SEO>
@@ -262,9 +263,11 @@
         ></Feed>
     {:else}
         <NowPlayingPostsSample
+            sessionUserId={sessionUserId}
             posts={feedItems}
             displayName={displayName}
             username={profileUsername}
+            remaining={remaining}
         ></NowPlayingPostsSample>
     {/if}
 </div>

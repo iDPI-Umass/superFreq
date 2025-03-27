@@ -1,8 +1,12 @@
 ---
 title: Updates
 layout: about
-updated: 03/26/2025
+updated: 03/27/2025
 ---
+### March 27, 2025
+#### Bug Fixes
+- A user's post on their own profile now accurately displays if you have already liked it
+
 ### March 26, 2025
 #### Bug Fixes
 - Image loading has been causing slow performance. Working on tweaking that little by little.
