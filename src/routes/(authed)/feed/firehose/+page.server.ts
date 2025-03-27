@@ -73,13 +73,9 @@ export const actions = {
         postId = data.get('post-id') as string
         const reactionType = data.get('reaction-type') as string
 
-        const { reaction, reactionCount } = await insertUpdateReaction( sessionUserId, postId, reactionType )
-
-        updatedReactionActive = reaction.active as boolean
-        updatedReactionCount = reactionCount as number
+        const { reaction } = await insertUpdateReaction( sessionUserId, postId, reactionType )
 
         updateReaction = reaction ? true : false
-        loadData = reaction ? false : true
 
         return { updateReaction }
     },

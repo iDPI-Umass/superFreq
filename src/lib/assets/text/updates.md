@@ -5,7 +5,12 @@ updated: 03/27/2025
 ---
 ### March 27, 2025
 #### Bug Fixes
-- A user's post on their own profile now accurately displays if you have already liked it
+- Several bugs fixed when visiting another user's profile:
+    - Posts now accurately reflect if you've already liked them
+    - The 'save' button is working
+    - Link to user's website no longer breaks layout
+- When viewing a post alone, liking a reply no longer makes all replies disappear
+- Home profile view now updates correctly after you update any account info
 
 ### March 26, 2025
 #### Bug Fixes
