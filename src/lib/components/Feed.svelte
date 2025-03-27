@@ -14,6 +14,7 @@
         feedItems: App.RowData[]
         mode: string
         remaining?: number
+        postEditState?: boolean
         userActionSuccess?: boolean | null
         collections?: App.RowData[]
         showCollectionsListModal?: boolean
@@ -25,6 +26,7 @@
         feedItems, 
         mode,
         remaining,
+        postEditState,
         userActionSuccess = null,
         collections = [],
         showCollectionsListModal = $bindable(false),
@@ -106,6 +108,7 @@
                         sessionUserId={sessionUserId}
                         post={item}
                         mode="feed"
+                        editState={postEditState}
                         userActionSuccess={userActionSuccess}
                         collections={collections}
                         bind:showCollectionsModal={showCollectionsListModal}
