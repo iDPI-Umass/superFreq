@@ -139,7 +139,7 @@
                                 altText={`${item.display_name}'s avatar`}
                                 imgClass='feed-avatar'
                             ></CoverArt>
-                        {item.user_id == sessionUserId ? 'You' : item.display_name} commented on {item.parent_post_user_id == sessionUserId ? 'your' : item.parent_post_display_name.concat(`'s`)} post
+                        {item.user_id == sessionUserId ? 'You' : item.display_name} commented on {item.parent_post_user_id == sessionUserId ? 'your' : item.parent_post_display_name.concat(`'s`)} post { (item.artist_name || item.user_added_artist_name) ? 'about' : ''}
                     </div>
                     {@render feedItemTag(item)}
                 </div>
