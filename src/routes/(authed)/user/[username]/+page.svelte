@@ -268,7 +268,11 @@
             posts={feedItems}
             displayName={displayName}
             username={profileUsername}
+            userActionSuccess={form?.userActionSuccess}
             remaining={remaining}
+            collections={sessionUserCollections}
+            showCollectionsListModal={showCollectionsListModal}
+            showSaveSucessModal={showSaveSucessModal}
         ></NowPlayingPostsSample>
     {/if}
 </div>
