@@ -26,10 +26,6 @@
         const slug = username?.concat(replyTimestamp)
         return slug
     }
-
-    $effect(() => {
-        console.log(replies.length)
-    })
 </script>
 
 <SEO title="{post?.display_name}'s Now Playing post"></SEO>
