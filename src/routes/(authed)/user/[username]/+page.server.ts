@@ -2,7 +2,7 @@ import type { PageServerLoad, Actions, Posts } from './$types'
 import { redirect } from '@sveltejs/kit'
 import { selectProfilePageData, insertUpdateBlock, insertUserFlag, insertUpdateUserFollow, insertPostFlag } from '$lib/resources/backend-calls/users'
 import { selectFeedData } from '$lib/resources/backend-calls/feed'
-import { selectUserPostsSample, insertPost, insertUpdateReaction, deletePost } from '$lib/resources/backend-calls/posts'
+import { selectUserPostsSample, insertPost, insertUpdateReaction, updatePost, deletePost } from '$lib/resources/backend-calls/posts'
 import { selectListSessionUserCollections, saveItemToCollection } from 'src/lib/resources/backend-calls/collections'
 import { getListenUrlData, validStringCheck } from '$lib/resources/parseData'
 import { add, parseISO } from 'date-fns'
@@ -26,6 +26,8 @@ let remaining = 0
 let postId: string
 let updatedReactionActive: boolean
 let updatedReactionCount: number
+let editPost: boolean
+let editedText: string
 
 let saveItemPostId: string
 let sessionUserCollections = [] as App.RowData[]
@@ -43,42 +45,43 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
     const updatesPageUpdatedAt = metadata.updated as string
 
-    loadData = ( !loadData && urlUsername == profileUsername ) ? false : true
+    if ( urlUsername != profileUsername ) {
+        loadData = true
+    }
 
-    if ( loadData ) {
-        profileData = await selectProfilePageData( sessionUserId, urlUsername )
-        profileUsername = profileData.profileUserData.username as string
-    
-        if ( profileUserId != profileData.profileUserData.id ) {
-            feedItems.length = 0
-        }
+    profileData = await selectProfilePageData( sessionUserId, urlUsername )
+    profileUsername = profileData.profileUserData.username as string
 
-        profileUserId = profileData.profileUserData.id as string
+    if ( profileUserId != profileData.profileUserData.id ) {
+        feedItems.length = 0
+    }
 
-        if (!profileData.profileUserData) {
-            throw redirect(303, '/')
-        }
-        else if ( sessionUserId == profileData.profileUserData.id) {
-            const { feedData, totalRowCount } = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
+    profileUserId = profileData.profileUserData.id as string
 
-            feedItems.push(...feedData)
-            feedItemCount = feedItems.length
-    
-            totalAvailableItems = totalRowCount as number
-            remaining = totalRowCount - feedItemCount
-            loadData = !loadData
-        }
-        else if ( sessionUserId != profileData.profileUserData.id || profileUserId != profileData.profileUserData.id) {
+    if (!profileData.profileUserData) {
+        throw redirect(303, '/')
+    }
 
-            const { feedData, totalRowCount } = await selectUserPostsSample( sessionUserId, profileUsername, batchSize, batchIterator )
-    
-            feedItems.push(...feedData)
-            feedItemCount = feedItems.length
+    if ( loadData && sessionUserId == profileData.profileUserData.id ) {
+        const { feedData, totalRowCount } = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
 
-            totalAvailableItems = totalRowCount as number
-            remaining = totalRowCount - feedItemCount
-            loadData = !loadData
-        }
+        feedItems.push(...feedData)
+        feedItemCount = feedItems.length
+
+        totalAvailableItems = totalRowCount as number
+        remaining = totalRowCount - feedItemCount
+        loadData = !loadData
+    }
+    else if ( loadData && ( sessionUserId != profileData.profileUserData.id || profileUserId != profileData.profileUserData.id )) {
+
+        const { feedData, totalRowCount } = await selectUserPostsSample( sessionUserId, profileUsername, batchSize, batchIterator )
+
+        feedItems.push(...feedData)
+        feedItemCount = feedItems.length
+
+        totalAvailableItems = totalRowCount as number
+        remaining = totalRowCount - feedItemCount
+        loadData = !loadData
     }
     
     if ( userAction ) {
@@ -233,11 +236,11 @@ export const actions = {
         const timestampSlug = createdAt?.toISOString()
         const timestamp = Date.parse(timestampSlug).toString()
 
+        loadData = true
         if ( !timestampSlug ) {
             return { success: false }
         }
         else {
-            loadData = true
             redirect(303, `/posts/${username}/now-playing/${timestamp}`)
         }
     },
@@ -253,6 +256,25 @@ export const actions = {
         const userActionSuccess = flag ? true : false
 
         return { userActionSuccess }
+    },
+    editPost: async ({ request, locals: { safeGetSession } }) => {
+        const { session } = await safeGetSession()
+        const sessionUserId = session?.user.id as string
+
+        const data = await request.formData()
+        editedText = data.get('edited-text') as string
+        const postData = JSON.parse(data.get('post-data') as string) as App.RowData
+
+        const submitEdit = await updatePost( sessionUserId, postData, editedText )
+
+        const success =  submitEdit ? true : false
+        const editState = submitEdit ? false : true
+
+        editedText = success ? submitEdit.text as string : editedText
+        editPost = success ? true : false
+        loadData = success ? false : true
+
+        return { success, editState }
     },
     deletePost: async ({ request, locals: { safeGetSession } }) => {
         const { session } = await safeGetSession()
@@ -275,14 +297,9 @@ export const actions = {
         postId = data.get('post-id') as string
         const reactionType = data.get('reaction-type') as string
 
-        const reaction = await insertUpdateReaction( sessionUserId, postId, reactionType )
+        const { reaction } = await insertUpdateReaction( sessionUserId, postId, reactionType )
 
         const userActionSuccess = reaction ? true : false
-
-        updatedReactionActive = reaction.reaction.active as boolean
-        updatedReactionCount = parseInt(reaction.reactionCount as string)
-        updateReaction = userActionSuccess ? true : false
-        loadData = userActionSuccess ? false : true
 
         return { userActionSuccess }
     },
