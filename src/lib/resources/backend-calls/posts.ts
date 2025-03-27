@@ -1153,16 +1153,7 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
 
             const reaction = updateReaction as App.RowData
 
-            const countReactions  = await trx
-            .selectFrom('post_reactions')
-            .select((eb) => eb.fn.count('id').as('reaction_count'))
-            .where('active', '=', true)
-            .where('post_id', '=', reaction.post_id)
-            .execute()
-
-            const reactionCount = countReactions[0]['reaction_count']
-
-            return { reaction, reactionCount }
+            return { reaction }
         }
         catch (error) {
             const changelog: App.Changelog = {}
@@ -1186,16 +1177,7 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
 
             const reaction = insertReaction as App.RowData
 
-            const countReactions  = await trx
-            .selectFrom('post_reactions')
-            .select((eb) => eb.fn.count('id').as('reaction_count'))
-            .where('active', '=', true)
-            .where('post_id', '=', reaction.post_id)
-            .execute()
-
-            const reactionCount = countReactions[0]['reaction_count']
-
-            return { reaction, reactionCount }
+            return { reaction }
         }
     })
 
