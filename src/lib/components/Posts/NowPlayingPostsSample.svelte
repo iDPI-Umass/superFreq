@@ -9,13 +9,15 @@
         username: string
         displayName: string
         sessionUserId?: string | null
+        remaining?: number
     }
     
     let {
         posts,
         username,
         displayName,
-        sessionUserId = null
+        sessionUserId = null,
+        remaining = 0
     }: ComponentProps = $props()
     
 </script>
@@ -41,11 +43,13 @@
         </NowPlayingPost>
     {/each}
     </div>
-    <div class="button-spacer">
-        <button class="standard" onclick={() => goto(`/user/${username}/now-playing-posts`)}>
-            see more
-        </button>
-    </div>
+    {#if remaining > 0}
+        <div class="button-spacer">
+            <button class="standard" onclick={() => goto(`/user/${username}/now-playing-posts`)}>
+                see more
+            </button>
+        </div>
+    {/if}
 </div>
 {:else if !posts || posts.length == 0}
 <div class="panel-medium">

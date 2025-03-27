@@ -74,7 +74,6 @@
 			}
 			addingItem = false
 			continuePromise = true
-
 			return { addedItems, query, searchComplete, newItemAdded, showModal }
 		}
 		if ( mode == 'collection' ) {
