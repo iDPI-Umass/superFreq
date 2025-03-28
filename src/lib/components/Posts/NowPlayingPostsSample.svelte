@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { enhance } from "$app/forms"
     import { goto } from "$app/navigation"
     import PanelHeader from "$lib/components/PanelHeader.svelte"
     import NowPlayingPost from "./NowPlayingPost.svelte"
@@ -56,11 +57,18 @@
     {/each}
     </div>
     {#if remaining > 0}
+    <form method="POST" action="?/loadMore" use:enhance>
+        {#if remaining && remaining > 0}
         <div class="button-spacer">
-            <button class="standard" onclick={() => goto(`/user/${username}/now-playing-posts`)}>
-                see more
+            <button
+                class="standard"
+                formaction="?/loadMore"
+            >
+                load more
             </button>
         </div>
+        {/if}
+    </form>
     {/if}
 </div>
 {:else if !posts || posts.length == 0}

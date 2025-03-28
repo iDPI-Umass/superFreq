@@ -1012,7 +1012,9 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
             .where('item_type', '=', 'now_playing_post')
             .execute()
 
-            return { permission: true, feedData: selectItems, totalRowCount: totalItems }
+            const rowCount = totalItems[0].feed_rows_count as number
+            
+            return { permission: true, feedData: selectItems, totalRowCount: rowCount }
         }
     })
 
