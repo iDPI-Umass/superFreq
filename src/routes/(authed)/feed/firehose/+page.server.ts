@@ -5,6 +5,8 @@ import { insertUpdateReaction, deletePost } from '$lib/resources/backend-calls/p
 import { validStringCheck } from '$lib/resources/parseData'
 import { selectListSessionUserCollections, saveItemToCollection } from '$lib/resources/backend-calls/collections'
 import { add } from 'date-fns'
+import { feedData } from 'src/lib/resources/states.svelte'
+
 
 let loadData = true
 let updateReaction = false
@@ -31,9 +33,16 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
     const timestampStart = add(timestampEnd, {days: -300})
 
     if ( loadData && ( batchSize * ( batchIterator + 1 ) != feedItems.length )) {
-        const { feedData, totalRowCount } = await selectFirehoseFeed( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd )
-        feedItems.push(...feedData)
-        feedItemCount = feedItems.length
+
+        feedData.feedItems.length = batchIterator * batchSize
+
+        const select = await selectFirehoseFeed( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd )
+
+        const totalRowCount = select.totalRowCount
+        const selectedFeedData = select.feedData
+
+        feedData.feedItems.push(...selectedFeedData)
+        feedItemCount = feedData.feedItems.length
 
         totalAvailableItems = totalRowCount as number
         remaining = totalRowCount - feedItemCount
@@ -56,7 +65,7 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
         }
     }
 
-    return { sessionUserId, feedItems, totalAvailableItems, remaining, sessionUserCollections } 
+    return { sessionUserId, feedItems: feedData.feedItems, totalAvailableItems, remaining, sessionUserCollections } 
 }
 
 export const actions = {

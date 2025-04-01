@@ -7,18 +7,20 @@ import { selectListSessionUserCollections, saveItemToCollection } from 'src/lib/
 import { getListenUrlData, validStringCheck } from '$lib/resources/parseData'
 import { add, parseISO } from 'date-fns'
 import { metadata } from '$lib/assets/text/updates.md'
+import { feedData } from 'src/lib/resources/states.svelte'
 
 let profileUsername = null as string | null
 let profileUserId = null as string | null
 
 let loadData = true
+let loadMore = false
 let userAction = false
 let updateReaction = false
 
 let profileData: any = null
 
 let batchIterator = 0
-const feedItems = [] as App.RowData[]
+let feedItems = [] as App.RowData[]
 let feedItemCount = 0
 let totalAvailableItems = 0
 let remaining = 0
@@ -50,38 +52,50 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     }
 
     profileData = await selectProfilePageData( sessionUserId, urlUsername )
-    profileUsername = profileData.profileUserData.username as string
-
-    if ( profileUserId != profileData.profileUserData.id ) {
-        feedItems.length = 0
-    }
-
-    profileUserId = profileData.profileUserData.id as string
 
     if (!profileData.profileUserData) {
         throw redirect(303, '/')
     }
 
-    if ( loadData && sessionUserId == profileData.profileUserData.id ) {
-        const { feedData, totalRowCount } = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
+    profileUsername = profileData.profileUserData.username as string
 
-        feedItems.push(...feedData)
-        feedItemCount = feedItems.length
-
-        totalAvailableItems = totalRowCount as number
-        remaining = totalRowCount - feedItemCount
-        loadData = !loadData
+    if ( profileUserId != profileData.profileUserData.id ) {
+        feedData.feedItems = []
+        loadMore = true
     }
-    else if ( loadData && ( sessionUserId != profileData.profileUserData.id || profileUserId != profileData.profileUserData.id )) {
 
-        const { feedData, totalRowCount } = await selectUserPostsSample( sessionUserId, profileUsername, batchSize, batchIterator )
+    feedData.profileUsername =  profileUsername
 
-        feedItems.push(...feedData)
-        feedItemCount = feedItems.length
+    profileUserId = profileData.profileUserData.id as string
+    feedData.profileUserId = profileUserId
+
+    // if profile is session user's, load feed data
+    if ( sessionUserId == profileUserId ) {
+        feedData.feedItems.length = batchIterator * batchSize
+
+        const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
+
+        const totalRowCount = select.totalRowCount
+        const selectedFeedData = select.feedData
+        feedData.feedItems.push(...selectedFeedData)
+        feedItemCount = feedData.feedItems.length
 
         totalAvailableItems = totalRowCount as number
         remaining = totalRowCount - feedItemCount
-        loadData = !loadData
+    }
+    // if profile is another user's, load their posts
+    else if ( sessionUserId != profileUserId ) {
+        feedData.feedItems.length = batchIterator * batchSize
+
+        const select = await selectUserPostsSample( sessionUserId, profileUsername, batchSize, batchIterator)
+        const totalRowCount = select.totalRowCount
+        const selectedFeedData = select.feedData
+
+        feedData.feedItems.push(...selectedFeedData)
+        feedItemCount = feedData.feedItems.length
+
+        totalAvailableItems = totalRowCount as number
+        remaining = totalRowCount - feedItemCount
     }
     
     if ( userAction ) {
@@ -97,29 +111,15 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
         }
         return false
     }
-    
-    if ( updateReaction ) {
-        updateReaction = false
 
-        const postIndex = feedItems.findIndex((element) => element.post_id == postId)
-        feedItems[postIndex]['reaction_count'] = updatedReactionCount
-
-        if ( updatedReactionActive ) {
-            feedItems[postIndex]['reaction_user_ids'].push(sessionUserId)
-        }
-        else if ( !updatedReactionActive ) {
-            const reactionIndex = feedItems[postIndex]['reaction_user_ids'].findIndex((element) => {element == sessionUserId})
-            feedItems[postIndex]['reaction_user_ids'].splice(reactionIndex, 1)
-        }
-    }
-
-    return { sessionUserId, profileData, feedItems, totalAvailableItems, remaining, profileUsername, sessionUserCollections, updatesPageUpdatedAt }
+    return { sessionUserId, profileData, feedItems: feedData.feedItems, totalAvailableItems, remaining, profileUsername, sessionUserCollections, updatesPageUpdatedAt }
 }
 
 export const actions = { 
     loadMore: async() => {
         batchIterator ++
         loadData = true
+        loadMore = true
         return { loadData }
     },
     blockUser: async({ request, locals: { safeGetSession } }) => {
