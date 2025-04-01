@@ -4,6 +4,7 @@ import { insertPostFlag } from '$lib/resources/backend-calls/users'
 import { insertUpdateReaction, deletePost } from '$lib/resources/backend-calls/posts'
 import { selectListSessionUserCollections, saveItemToCollection } from '$lib/resources/backend-calls/collections'
 import { add } from 'date-fns'
+import { feedData } from 'src/lib/resources/states.svelte'
 
 let loadData = true
 let updateReaction = false
@@ -30,32 +31,35 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
     const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
 
     if ( loadData ) {
-        const { feedData, totalRowCount } = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options )
+        feedData.feedItems.length = batchIterator * batchSize
 
-        feedItems.push(...feedData)
-        feedItemCount = feedItems.length
+        const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
+
+        const totalRowCount = select.totalRowCount
+        const selectedFeedData = select.feedData
+        feedData.feedItems.push(...selectedFeedData)
+        feedItemCount = feedData.feedItems.length
 
         totalAvailableItems = totalRowCount as number
         remaining = totalRowCount - feedItemCount
         loadData = !loadData
     }
 
-    if ( updateReaction ) {
-        updateReaction = false
+    // if ( updateReaction ) {
+    //     updateReaction = false
 
-        const postIndex = feedItems.findIndex((element) => element.post_id == postId)
-        feedItems[postIndex]['reaction_count'] = updatedReactionCount
+    //     const postIndex = feedItems.findIndex((element) => element.post_id == postId)
 
-        if ( updatedReactionActive ) {
-            feedItems[postIndex]['reaction_user_ids'].push(sessionUserId)
-        }
-        else if ( !updatedReactionActive ) {
-            const reactionIndex = feedItems[postIndex]['reaction_user_ids'].findIndex((element) => {element == sessionUserId})
-            feedItems[postIndex]['reaction_user_ids'].splice(reactionIndex, 1)
-        }
-    }
+    //     if ( updatedReactionActive ) {
+    //         feedItems[postIndex]['reaction_user_ids'].push(sessionUserId)
+    //     }
+    //     else if ( !updatedReactionActive ) {
+    //         const reactionIndex = feedItems[postIndex]['reaction_user_ids'].findIndex((element) => {element == sessionUserId})
+    //         feedItems[postIndex]['reaction_user_ids'].splice(reactionIndex, 1)
+    //     }
+    // }
 
-    return { sessionUserId, feedItems, totalAvailableItems, remaining, sessionUserCollections } 
+    return { sessionUserId, feedItems: feedData.feedItems, totalAvailableItems, remaining, sessionUserCollections } 
 }
 
 export const actions = {
@@ -72,10 +76,9 @@ export const actions = {
         postId = data.get('post-id') as string
         const reactionType = data.get('reaction-type') as string
 
-        const { reaction, reactionCount } = await insertUpdateReaction( sessionUserId, postId, reactionType )
+        const { reaction } = await insertUpdateReaction( sessionUserId, postId, reactionType )
 
         updatedReactionActive = reaction.active as boolean
-        updatedReactionCount = reactionCount as number
 
         updateReaction = reaction ? true : false
         loadData = reaction ? false : true

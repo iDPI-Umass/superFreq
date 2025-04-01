@@ -980,7 +980,10 @@ export const selectUserPostsAndComments = async function ( sessionUserId: string
 
 /* Select a user's posts sample */
 
-export const selectUserPostsSample = async function ( sessionUserId: string, username: string, batchSize: number, iterator: number ) {
+export const selectUserPostsSample = async function ( sessionUserId: string, username: string, batchSize: number, batchIterator: number ) {
+
+    const offset = batchSize * batchIterator
+
     const selectPosts = await db.transaction().execute(async(trx) => {
         try {
             await trx
@@ -1000,9 +1003,9 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
             .selectAll()
             .where('username', '=', username)
             .where('item_type', '=', 'now_playing_post')
-            .orderBy('timestamp desc')
             .limit(batchSize)
-            .offset(iterator)
+            .orderBy('timestamp desc')
+            .offset(offset)
             .execute()
 
             const totalItems = await trx
@@ -1013,7 +1016,9 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
             .execute()
 
             const rowCount = totalItems[0].feed_rows_count as number
-            
+
+            console.log(selectItems.length, selectItems[0].release_group_name)
+
             return { permission: true, feedData: selectItems, totalRowCount: rowCount }
         }
     })
