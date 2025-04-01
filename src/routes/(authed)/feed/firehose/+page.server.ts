@@ -50,20 +50,20 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
         loadData = !loadData
     }
 
-    if ( updateReaction ) {
-        updateReaction = false
+    // if ( updateReaction ) {
+    //     updateReaction = false
 
-        const postIndex = feedItems.findIndex((element) => element.post_id == postId)
-        feedItems[postIndex]['reaction_count'] = updatedReactionCount
+    //     const postIndex = feedItems.findIndex((element) => element.post_id == postId)
+    //     feedItems[postIndex]['reaction_count'] = updatedReactionCount
 
-        if ( updatedReactionActive ) {
-            feedItems[postIndex]['reaction_user_ids'].push(sessionUserId)
-        }
-        else if ( !updatedReactionActive ) {
-            const reactionIndex = feedItems[postIndex]['reaction_user_ids'].findIndex((element) => {element == sessionUserId})
-            feedItems[postIndex]['reaction_user_ids'].splice(reactionIndex, 1)
-        }
-    }
+    //     if ( updatedReactionActive ) {
+    //         feedItems[postIndex]['reaction_user_ids'].push(sessionUserId)
+    //     }
+    //     else if ( !updatedReactionActive ) {
+    //         const reactionIndex = feedItems[postIndex]['reaction_user_ids'].findIndex((element) => {element == sessionUserId})
+    //         feedItems[postIndex]['reaction_user_ids'].splice(reactionIndex, 1)
+    //     }
+    // }
 
     return { sessionUserId, feedItems: feedData.feedItems, totalAvailableItems, remaining, sessionUserCollections } 
 }
