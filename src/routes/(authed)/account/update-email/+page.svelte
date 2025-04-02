@@ -47,7 +47,7 @@
             name="current-email"
             id="current-email"
             form="account-data"
-            value={sessionUserEmail} 
+            defaultValue={sessionUserEmail} 
             disabled
         />
         <label 
