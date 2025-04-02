@@ -59,6 +59,7 @@
 			query = ""
 			searchComplete = false
 			promiseStates.newItemAdded = true
+			continuePromise = false
 			showModal = false
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
 				const releaseGroup = {
@@ -76,6 +77,7 @@
 			return { addedItems, query, searchComplete, showModal }
 		}
 		if ( mode == 'collection' ) {
+			promiseStates.continueClientSideImgPromise = false
 			const collectionItems = await addCollectionItemNoImg( item, addedItems, deletedItems, limit, searchCategory, mbidCategory )
 			addedItems = collectionItems.addedItems
 			deletedItems = collectionItems.deletedItems
@@ -92,7 +94,7 @@
 				promiseStates.imgPromise = new Promise ((resolve) => resolve(success))
 			}
 			addingItem = false
-			continuePromise = true
+			promiseStates.continueClientSideImgPromise = true
 			return { addedItems, deletedItems, query, searchComplete, showModal }
 		}
 	}

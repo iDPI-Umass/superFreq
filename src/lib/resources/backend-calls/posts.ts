@@ -1017,8 +1017,6 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
 
             const rowCount = totalItems[0].feed_rows_count as number
 
-            console.log(selectItems.length, selectItems[0].release_group_name)
-
             return { permission: true, feedData: selectItems, totalRowCount: rowCount }
         }
     })
