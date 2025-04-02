@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { PageData,  ActionData } from "../$types"
+    import { onMount } from "svelte"
 	import { invalidateAll } from "$app/navigation"
 	import { enhance } from "$app/forms"
 
@@ -10,10 +10,11 @@
     import RedirectModal from "$lib/components/modals/RedirectModal.svelte"
 	import AvatarSearch from "$lib/components/AvatarSearch.svelte"
 	import { validateUsernameCharacters } from "$lib/resources/parseData"
+	import { actionStates } from "src/lib/resources/states.svelte"
 
 	import wave from "$lib/assets/images/logo/freq-wave.svg"
 
-	let { data, form }: Props = $props();
+	let { data, form } = $props();
 
     const email = data.email as string
 
@@ -21,7 +22,6 @@
     let displayName = $state('')
     let about = ''
     let website = ''
-    let newItemAdded = $state(false)
     let avatarItem = $state({} as App.RowData)
 	let delay = $state(5)
 	let countdown = $state(0)
@@ -55,6 +55,10 @@
             setInterval(() => countdown -= 1, 1000)
         }
     })
+
+	onMount(() => {
+		actionStates.newItemAdded = false
+	})
 </script>
 
 <SEO title="Create profile"></SEO>
@@ -218,7 +222,6 @@
 				Avatar
 			</label>
 			<AvatarSearch
-				bind:newItemAdded={newItemAdded}
 				displayName={displayName}
 				avatarUrl={avatarUrl}
 				bind:avatarItem={avatarItem}

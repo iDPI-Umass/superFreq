@@ -12,8 +12,6 @@
         limit?: string
         collectionItems: App.RowData[]
         deletedItems?: App.RowData[]
-        itemAdded: boolean
-        formAction?: string
         imgPromise?: any
     }
 
@@ -24,8 +22,6 @@
         limit,
         collectionItems = $bindable([]),
         deletedItems = $bindable([]),
-        itemAdded = $bindable(false),
-        formAction,
         imgPromise = $bindable(null)
     }: ComponentProps = $props()
 
@@ -164,7 +160,6 @@
                     bind:addedItems={collectionItems}
                     bind:deletedItems={deletedItems}
                     limit={limit}
-                    bind:newItemAdded={itemAdded}
                     searchButtonText={`search ${categoryLookup[itemType]}`}
                     searchPlaceholder={`search ${categoryLookup[itemType]}`}
                     mode="collection"

@@ -2,7 +2,9 @@
 	import { enhance } from '$app/forms'
 	import ListModal from 'src/lib/components/modals/ListModal.svelte'
 	import { mbSearch, addCollectionItemNoImg, getCoverArt, addSingleItemNoImg, mbidCateogory, artistName, artistMbid, releaseGroupName, releaseGroupMbid, releaseGroupMetadata, recordingName, itemDate, artistOrigin } from '$lib/resources/musicbrainz'
-	import CoverArt from './CoverArt.svelte';
+	import CoverArt from './CoverArt.svelte'
+
+    import { actionStates } from '$lib/resources/states.svelte';
 
 	interface ComponentProps {
 		searchCategory: string
@@ -10,7 +12,6 @@
 		searchPlaceholder: string
 		addedItems: any
 		deletedItems?: App.RowData[]
-		newItemAdded: boolean,
 		mode: string,
 		limit?: string,
 		query?: string,
@@ -24,7 +25,6 @@
 		searchPlaceholder,
 		addedItems = $bindable([]),
 		deletedItems = $bindable([]),
-		newItemAdded = $bindable(false),
 		mode, // "single" | "collection" | "avatar-search"
 		limit = '25',
 		query = '',
@@ -39,6 +39,7 @@
 	let searchComplete = $state(false)
 
 	async function search ( query: string, searchCategory: string, limit: string ) {
+		actionStates.newItemAdded = false
 		mbData = []
 		showModal = true
 		const searchResults = await mbSearch(query, searchCategory, limit)
@@ -59,7 +60,7 @@
 			addedItems = singleItem.addedItems
 			query = ""
 			searchComplete = false
-			newItemAdded = true
+			actionStates.newItemAdded = true
 			showModal = false
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
 				const releaseGroup = {
@@ -74,7 +75,7 @@
 			}
 			addingItem = false
 			continuePromise = true
-			return { addedItems, query, searchComplete, newItemAdded, showModal }
+			return { addedItems, query, searchComplete, showModal }
 		}
 		if ( mode == 'collection' ) {
 			const collectionItems = await addCollectionItemNoImg( item, addedItems, deletedItems, limit, searchCategory, mbidCategory )
@@ -82,7 +83,7 @@
 			deletedItems = collectionItems.deletedItems
 			query = ""
 			searchComplete = false
-			newItemAdded = collectionItems.newItemAdded
+			actionStates.newItemAdded = collectionItems.newItemAdded
 			showModal = false
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
 				const releaseGroup = releaseGroupMetadata( searchCategory, item )
@@ -94,7 +95,7 @@
 			}
 			addingItem = false
 			continuePromise = true
-			return { addedItems, deletedItems, query, searchComplete, newItemAdded, showModal, imgPromise }
+			return { addedItems, deletedItems, query, searchComplete, showModal, imgPromise }
 		}
 	}
 

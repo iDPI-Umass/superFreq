@@ -3,6 +3,7 @@
 -->
 
 <script lang="ts">
+    import { onMount } from 'svelte'
     import SEO from '$lib/components/layout/SEO.svelte'
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import GridList from '$lib/components/GridList.svelte'
@@ -10,6 +11,8 @@
     import Tooltip from '$lib/components/Tooltip.svelte'
 	import InfoBox from 'src/lib/components/InfoBox.svelte'
     import CollectionEditor from '$lib/components/CollectionEditor.svelte'
+
+    import { actionStates } from 'src/lib/resources/states.svelte'
 
     interface Props {
         data: any;
@@ -25,7 +28,6 @@
 
 	let collectionItems = $state([]) as object[]
 
-	let itemAdded = $state(false)
     let imgPromise = $state(null)
 
 	// UI
@@ -43,6 +45,10 @@
         else return lookup
     }
 	let placeholderText = "Search for items to add to your collection"
+
+    onMount(() => {
+        actionStates.newItemAdded = false
+    })
 </script>
 
 <SEO title="New collection"></SEO>
@@ -280,7 +286,6 @@
 		bind:collectionItems={collectionItems}
 		collectionType={collectionType}
         collectionStatus={collectionStatus}
-		bind:itemAdded={itemAdded}
 		bind:imgPromise={imgPromise}
 	></CollectionEditor>
     <div class="bottom-double-border"></div>

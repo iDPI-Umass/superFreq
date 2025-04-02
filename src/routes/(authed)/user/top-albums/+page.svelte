@@ -1,8 +1,10 @@
 <script lang="ts">
+	import { onMount } from 'svelte'
 	import SEO from '$lib/components/layout/SEO.svelte'
     import PanelHeader from '$lib/components/PanelHeader.svelte'
 	import CollectionEditor from '$lib/components/CollectionEditor.svelte'
-	import { enhance } from '$app/forms';
+	import { enhance } from '$app/forms'
+	import { actionStates } from '$lib/resources/states.svelte';
 
 	interface Props {
 		data: any;
@@ -19,9 +21,11 @@
 
 	let deletedItems = $state(deletedCollectionContents ? deletedCollectionContents : [] as App.RowData[])
 
-	let itemAdded = $state(false)
-
 	let loadingSubmission = $state(false)
+
+	onMount(() => {
+		actionStates.newItemAdded = false
+	})
 </script>
 
 <SEO title="Choose top albums"></SEO>
@@ -75,7 +79,6 @@
 		collectionType={collectionType}
 		limit="8"
 		mode="release_group"
-		itemAdded={itemAdded}
 		bind:imgPromise={imgPromise}
 	></CollectionEditor>
 </div>

@@ -14,7 +14,7 @@
 
 	let { profile } = $derived(data)
 
-    let loading = false
+    let loading = $state(false)
     let username = $derived(profile?.username as string)
     let delay = $state(5)
 	let countdown = $state(0)
@@ -53,13 +53,16 @@
 		id="account-data"
 		method="POST"
         use:enhance={() => {
+            loading = true
             const validUsername = validateUsernameCharacters(username)
             if ( !validUsername ) {
                 invalidUsername = true
+                loading = false
                 return
             }
             return async ({ update }) => {
                 await update()
+                loading = false
             }}
         }
 	>
@@ -101,6 +104,7 @@
             <button
                 type="submit"
                 class="double-border-top"
+                disabled={loading}
             >
                 <div class="inner-border">
                     submit

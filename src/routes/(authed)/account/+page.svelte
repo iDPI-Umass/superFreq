@@ -11,6 +11,7 @@
 
 	import wave from "$lib/assets/images/logo/freq-wave.svg"
 	import { tick } from 'svelte';
+	import { actionStates } from '$lib/resources/states.svelte.js'
 
 	let { data, form } = $props();
 
@@ -18,7 +19,6 @@
 
 	let success = $derived(form?.success) as boolean
 
-	let newItemAdded = $state(false) as boolean
 	let displayName = $derived(profile?.display_name ?? '') as string
 	let username = $derived(profile?.username ?? '') as string
 	let website = $derived(profile?.website ?? '') as string
@@ -44,11 +44,12 @@
 	}) as App.RowData
 
 	let imgPromise = $state(null)
-	let loading = $derived(( newItemAdded && !imgPromise ) ? true : false )
+	let loading = $derived(( actionStates.newItemAdded && !imgPromise ) ? true : false )
 
 	let updateLoading = $state(false)
 	$effect.pre(() => {
 		invalidateAll()
+		actionStates.newItemAdded = false
 	})
 </script>
 
@@ -222,7 +223,6 @@
 				Avatar 
 			</label>
 			<AvatarSearch
-				bind:newItemAdded={newItemAdded}
 				displayName={displayName}
 				avatarUrl={avatarUrl}
 				bind:avatarItem={avatarItem}
