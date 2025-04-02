@@ -6,7 +6,8 @@ export const GET: RequestHandler = async ({ locals: { supabase, safeGetSession }
     const { session } = await safeGetSession()
     if ( session ) {
         await supabase.auth.signOut()
-        userProfile = userProfileReset
+        userProfile.username = ''
+        userProfile.display_name = ''
         redirect(303, '/welcome')
     }
     else {
