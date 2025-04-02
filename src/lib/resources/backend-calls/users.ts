@@ -352,7 +352,7 @@ export const newSessionProfile = async function ( sessionUserId: string, profile
             .where('id', '!=', sessionUserId)
             .executeTakeFirstOrThrow()
 
-            return { success: false }
+            return { success: false, usernameTaken: true }
         }
         catch ( error ) {
             // associate profile with invites table
@@ -456,7 +456,7 @@ export const newSessionProfile = async function ( sessionUserId: string, profile
                 ])
                 .executeTakeFirst()
 
-                return { success: true }
+                return { success: true, usernameTaken: false }
             }
         }
     })
@@ -566,7 +566,7 @@ export const updateUsername = async function ( sessionUserId: string, newUsernam
             .where('id', '!=', sessionUserId)
             .executeTakeFirstOrThrow()
 
-            return { update: null, success: false }
+            return { update: { username: null, changelog: [] }, success: false, usernameTaken: true }
         }
         catch (error) {
             const profileData = await trx
@@ -598,7 +598,7 @@ export const updateUsername = async function ( sessionUserId: string, newUsernam
 
             const update = await updateUsername
 
-            return { update, success: true }
+            return { update, success: true, usernameTaken: false }
         }
     }) 
     return updateUsername
