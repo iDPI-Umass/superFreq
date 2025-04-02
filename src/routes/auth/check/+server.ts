@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { db } from 'src/database.ts'
-import { profileStoresObject } from '$lib/stores'
+import { userProfile } from '$lib/resources/states.svelte'
 
 export const GET: RequestHandler = async ({ locals: { safeGetSession }}) => {
 
@@ -33,11 +33,11 @@ export const GET: RequestHandler = async ({ locals: { safeGetSession }}) => {
     }
 
     if ( userId && username ) {
-      profileStoresObject.set({
-        'username': username,
-        'display_name': display_name,
-        'avatar_url': avatar_url,
-      })
+        userProfile.username = username,
+        userProfile.display_name = display_name,
+        userProfile.avatar_url = avatar_url,
+        userProfile.user_id = userId
+
       return redirect(303, `/user/${username}`)
     }
     else if ( userId && !username ) {
