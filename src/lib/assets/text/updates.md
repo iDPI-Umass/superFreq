@@ -1,8 +1,13 @@
 ---
 title: Updates
 layout: about
-updated: 03/27/2025
+updated: 04/01/2025
 ---
+### April 1, 2024
+#### Bug Fixes
+- Data now consistently loads sequentially in feeds
+- Liking a post in the Universal Feed should work without a 200 error now
+
 ### March 27, 2025
 #### Bug Fixes
 - Several bugs fixed when visiting another user's profile:
