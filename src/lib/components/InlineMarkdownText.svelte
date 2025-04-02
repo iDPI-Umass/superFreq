@@ -1,5 +1,6 @@
 <script lang="ts">
     import { parseMarkdown } from "$lib/resources/parseData"
+    import DOMPurify from "dompurify"
     
     let {
         text
@@ -7,7 +8,7 @@
 </script>
 
 {#await parseMarkdown(text) then text}
-    {@html text}
+    {@html DOMPurify.sanitize(text as string)}
 {:catch}
     {''}
 {/await}
