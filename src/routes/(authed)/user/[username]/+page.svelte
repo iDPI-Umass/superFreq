@@ -1,6 +1,7 @@
 <script lang="ts">
+    import { onMount } from 'svelte'
     import type { ActionData, PageData } from './$types.js'
-    import { goto } from '$app/navigation'
+    import { goto, invalidateAll } from '$app/navigation'
     import { enhance } from '$app/forms'
 
     import SEO from '$lib/components/layout/SEO.svelte'
@@ -264,6 +265,7 @@
             sessionUserId={sessionUserId}
             feedItems={feedItems}
             mode="feed"
+            postEditState={form?.editState}
             userActionSuccess={form?.userActionSuccess}
             remaining={remaining}
             collections={sessionUserCollections}
@@ -272,9 +274,15 @@
         ></Feed>
     {:else}
         <NowPlayingPostsSample
+            sessionUserId={sessionUserId}
             posts={feedItems}
             displayName={displayName}
             username={profileUsername}
+            userActionSuccess={form?.userActionSuccess}
+            remaining={remaining}
+            collections={sessionUserCollections}
+            showCollectionsListModal={showCollectionsListModal}
+            showSaveSucessModal={showSaveSucessModal}
         ></NowPlayingPostsSample>
     {/if}
 </div>

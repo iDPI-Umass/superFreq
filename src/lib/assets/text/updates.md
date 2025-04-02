@@ -1,8 +1,29 @@
 ---
 title: Updates
 layout: about
-updated: 03/21/2025
+updated: 04/01/2025
 ---
+### April 1, 2024
+#### Bug Fixes
+- Data now consistently loads sequentially in feeds
+- Liking a post in the Universal Feed should work without a 200 error now
+
+### March 27, 2025
+#### Bug Fixes
+- Several bugs fixed when visiting another user's profile:
+    - Posts now accurately reflect if you've already liked them
+    - The 'save' button is working
+    - Link to user's website no longer breaks layout
+- When viewing a post alone, liking a reply no longer makes all replies disappear
+- Home profile view now updates correctly after you update any account info
+
+### March 26, 2025
+#### Bug Fixes
+- Image loading has been causing slow performance. Working on tweaking that little by little.
+
+#### Updates
+- Added more info to feed items about comments and likes
+
 ### March 21, 2025
 #### Bug Fixes
 - Metadata now appears in post where user added metadata themselves

@@ -98,6 +98,7 @@ p.profile-about {
 a.profile-website {
     color: var(--freq-color-primary-text);
     text-decoration: underline;
+    word-break: break-all;
 }
 a.profile-website:hover,
 a.profile-website:focus {

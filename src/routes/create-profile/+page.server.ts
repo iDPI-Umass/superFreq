@@ -1,5 +1,6 @@
 import type { PageServerLoad, Actions } from "../(authed)/account/$types"
 import { newSessionProfile } from "$lib/resources/backend-calls/users"
+import { validateUsernameCharacters } from "$lib/resources/parseData"
 import wave from "$lib/assets/images/logo/freq-wave.svg"
 
 let sessionUserId: string
@@ -24,6 +25,12 @@ export const actions = {
         const avatarUrl = formData.get('avatarUrl')
         const avatarMbid = formData.get('avatarMbid')
 
+        const validUsername = validateUsernameCharacters(username)
+
+        if ( !validUsername ) {
+            return { success: false, validUsername, usernameTaken: false  }
+        }
+
         const profileData = {
             'username': username,
             'display_name': displayName ?? username,
@@ -35,8 +42,8 @@ export const actions = {
 
         const update = await newSessionProfile( sessionUserId, profileData, email, avatarItem )
 
-        const success = update.success as boolean
+        const { success, usernameTaken } = update as boolean
 
-        return { success }
+        return { success, validUsername: true, usernameTaken }
     }
 } satisfies Actions

@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { enhance } from "$app/forms"
     import { goto } from "$app/navigation"
     import PanelHeader from "$lib/components/PanelHeader.svelte"
     import NowPlayingPost from "./NowPlayingPost.svelte"
@@ -9,13 +10,23 @@
         username: string
         displayName: string
         sessionUserId?: string | null
+        remaining?: number
+        userActionSuccess?: boolean | null
+        collections?: App.RowData[]
+        showCollectionsListModal?: boolean
+        showSaveSucessModal?: boolean
     }
     
     let {
         posts,
         username,
         displayName,
-        sessionUserId = null
+        sessionUserId = null,
+        remaining = 0,
+        userActionSuccess = null,
+        collections = [],
+        showCollectionsListModal = $bindable(false),
+        showSaveSucessModal = $bindable(false)
     }: ComponentProps = $props()
     
 </script>
@@ -37,15 +48,28 @@
             post={post}
             sessionUserId={sessionUserId}
             mode="feed"
+            userActionSuccess={userActionSuccess}
+            collections={collections}
+            bind:showCollectionsModal={showCollectionsListModal}
+            bind:showSaveSucessModal={showSaveSucessModal}
         >
         </NowPlayingPost>
     {/each}
     </div>
-    <div class="button-spacer">
-        <button class="standard" onclick={() => goto(`/user/${username}/now-playing-posts`)}>
-            see more
-        </button>
-    </div>
+    {#if remaining > 0}
+    <form method="POST" action="?/loadMore" use:enhance>
+        {#if remaining && remaining > 0}
+        <div class="button-spacer">
+            <button
+                class="standard"
+                formaction="?/loadMore"
+            >
+                load more
+            </button>
+        </div>
+        {/if}
+    </form>
+    {/if}
 </div>
 {:else if !posts || posts.length == 0}
 <div class="panel-medium">

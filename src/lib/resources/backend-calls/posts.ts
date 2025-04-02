@@ -175,7 +175,7 @@ export const updatePost = async function ( sessionUserId: string, postData: App.
         const selectPostData = await trx
         .selectFrom('posts')
         .select(['user_id', 'changelog'])
-        .where('id', '=', postData.id)
+        .where('id', '=', postData.post_id)
         .where('user_id', '=', sessionUserId)
         .executeTakeFirstOrThrow()
 
@@ -207,7 +207,7 @@ export const updatePost = async function ( sessionUserId: string, postData: App.
             show_title: postData.showTitle,
             changelog: changelog,
         })
-        .where('id','=', postData.id)
+        .where('id','=', postData.post_id)
         .returning([
             'text', 
             'artist_name', 
@@ -980,7 +980,10 @@ export const selectUserPostsAndComments = async function ( sessionUserId: string
 
 /* Select a user's posts sample */
 
-export const selectUserPostsSample = async function ( sessionUserId: string, username: string, batchSize: number, iterator: number ) {
+export const selectUserPostsSample = async function ( sessionUserId: string, username: string, batchSize: number, batchIterator: number ) {
+
+    const offset = batchSize * batchIterator
+
     const selectPosts = await db.transaction().execute(async(trx) => {
         try {
             await trx
@@ -1000,9 +1003,9 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
             .selectAll()
             .where('username', '=', username)
             .where('item_type', '=', 'now_playing_post')
-            .orderBy('timestamp desc')
             .limit(batchSize)
-            .offset(iterator)
+            .orderBy('timestamp desc')
+            .offset(offset)
             .execute()
 
             const totalItems = await trx
@@ -1012,7 +1015,11 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
             .where('item_type', '=', 'now_playing_post')
             .execute()
 
-            return { permission: true, feedData: selectItems, totalRowCount: totalItems }
+            const rowCount = totalItems[0].feed_rows_count as number
+
+            console.log(selectItems.length, selectItems[0].release_group_name)
+
+            return { permission: true, feedData: selectItems, totalRowCount: rowCount }
         }
     })
 
@@ -1153,16 +1160,7 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
 
             const reaction = updateReaction as App.RowData
 
-            const countReactions  = await trx
-            .selectFrom('post_reactions')
-            .select((eb) => eb.fn.count('id').as('reaction_count'))
-            .where('active', '=', true)
-            .where('post_id', '=', reaction.post_id)
-            .execute()
-
-            const reactionCount = countReactions[0]['reaction_count']
-
-            return { reaction, reactionCount }
+            return { reaction }
         }
         catch (error) {
             const changelog: App.Changelog = {}
@@ -1186,16 +1184,7 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
 
             const reaction = insertReaction as App.RowData
 
-            const countReactions  = await trx
-            .selectFrom('post_reactions')
-            .select((eb) => eb.fn.count('id').as('reaction_count'))
-            .where('active', '=', true)
-            .where('post_id', '=', reaction.post_id)
-            .execute()
-
-            const reactionCount = countReactions[0]['reaction_count']
-
-            return { reaction, reactionCount }
+            return { reaction }
         }
     })
 

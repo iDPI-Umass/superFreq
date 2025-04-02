@@ -1,15 +1,16 @@
 import { redirect } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
-import { profileStoresObject } from '$lib/stores'
+import { userProfile, userProfileReset } from '$lib/resources/states.svelte'
 
 export const GET: RequestHandler = async ({ locals: { supabase, safeGetSession }}) => {
     const { session } = await safeGetSession()
     if ( session ) {
         await supabase.auth.signOut()
-        profileStoresObject.set({
-            'username': null,
-            'display_name': null,
-          })
-        throw redirect(303, '/welcome')
+        userProfile.username = ''
+        userProfile.display_name = ''
+        redirect(303, '/welcome')
+    }
+    else {
+        redirect (303, '/welcome')
     }
 }

@@ -5,6 +5,7 @@
     import decoration from "$lib/assets/images/feed-item-decoration.svg"
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
     import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
+    import NowPlayingTag from './Posts/NowPlayingTag.svelte'
     import CoverArt from 'src/lib/components/CoverArt.svelte'
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
@@ -13,6 +14,7 @@
         feedItems: App.RowData[]
         mode: string
         remaining?: number
+        postEditState?: boolean
         userActionSuccess?: boolean | null
         collections?: App.RowData[]
         showCollectionsListModal?: boolean
@@ -24,6 +26,7 @@
         feedItems, 
         mode,
         remaining,
+        postEditState,
         userActionSuccess = null,
         collections = [],
         showCollectionsListModal = $bindable(false),
@@ -40,10 +43,38 @@
         return avatar
     }
 
+
     let loadingMore = $state(false)
+
 </script>
 
-<!-- <svelte:options runes={true} /> -->
+{#snippet feedItemTag( feedItem: App.RowData )} 
+    {#if (feedItem.artist_name || feedItem.user_added_artist_name) && (feedItem.release_group_name || feedItem.user_added_release_group_name)}
+        <div class="feed-item-two-liner-tag-row">
+            <NowPlayingTag
+                artistName={feedItem.artist_name ?? feedItem.user_added_artist_name}
+                itemTitle={feedItem.release_group_name ?? feedItem.user_added_release_group_name}
+                itemType='release_group'
+            ></NowPlayingTag>
+        </div>
+    {:else if (feedItem.artist_name || feedItem.user_added_artist_name) && (feedItem.recording_name || feedItem.user_added_recording_name)}
+        <div class="feed-item-two-liner-tag-row">
+            <NowPlayingTag
+                artistName={feedItem.artist_name ?? feedItem.user_added_artist_name}
+                itemTitle={feedItem.recording_name ?? feedItem.user_added_recording_name}
+                itemType='recording'
+            ></NowPlayingTag>
+        </div>
+    {:else if (feedItem.artist_name || feedItem.user_added_artist_name) && feedItem.episode_title}
+        <div class="feed-item-two-liner-tag-row">
+            <NowPlayingTag
+                artistName={feedItem.artist_name ?? feedItem.user_added_artist_name}
+                itemTitle={feedItem.episode}
+                itemType='episode'
+            ></NowPlayingTag>
+        </div>
+    {/if}
+{/snippet}
 
 <div class="feed-panel">
     <PanelHeader>
@@ -80,6 +111,7 @@
                         sessionUserId={sessionUserId}
                         post={item}
                         mode="feed"
+                        editState={postEditState}
                         userActionSuccess={userActionSuccess}
                         collections={collections}
                         bind:showCollectionsModal={showCollectionsListModal}
@@ -98,30 +130,40 @@
                         ></CoverArt>
                     {item.display_name} followed you
                 </div>
+                {@render feedItemTag(item)}
             </a>
         <!-- Comment -->
         {:else if item.item_type == 'comment'}
             <a href={`/posts/${item.parent_post_username}/now-playing/${parseTimestamp(item.parent_post_created_at)}#${item.username?.concat(parseTimestamp(item.timestamp))}`}>
-                <div class="feed-item-one-liner">
-                        <CoverArt
-                            item={avatarItem(item)}
-                            altText={`${item.display_name}'s avatar`}
-                            imgClass='feed-avatar'
-                        ></CoverArt>
-                    {item.user_id == sessionUserId ? 'You' : item.display_name} commented on {item.parent_post_user_id == sessionUserId ? 'your' : item.parent_post_display_name.concat(`'s`)} post
+                <div class="feed-item">
+                    <div class="feed-item-two-liner-user-row">
+                            <CoverArt
+                                item={avatarItem(item)}
+                                altText={`${item.display_name}'s avatar`}
+                                imgClass='feed-avatar'
+                            ></CoverArt>
+                        {item.user_id == sessionUserId ? 'You' : item.display_name} commented on {item.parent_post_user_id == sessionUserId ? 'your' : item.parent_post_display_name.concat(`'s`)} post { (item.artist_name || item.user_added_artist_name) ? 'about' : ''}
+                    </div>
+                    {@render feedItemTag(item)}
                 </div>
             </a>
         <!-- Reaction -->
         {:else if item.item_type == 'reaction'}
             <a href={ item.reaction_post_type == 'now_playing' ? `/posts/${item.reaction_post_username}/now-playing/${parseTimestamp(item.reaction_post_created_at)}` : `/posts/${item.parent_post_username}/now-playing/${parseTimestamp(item.parent_post_created_at)}#${item.reaction_post_username?.concat(parseTimestamp(item.reaction_post_created_at))}`}>
-                <div class="feed-item-one-liner">
+                <div class="feed-item">
+                    <div class="feed-item-two-liner-user-row">
                         <CoverArt
                             item={avatarItem(item)}
                             altText={`${item.display_name}'s avatar`}
                             imgClass='feed-avatar'
                         ></CoverArt>
-                    {item.user_id == sessionUserId ? 'You' : item.display_name} liked {item.reaction_post_user_id == sessionUserId ? 'your' : item.reaction_post_display_name.concat(`'s`)} { item.reaction_post_type == 'now_playing ' ? 'post' : 'reply' }
+
+                        {item.user_id == sessionUserId ? 'You' : item.display_name} liked {item.reaction_post_user_id == sessionUserId ? 'your' : item.reaction_post_display_name.concat(`'s`)} { item.reaction_post_type == 'now_playing' ? 'post' : 'reply' } { (item.artist_name || item.user_added_artist_name) ? 'about' : ''}
+                    </div>
+                    {@render feedItemTag(item)}
+
                 </div>
+
             </a>
         <!-- Collection follow -->
             {:else if item.item_type == 'collection_follow' && ( item.user_id != item.collection_owner_id )}
