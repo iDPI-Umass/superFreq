@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
 import { selectSessionProfile, updateSessionProfile } from '$lib/resources/backend-calls/users'
-import { profileStoresObject } from '$lib/stores'
+import { userProfile } from '$lib/resources/states.svelte'
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 
@@ -32,12 +32,19 @@ export const actions = {
     const avatar = newAvatarUrl ? newAvatarUrl : avatarUrl
     const mbid = newAvatarMbid ? newAvatarMbid : avatarMbid
 
-    profileStoresObject.set({
-      'username': username,
-      'display_name': displayName,
-      'avatar_url': avatar,
-      'website': website
-    })
+    console.log(avatarItem)
+
+    userProfile.username = username
+    userProfile.display_name = displayName
+    userProfile.avatar_url = avatarUrl,
+    userProfile.website = website
+
+    if ( avatarItem ) {
+      userProfile.avatar_url = avatarItem.img_url ?? null
+      userProfile.last_fm_avatar_url = avatarItem.last_fm_avatar_url ?? null
+      userProfile.avatar_artist_name = avatarItem.artist_name ?? null
+      userProfile.avatar_release_group_name = avatarItem.release_group_name ??  null
+    }
 
     const profileData = {
       id: session.user?.id,
