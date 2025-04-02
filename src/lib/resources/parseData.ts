@@ -53,6 +53,15 @@ export function parseTimestamp ( itemTimestamp: Date ) {
     return timestamp
 }
 
+
+/* Make sure username only contains letters, numbers, and underscore */
+
+export const validateUsernameCharacters = function ( username: string) {
+	const valid = /\W+/.test(username) ? false : true
+
+    return valid
+}
+
 /*
 //
 ** Markdown parsing

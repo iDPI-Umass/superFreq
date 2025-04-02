@@ -9,13 +9,9 @@
     import NotificationModal from "src/lib/components/modals/NotificationModal.svelte"
     import RedirectModal from "$lib/components/modals/RedirectModal.svelte"
 	import AvatarSearch from "$lib/components/AvatarSearch.svelte"
+	import { validateUsernameCharacters } from "$lib/resources/parseData"
 
 	import wave from "$lib/assets/images/logo/freq-wave.svg"
-
-	interface Props {
-		data: any;
-		form: ActionData;
-	}
 
 	let { data, form }: Props = $props();
 
@@ -45,7 +41,8 @@
 		'label': avatarItem?.label,
 	}) as App.RowData
 
-	let showNotificationModal = $derived( form?.success == false ? true : false )
+	let usernameTaken = $derived( form?.usernameTaken ?? false )
+	let invalidUsername = $state( false )
 	let showRedirectModal = $derived(form?.success ? form?.success : false)
 
 	$effect.pre(() => {
@@ -87,12 +84,16 @@
 	</PanelHeader>
 	<div class="form-wrapper">
 		<form
-			id="account-data"
 			class="form-column"
 			method="POST"
 			action="?/create"
 			use:enhance={() => {
 				avatarPromise = true
+				const validUsername = validateUsernameCharacters(username)
+				if ( !validUsername ) {
+					invalidUsername = true
+					return
+				}
 				return async ({ update }) => {
 					avatarPromise = false
 					await update()
@@ -127,6 +128,9 @@
                     * required
                 </span>
 			</div>
+			<span class="tip">
+				letters, digits, and underscores allowed
+			</span>
 			<input
 				class="text"
 				type="text"
@@ -226,8 +230,6 @@
 					class="double-border-top"
 					type="submit"
 					disabled={( !( username && displayName ) || avatarPromise )}
-					form="account-data"
-					formaction="?/create"
 					>
 					<div class="inner-border">
 						submit 
@@ -239,7 +241,7 @@
 </div>
 
 <NotificationModal
-    showModal = {showNotificationModal}
+    showModal = { form?.success == false && form?.usernameTaken == true }
 >
 	{#snippet headerText()}
 		<span >
@@ -252,6 +254,21 @@
 			<br />
 			<br />
 			Your Display Name is what other people on the site will actually see.
+		</span>
+	{/snippet}
+</NotificationModal>
+
+<NotificationModal
+    showModal = { invalidUsername || form?.validUsername == false }
+>
+	{#snippet headerText()}
+		<span >
+			Username contains bad characters
+		</span>
+	{/snippet}
+	{#snippet message()}
+		<span >
+			Usernamess only contain letters (a-z or A-Z), digits (0-9), and underscores(_).
 		</span>
 	{/snippet}
 </NotificationModal>
