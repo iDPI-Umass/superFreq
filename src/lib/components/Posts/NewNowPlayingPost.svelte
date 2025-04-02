@@ -8,13 +8,11 @@
 
     interface ComponentProps {
         addedItem?: any
-        newItemAdded?: boolean
         imgPromise?: any
     }
 
     let {
         addedItem = $bindable({}),
-        newItemAdded = $bindable(false),
         imgPromise = $bindable(null)
     }: ComponentProps = $props()
 
@@ -270,7 +268,6 @@
                     searchButtonText="search"
                     searchPlaceholder="look up an album"
                     bind:addedItems={addedItem}
-                    bind:newItemAdded={newItemAdded}
                     mode="single"
                     limit="10"
                     bind:imgPromise={imgPromise}
@@ -288,7 +285,6 @@
                     searchButtonText="search"
                     searchPlaceholder="look up a track"
                     bind:addedItems={addedItem}
-                    bind:newItemAdded={newItemAdded}
                     mode="single"
                     bind:imgPromise={imgPromise}
                 ></MusicBrainzSearch>

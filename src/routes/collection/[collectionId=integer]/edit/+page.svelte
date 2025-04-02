@@ -1,14 +1,14 @@
 <script lang="ts">
-    import type { PageData } from './$types';
-
+    import { onMount } from 'svelte'
     import SEO from '$lib/components/layout/SEO.svelte'
     import CollectionEditor from '$lib/components/CollectionEditor.svelte'
     import Tooltip from '$lib/components/Tooltip.svelte'
     import InfoBox from '$lib/components/InfoBox.svelte'
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
     import SingleActionModal from 'src/lib/components/modals/SingleActionModal.svelte'
+    import { actionStates } from '$lib/resources/states.svelte'
 
-    let { form, data }:  {data: PageData} = $props()
+    let { form, data } = $props()
     let { collection } = $state(data)
 
     const { sessionUserId, collectionId, infoBoxText }: 
@@ -29,8 +29,6 @@
     let defaultSort = $state(collectionInfo["default_view_sort"])
 
 	let collectionItems = $state(collection?.collectionContents as App.RowData[])
-
-	let itemAdded = $state(false)
 	
     let deletedItems = $state(collection?.deletedCollectionContents as App.RowData[])
 
@@ -38,6 +36,9 @@
 
     let showModal = $state(false)
 
+    onMount(() => {
+        actionStates.newItemAdded = false
+    })
 </script>
 
 <SEO title="Edit {collectionInfo.title}"></SEO>
@@ -251,7 +252,6 @@
 		bind:deletedItems={deletedItems}
 		collectionType={collectionType}
         collectionStatus={collectionStatus}
-		bind:itemAdded={itemAdded}
 		bind:imgPromise={imgPromise}
 	></CollectionEditor>
     <div class="bottom-double-border"></div>

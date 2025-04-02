@@ -4,8 +4,9 @@
 
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
+    import { actionStates } from '$lib/resources/states.svelte'
+
     interface ComponentProps {
-        newItemAdded: boolean,
         displayName: string,
         avatarUrl: string,
         avatarItem: App.RowData,
@@ -14,7 +15,6 @@
     }
 
     let {
-        newItemAdded = $bindable(false),
         displayName,
         avatarUrl,
         avatarItem = $bindable({}),
@@ -47,7 +47,6 @@
         searchButtonText="search"
         searchPlaceholder="Search for an album"
         bind:addedItems={avatarItem}
-        bind:newItemAdded={newItemAdded}
         mode="single"
         limit="10"
         bind:imgPromise={imgPromise}
@@ -57,12 +56,12 @@
 <span class="tip">
     search for album cover to make your profile image
 </span>
-{#if avatarUrl && !newItemAdded}
+{#if avatarUrl && !actionStates.newItemAdded}
     <CoverArt
         item={avatarInfo}
         altText="{displayName}'s avatar: {avatarReleaseGroupName} by {avatarArtistName}"
     ></CoverArt>
-{:else if avatarItem && newItemAdded}
+{:else if avatarItem && actionStates.newItemAdded}
     {@render editorItemImage(avatarItem, avatarReleaseGroupName)}
 {/if}
 

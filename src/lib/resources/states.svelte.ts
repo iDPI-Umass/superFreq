@@ -25,3 +25,7 @@ export const userProfileReset = {
     'avatar_artist_name': '',
     'website': ''
 }
+
+export const actionStates = $state({
+    'newItemAdded': false
+})
