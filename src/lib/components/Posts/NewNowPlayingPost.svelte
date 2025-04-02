@@ -20,11 +20,19 @@
 
     let imgUrl = $derived(addedItem["img_url"]) as string
     let lastFmImgUrl = $derived(addedItem["last_fm_img_url"]) as string
+
+    let posting = $state(false)
 </script>
 <!-- <svelte:options runes={true} /> -->
 
 {#snippet postForm( itemType: string, addedItem: App.RowData )}
-    <form method="POST" action="?/post" class="vertical" use:enhance>
+    <form method="POST" action="?/post" class="vertical" use:enhance={() => {
+        posting = true
+        return async ({ update }) => {
+            await update()
+            posting = false
+        }}
+    }>
         <input
             id="item-type" 
             name="item-type" 
@@ -229,7 +237,7 @@
             spellcheck=true 
             placeholder="Some prompts: What do you like about this? Does it remind you of something? Are you looking for more like it?"
         ></textarea>
-        <button class="standard" formaction='?/post' type="submit">
+        <button class="standard" formaction='?/post' type="submit" disabled={posting}>
             submit
         </button>
     </form>

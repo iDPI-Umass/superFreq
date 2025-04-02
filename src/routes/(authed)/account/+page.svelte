@@ -46,6 +46,7 @@
 	let imgPromise = $state(null)
 	let loading = $derived(( newItemAdded && !imgPromise ) ? true : false )
 
+	let updateLoading = $state(false)
 	$effect.pre(() => {
 		invalidateAll()
 	})
@@ -82,7 +83,13 @@
 			class="form-column"
 			method="post"
 			action="?/update"
-
+			use:enhance={(form) => {
+				updateLoading = true
+				return async ({ update }) => {
+					await update({ reset: false });
+					updateLoading = false
+				}
+			}}
 		>
 			<div class="label-group">
 				<label 
@@ -227,10 +234,10 @@
 					form="account-data"
 					class="double-border-top"
 					type="submit"
-					disabled={loading}
+					disabled={updateLoading}
 					>
 					<div class="inner-border">
-						{( loading ) ? 'Loading...' : 'Update profile'}
+						{'Update profile'}
 					</div>
 				</button>
 				<form 

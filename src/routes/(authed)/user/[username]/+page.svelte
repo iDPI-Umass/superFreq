@@ -66,6 +66,8 @@
 
     let showCollectionsListModal = $derived(form?.showCollectionsModal ?? false)
     let showSaveSucessModal = $derived(form?.updateSuccess ?? false)
+
+    let followLoading = $state(false)
 </script>
 
 <SEO title="{displayName}'s Profile"></SEO>
@@ -118,7 +120,14 @@
                 <form
                     method="POST"
                     action="?/followUser"
-                    use:enhance
+                    use:enhance={(form) => {
+                        followLoading = true
+                        return async ({ update }) => {
+                            await update();
+                            followLoading = false
+                        }
+
+                    }}
                 >
                     <input 
                         type="hidden"
@@ -130,6 +139,7 @@
                         class="standard" 
                         type="submit"
                         formaction="?/followUser"
+                        disabled={followLoading}
                     >
                     {#if followingNow == true}
                         unfollow
