@@ -4,7 +4,7 @@
 	import { mbSearch, addCollectionItemNoImg, getCoverArt, addSingleItemNoImg, mbidCateogory, artistName, artistMbid, releaseGroupName, releaseGroupMbid, releaseGroupMetadata, recordingName, itemDate, artistOrigin } from '$lib/resources/musicbrainz'
 	import CoverArt from './CoverArt.svelte'
 
-    import { actionStates } from '$lib/resources/states.svelte';
+    import { promiseStates } from '$lib/resources/states.svelte';
 
 	interface ComponentProps {
 		searchCategory: string
@@ -15,7 +15,6 @@
 		mode: string,
 		limit?: string,
 		query?: string,
-		imgPromise?: any,
 		continuePromise? : boolean
 	}
 
@@ -28,7 +27,6 @@
 		mode, // "single" | "collection" | "avatar-search"
 		limit = '25',
 		query = '',
-		imgPromise = $bindable(null),
 		continuePromise = $bindable(true)
 	}: ComponentProps = $props()
 
@@ -39,7 +37,7 @@
 	let searchComplete = $state(false)
 
 	async function search ( query: string, searchCategory: string, limit: string ) {
-		actionStates.newItemAdded = false
+		promiseStates.newItemAdded = false
 		mbData = []
 		showModal = true
 		const searchResults = await mbSearch(query, searchCategory, limit)
@@ -60,7 +58,7 @@
 			addedItems = singleItem.addedItems
 			query = ""
 			searchComplete = false
-			actionStates.newItemAdded = true
+			promiseStates.newItemAdded = true
 			showModal = false
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
 				const releaseGroup = {
@@ -71,7 +69,7 @@
 				const { success, coverArtArchiveUrl, lastFmCoverArtUrl } = await getCoverArt(releaseGroup)
 				addedItems["img_url"] = success ? coverArtArchiveUrl : null
 				addedItems["last_fm_img_url"] = success ? lastFmCoverArtUrl : null
-				imgPromise = new Promise ((resolve) => resolve(success)) 
+				promiseStates.imgPromise = new Promise ((resolve) => resolve(success)) 
 			}
 			addingItem = false
 			continuePromise = true
@@ -83,7 +81,7 @@
 			deletedItems = collectionItems.deletedItems
 			query = ""
 			searchComplete = false
-			actionStates.newItemAdded = collectionItems.newItemAdded
+			promiseStates.newItemAdded = collectionItems.newItemAdded
 			showModal = false
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
 				const releaseGroup = releaseGroupMetadata( searchCategory, item )
@@ -91,11 +89,11 @@
 				const thisItemIndex = addedItems.findIndex((item) => item['release_group_mbid'] == releaseGroup.release_group_mbid)
 				addedItems[thisItemIndex]["img_url"] = success ? coverArtArchiveUrl : null
 				addedItems[thisItemIndex]["last_fm_img_url"] = success ? lastFmCoverArtUrl : null
-				imgPromise = new Promise ((resolve) => resolve(success))
+				promiseStates.imgPromise = new Promise ((resolve) => resolve(success))
 			}
 			addingItem = false
 			continuePromise = true
-			return { addedItems, deletedItems, query, searchComplete, showModal, imgPromise }
+			return { addedItems, deletedItems, query, searchComplete, showModal }
 		}
 	}
 

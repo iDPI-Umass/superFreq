@@ -6,7 +6,7 @@
     import InfoBox from '$lib/components/InfoBox.svelte'
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
     import SingleActionModal from 'src/lib/components/modals/SingleActionModal.svelte'
-    import { actionStates } from '$lib/resources/states.svelte'
+    import { promiseStates } from '$lib/resources/states.svelte'
 
     let { form, data } = $props()
     let { collection } = $state(data)
@@ -17,8 +17,6 @@
         collectionId: string
         infoBoxText: App.StringLookupObject
     } = data
-
-    let imgPromise = $state(null)
 
     const collectionInfo = $state(collection?.info as App.RowData)
 
@@ -37,7 +35,8 @@
     let showModal = $state(false)
 
     onMount(() => {
-        actionStates.newItemAdded = false
+        promiseStates.newItemAdded = false
+        promiseStates.imgPromise = null
     })
 </script>
 
@@ -252,7 +251,6 @@
 		bind:deletedItems={deletedItems}
 		collectionType={collectionType}
         collectionStatus={collectionStatus}
-		bind:imgPromise={imgPromise}
 	></CollectionEditor>
     <div class="bottom-double-border"></div>
 </div>

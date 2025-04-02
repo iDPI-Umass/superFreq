@@ -10,7 +10,7 @@
     import RedirectModal from "$lib/components/modals/RedirectModal.svelte"
 	import AvatarSearch from "$lib/components/AvatarSearch.svelte"
 	import { validateUsernameCharacters } from "$lib/resources/parseData"
-	import { actionStates } from "src/lib/resources/states.svelte"
+	import { promiseStates } from "src/lib/resources/states.svelte"
 
 	import wave from "$lib/assets/images/logo/freq-wave.svg"
 
@@ -26,7 +26,6 @@
 	let delay = $state(5)
 	let countdown = $state(0)
 
-	let imgPromise = $state(null)
 	let avatarPromise = $state(false)
 
 	let avatarUrl = $derived(avatarItem?.avatar_url ?? '') as string
@@ -57,26 +56,12 @@
     })
 
 	onMount(() => {
-		actionStates.newItemAdded = false
+		promiseStates.newItemAdded = false
+		promiseStates.imgPromise =  null
 	})
 </script>
 
 <SEO title="Create profile"></SEO>
-
-{#snippet editorItemImage(avatarItem: any, altText: string)}
-    {#await imgPromise}
-    <img 
-        src={wave} 
-        alt="loading cover art"
-    />
-	<p>Loading cover art.</p>
-    {:then}
-        <img 
-            src={(avatarItem["img_url"] ?? avatarItem["last_fm_img_url"]) ?? wave } 
-            alt="{(avatarItem["img_url"] ?? avatarItem["last_fm_img_url"]) ? altText : 'no available'} cover art"
-        />
-    {/await}
-{/snippet}
 
 <div class="panel" id="profile-info">
 	<PanelHeader>
@@ -226,7 +211,6 @@
 				avatarUrl={avatarUrl}
 				bind:avatarItem={avatarItem}
 				avatarInfo={avatarInfo}
-				bind:imgPromise={imgPromise}
 			></AvatarSearch>
 			<div class="actions">
 				<button

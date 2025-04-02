@@ -26,6 +26,10 @@ export const userProfileReset = {
     'website': ''
 }
 
-export const actionStates = $state({
-    'newItemAdded': false
+export const promiseStates: {
+    newItemAdded: boolean
+    imgPromise: any
+} = $state({
+    'newItemAdded': false,
+    'imgPromise': null
 })

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte'
 	import { enhance } from '$app/forms'
 	import { invalidate, invalidateAll } from '$app/navigation'
 	import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
@@ -11,7 +12,7 @@
 
 	import wave from "$lib/assets/images/logo/freq-wave.svg"
 	import { tick } from 'svelte';
-	import { actionStates } from '$lib/resources/states.svelte.js'
+	import { promiseStates } from '$lib/resources/states.svelte.js'
 
 	let { data, form } = $props();
 
@@ -43,32 +44,19 @@
 		'label': avatarItem?.label,
 	}) as App.RowData
 
-	let imgPromise = $state(null)
-	let loading = $derived(( actionStates.newItemAdded && !imgPromise ) ? true : false )
-
 	let updateLoading = $state(false)
+
 	$effect.pre(() => {
 		invalidateAll()
-		actionStates.newItemAdded = false
+	})
+
+	onMount(() => {
+		promiseStates.newItemAdded = false
+		promiseStates.imgPromise = null
 	})
 </script>
 
 <SEO title="Account"></SEO>
-
-{#snippet editorItemImage(avatarItem: any, altText: string)}
-    {#await imgPromise}
-    <img 
-        src={wave} 
-        alt="loading cover art"
-    />
-	<p>Loading cover art.</p>
-    {:then}
-        <img 
-            src={(avatarItem["img_url"] ?? avatarItem["last_fm_img_url"]) ?? wave } 
-            alt="{(avatarItem["img_url"] ?? avatarItem["last_fm_img_url"]) ? altText : 'no available'} cover art"
-        />
-    {/await}
-{/snippet}
  
 <div class="panel" id="profile-info">
 	<PanelHeader>
@@ -84,7 +72,7 @@
 			class="form-column"
 			method="post"
 			action="?/update"
-			use:enhance={(form) => {
+			use:enhance={() => {
 				updateLoading = true
 				return async ({ update }) => {
 					await update({ reset: false });
@@ -227,7 +215,6 @@
 				avatarUrl={avatarUrl}
 				bind:avatarItem={avatarItem}
 				avatarInfo={avatarInfo}
-				bind:imgPromise={imgPromise}
 			></AvatarSearch>
 			<div class="actions">
 				<button
@@ -248,7 +235,7 @@
 					<button 
 						class="double-border-top" 
 						type="submit" 
-						disabled={loading}
+						disabled={updateLoading}
 					>
 						<div class="inner-border">
 							Sign Out

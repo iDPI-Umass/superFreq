@@ -4,14 +4,13 @@
 
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
-    import { actionStates } from '$lib/resources/states.svelte'
+    import { promiseStates } from '$lib/resources/states.svelte'
 
     interface ComponentProps {
         displayName: string,
         avatarUrl: string,
         avatarItem: App.RowData,
         avatarInfo: App.RowData,
-        imgPromise: any
     }
 
     let {
@@ -19,7 +18,6 @@
         avatarUrl,
         avatarItem = $bindable({}),
         avatarInfo,
-        imgPromise = $bindable(null)
     }: ComponentProps = $props()
 
     let avatarArtistName = $derived(avatarInfo['artist_name']) as string
@@ -27,7 +25,7 @@
 </script>
 
 {#snippet editorItemImage(avatarItem: any, altText: string)}
-    {#await imgPromise}
+    {#await promiseStates.imgPromise}
     <img 
         src={wave} 
         alt="loading cover art"
@@ -49,19 +47,18 @@
         bind:addedItems={avatarItem}
         mode="single"
         limit="10"
-        bind:imgPromise={imgPromise}
     >
     </MusicBrainzSearch>
 </div>
 <span class="tip">
     search for album cover to make your profile image
 </span>
-{#if avatarUrl && !actionStates.newItemAdded}
+{#if avatarUrl && !promiseStates.newItemAdded}
     <CoverArt
         item={avatarInfo}
         altText="{displayName}'s avatar: {avatarReleaseGroupName} by {avatarArtistName}"
     ></CoverArt>
-{:else if avatarItem && actionStates.newItemAdded}
+{:else if avatarItem && promiseStates.newItemAdded}
     {@render editorItemImage(avatarItem, avatarReleaseGroupName)}
 {/if}
 

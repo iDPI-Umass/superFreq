@@ -12,7 +12,7 @@
 	import InfoBox from 'src/lib/components/InfoBox.svelte'
     import CollectionEditor from '$lib/components/CollectionEditor.svelte'
 
-    import { actionStates } from 'src/lib/resources/states.svelte'
+    import { promiseStates } from 'src/lib/resources/states.svelte'
 
     interface Props {
         data: any;
@@ -28,26 +28,9 @@
 
 	let collectionItems = $state([]) as object[]
 
-    let imgPromise = $state(null)
-
-	// UI
-	const buttonTextLookup: {[index: string]: string} = {
-		"": "...",
-		"artists": "artists",
-		"release_groups": "albums",
-		"recordings": "tracks"
-	}
-
-    function searchButtonLabel ( lookup: string ) {
-        if (!lookup) {
-            return '...'
-        }
-        else return lookup
-    }
-	let placeholderText = "Search for items to add to your collection"
-
     onMount(() => {
-        actionStates.newItemAdded = false
+        promiseStates.newItemAdded = false
+        promiseStates.imgPromise = null
     })
 </script>
 
@@ -286,7 +269,6 @@
 		bind:collectionItems={collectionItems}
 		collectionType={collectionType}
         collectionStatus={collectionStatus}
-		bind:imgPromise={imgPromise}
 	></CollectionEditor>
     <div class="bottom-double-border"></div>
 </div>
