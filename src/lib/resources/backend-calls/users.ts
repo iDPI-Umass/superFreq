@@ -566,7 +566,7 @@ export const updateUsername = async function ( sessionUserId: string, newUsernam
             .where('id', '!=', sessionUserId)
             .executeTakeFirstOrThrow()
 
-            return { update: null, success: false, usernameTaken: true }
+            return { update: { username: null, changelog: [] }, success: false, usernameTaken: true }
         }
         catch (error) {
             const profileData = await trx

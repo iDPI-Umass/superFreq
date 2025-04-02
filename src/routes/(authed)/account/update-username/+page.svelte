@@ -10,12 +10,7 @@
 	import RedirectModal from '$lib/components/modals/RedirectModal.svelte'
     import { validateUsernameCharacters } from "$lib/resources/parseData"
 
-    interface Props {
-        data: PageData;
-        form: ActionData;
-    }
-
-    let { data, form }: Props = $props();
+    let { data, form } = $props();
 
 	let { profile } = $derived(data)
 
