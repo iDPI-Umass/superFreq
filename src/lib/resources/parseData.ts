@@ -70,7 +70,6 @@ export const validateUsernameCharacters = function ( username: string) {
 
 /* Takes string from database and outputs html. Need to use {@html} tag in HTML to display what this funciton outputs. ALWAYS user DOMPurify.sanitize in that {@html} tag */
 export const parseMarkdown = async function ( text: string ) {
-    console.log('text: ', text)
     const parsedText = await unified()
         .use(remarkParse)
         .use(remarkUnlink)

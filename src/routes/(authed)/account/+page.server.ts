@@ -32,8 +32,6 @@ export const actions = {
     const avatar = newAvatarUrl ? newAvatarUrl : avatarUrl
     const mbid = newAvatarMbid ? newAvatarMbid : avatarMbid
 
-    console.log(avatarItem)
-
     userProfile.username = username
     userProfile.display_name = displayName
     userProfile.avatar_url = avatarUrl,

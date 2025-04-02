@@ -269,14 +269,14 @@ export const getCoverArtClientSide = async function ( releaseGroup: App.RowData,
         throw Error
     }
 
+    if ( !continuePromise ) {
+        return  { coverArtArchiveUrl, lastFmCoverArtUrl, wave: wave, success: false }
+    }
+
     const coverArtArchiveUrl = releaseGroup.release_group_mbid ? `https://coverartarchive.org/release-group/${releaseGroup.release_group_mbid}/front` : null
     
     const lastFmCoverArtUrl = null as string | null
     const lastFmResUrl = await getLastFmCoverArt( releaseGroup ) as string
-
-    if ( !continuePromise ) {
-        return  { coverArtArchiveUrl, lastFmCoverArtUrl, wave: wave, success: false }
-    }
 
     try {
         const httpLastFm = new XMLHttpRequest()

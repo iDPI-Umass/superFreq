@@ -27,9 +27,11 @@ export const userProfileReset = {
 }
 
 export const promiseStates: {
+    continueClientSideImgPromise: boolean
     newItemAdded: boolean
     imgPromise: any
 } = $state({
+    'continueClientSideImgPromise': true,
     'newItemAdded': false,
     'imgPromise': null
 })

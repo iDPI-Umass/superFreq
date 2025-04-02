@@ -9,6 +9,7 @@ Currently configured to server Last.fm images on the client side by default on a
     import { onMount } from "svelte"
     import { checkFetchedCoverArt, getLastFmCoverArt, getCoverArt, getCoverArtClientSide } from "$lib/resources/musicbrainz"
     import wave from "$lib/assets/images/logo/freq-wave.svg"
+    import { promiseStates } from "$lib/resources/states.svelte";
 
     interface ComponentProps {
         item?: any
@@ -18,7 +19,6 @@ Currently configured to server Last.fm images on the client side by default on a
         releaseGroupName?: string | null
         altText: string
         imgClass?: string | null
-        continuePromise?: boolean
     }
 
     let {
@@ -29,7 +29,6 @@ Currently configured to server Last.fm images on the client side by default on a
         releaseGroupName = null,
         altText,
         imgClass,
-        continuePromise = $bindable(true)
     }: ComponentProps = $props()
 
     const coverArtItem = $derived({
@@ -49,6 +48,9 @@ Currently configured to server Last.fm images on the client side by default on a
     })
 
     const coverArtArchiveImgUrl = $derived(item ? coverArtItem['img_url'] : null)
+
+    const continuePromise = $derived(promiseStates.continueClientSideImgPromise)
+
 </script>
 
 {#if item && (coverArtItem['last_fm_img_url'] || coverArtItem['img_url']) } 
