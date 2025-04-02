@@ -8,12 +8,10 @@
 
     interface ComponentProps {
         addedItem?: any
-        imgPromise?: any
     }
 
     let {
         addedItem = $bindable({}),
-        imgPromise = $bindable(null)
     }: ComponentProps = $props()
 
     let imgUrl = $derived(addedItem["img_url"]) as string
@@ -270,7 +268,6 @@
                     bind:addedItems={addedItem}
                     mode="single"
                     limit="10"
-                    bind:imgPromise={imgPromise}
                 ></MusicBrainzSearch>
                 <Tooltip>
                     Search for an album to autofill this form. If it's not coming up search: "album name" artist (using the quotation marks).
@@ -286,7 +283,6 @@
                     searchPlaceholder="look up a track"
                     bind:addedItems={addedItem}
                     mode="single"
-                    bind:imgPromise={imgPromise}
                 ></MusicBrainzSearch>
                 <Tooltip>
                     Search for a track to autofill this form. If it's not coming up search: "track name" artist (using the quotation marks).

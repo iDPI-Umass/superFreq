@@ -4,7 +4,7 @@
     import PanelHeader from '$lib/components/PanelHeader.svelte'
 	import CollectionEditor from '$lib/components/CollectionEditor.svelte'
 	import { enhance } from '$app/forms'
-	import { actionStates } from '$lib/resources/states.svelte';
+	import { promiseStates } from '$lib/resources/states.svelte';
 
 	interface Props {
 		data: any;
@@ -15,8 +15,6 @@
 
 	let collectionType = "release_groups"
 
-	let imgPromise = $state(null)
-
 	let collectionItems = $state(collectionContents ? collectionContents : [] as App.RowData[])
 
 	let deletedItems = $state(deletedCollectionContents ? deletedCollectionContents : [] as App.RowData[])
@@ -24,7 +22,8 @@
 	let loadingSubmission = $state(false)
 
 	onMount(() => {
-		actionStates.newItemAdded = false
+		promiseStates.newItemAdded = false
+		promiseStates.imgPromise =  null
 	})
 </script>
 
@@ -79,7 +78,6 @@
 		collectionType={collectionType}
 		limit="8"
 		mode="release_group"
-		bind:imgPromise={imgPromise}
 	></CollectionEditor>
 </div>
 

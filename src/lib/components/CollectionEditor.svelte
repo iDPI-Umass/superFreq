@@ -12,7 +12,6 @@
         limit?: string
         collectionItems: App.RowData[]
         deletedItems?: App.RowData[]
-        imgPromise?: any
     }
 
     let {
@@ -22,12 +21,7 @@
         limit,
         collectionItems = $bindable([]),
         deletedItems = $bindable([]),
-        imgPromise = $bindable(null)
     }: ComponentProps = $props()
-
-    // $: imgPromise
-    // $: collectionItems
-    // $: deletedItems
 
     const categoryLookup: {[index: string]: string} = {
 		"": "...",
@@ -163,7 +157,6 @@
                     searchButtonText={`search ${categoryLookup[itemType]}`}
                     searchPlaceholder={`search ${categoryLookup[itemType]}`}
                     mode="collection"
-                    bind:imgPromise={imgPromise}
                 ></MusicBrainzSearch>
             </div>
             <span class="or">— or —</span>
@@ -201,7 +194,6 @@
     collectionStatus={collectionStatus}
     layout="list"
     mode="edit"
-    bind:imgPromise={imgPromise}
 ></GridList>
 
 

@@ -1,13 +1,14 @@
 <script lang="ts">
-	import type { ActionData } from './$types'
+	import { onMount } from 'svelte'
 	import SEO from '$lib/components/layout/SEO.svelte'
     import NewNowPlayingPost from '$lib/components/Posts/NewNowPlayingPost.svelte'
+	import { promiseStates } from '$lib/resources/states.svelte';
 	
-	// export let form: ActionData
-	// $: form
-
 	let addedItem = $state({})
-	let imgPromise = $state(null)
+
+	onMount(() => {
+		promiseStates.imgPromise =  null
+	})
 </script>
 
 <!-- <svelte:options runes={true} /> -->
@@ -16,5 +17,4 @@
 
 <NewNowPlayingPost
 	bind:addedItem={addedItem}
-	bind:imgPromise={imgPromise}
 ></NewNowPlayingPost>

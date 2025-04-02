@@ -13,6 +13,7 @@
     import CoverArt from "$lib/components/CoverArt.svelte"
     import CollectionItemTag from "$lib/components/CollectionItemTag.svelte"
     import { listenUrlWhitelistCheck } from "$lib/resources/parseData";
+    import { promiseStates } from "$lib/resources/states.svelte";
 
     interface ComponentProps {
         collectionContents: any
@@ -23,7 +24,6 @@
         showTags?: boolean
         layout: string
         mode: string
-        imgPromise?: any
     }
 
     let {
@@ -35,7 +35,6 @@
         showTags = true,
         layout, // "grid" | "condensed-grid" | "list"
         mode, // "view" | "edit"
-        imgPromise = $bindable(null)
     }: ComponentProps = $props()
     
     const format: App.NestedObject = {
@@ -140,7 +139,7 @@
 {/snippet}
 
 {#snippet editorItemImage(item: any, altText: string)}
-    {#await imgPromise}
+    {#await promiseStates.imgPromise}
         <img 
             src={wave} 
             alt="loading cover art"
