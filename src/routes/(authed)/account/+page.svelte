@@ -98,7 +98,7 @@
 				name="email" 
 				id="email"
 				form="account-data"
-				value={email} 
+				defaultValue={email} 
 				disabled 
 			/>
 			<div class="label-group">
@@ -119,7 +119,7 @@
 				name="username"
 				id="username"
 				form="account-data"
-				value={username}
+				defaultValue={username}
 				disabled 
 			/>
 			<label 
