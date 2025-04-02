@@ -80,7 +80,7 @@
                 name="current-username"
                 id="current-username"
                 form="account-data"
-                value={username} 
+                defaultValue={username} 
                 disabled
             />
             <label 
@@ -99,7 +99,7 @@
                 name="new-username"
                 id="new-username"
                 form="account-data"
-                value={username} 
+                defaultValue={username} 
             />
             <button
                 type="submit"
