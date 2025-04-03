@@ -4,23 +4,16 @@
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
     import ManualAddModal from '$lib/components/modals/ManualAddModal.svelte'
     import CollectionItemTag from '$lib/components/CollectionItemTag.svelte'
+    import { collectionData } from '$lib/resources/states.svelte'
 
     interface ComponentProps {
-        collectionType: string
-        collectionStatus: string
-        mode?: string
-        limit?: string
-        collectionItems: App.RowData[]
-        deletedItems?: App.RowData[]
+        mode?: string | null
+        limit?: string | null
     }
 
     let {
-        collectionType,
-        collectionStatus,
         mode = '', // artists || release_groups || recordings
-        limit,
-        collectionItems = $bindable([]),
-        deletedItems = $bindable([]),
+        limit
     }: ComponentProps = $props()
 
     const categoryLookup: {[index: string]: string} = {
@@ -151,8 +144,6 @@
                 </span>
                 <MusicBrainzSearch 
                     searchCategory={searchCategoryLookup[itemType]}
-                    bind:addedItems={collectionItems}
-                    bind:deletedItems={deletedItems}
                     limit={limit}
                     searchButtonText={`search ${categoryLookup[itemType]}`}
                     searchPlaceholder={`search ${categoryLookup[itemType]}`}
@@ -166,7 +157,6 @@
         </span>
         <ManualAddModal
             bind:showModal={showManualAddModal}
-            bind:items={collectionItems}
             itemType={itemType}
         >
             {#snippet headerText()}
@@ -188,10 +178,8 @@
 </div>
 <div class="bottom-double-border"></div>
 <GridList 
-    bind:collectionContents={collectionItems}
-    bind:deletedItems={deletedItems}
-    collectionType={collectionType}
-    collectionStatus={collectionStatus}
+    collectionType={collectionData.type}
+    collectionStatus={collectionData.status}
     layout="list"
     mode="edit"
 ></GridList>

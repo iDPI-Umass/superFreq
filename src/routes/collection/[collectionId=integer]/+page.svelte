@@ -12,18 +12,14 @@
     import GridList from "$lib/components/GridList.svelte"
     import InfoBox from '$lib/components/InfoBox.svelte'
     import InlineMarkdownText from '$lib/components/InlineMarkdownText.svelte'
-	import { tick } from 'svelte'
+	import { onMount, tick } from 'svelte'
 
+    import { collectionData } from '$lib/resources/states.svelte.js'
     // import { insertCollectionFollow, updateCollectionFollow } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions';
 
 
     let { data } = $props();
-    let { sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData, infoBoxText } = $derived(data);
-
-
-    const collectionType = $derived(collectionInfo?.type as string)
-    const collectionStatus = $derived(collectionInfo?.status as string)
-    const collectionUpdatedAt = $derived(collectionInfo?.updated_at as Date)
+    let { sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData, infoBoxText } = $state(data);
 
     let gridListSelect = $state("grid")
 
@@ -35,7 +31,12 @@
         "recordings": "tracks"
     }
 
-    const updatedAt = $derived(new Date(collectionUpdatedAt).toLocaleDateString())
+    collectionData.type = collectionInfo?.type as string
+    collectionData.status = collectionInfo?.status as string    
+    collectionData.updatedAt = collectionInfo?.updated_at as Date
+    collectionData.collectionItems = collectionContents as App.RowData[]
+
+    const updatedAt = $derived(new Date(collectionInfo?.updated_at).toLocaleDateString())
 
     const sortOptions = ['default', 'reverse', 'artist A --> Z', 'artist Z --> A'] as any
 
@@ -87,8 +88,6 @@
     $effect(() => {
         sortedItems =  sort(sortOption)
     })
-
-    
 
 </script>
 
@@ -156,7 +155,7 @@
                 <InfoBox
                     mode="inline"
                 >
-                    {infoBoxText[collectionStatus]}
+                    {infoBoxText[collectionInfo?.status]}
                 </InfoBox>
                 {/if}
             </div>
@@ -215,10 +214,7 @@
             </div>
         </div>
         <GridList
-            collectionContents={sortedItems}
             collectionReturned={viewPermission}
-            collectionType={collectionType}
-            collectionStatus={collectionStatus}
             layout={gridListSelect}
             mode="view"
         >

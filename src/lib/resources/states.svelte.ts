@@ -35,3 +35,16 @@ export const promiseStates: {
     'newItemAdded': false,
     'imgPromise': null
 })
+
+export const collectionData = $state({
+    'title': null as string | null,
+    'mode': null as string | null,
+    'singleItem': {} as App.RowData,
+    'collectionItems': [] as App.RowData[],
+    'deletedItems': [] as App.RowData[],
+    'defaultSort': null as string | null,
+    'status': null as string | null,
+    'type': null as string | null,
+    'descriptionText': null as string | null,
+    'updatedAt': null  as Date | null
+}) 

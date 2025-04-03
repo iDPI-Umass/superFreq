@@ -6,7 +6,7 @@
     import InfoBox from '$lib/components/InfoBox.svelte'
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
     import SingleActionModal from 'src/lib/components/modals/SingleActionModal.svelte'
-    import { promiseStates } from '$lib/resources/states.svelte'
+    import { promiseStates, collectionData } from '$lib/resources/states.svelte'
 
     let { form, data } = $props()
     let { collection } = $state(data)
@@ -20,15 +20,15 @@
 
     const collectionInfo = $state(collection?.info as App.RowData)
 
-	let collectionTitle = $state(collectionInfo["title"]) 
-	let collectionType = collectionInfo["type"] 
-	let collectionStatus = $state(collectionInfo["status"]) 
-	let descriptionText = $state(collectionInfo["description_text"] )
-    let defaultSort = $state(collectionInfo["default_view_sort"])
+	collectionData.title = collectionInfo["title"]
+	collectionData.type = collectionInfo["type"] 
+	collectionData.status = collectionInfo["status"] 
+	collectionData.descriptionText = collectionInfo["description_text"]
+    collectionData.defaultSort = collectionInfo["default_view_sort"]
 
-	let collectionItems = $state(collection?.collectionContents as App.RowData[])
+	collectionData.collectionItems = collection?.collectionContents
 	
-    let deletedItems = $state(collection?.deletedCollectionContents as App.RowData[])
+    collectionData.deletedItems = collection?.deletedCollectionContents
 
     const isOwner = $derived(( sessionUserId == collectionInfo.owner_id ) ? true : false)
 
@@ -72,25 +72,25 @@
                 type="text" 
                 name="collection-title" 
                 id="collection-title" 
-                bind:value={collectionTitle} required 
+                value={collectionData.title} required 
             />       
             <input 
                 type="hidden"
                 name="status"
-                value={collectionStatus}
+                value={collectionData.status}
             />
-            {#key collectionItems?.length}
+            {#key collectionData.collectionItems.length}
                 <input 
                     type="hidden"
                     name="collection-contents"
-                    value={JSON.stringify(collectionItems)}
+                    value={JSON.stringify(collectionData.collectionItems)}
                 />
             {/key}
-            {#key deletedItems?.length}
+            {#key collectionData.deletedItems.length}
                 <input 
                     type="hidden"
                     name="deleted-items"
-                    value={JSON.stringify(deletedItems)}
+                    value={JSON.stringify(collectionData.deletedItems)}
                 />
             {/key}
             {#if isOwner}
@@ -109,7 +109,7 @@
                                 name="view-sort" 
                                 id="view-sort" 
                                 value="default" 
-                                bind:group={defaultSort}
+                                bind:group={collectionData.defaultSort}
                             />
                             <label for="default">default</label>
                         </li>
@@ -120,7 +120,7 @@
                                 name="view-sort" 
                                 id="view-sort" 
                                 value="reverse" 
-                                bind:group={defaultSort}
+                                bind:group={collectionData.defaultSort}
                             />
                             <label for="reverse">reverse</label>
                         </li>
@@ -131,7 +131,7 @@
                                 name="view-sort" 
                                 id="view-sort" 
                                 value="artist_asc" 
-                                bind:group={defaultSort}
+                                bind:group={collectionData.defaultSort}
                             />
                             <label for="artist-asc">artists a --> z</label>
                         </li>
@@ -142,7 +142,7 @@
                                 name="view-sort" 
                                 id="view-sort" 
                                 value="artist_desc" 
-                                bind:group={defaultSort}
+                                bind:group={collectionData.defaultSort}
                             />
                             <label for="artist-desc">artists z --> a</label>
                         </li>
@@ -169,7 +169,7 @@
                                 name="status" 
                                 id="open" 
                                 value="open" 
-                                bind:group={collectionStatus} 
+                                bind:group={collectionData.status} 
                             />
                             <label for="open">
                                 open
@@ -182,7 +182,7 @@
                                 name="status" 
                                 id="public" 
                                 value="public" 
-                                bind:group={collectionStatus} 
+                                bind:group={collectionData.status}  
                              />
                             <label for="public">
                                 public
@@ -195,7 +195,7 @@
                                 name="status" 
                                 id="private" 
                                 value="private" 
-                                bind:group={collectionStatus} 
+                                bind:group={collectionData.status}  
                             />
                             <label for="private">
                                 private
@@ -204,11 +204,11 @@
                     </ul>
                 </fieldset>
             {/if}
-            {#if collectionStatus && collectionStatus != 'public'}
+            {#if collectionData.status && collectionData.status != 'public'}
                 <InfoBox
                     mode="inline"
                 >
-                    {infoBoxText[collectionStatus]}
+                    {infoBoxText[collectionData.status]}
                 </InfoBox>
             {/if}
         </div>
@@ -223,7 +223,7 @@
                 cols="1"
                 spellcheck=true 
                 required
-            >{descriptionText}</textarea>
+            >{collectionData.descriptionText}</textarea>
             <div class="collection-info-button-spacing">
                 <button 
                     type="button"
@@ -237,7 +237,7 @@
                 <button 
                     class="double-border-top" 
                     formAction = '?/updateCollection'
-                    disabled={!(collectionStatus && collectionTitle)}
+                    disabled={!(collectionData.status && collectionData.title)}
                 >
                     <div class="inner-border">
                         save edits
@@ -247,10 +247,6 @@
         </div>
     </form>
 	<CollectionEditor
-		bind:collectionItems={collectionItems}
-		bind:deletedItems={deletedItems}
-		collectionType={collectionType}
-        collectionStatus={collectionStatus}
 	></CollectionEditor>
     <div class="bottom-double-border"></div>
 </div>

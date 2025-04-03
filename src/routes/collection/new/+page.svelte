@@ -12,7 +12,7 @@
 	import InfoBox from 'src/lib/components/InfoBox.svelte'
     import CollectionEditor from '$lib/components/CollectionEditor.svelte'
 
-    import { promiseStates } from 'src/lib/resources/states.svelte'
+    import { promiseStates, collectionData } from 'src/lib/resources/states.svelte'
 
     interface Props {
         data: any;
@@ -21,16 +21,20 @@
     let { data }: Props = $props();
     let { sessionUserId, infoBoxText } = $state(data)
 
-	let collectionTitle = $state() as string
-	let collectionType = $state() as string
-	let collectionStatus = $state() as string
-    let defaultSort = $state() as string
-
-	let collectionItems = $state([]) as object[]
+	collectionData.title = null
+	collectionData.type = null
+	collectionData.status = null
+    collectionData.defaultSort = null
+    collectionData.collectionItems = []
 
     onMount(() => {
         promiseStates.newItemAdded = false
         promiseStates.imgPromise = null
+        collectionData.title = null
+        collectionData.type = null
+        collectionData.status = null
+        collectionData.defaultSort = null
+        collectionData.collectionItems = []
     })
 </script>
 
@@ -58,7 +62,7 @@
                 type="hidden"
                 name="collection-contents"
                 id="collection-contents"
-                value={JSON.stringify(collectionItems)}
+                value={JSON.stringify(collectionData.collectionItems)}
             />
             <div class="label-group">
                 <label 
@@ -76,7 +80,7 @@
                 type="text" 
                 name="collection-title" 
                 id="collection-title" 
-                bind:value={collectionTitle} 
+                bind:value={collectionData.title} 
                 required 
             />
             <!-- <fieldset>
@@ -200,7 +204,7 @@
                             name="status" 
                             id="open" 
                             value="open" 
-                            bind:group={collectionStatus} 
+                            bind:group={collectionData.status} 
                         />
                         <label for="open">open</label>
                     </li>
@@ -211,7 +215,7 @@
                             name="status" 
                             id="public" 
                             value="public" 
-                            bind:group={collectionStatus} 
+                            bind:group={collectionData.status} 
                         />
                         <label for="public">public</label>
                     </li>
@@ -222,17 +226,17 @@
                             name="status" 
                             id="private" 
                             value="private" 
-                            bind:group={collectionStatus} 
+                            bind:group={collectionData.status} 
                         />
                         <label for="private">private</label>
                     </li>
                 </ul>
             </fieldset>
-            {#if collectionStatus && collectionStatus != 'public'}
+            {#if collectionData.status && collectionData.status != 'public'}
                 <InfoBox
                     mode="inline"
                 >
-                    {infoBoxText[collectionStatus]}
+                    {infoBoxText[collectionData.status]}
                 </InfoBox>
             {/if}
         </div>
@@ -256,7 +260,7 @@
                     class="double-border-top" 
                     type="submit"
                     formAction="?/insertCollection"
-                    disabled={!(collectionStatus && collectionTitle && (collectionItems.length > 0))}
+                    disabled={!(collectionData.status && collectionData.title && (collectionData.collectionItems.length > 0))}
                 >
                     <div class="inner-border">
                         create new collection
@@ -266,9 +270,6 @@
         </div>
     </form>
 	<CollectionEditor
-		bind:collectionItems={collectionItems}
-		collectionType={collectionType}
-        collectionStatus={collectionStatus}
 	></CollectionEditor>
     <div class="bottom-double-border"></div>
 </div>
