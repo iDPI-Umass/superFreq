@@ -4,7 +4,7 @@
 
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
-    import { promiseStates } from '$lib/resources/states.svelte'
+    import { promiseStates, collectionData } from '$lib/resources/states.svelte'
 
     interface ComponentProps {
         displayName: string,
