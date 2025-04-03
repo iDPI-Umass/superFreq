@@ -160,8 +160,7 @@ export const actions = {
         const data = await request.formData()
         const postId = data.get('post-id') as string
         const collectionId = data.get('collection-id') as string
-        console.log(postId, collectionId)
-
+        
         const update = await saveItemToCollection( sessionUserId, postId, collectionId )
 
         return { updateSuccess: update }

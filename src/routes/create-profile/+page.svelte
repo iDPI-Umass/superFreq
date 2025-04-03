@@ -74,17 +74,21 @@
 	<div class="form-wrapper">
 		<form
 			class="form-column"
+			id="create"
 			method="POST"
 			action="?/create"
 			use:enhance={() => {
-				avatarPromise = true
+				// avatarPromise = true
+				console.log('running')
 				const validUsername = validateUsernameCharacters(username)
 				if ( !validUsername ) {
 					invalidUsername = true
 					return
 				}
+				console.log('checked')
 				return async ({ update }) => {
-					avatarPromise = false
+					// avatarPromise = false
+					console.log('update')
 					await update()
 				}}
 			}
@@ -216,6 +220,7 @@
 				<button
 					class="double-border-top"
 					type="submit"
+					form="create"
 					disabled={( !( username && displayName ) || avatarPromise )}
 					>
 					<div class="inner-border">
