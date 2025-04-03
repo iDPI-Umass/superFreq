@@ -175,9 +175,11 @@ export const updatePost = async function ( sessionUserId: string, postData: App.
         const selectPostData = await trx
         .selectFrom('posts')
         .select(['user_id', 'changelog'])
-        .where('id', '=', postData.post_id)
+        .where('id', '=', postData.id)
         .where('user_id', '=', sessionUserId)
         .executeTakeFirstOrThrow()
+
+        console.log(selectPostData)
 
         const changelog = selectPostData?.changelog as App.Changelog
         changelog[timestampISOString] = {
@@ -207,7 +209,7 @@ export const updatePost = async function ( sessionUserId: string, postData: App.
             show_title: postData.showTitle,
             changelog: changelog,
         })
-        .where('id','=', postData.post_id)
+        .where('id','=', postData.id)
         .returning([
             'text', 
             'artist_name', 

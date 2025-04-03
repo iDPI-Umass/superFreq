@@ -1,9 +1,14 @@
 ---
 title: Updates
 layout: about
-updated: 04/01/2025
+updated: 04/03/2025
 ---
-### April 1, 2024
+### April 3, 2025
+#### Bug Fixes
+- Editing posts works again
+- Post replies no longer show up under the wrong post
+
+### April 1, 2025
 #### Bug Fixes
 - Data now consistently loads sequentially in feeds
 - Liking a post in the Universal Feed should work without a 200 error now

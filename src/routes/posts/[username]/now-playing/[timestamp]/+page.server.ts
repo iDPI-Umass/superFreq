@@ -6,22 +6,6 @@ import { insertPostFlag } from '$lib/resources/backend-calls/users'
 import { selectListSessionUserCollections, saveItemToCollection } from 'src/lib/resources/backend-calls/collections.js'
 import { validStringCheck } from '$lib/resources/parseData'
 
-let loadData = true
-
-let post: App.RowData = {}
-let postId: string
-let postUsername: string
-let postCreatedAt: string
-let postTimestamp: string
-let postReplies: App.RowData[]
-
-let updateReaction: boolean
-let reactionActive: boolean
-let postReactionCount: number
-let editPost: boolean
-let editedText: string
-
-let saveItemPostId: string
 let collections = [] as App.RowData[]
 
 export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSession } }) => {
@@ -29,62 +13,34 @@ export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSe
     const { session } = await safeGetSession()
     const { profile } = await parent()
 
-    let username = profile?.username ?? null
+    const profileUsername = profile?.username ?? null
 
     if ( !session ) {
         throw redirect(307, '/')
     }
-    else if( session && !username ) {
+    else if( session && !profileUsername ) {
         throw redirect(307, '/create-profile')
     }
     
     const sessionUserId = session?.user.id as string
 
-    username = params.username
+    const username = params.username
     const timestamp = parseInt(params.timestamp)
     const timestampString = new Date(timestamp).toISOString()
 
     let replies: App.RowData[] = []
     let permission: boolean = true
 
-    if ( loadData ) {
-        const select = await selectPostAndReplies( sessionUserId, username, timestampString )
+    let post: App.RowData = {}
 
-        post = select.post as App.RowData
-        replies = select.replies as App.RowData[]
-        permission = select.permission as boolean
-    
-        if ( !permission ) {
-            return { sessionUserId: null, post: {}, replies: [], collections }
-        }
-    
-        postId = post?.id as string
-        postUsername = post?.username as string
-        postCreatedAt = post?.created_at.toISOString()
-        postTimestamp = Date.parse(postCreatedAt).toString()
-        postReplies = replies as App.RowData[]
-    }
+    const select = await selectPostAndReplies( sessionUserId, username, timestampString )
 
-    if ( updateReaction ) {
-        updateReaction = false
-        loadData = true
+    post = select.post as App.RowData
+    replies = select.replies as App.RowData[]
+    permission = select.permission as boolean
 
-        post.reaction_count = postReactionCount
-
-        if ( reactionActive ) {
-            post.reaction_user_ids.push(sessionUserId)
-        }
-        else if ( !reactionActive ) {
-            const reactionIndex = post.reaction_user_ids.findIndex((element) => {element == sessionUserId})
-            post.reaction_user_ids.splice(reactionIndex, 1)
-        }
-    }
-
-    if ( editPost ) {
-        editPost = false
-        loadData = true
-
-        post.text = editedText
+    if ( !permission ) {
+        return { sessionUserId: null, post: {}, replies: [], collections }
     }
 
     return { sessionUserId, post, replies, collections }
@@ -100,6 +56,7 @@ export const actions = {
 
         const data = await request.formData()
         const replyText = data.get('reply-text') as string
+        const postId = data.get('post-id') as string
 
         const postData = {
             user_id: sessionUserId,
@@ -145,17 +102,14 @@ export const actions = {
         const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
-        editedText = data.get('edited-text') as string
+        const editedText = data.get('edited-text') as string
         const postData = JSON.parse(data.get('post-data') as string) as App.RowData
 
+        console.log('edited text: ', editedText)
         const submitEdit = await updatePost( sessionUserId, postData, editedText )
 
         const success =  submitEdit ? true : false
         const editState = submitEdit ? false : true
-
-        editedText = success ? submitEdit.text as string : editedText
-        editPost = success ? true : false
-        loadData = success ? false : true
 
         return { success, editState }
     },
@@ -192,16 +146,12 @@ export const actions = {
 
         return { success }
     },
-    getCollectionList: async ({ request, locals: { safeGetSession } }) => {
+    getCollectionList: async ({ locals: { safeGetSession } }) => {
         const { session } = await safeGetSession()
         const sessionUserId = session?.user.id as string
 
-        const data = await request.formData()
-        saveItemPostId = data.get('post-id') as string
+        collections = await selectListSessionUserCollections(sessionUserId)
 
-        if ( collections.length == 0 ) {
-            collections = await selectListSessionUserCollections(sessionUserId)
-        }
         return { showCollectionsModal: true }
        },
     saveToCollection: async ({ request, locals: { safeGetSession } }) => {
@@ -209,9 +159,10 @@ export const actions = {
         const sessionUserId = session?.user.id as string
         
         const data = await request.formData()
+        const postId = data.get('post-id') as string
         const collectionId = data.get('collection-id') as string
 
-        const update = await saveItemToCollection( sessionUserId, saveItemPostId, collectionId )
+        const update = await saveItemToCollection( sessionUserId, postId, collectionId )
 
         return { updateSuccess: update }
     }

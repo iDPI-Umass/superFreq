@@ -32,6 +32,8 @@
         layout, // "grid" | "condensed-grid" | "list"
         mode, // "view" | "edit"
     }: ComponentProps = $props()
+
+    console.log(collectionData.collectionItems)
     
 
     const format: App.NestedObject = {
@@ -108,7 +110,7 @@
             return spacesArray
         }
 
-        const remainingSpaces = ( layout == 'grid' ) ? items.length % 6 : items.length % 4
+        const remainingSpaces = ( layout == 'grid' ) ? 6 - items.length : 4 - items.length
 
         let n = 0
         while ( n < remainingSpaces ) {
