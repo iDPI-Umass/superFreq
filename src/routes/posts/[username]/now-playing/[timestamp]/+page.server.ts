@@ -111,10 +111,6 @@ export const actions = {
         const success =  submitEdit ? true : false
         const editState = submitEdit ? false : true
 
-        editedText = success ? submitEdit.text as string : editedText
-        editPost = success ? true : false
-        loadData = success ? false : true
-
         return { success, editState }
     },
     deletePost: async ({ request, locals: { safeGetSession } }) => {
