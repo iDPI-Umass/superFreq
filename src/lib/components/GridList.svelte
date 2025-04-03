@@ -13,23 +13,19 @@
     import CoverArt from "$lib/components/CoverArt.svelte"
     import CollectionItemTag from "$lib/components/CollectionItemTag.svelte"
     import { listenUrlWhitelistCheck } from "$lib/resources/parseData";
-    import { promiseStates } from "$lib/resources/states.svelte";
+    import { promiseStates, collectionData } from "$lib/resources/states.svelte";
 
     interface ComponentProps {
-        collectionContents: any
-        deletedItems?: any
-        collectionReturned?: boolean
-        collectionType: string
-        collectionStatus?: string
+        collectionReturned?: boolean | null
+        collectionType?: string | null
+        collectionStatus?: string | null
         showTags?: boolean
         layout: string
         mode: string
     }
 
     let {
-        collectionContents = $bindable([]),
-        deletedItems = $bindable([]),
-        collectionReturned,
+        collectionReturned = null,
         collectionType, // "artists" | "release_groups" | "recordings" | "labels"
         collectionStatus = "public", // "open", "public", "private", "deleted"
         showTags = true,
@@ -37,6 +33,7 @@
         mode, // "view" | "edit"
     }: ComponentProps = $props()
     
+
     const format: App.NestedObject = {
         "grid": ["media-grid", "media-grid-item"],
         "list": ["media-list", "media-list-item"],
@@ -69,10 +66,10 @@
         return text
     } 
 
-    let items = $state(collectionContents)
+    let items = $state(collectionData.collectionItems)
 
     $effect(() => {
-        items = collectionContents
+        items = collectionData.collectionItems
     })
 
     const flipDurationMs = 300;
@@ -83,7 +80,7 @@
 
 	function handleFinalize( e: any ) {
 		const { items: newItems } = e.detail;
-        collectionContents = newItems
+        collectionData.collectionItems = newItems
 	}
 
     // delete item from collection editor
@@ -92,7 +89,7 @@
 
         if ( item.inserted_at ){
             item.item_position = null
-            deletedItems.push(item)
+            collectionData.deletedItems.push(item)
         }
 
 		for (const i of items) {
@@ -100,10 +97,10 @@
 			i["id"] = itemIndex
             i["item_position"] = itemIndex
 		}
-        collectionContents = items
+        collectionData.collectionItems = items
 	}
 
-    const undersizedCollection = $derived(( mode == 'view' && ( layout == 'grid' && collectionContents.length < 6 ) || ( layout == 'condensed-grid' && collectionContents.length < 4 )) ? true : false)
+    const undersizedCollection = $derived(( mode == 'view' && ( layout == 'grid' && collectionData.collectionItems.length < 6 ) || ( layout == 'condensed-grid' && collectionData.collectionItems.length < 4 )) ? true : false)
 
     function getGridSpacers ( items: any, layout: string ) {
         const spacesArray = [] as number[]
@@ -122,7 +119,6 @@
     }
 
     const gridSpacers = $derived(getGridSpacers(items, layout))
-
 </script>
 
 <!-- <svelte:options runes={true} /> -->
@@ -296,7 +292,7 @@
     {/if}
 {/snippet}
 
-{#await collectionContents.length > 0 then}
+{#await collectionData.collectionItems.length > 0 then}
     {#if mode == "edit"}
         <ul 
             aria-label="collection items" 
@@ -324,7 +320,7 @@
             aria-label="collection items" 
             class={format[layout][0]}
         >
-            {#each collectionContents as contentItem}                  
+            {#each collectionData.collectionItems as contentItem}                  
                 <li class={format[layout][1]}>
                     {@render coverArt(contentItem, ( contentItem["item_type"] ?? collectionType ), mode)}
                     <div class="metadata-blurb">

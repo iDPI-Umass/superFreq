@@ -532,13 +532,13 @@ export const addSingleItem = async function  (
 
 export const addSingleItemNoImg = async function  (     
     item: App.RowData, 
-    addedItems: App.RowData, 
+    singleItem: App.RowData, 
     searchCategory: string,  
 ) {
     const mbid = releaseGroupMbid( searchCategory, item )
     const releaseDate = itemDate( searchCategory, item )
     const label = await getLabel( searchCategory, mbid, releaseDate )
-    addedItems =  {
+    singleItem =  {
         "artist_mbid": artistMbid( searchCategory, item ),
         "artist_name": artistName( searchCategory, item ),
         "release_group_mbid": mbid,
@@ -554,5 +554,5 @@ export const addSingleItemNoImg = async function  (
         "item_type": itemTypeTable[searchCategory],
     }
 
-    return { addedItems }
+    return { singleItem }
 }

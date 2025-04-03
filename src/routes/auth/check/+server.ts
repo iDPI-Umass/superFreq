@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { db } from 'src/database.ts'
-import { userProfile } from '$lib/resources/states.svelte'
+import { sessionUserProfile } from '$lib/resources/states.svelte'
 
 export const GET: RequestHandler = async ({ locals: { safeGetSession }}) => {
 
@@ -33,10 +33,10 @@ export const GET: RequestHandler = async ({ locals: { safeGetSession }}) => {
     }
 
     if ( userId && username ) {
-        userProfile.username = username,
-        userProfile.display_name = display_name,
-        userProfile.avatar_url = avatar_url,
-        userProfile.user_id = userId
+      sessionUserProfile.username = username,
+      sessionUserProfile.display_name = display_name,
+      sessionUserProfile.avatar_url = avatar_url,
+      sessionUserProfile.user_id = userId
 
       return redirect(303, `/user/${username}`)
     }

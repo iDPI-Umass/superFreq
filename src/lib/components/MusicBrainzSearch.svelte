@@ -4,16 +4,14 @@
 	import { mbSearch, addCollectionItemNoImg, getCoverArt, addSingleItemNoImg, mbidCateogory, artistName, artistMbid, releaseGroupName, releaseGroupMbid, releaseGroupMetadata, recordingName, itemDate, artistOrigin } from '$lib/resources/musicbrainz'
 	import CoverArt from './CoverArt.svelte'
 
-    import { promiseStates } from '$lib/resources/states.svelte';
+    import { promiseStates, collectionData } from '$lib/resources/states.svelte';
 
 	interface ComponentProps {
 		searchCategory: string
 		searchButtonText: string
 		searchPlaceholder: string
-		addedItems: any
-		deletedItems?: App.RowData[]
 		mode: string,
-		limit?: string,
+		limit?: string | null,
 		query?: string,
 		continuePromise? : boolean
 	}
@@ -22,8 +20,6 @@
 		searchCategory, // "artists" | "release_groups" | "releases" | "recordings" | "labels"
 		searchButtonText,
 		searchPlaceholder,
-		addedItems = $bindable([]),
-		deletedItems = $bindable([]),
 		mode, // "single" | "collection" | "avatar-search"
 		limit = '25',
 		query = '',
@@ -54,12 +50,12 @@
 	async function addItem ( mode: string, item: App.RowData ) {
 		addingItem = true
 		if ( mode == 'single' ) {
-			const singleItem = await addSingleItemNoImg( item, addedItems, searchCategory )
-			addedItems = singleItem.addedItems
+			const singleItem = await addSingleItemNoImg( item, collectionData.singleItem, searchCategory )
+			collectionData.singleItem = singleItem.singleItem
 			query = ""
 			searchComplete = false
 			promiseStates.newItemAdded = true
-			continuePromise = false
+			promiseStates.continueClientSideImgPromise = false
 			showModal = false
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
 				const releaseGroup = {
@@ -68,19 +64,19 @@
 					release_group_name: releaseGroupName(searchCategory, item)
 				}
 				const { success, coverArtArchiveUrl, lastFmCoverArtUrl } = await getCoverArt(releaseGroup)
-				addedItems["img_url"] = success ? coverArtArchiveUrl : null
-				addedItems["last_fm_img_url"] = success ? lastFmCoverArtUrl : null
+				collectionData.singleItem['img_url'] = success ? coverArtArchiveUrl : null
+				collectionData.singleItem["last_fm_img_url"] = success ? lastFmCoverArtUrl : null
 				promiseStates.imgPromise = new Promise ((resolve) => resolve(success)) 
 			}
 			addingItem = false
-			continuePromise = true
-			return { addedItems, query, searchComplete, showModal }
+			promiseStates.continueClientSideImgPromise = true
+			return { query, searchComplete, showModal }
 		}
 		if ( mode == 'collection' ) {
 			promiseStates.continueClientSideImgPromise = false
-			const collectionItems = await addCollectionItemNoImg( item, addedItems, deletedItems, limit, searchCategory, mbidCategory )
-			addedItems = collectionItems.addedItems
-			deletedItems = collectionItems.deletedItems
+			const collectionItems = await addCollectionItemNoImg( item, collectionData.collectionItems, collectionData.deletedItems, limit, searchCategory, mbidCategory )
+			collectionData.collectionItems = collectionItems.addedItems
+			collectionData.deletedItems = collectionItems.deletedItems
 			query = ""
 			searchComplete = false
 			promiseStates.newItemAdded = collectionItems.newItemAdded
@@ -88,14 +84,14 @@
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
 				const releaseGroup = releaseGroupMetadata( searchCategory, item )
 				const { success, coverArtArchiveUrl, lastFmCoverArtUrl } = await getCoverArt(releaseGroup)
-				const thisItemIndex = addedItems.findIndex((item) => item['release_group_mbid'] == releaseGroup.release_group_mbid)
-				addedItems[thisItemIndex]["img_url"] = success ? coverArtArchiveUrl : null
-				addedItems[thisItemIndex]["last_fm_img_url"] = success ? lastFmCoverArtUrl : null
+				const thisItemIndex = collectionData.collectionItems.findIndex((item) => item['release_group_mbid'] == releaseGroup.release_group_mbid)
+				collectionData.collectionItems[thisItemIndex]["img_url"] = success ? coverArtArchiveUrl : null
+				collectionData.collectionItems[thisItemIndex]["last_fm_img_url"] = success ? lastFmCoverArtUrl : null
 				promiseStates.imgPromise = new Promise ((resolve) => resolve(success))
 			}
 			addingItem = false
 			promiseStates.continueClientSideImgPromise = true
-			return { addedItems, deletedItems, query, searchComplete, showModal }
+			return { query, searchComplete, showModal }
 		}
 	}
 
@@ -180,7 +176,6 @@
 									<CoverArt
 										item={coverArtItem(item, searchCategory)}
 										altText='album {releaseGroupName(searchCategory, item)} by artist {artistName(searchCategory, item)}'
-										continuePromise={continuePromise}
 									></CoverArt>
 								</div>
 							{/if}

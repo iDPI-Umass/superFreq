@@ -13,25 +13,13 @@ let profileUsername = null as string | null
 let profileUserId = null as string | null
 
 let loadData = true
-let loadMore = false
 let userAction = false
-let updateReaction = false
-
-let profileData: any = null
 
 let batchIterator = 0
-let feedItems = [] as App.RowData[]
 let feedItemCount = 0
 let totalAvailableItems = 0
 let remaining = 0
 
-let postId: string
-let updatedReactionActive: boolean
-let updatedReactionCount: number
-let editPost: boolean
-let editedText: string
-
-let saveItemPostId: string
 let sessionUserCollections = [] as App.RowData[]
 
 export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}) => {
@@ -51,7 +39,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
         loadData = true
     }
 
-    profileData = await selectProfilePageData( sessionUserId, urlUsername )
+    const profileData = await selectProfilePageData( sessionUserId, urlUsername )
 
     if (!profileData.profileUserData) {
         throw redirect(303, '/')
@@ -61,7 +49,6 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
 
     if ( profileUserId != profileData.profileUserData.id ) {
         feedData.feedItems = []
-        loadMore = true
     }
 
     feedData.profileUsername =  profileUsername
@@ -105,13 +92,6 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
         profileData = await selectProfilePageData( sessionUserId, profileUsername )
     }
 
-    function findPost( item: App.RowData, postId: string ) {
-        if ( item.post_id == postId ) { 
-            return true
-        }
-        return false
-    }
-
     return { sessionUserId, profileData, feedItems: feedData.feedItems, totalAvailableItems, remaining, profileUsername, sessionUserCollections, updatesPageUpdatedAt }
 }
 
@@ -119,7 +99,6 @@ export const actions = {
     loadMore: async() => {
         batchIterator ++
         loadData = true
-        loadMore = true
         return { loadData }
     },
     blockUser: async({ request, locals: { safeGetSession } }) => {
@@ -249,7 +228,7 @@ export const actions = {
         const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
-        postId = data.get('post-id') as string
+        const postId = data.get('post-id') as string
 
         const flag = await insertPostFlag( sessionUserId, postId )
 
@@ -262,7 +241,7 @@ export const actions = {
         const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
-        editedText = data.get('edited-text') as string
+        let editedText = data.get('edited-text') as string
         const postData = JSON.parse(data.get('post-data') as string) as App.RowData
 
         const submitEdit = await updatePost( sessionUserId, postData, editedText )
@@ -281,7 +260,7 @@ export const actions = {
         const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
-        postId = data.get('post-id') as string
+        const postId = data.get('post-id') as string
 
         const submitDelete = await deletePost( sessionUserId, postId )
 
@@ -294,7 +273,7 @@ export const actions = {
         const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
-        postId = data.get('post-id') as string
+        const postId = data.get('post-id') as string
         const reactionType = data.get('reaction-type') as string
 
         const { reaction } = await insertUpdateReaction( sessionUserId, postId, reactionType )
@@ -303,16 +282,12 @@ export const actions = {
 
         return { userActionSuccess }
     },
-    getCollectionList: async ({ request, locals: { safeGetSession } }) => {
+    getCollectionList: async ({ locals: { safeGetSession } }) => {
         const { session } = await safeGetSession()
         const sessionUserId = session?.user.id as string
 
-        const data = await request.formData()
-        saveItemPostId = data.get('post-id') as string
-
-        if ( sessionUserCollections.length == 0 ) {
-            sessionUserCollections = await selectListSessionUserCollections(sessionUserId)
-        }
+        sessionUserCollections = await selectListSessionUserCollections(sessionUserId)
+        
         return { showCollectionsModal: true }
     },
     saveToCollection: async ({ request, locals: { safeGetSession } }) => {
@@ -320,9 +295,10 @@ export const actions = {
         const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
+        const postId = data.get('post-id') as string
         const collectionId = data.get('collection-id') as string
 
-        const update = await saveItemToCollection( sessionUserId, saveItemPostId, collectionId )
+        const update = await saveItemToCollection( sessionUserId, postId, collectionId )
 
         return { updateSuccess: update }
     }

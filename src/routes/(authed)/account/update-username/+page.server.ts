@@ -2,7 +2,7 @@ import type { PageServerLoad, Actions } from './$types'
 import { redirect } from '@sveltejs/kit'
 import { updateUsername } from '$lib/resources/backend-calls/users'
 import { validateUsernameCharacters } from "$lib/resources/parseData"
-import { userProfile } from "$lib/resources/states.svelte"
+import { sessionUserProfile } from "$lib/resources/states.svelte"
 
 import { db } from 'src/database.ts'
 
@@ -39,7 +39,7 @@ export const actions = {
         const { username  } =  update as App.ProfileObject
 
         if ( success ) {
-            userProfile.username = username
+            sessionUserProfile.username = username
             return { success, validUsername, usernameTaken }
         }
         else {

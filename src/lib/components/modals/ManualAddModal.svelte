@@ -2,19 +2,18 @@
 	import { add } from 'date-fns';
 	import type { Snippet } from 'svelte'
     import { listenUrlWhitelistCheck } from '$lib/resources/parseData'
+    import { collectionData } from '$lib/resources/states.svelte';
 
 
 	interface ComponentProps {
         showModal: boolean
         itemType: string
-        items: App.RowData[]
         headerText: Snippet
     }
 
 	let {         
 		showModal = $bindable(false),
         itemType,
-        items = $bindable([]),
         headerText, 
 	}: ComponentProps = $props()
 
@@ -52,7 +51,7 @@
     } as App.RowData
 
     let newItem = $state(itemTemplate)
-    let collectionLength = $derived(items.length ?? 0)
+    let collectionLength = $derived(collectionData.collectionItems.length ?? 0)
 
     function addItem() {
         newItem.item_type = itemType
@@ -60,7 +59,7 @@
         newItem.item_position = thisItemIndex
         newItem.id = thisItemIndex
         newItem.listen_url = listenUrlChecked(newItem.listen_url) ? newItem.listen_url : null
-        items.push(newItem)
+        collectionData.collectionItems.push(newItem)
         newItem = itemTemplate
         dialog.close()
     }

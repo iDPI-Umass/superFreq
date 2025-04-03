@@ -14,12 +14,10 @@
     import CoverArt from '$lib/components/CoverArt.svelte'
     import InfoBox from '$lib/components/InfoBox.svelte'
 
-    interface Props {
-        data: any;
-        form: ActionData;
-    }
+    import { collectionData, viewProfile } from '$lib/resources/states.svelte.js'
 
-    let { data, form }: Props = $props();
+
+    let { data, form } = $props();
 
     let { sessionUserId, profileData, feedItems, totalAvailableItems, remaining, profileUsername, sessionUserCollections, updatesPageUpdatedAt }: {
         sessionUserId: string
@@ -34,43 +32,49 @@
 
     let { profileUserData, followInfo, permission, profileUserBlockInfo, profileUserFlagInfo } = $derived(profileData)
 
-    const profileUserId = $derived(profileUserData?.id as string)
-
-    let collectionCount = $derived(permission ? profileData?.collectionCount as number : null)
-    let collectionFollowingCount = $derived(permission ? profileData?.collectionFollowingCount as number : null)
-    let userFollowingCount = $derived(permission ? profileData?.userFollowingCount as number : null)
-    let nowPlayingPostsCount = $derived(permission ? profileData?.nowPlayingPostsCount as number : null)
-    let topAlbumsCollection = $derived(permission ? profileData?.topAlbumsCollection.slice(0, 8) as App.ProfileObject[] : null)
-
-    let topAlbumsReturned = $derived( topAlbumsCollection ? true : false)
+    let topAlbumsReturned = $derived( viewProfile.topAlbumsCollection.length > 0 ? true : false)
     
     let followingNow = $derived(followInfo?.follows_now ?? false)
     let profileUserBlocked = $derived(profileUserBlockInfo?.active ?? false)
     let profileUserFlagged = $derived(profileUserFlagInfo?.active ?? false)
 
-    let displayName = $derived(profileUserData?.display_name as string)
-
-    let imgUrl = $derived(profileUserData?.avatar_url as string)
-    let lastFmImgUrl = $derived(profileUserData?.last_fm_img_url as string)
-    let avatarArtistName = $derived(profileUserData?.avatar_artist_name as string)
-    let avatarReleaseGroupName = $derived(profileUserData?.avatar_release_group_name as string)
-
     let avatarItem = $derived({
-        'img_url': imgUrl,
-        'last_fm_img_url': lastFmImgUrl,
-        'artist_name': avatarArtistName,
-        'release_group_name': avatarReleaseGroupName
+        'img_url': viewProfile.avatar_url,
+        'last_fm_img_url': viewProfile.last_fm_avatar_url,
+        'artist_name': viewProfile.avatar_artist_name,
+        'release_group_name': viewProfile.avatar_release_group_name
     })
 
-    let isSessionUserProfile = $derived(( profileUserData?.id == sessionUserId ) ? true : false )
+    let isSessionUserProfile = $derived(( viewProfile.user_id == sessionUserId ) ? true : false )
 
     let showCollectionsListModal = $derived(form?.showCollectionsModal ?? false)
     let showSaveSucessModal = $derived(form?.updateSuccess ?? false)
 
     let followLoading = $state(false)
+
+    $effect(() => {
+        viewProfile.user_id = profileUserData?.id as string
+        viewProfile.username = profileUserData?.username as string
+        viewProfile.display_name = profileUserData?.display_name as string
+        viewProfile.about = profileUserData?.about as string
+        viewProfile.avatar_url = profileUserData?.img_url as string
+        viewProfile.last_fm_avatar_url = profileUserData?.last_fm_img_url as string
+        viewProfile.avatar_artist_name = profileUserData?.avatar_artist_name as string
+        viewProfile.avatar_release_group_name = profileUserData?.avatar_release_group_name as string
+
+        viewProfile.metrics.collectionCount = permission ? profileData?.collectionCount as number : null
+        viewProfile.metrics.collectionFollowingCount = permission ? profileData?.collectionFollowingCount as number : null
+        viewProfile.metrics.userFollowingCount = permission ? profileData?.userFollowingCount as number : null
+        viewProfile.metrics.nowPlayingPostsCount = permission ? profileData?.nowPlayingPostsCount as number : null
+        viewProfile.topAlbumsCollection = permission ? profileData?.topAlbumsCollection.slice(0, 8) as App.ProfileObject[] : []
+
+        collectionData.collectionItems = profileData?.topAlbumsCollection
+    })
+    
+
 </script>
 
-<SEO title="{displayName}'s Profile"></SEO>
+<SEO title="{viewProfile.display_name}'s Profile"></SEO>
 
 <div class="profile-info">
     <div class="profile-info-box-left">
@@ -79,7 +83,7 @@
                 <div class="avatar-image">
                     <CoverArt
                         item={avatarItem}
-                        altText={`${displayName}'s avatar: ${avatarReleaseGroupName} by ${avatarArtistName}`}
+                        altText={`${viewProfile.display_name}'s avatar: ${viewProfile.avatar_release_group_name} by ${viewProfile.avatar_artist_name}`}
                     ></CoverArt>
                 </div>
                 {#if isSessionUserProfile}
@@ -94,11 +98,11 @@
             <div class="profile-info-box-column">
                 <div class="profile-user-data-column">
                     <div class="profile-displayname-username-column">
-                        <h2>{profileUserData?.display_name}</h2>
-                        <p class="data-muted">{profileUserData?.username}</p>
+                        <h2>{viewProfile.display_name}</h2>
+                        <p class="data-muted">{viewProfile.username}</p>
                     </div>
-                    <p class="profile-about">{profileUserData?.about ?? ''}</p>
-                    <a class="profile-website" href={profileUserData?.website ?? ''}>{profileUserData?.website ?? ''}</a>
+                    <p class="profile-about">{viewProfile.about ?? ''}</p>
+                    <a class="profile-website" href={viewProfile.website ?? ''}>{viewProfile.website ?? ''}</a>
                 </div>
             </div>
         </div>
@@ -133,7 +137,7 @@
                         type="hidden"
                         name="profile-user-id" 
                         id="profile-user-id"
-                        value={profileUserId}
+                        value={viewProfile.user_id}
                     />
                     <button 
                         class="standard" 
@@ -152,7 +156,7 @@
                     mode='profileMenu'
                     blocked={profileUserBlocked}
                     flagged={profileUserFlagged}
-                    profileUserId={profileUserId}
+                    profileUserId={viewProfile.user_id}
                     success={form?.userActionSuccess}
                 ></UserActionsMenu>
             {/if}
@@ -161,10 +165,10 @@
     <div class="profile-info-box-right">
         <div class="profile-stats-box" aria-label="user metrics">
             <div class="metric" aria-label="metric">
-                <a class="metrics" href="/user/{profileUsername}/collections">
+                <a class="metrics" href="/user/{viewProfile.username}/collections">
                     <div class="numeral">
                         <p class="metric-numerals">
-                            {collectionCount}
+                            {viewProfile.metrics.collectionCount}
                         </p>
                     </div>
                     <p class="data-muted-uppercase">
@@ -173,10 +177,10 @@
                 </a>
             </div>
             <div class="metric" aria-label="metric">
-                <a class="metrics" href="/user/{profileUsername}/now-playing-posts">
+                <a class="metrics" href="/user/{viewProfile.username}/now-playing-posts">
                     <div class="numeral">
                         <p class="metric-numerals">
-                            {nowPlayingPostsCount}
+                            {viewProfile.metrics.nowPlayingPostsCount}
                         </p>
                     </div>
                     <p class="data-muted-uppercase">
@@ -185,10 +189,10 @@
                 </a>
             </div>
             <div class="metric" aria-label="metric">
-                <a class="metrics" href="/user/{profileUsername}/collections-following">
+                <a class="metrics" href="/user/{viewProfile.username}/collections-following">
                     <div class="numeral">
                         <p class="metric-numerals">
-                            {collectionFollowingCount}
+                            {viewProfile.metrics.collectionFollowingCount}
                         </p>
                     </div>
                     <p class="data-muted-uppercase">
@@ -197,10 +201,10 @@
                 </a>
             </div>
             <div class="metric" aria-label="metric">
-                <a class="metrics" href="/user/{profileUsername}/users-following">
+                <a class="metrics" href="/user/{viewProfile.username}/users-following">
                     <div class="numeral">
                         <p class="metric-numerals">
-                            {userFollowingCount}
+                            {viewProfile.metrics.userFollowingCount}
                         </p>
                     </div>
                     <p class="data-muted-uppercase">
@@ -215,7 +219,7 @@
 <div class="border-full-vw"></div>
 
 <div class="content">
-    {#if topAlbumsCollection && topAlbumsCollection.length > 0}
+    {#if viewProfile.topAlbumsCollection && viewProfile.topAlbumsCollection.length > 0}
     <div class="panel-medium">
         <PanelHeader>
             {#snippet headerText()}
@@ -223,7 +227,7 @@
             {/snippet}
             {#snippet button()}
                 <span >   
-                    {#if profileUserData?.id == sessionUserId}
+                    {#if viewProfile.user_id == sessionUserId}
                         <button class="standard" onclick={() => goto(`/user/top-albums`)}>
                             edit
                         </button>
@@ -232,7 +236,6 @@
             {/snippet}
         </PanelHeader>
         <GridList
-            collectionContents={topAlbumsCollection}
             collectionReturned={topAlbumsReturned}
             collectionType="release_groups"
             showTags={false}
@@ -241,7 +244,7 @@
         >
         </GridList>
     </div>
-    {:else if topAlbumsCollection?.length == 0 && profileUserData?.id == sessionUserId}
+    {:else if viewProfile.topAlbumsCollection?.length == 0 && viewProfile.user_id == sessionUserId}
     <div class="panel-medium">
         <PanelHeader>
             {#snippet headerText()}
@@ -256,7 +259,7 @@
        
     </div>
     {/if}
-    {#if profileUserData?.id == sessionUserId}
+    {#if viewProfile.user_id == sessionUserId}
         <InfoBox mode="compact">
             New <a href="/about/updates#updates">updates and bug fixes</a> as of {updatesPageUpdatedAt}
         </InfoBox>
@@ -276,8 +279,8 @@
         <NowPlayingPostsSample
             sessionUserId={sessionUserId}
             posts={feedItems}
-            displayName={displayName}
-            username={profileUsername}
+            displayName={viewProfile.display_name}
+            username={viewProfile.username}
             userActionSuccess={form?.userActionSuccess}
             remaining={remaining}
             collections={sessionUserCollections}
