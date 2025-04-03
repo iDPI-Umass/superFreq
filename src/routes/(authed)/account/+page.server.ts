@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
 import { selectSessionProfile, updateSessionProfile } from '$lib/resources/backend-calls/users'
-import { userProfile } from '$lib/resources/states.svelte'
+import { sessionUserProfile } from '$lib/resources/states.svelte'
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 
@@ -32,16 +32,16 @@ export const actions = {
     const avatar = newAvatarUrl ? newAvatarUrl : avatarUrl
     const mbid = newAvatarMbid ? newAvatarMbid : avatarMbid
 
-    userProfile.username = username
-    userProfile.display_name = displayName
-    userProfile.avatar_url = avatarUrl,
-    userProfile.website = website
+    sessionUserProfile.username = username
+    sessionUserProfile.display_name = displayName
+    sessionUserProfile.avatar_url = avatarUrl,
+    sessionUserProfile.website = website
 
     if ( avatarItem ) {
-      userProfile.avatar_url = avatarItem.img_url ?? null
-      userProfile.last_fm_avatar_url = avatarItem.last_fm_avatar_url ?? null
-      userProfile.avatar_artist_name = avatarItem.artist_name ?? null
-      userProfile.avatar_release_group_name = avatarItem.release_group_name ??  null
+      sessionUserProfile.avatar_url = avatarItem.img_url ?? null
+      sessionUserProfile.last_fm_avatar_url = avatarItem.last_fm_avatar_url ?? null
+      sessionUserProfile.avatar_artist_name = avatarItem.artist_name ?? null
+      sessionUserProfile.avatar_release_group_name = avatarItem.release_group_name ??  null
     }
 
     const profileData = {

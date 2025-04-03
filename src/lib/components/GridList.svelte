@@ -119,7 +119,6 @@
     }
 
     const gridSpacers = $derived(getGridSpacers(items, layout))
-
 </script>
 
 <!-- <svelte:options runes={true} /> -->

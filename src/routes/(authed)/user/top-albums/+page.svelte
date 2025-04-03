@@ -4,7 +4,7 @@
     import PanelHeader from '$lib/components/PanelHeader.svelte'
 	import CollectionEditor from '$lib/components/CollectionEditor.svelte'
 	import { enhance } from '$app/forms'
-	import { promiseStates } from '$lib/resources/states.svelte';
+	import { promiseStates, collectionData } from '$lib/resources/states.svelte'
 
 	interface Props {
 		data: any;
@@ -13,11 +13,10 @@
 	let { data }: Props = $props();
 	let { collectionContents, deletedCollectionContents } =  $state(data)
 
-	let collectionType = "release_groups"
-
-	let collectionItems = $state(collectionContents ? collectionContents : [] as App.RowData[])
-
-	let deletedItems = $state(deletedCollectionContents ? deletedCollectionContents : [] as App.RowData[])
+	collectionData.collectionItems = collectionContents ? collectionContents : [] as App.RowData[]
+	collectionData.deletedItems = deletedCollectionContents ? deletedCollectionContents : [] as App.RowData[]
+	collectionData.status = 'public'
+	collectionData.type = 'release_groups'
 
 	let loadingSubmission = $state(false)
 
@@ -46,19 +45,19 @@
 		}
 	}}>
 		<p>Pick your top 8 albums to display on your profile.</p>
-		{#key collectionItems?.length}
+		{#key collectionData.collectionItems.length}
 		<input 
 			type="hidden"
 			name="collection-items"
 			id="collection=items"
-			value={JSON.stringify(collectionItems)}
+			value={JSON.stringify(collectionData.collectionItems)}
 		/>
 		{/key}
-		{#key deletedItems?.length}
+		{#key collectionData.deletedItems.length}
 		<input 
 			type="hidden"
 			name="deleted-items"
-			value={JSON.stringify(deletedItems)}
+			value={JSON.stringify(collectionData.deletedItems)}
 		/>
 		{/key}
         <button 
@@ -72,10 +71,6 @@
         </button>
     </form>
 	<CollectionEditor
-		bind:collectionItems={collectionItems}
-		bind:deletedItems={deletedItems}
-		collectionStatus="public"
-		collectionType={collectionType}
 		limit="8"
 		mode="release_group"
 	></CollectionEditor>
