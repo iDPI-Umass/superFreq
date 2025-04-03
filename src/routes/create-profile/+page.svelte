@@ -10,7 +10,7 @@
     import RedirectModal from "$lib/components/modals/RedirectModal.svelte"
 	import AvatarSearch from "$lib/components/AvatarSearch.svelte"
 	import { validateUsernameCharacters } from "$lib/resources/parseData"
-	import { promiseStates } from "src/lib/resources/states.svelte"
+	import { promiseStates, collectionData } from "src/lib/resources/states.svelte"
 
 	import wave from "$lib/assets/images/logo/freq-wave.svg"
 
@@ -22,22 +22,21 @@
     let displayName = $state('')
     let about = ''
     let website = ''
-    let avatarItem = $state({} as App.RowData)
 	let delay = $state(5)
 	let countdown = $state(0)
 
 	let avatarPromise = $state(false)
 
-	let avatarUrl = $derived(avatarItem?.avatar_url ?? '') as string
+	let avatarUrl = $derived(collectionData.singleItem.avatar_url ?? '') as string
 
 	let avatarInfo = $derived({
 		'img_url': avatarUrl,
-		'last_fm_img_url': avatarItem?.last_fm_img_url,
-		'artist_name': avatarItem?.artist_name,
-		'artist_mbid': avatarItem?.artist_mbid,
-		'release_group_name': avatarItem?.release_group_name,
-		'release_group_mbid': avatarItem?.release_group_mbid,
-		'label': avatarItem?.label,
+		'last_fm_img_url': collectionData.singleItem.last_fm_img_url,
+		'artist_name': collectionData.singleItem.artist_name,
+		'artist_mbid': collectionData.singleItem.artist_mbid,
+		'release_group_name': collectionData.singleItem.release_group_name,
+		'release_group_mbid': collectionData.singleItem.release_group_mbid,
+		'label': collectionData.singleItem.label,
 	}) as App.RowData
 
 	let usernameTaken = $derived( form?.usernameTaken ?? false )
@@ -74,7 +73,7 @@
 	<div class="form-wrapper">
 		<form
 			class="form-column"
-			id="create"
+			id="account-data"
 			method="POST"
 			action="?/create"
 			use:enhance={() => {
@@ -188,19 +187,19 @@
 				type="hidden" 
 				name="avatarItem" 
 				id="avatarItem" 
-				value={JSON.stringify(avatarItem)} 
+				value={JSON.stringify(collectionData.singleItem)} 
 			/>
 			<input 
 				type="hidden" 
 				name="avatarUrl" 
 				id="avatarUrl" 
-				value={avatarItem?.img_url ?? null} 
+				value={collectionData.singleItem.img_url ?? null} 
 			/>
 			<input 
 				type="hidden" 
 				name="avatarMbid" 
 				id="avatarMbid" 
-				value={avatarItem.release_group_mbid ?? null} 
+				value={collectionData.singleItem.release_group_mbid ?? null} 
 			/>
 		</form>
 		<div class="form-column">
@@ -213,14 +212,14 @@
 			<AvatarSearch
 				displayName={displayName}
 				avatarUrl={avatarUrl}
-				bind:avatarItem={avatarItem}
+				avatarItem={collectionData.singleItem}
 				avatarInfo={avatarInfo}
 			></AvatarSearch>
 			<div class="actions">
 				<button
 					class="double-border-top"
 					type="submit"
-					form="create"
+					form="account-data"
 					disabled={( !( username && displayName ) || avatarPromise )}
 					>
 					<div class="inner-border">
