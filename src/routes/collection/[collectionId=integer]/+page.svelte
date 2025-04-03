@@ -31,8 +31,6 @@
         "recordings": "tracks"
     }
 
-    console.log(collectionInfo)
-
     collectionData.type = collectionInfo?.type as string
     collectionData.status = collectionInfo?.status as string    
     collectionData.updatedAt = collectionInfo?.updated_at as Date
@@ -90,8 +88,6 @@
     $effect(() => {
         sortedItems =  sort(sortOption)
     })
-
-    console.log(collectionData.collectionItems)
 
 </script>
 

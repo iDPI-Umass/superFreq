@@ -60,7 +60,6 @@
     let reactionCount = $derived(post?.reaction_count) as number
     let postId = $derived(post?.id ?? post?.post_id) as string
 
-
     let avatarItem = {
         'img_url': post.avatar_url,
         'last_fm_img_url': post.last_fm_avatar_url,
