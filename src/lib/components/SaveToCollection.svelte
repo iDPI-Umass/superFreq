@@ -21,8 +21,6 @@
 
     let addingItem = $state(false)
 
-    console.log(postId)
-
     let savedToCollectionId = $state() as string
     let savedToCollectionTitle = $state() as string
     let savedToCollectionRoute = $state() as string
