@@ -179,8 +179,6 @@ export const updatePost = async function ( sessionUserId: string, postData: App.
         .where('user_id', '=', sessionUserId)
         .executeTakeFirstOrThrow()
 
-        console.log(selectPostData)
-
         const changelog = selectPostData?.changelog as App.Changelog
         changelog[timestampISOString] = {
             text: editedText,

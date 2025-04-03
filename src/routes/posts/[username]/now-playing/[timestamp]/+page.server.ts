@@ -105,7 +105,6 @@ export const actions = {
         const editedText = data.get('edited-text') as string
         const postData = JSON.parse(data.get('post-data') as string) as App.RowData
 
-        console.log('edited text: ', editedText)
         const submitEdit = await updatePost( sessionUserId, postData, editedText )
 
         const success =  submitEdit ? true : false
@@ -161,6 +160,7 @@ export const actions = {
         const data = await request.formData()
         const postId = data.get('post-id') as string
         const collectionId = data.get('collection-id') as string
+        console.log(postId, collectionId)
 
         const update = await saveItemToCollection( sessionUserId, postId, collectionId )
 

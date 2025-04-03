@@ -31,10 +31,7 @@
         showTags = true,
         layout, // "grid" | "condensed-grid" | "list"
         mode, // "view" | "edit"
-    }: ComponentProps = $props()
-
-    console.log(collectionData.collectionItems)
-    
+    }: ComponentProps = $props()    
 
     const format: App.NestedObject = {
         "grid": ["media-grid", "media-grid-item"],
