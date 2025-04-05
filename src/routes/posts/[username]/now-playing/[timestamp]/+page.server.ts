@@ -73,7 +73,7 @@ export const actions = {
 
         const commentTimestampSlug = createdAt.toString()
         const commentTimestamp = Date.parse(commentTimestampSlug).toString()
-        const permalink = `/posts/${postUsername}/now-playing/${postTimestamp}#${username.concat(commentTimestamp)}`
+        const permalink = `/posts/${username}/now-playing/${postTimestamp}#${username.concat(commentTimestamp)}`
 
         if (createdAt) {
             throw redirect(303, permalink)
@@ -118,6 +118,7 @@ export const actions = {
 
         const data = await request.formData()
         const postId = data.get('post-reply-id') as string ?? data.get('post-id') as string
+        const postUsername = data.get('post-username') as string
 
         const submitDelete = await deletePost( sessionUserId, postId )
 
