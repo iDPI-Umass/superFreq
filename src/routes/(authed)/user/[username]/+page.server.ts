@@ -39,7 +39,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
         loadData = true
     }
 
-    const profileData = await selectProfilePageData( sessionUserId, urlUsername )
+    let profileData = await selectProfilePageData( sessionUserId, urlUsername )
 
     if (!profileData.profileUserData) {
         throw redirect(303, '/')
