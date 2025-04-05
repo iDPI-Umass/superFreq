@@ -45,6 +45,13 @@
         form="submitReaction"
         value="like"
     />
+    <input 
+        type="hidden"
+        name="post-username"
+        id="post-username"
+        form={formName}
+        value={post?.username}
+    />
 {/snippet}
 
 <div class="post-panel">
