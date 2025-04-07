@@ -8,6 +8,7 @@
     import NowPlayingTag from './Posts/NowPlayingTag.svelte'
     import CoverArt from 'src/lib/components/CoverArt.svelte'
     import wave from "$lib/assets/images/logo/freq-wave.svg"
+    import { feedData } from '$lib/resources/states.svelte'
 
     interface ComponentProps {
         sessionUserId: string
@@ -45,7 +46,6 @@
 
 
     let loadingMore = $state(false)
-
 </script>
 
 {#snippet feedItemTag( feedItem: App.RowData )} 
@@ -84,145 +84,148 @@
             </span>
         {/snippet}
     </PanelHeader>
-    {#if feedItems.length == 0}
-    <div class="feed-item-one-liner">
-        <p>Nothing in your feed? Try following some more <a href="/users">users</a> and <a href="/collections" >collections</a>.</p>
-    </div>
-    {/if}
-    {#each feedItems as item}
-    <div class="feed-item">
-        <!-- Now Playing post -->
-        {#if item.item_type == 'now_playing_post'}      
-            <a href={`/posts/${item.username}/now-playing/${parseTimestamp(item.timestamp)}`}>
-                <div class="feed-item-user-data">
-                        <CoverArt
-                            item={avatarItem(item)}
-                            altText={`${item.display_name}'s avatar`}
-                            imgClass='feed-avatar'
-                        ></CoverArt>
-                    {item.user_id == sessionUserId ? 'You' : item.display_name}
-                    posted: 
-                </div>
-            </a>
-            <div class="feed-post-spacer">
-                <!-- <img class="feed-item-ornament" src={decoration} alt="decoration" /> -->
-                <div class="feed-item-now-playing">
-                    <NowPlayingPost
-                        sessionUserId={sessionUserId}
-                        post={item}
-                        mode="feed"
-                        editState={postEditState}
-                        userActionSuccess={userActionSuccess}
-                        collections={collections}
-                        bind:showCollectionsModal={showCollectionsListModal}
-                        bind:showSaveSucessModal={showSaveSucessModal}
-                    ></NowPlayingPost>
-                </div>
-            </div>
-        <!-- Some user followed user -->
-        {:else if item.item_type == 'social_follow' && item.target_user_id == sessionUserId}
-            <a href={`/user/${item.username}`}>
-                <div class="feed-item-one-liner">
-                        <CoverArt
-                            item={avatarItem(item)}
-                            altText={`${item.display_name}'s avatar`}
-                            imgClass='feed-avatar'
-                        ></CoverArt>
-                    {item.display_name} followed you
-                </div>
-                {@render feedItemTag(item)}
-            </a>
-        <!-- Comment -->
-        {:else if item.item_type == 'comment'}
-            <a href={`/posts/${item.parent_post_username}/now-playing/${parseTimestamp(item.parent_post_created_at)}#${item.username?.concat(parseTimestamp(item.timestamp))}`}>
-                <div class="feed-item">
-                    <div class="feed-item-two-liner-user-row">
+        {#if feedItems.length == 0}
+        <div class="feed-item-one-liner">
+            <p>Nothing in your feed? Try following some more <a href="/users">users</a> and <a href="/collections" >collections</a>.</p>
+        </div>
+        {:else}
+        {#each feedItems as item}
+            <div class="feed-item">
+                <!-- Now Playing post -->
+                {#if item?.item_type == 'now_playing_post'}      
+                    <a href={`/posts/${item.username}/now-playing/${parseTimestamp(item.timestamp)}`}>
+                        <div class="feed-item-user-data">
+                                <CoverArt
+                                    item={avatarItem(item)}
+                                    altText={`${item.display_name}'s avatar`}
+                                    imgClass='feed-avatar'
+                                ></CoverArt>
+                            {item.user_id == sessionUserId ? 'You' : item.display_name}
+                            posted: 
+                        </div>
+                    </a>
+                    <div class="feed-post-spacer">
+                        <!-- <img class="feed-item-ornament" src={decoration} alt="decoration" /> -->
+                        <div class="feed-item-now-playing">
+                            <NowPlayingPost
+                                sessionUserId={sessionUserId}
+                                post={item}
+                                mode="feed"
+                                editState={postEditState}
+                                userActionSuccess={userActionSuccess}
+                                collections={collections}
+                                bind:showCollectionsModal={showCollectionsListModal}
+                                bind:showSaveSucessModal={showSaveSucessModal}
+                            ></NowPlayingPost>
+                        </div>
+                    </div>
+                <!-- Some user followed user -->
+                {:else if item?.item_type == 'social_follow' && item?.target_user_id == sessionUserId}
+                    <a href={`/user/${item.username}`}>
+                        <div class="feed-item-one-liner">
+                                <CoverArt
+                                    item={avatarItem(item)}
+                                    altText={`${item.display_name}'s avatar`}
+                                    imgClass='feed-avatar'
+                                ></CoverArt>
+                            {item.display_name} followed you
+                        </div>
+                        {@render feedItemTag(item)}
+                    </a>
+                <!-- Comment -->
+                {:else if item?.item_type == 'comment'}
+                    <a href={`/posts/${item.parent_post_username}/now-playing/${parseTimestamp(item.parent_post_created_at)}#${item.username?.concat(parseTimestamp(item.timestamp))}`}>
+                        <div class="feed-item">
+                            <div class="feed-item-two-liner-user-row">
+                                    <CoverArt
+                                        item={avatarItem(item)}
+                                        altText={`${item.display_name}'s avatar`}
+                                        imgClass='feed-avatar'
+                                    ></CoverArt>
+                                {item.user_id == sessionUserId ? 'You' : item.display_name} commented on {item.parent_post_user_id == sessionUserId ? 'your' : item.parent_post_display_name.concat(`'s`)} post { (item.artist_name || item.user_added_artist_name) ? 'about' : ''}
+                            </div>
+                            {@render feedItemTag(item)}
+                        </div>
+                    </a>
+                <!-- Reaction -->
+                {:else if item?.item_type == 'reaction'}
+                    <a href={ item.reaction_post_type == 'now_playing' ? `/posts/${item.reaction_post_username}/now-playing/${parseTimestamp(item.reaction_post_created_at)}` : `/posts/${item.parent_post_username}/now-playing/${parseTimestamp(item.parent_post_created_at)}#${item.reaction_post_username?.concat(parseTimestamp(item.reaction_post_created_at))}`}>
+                        <div class="feed-item">
+                            <div class="feed-item-two-liner-user-row">
+                                <CoverArt
+                                    item={avatarItem(item)}
+                                    altText={`${item.display_name}'s avatar`}
+                                    imgClass='feed-avatar'
+                                ></CoverArt>
+
+                                {item.user_id == sessionUserId ? 'You' : item.display_name} liked {item.reaction_post_user_id == sessionUserId ? 'your' : item.reaction_post_display_name.concat(`'s`)} { item.reaction_post_type == 'now_playing' ? 'post' : 'reply' } { (item.artist_name || item.user_added_artist_name) ? 'about' : ''}
+                            </div>
+                            {@render feedItemTag(item)}
+
+                        </div>
+
+                    </a>
+                <!-- Collection follow -->
+                {:else if item?.item_type == 'collection_follow' && ( item?.user_id != item?.collection_owner_id )}
+                    <a href={`/collection/${item.collection_id}`}>
+                        <div class="feed-item-one-liner">
                             <CoverArt
                                 item={avatarItem(item)}
                                 altText={`${item.display_name}'s avatar`}
                                 imgClass='feed-avatar'
                             ></CoverArt>
-                        {item.user_id == sessionUserId ? 'You' : item.display_name} commented on {item.parent_post_user_id == sessionUserId ? 'your' : item.parent_post_display_name.concat(`'s`)} post { (item.artist_name || item.user_added_artist_name) ? 'about' : ''}
-                    </div>
-                    {@render feedItemTag(item)}
-                </div>
-            </a>
-        <!-- Reaction -->
-        {:else if item.item_type == 'reaction'}
-            <a href={ item.reaction_post_type == 'now_playing' ? `/posts/${item.reaction_post_username}/now-playing/${parseTimestamp(item.reaction_post_created_at)}` : `/posts/${item.parent_post_username}/now-playing/${parseTimestamp(item.parent_post_created_at)}#${item.reaction_post_username?.concat(parseTimestamp(item.reaction_post_created_at))}`}>
-                <div class="feed-item">
-                    <div class="feed-item-two-liner-user-row">
+                            <span class="blurb">
+                            {item.user_id == sessionUserId ? 'You' : item.display_name}
+                            followed {item.collection_owner_id == sessionUserId ? 'your' : 'a'} collection: 
+                            <span class="feed-item-subject">
+                                {item.collection_title}
+                            </span>
+                            </span>
+                        </div>
+                    </a>
+                <!-- Collection edit -->
+                {:else if item?.item_type == 'collection_edit' && !item?.item_type.is_top_albums}
+                    <a href={`/collection/${item.collection_id}`}>
+                        <div class="feed-item-one-liner">
+                            <CoverArt
+                                item={avatarItem(item)}
+                                altText={`${item.display_name}'s avatar`}
+                                imgClass='feed-avatar'
+                            ></CoverArt>
+                            <span class="blurb">
+                            {item.user_id == sessionUserId ? 'You' : item.display_name}
+                            edited the collection: 
+                            <span class="feed-item-subject">
+                                {item.collection_title}
+                            </span>
+                            </span>
+                        </div>
+                    </a>
+                <!-- Top albums collection edit -->
+                {:else if item?.item_type == 'collection_edit' && item?.item_type.is_top_albums}
+                <a href={`/user/${item.username}`}>
+                    <div class="feed-item-one-liner">
                         <CoverArt
                             item={avatarItem(item)}
                             altText={`${item.display_name}'s avatar`}
                             imgClass='feed-avatar'
                         ></CoverArt>
-
-                        {item.user_id == sessionUserId ? 'You' : item.display_name} liked {item.reaction_post_user_id == sessionUserId ? 'your' : item.reaction_post_display_name.concat(`'s`)} { item.reaction_post_type == 'now_playing' ? 'post' : 'reply' } { (item.artist_name || item.user_added_artist_name) ? 'about' : ''}
+                        <span class="blurb">
+                            {item.user_id == sessionUserId ? 'You' : item.display_name}
+                            edited their 
+                            <span class="feed-item-subject">
+                                Top Albums
+                            </span>     
+                            collection
+                        </span>
                     </div>
-                    {@render feedItemTag(item)}
-
+                </a>
+                {:else if !item?.item_type}
+                <span class="blank"></span>
+                {/if}
                 </div>
-
-            </a>
-        <!-- Collection follow -->
-            {:else if item.item_type == 'collection_follow' && ( item.user_id != item.collection_owner_id )}
-            <a href={`/collection/${item.collection_id}`}>
-                <div class="feed-item-one-liner">
-                    <CoverArt
-                        item={avatarItem(item)}
-                        altText={`${item.display_name}'s avatar`}
-                        imgClass='feed-avatar'
-                    ></CoverArt>
-                    <span class="blurb">
-                      {item.user_id == sessionUserId ? 'You' : item.display_name}
-                      followed {item.collection_owner_id == sessionUserId ? 'your' : 'a'} collection: 
-                      <span class="feed-item-subject">
-                          {item.collection_title}
-                      </span>
-                    </span>
-                </div>
-            </a>
-        <!-- Collection edit -->
-        {:else if item.item_type == 'collection_edit' && !item.item_type.is_top_albums}
-            <a href={`/collection/${item.collection_id}`}>
-                <div class="feed-item-one-liner">
-                    <CoverArt
-                        item={avatarItem(item)}
-                        altText={`${item.display_name}'s avatar`}
-                        imgClass='feed-avatar'
-                    ></CoverArt>
-                    <span class="blurb">
-                      {item.user_id == sessionUserId ? 'You' : item.display_name}
-                      edited the collection: 
-                      <span class="feed-item-subject">
-                          {item.collection_title}
-                      </span>
-                    </span>
-                </div>
-            </a>
-        <!-- Top albums collection edit -->
-        {:else if item.item_type == 'collection_edit' && item.item_type.is_top_albums}
-        <a href={`/user/${item.username}`}>
-            <div class="feed-item-one-liner">
-                <CoverArt
-                    item={avatarItem(item)}
-                    altText={`${item.display_name}'s avatar`}
-                    imgClass='feed-avatar'
-                ></CoverArt>
-                <span class="blurb">
-                    {item.user_id == sessionUserId ? 'You' : item.display_name}
-                    edited their 
-                    <span class="feed-item-subject">
-                        Top Albums
-                    </span>     
-                    collection
-                </span>
-            </div>
-        </a>
+        {/each}
         {/if}
-        </div>
-    {/each}
     <form method="POST" action="?/loadMore" use:enhance={(form) => {
         loadingMore = true
         return async ({ update }) => {
@@ -270,5 +273,8 @@
     }
     .standard {
         margin: 0;
+    }
+    span.blank {
+        display: none;
     }
 </style>

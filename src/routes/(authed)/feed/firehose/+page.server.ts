@@ -24,7 +24,7 @@ let updatedReactionCount: number
 let saveItemPostId: string
 let sessionUserCollections = [] as App.RowData[]
 
-export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
+export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) => {
     const {session} = await safeGetSession()
     const sessionUserId = session?.user.id as string
 
@@ -32,7 +32,14 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
     const timestampEnd = new Date()
     const timestampStart = add(timestampEnd, {days: -300})
 
-    if ( loadData && ( batchSize * ( batchIterator + 1 ) != feedItems.length )) {
+    if ( url.pathname != feedData.feedSlug ) {
+        loadData = true
+        feedData.feedItems = []
+        batchIterator = 0
+        feedData.feedSlug = url.pathname
+    }
+
+    if ( loadData ) {
 
         feedData.feedItems.length = batchIterator * batchSize
 
@@ -49,21 +56,6 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 
         loadData = !loadData
     }
-
-    // if ( updateReaction ) {
-    //     updateReaction = false
-
-    //     const postIndex = feedItems.findIndex((element) => element.post_id == postId)
-    //     feedItems[postIndex]['reaction_count'] = updatedReactionCount
-
-    //     if ( updatedReactionActive ) {
-    //         feedItems[postIndex]['reaction_user_ids'].push(sessionUserId)
-    //     }
-    //     else if ( !updatedReactionActive ) {
-    //         const reactionIndex = feedItems[postIndex]['reaction_user_ids'].findIndex((element) => {element == sessionUserId})
-    //         feedItems[postIndex]['reaction_user_ids'].splice(reactionIndex, 1)
-    //     }
-    // }
 
     return { sessionUserId, feedItems: feedData.feedItems, totalAvailableItems, remaining, sessionUserCollections } 
 }

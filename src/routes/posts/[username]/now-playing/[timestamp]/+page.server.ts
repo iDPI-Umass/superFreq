@@ -40,10 +40,10 @@ export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSe
     permission = select.permission as boolean
 
     if ( !permission ) {
-        return { sessionUserId: null, post: {}, replies: [], collections }
+        return { sessionUserId: null, post: {}, replies: [], collections, postTimestamp: null }
     }
 
-    return { sessionUserId, post, replies, collections }
+    return { sessionUserId, post, replies, collections, postTimestamp: timestamp }
 }
 
 export const actions = {
@@ -57,6 +57,7 @@ export const actions = {
         const data = await request.formData()
         const replyText = data.get('reply-text') as string
         const postId = data.get('post-id') as string
+        const postTimestamp = data.get('post-timestamp')
 
         const postData = {
             user_id: sessionUserId,

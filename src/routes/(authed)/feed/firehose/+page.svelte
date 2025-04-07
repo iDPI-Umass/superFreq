@@ -1,6 +1,8 @@
 <script lang="ts">
     import SEO from '$lib/components/layout/SEO.svelte'
     import Feed from '$lib/components/Feed.svelte'
+    import { feedData } from '$lib/resources/states.svelte';
+	import { onMount } from 'svelte';
 
     let { data, form } = $props()
     let { sessionUserId, feedItems, remaining, sessionUserCollections } = $derived(data)
@@ -15,8 +17,8 @@
 
 <Feed
     sessionUserId={sessionUserId}
-    feedItems={feedItems}
     mode="feed"
+    feedItems={feedItems}
     remaining={remaining}
     collections={sessionUserCollections}
     showCollectionsListModal={showCollectionsListModal}

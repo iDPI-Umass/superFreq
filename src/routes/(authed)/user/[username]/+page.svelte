@@ -14,7 +14,7 @@
     import CoverArt from '$lib/components/CoverArt.svelte'
     import InfoBox from '$lib/components/InfoBox.svelte'
 
-    import { collectionData, viewProfile } from '$lib/resources/states.svelte.js'
+    import { collectionData, viewProfile, feedData } from '$lib/resources/states.svelte.js'
 
 
     let { data, form } = $props();
@@ -25,7 +25,7 @@
         feedItems: any
         totalAvailableItems: number
         remaining: number
-        profileUsername: string
+        profileUsername: string | null
         sessionUserCollections: App.RowData[]
         updatesPageUpdatedAt: string
     } = $derived(data)
@@ -266,8 +266,8 @@
         <NewNowPlayingPost></NewNowPlayingPost>
         <Feed
             sessionUserId={sessionUserId}
-            feedItems={feedItems}
             mode="feed"
+            feedItems = {feedItems}
             postEditState={form?.editState}
             userActionSuccess={form?.userActionSuccess}
             remaining={remaining}

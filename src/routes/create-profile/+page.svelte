@@ -78,16 +78,13 @@
 			action="?/create"
 			use:enhance={() => {
 				// avatarPromise = true
-				console.log('running')
 				const validUsername = validateUsernameCharacters(username)
 				if ( !validUsername ) {
 					invalidUsername = true
 					return
 				}
-				console.log('checked')
 				return async ({ update }) => {
 					// avatarPromise = false
-					console.log('update')
 					await update()
 				}}
 			}

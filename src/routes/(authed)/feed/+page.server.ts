@@ -22,13 +22,20 @@ let updatedReactionCount: number
 let saveItemPostId: string
 let sessionUserCollections = [] as App.RowData[]
 
-export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
+export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) => {
     const { session } = await safeGetSession()
     const sessionUserId = session?.user.id as string
     const batchSize = 20
     const timestampEnd = new Date()
     const timestampStart = add(timestampEnd, {days: -300})
     const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
+
+    if ( url.pathname != feedData.feedSlug ) {
+        loadData = true
+        feedData.feedItems = []
+        batchIterator = 0
+        feedData.feedSlug = url.pathname
+    }
 
     if ( loadData ) {
         feedData.feedItems.length = batchIterator * batchSize
@@ -37,12 +44,14 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 
         const totalRowCount = select.totalRowCount
         const selectedFeedData = select.feedData
+
         feedData.feedItems.push(...selectedFeedData)
         feedItemCount = feedData.feedItems.length
 
         totalAvailableItems = totalRowCount as number
         remaining = totalRowCount - feedItemCount
         loadData = !loadData
+
     }
 
     // if ( updateReaction ) {

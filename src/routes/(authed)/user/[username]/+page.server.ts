@@ -9,9 +9,6 @@ import { add, parseISO } from 'date-fns'
 import { metadata } from '$lib/assets/text/updates.md'
 import { feedData } from 'src/lib/resources/states.svelte'
 
-let profileUsername = null as string | null
-let profileUserId = null as string | null
-
 let loadData = true
 let userAction = false
 
@@ -22,7 +19,7 @@ let remaining = 0
 
 let sessionUserCollections = [] as App.RowData[]
 
-export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}) => {
+export const load: PageServerLoad = async ({ params, url, locals: { safeGetSession }}) => {
 
     const { session } = await safeGetSession()
     const sessionUserId = session?.user.id as string
@@ -35,29 +32,25 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
     const updatesPageUpdatedAt = metadata.updated as string
 
-    if ( urlUsername != profileUsername ) {
-        loadData = true
-    }
-
-    let profileData = await selectProfilePageData( sessionUserId, urlUsername )
+    const profileData = await selectProfilePageData( sessionUserId, urlUsername )
 
     if (!profileData.profileUserData) {
         throw redirect(303, '/')
     }
 
-    profileUsername = profileData.profileUserData.username as string
+    const profileUserId = profileData.profileUserData.id
+    const profileUsername = profileData.profileUserData.username
 
-    if ( profileUserId != profileData.profileUserData.id ) {
+    if ( url.pathname != feedData.feedSlug ) {
+        loadData = true
         feedData.feedItems = []
+        batchIterator = 0
+        feedData.feedSlug = url.pathname
     }
 
-    feedData.profileUsername =  profileUsername
-
-    profileUserId = profileData.profileUserData.id as string
-    feedData.profileUserId = profileUserId
 
     // if profile is session user's, load feed data
-    if ( sessionUserId == profileUserId ) {
+    if ( loadData && sessionUserId == profileUserId ) {
         feedData.feedItems.length = batchIterator * batchSize
 
         const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
@@ -69,9 +62,11 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
 
         totalAvailableItems = totalRowCount as number
         remaining = totalRowCount - feedItemCount
+
+        loadData = !loadData
     }
     // if profile is another user's, load their posts
-    else if ( sessionUserId != profileUserId ) {
+    else if ( loadData && sessionUserId != profileUserId ) {
         feedData.feedItems.length = batchIterator * batchSize
 
         const select = await selectUserPostsSample( sessionUserId, profileUsername, batchSize, batchIterator)
@@ -83,6 +78,8 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
 
         totalAvailableItems = totalRowCount as number
         remaining = totalRowCount - feedItemCount
+
+        loadData = !loadData
     }
     
     if ( userAction ) {
