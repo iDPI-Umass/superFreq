@@ -7,10 +7,11 @@
 
     let { data, form } = $props();
 
-    let { post, replies, collections }: {
+    let { post, replies, collections, postTimestamp }: {
         post: App.RowData
         replies?: App.RowData[]
         collections?: App.RowData[]
+        postTimestamp: string
     } = $derived(data)
 
     let sessionUserId = data?.sessionUserId as string
@@ -51,6 +52,13 @@
         id="post-username"
         form={formName}
         value={post?.username}
+    />
+    <input 
+        type="hidden"
+        name="post-timestamp"
+        id="post-timestamp"
+        form={formName}
+        value={postTimestamp}
     />
 {/snippet}
 

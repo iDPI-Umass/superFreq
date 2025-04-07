@@ -797,7 +797,7 @@ export const selectFirehoseFeed = async function ( sessionUserId: string, batchS
         }
 
         following.push(sessionUserId)
-
+        
         const feedData = await trx
         .selectFrom('feed_items')
         .selectAll()

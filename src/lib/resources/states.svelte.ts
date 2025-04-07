@@ -1,7 +1,8 @@
 export const feedData = $state({
     'profileUsername': '',
     'profileUserId': '',
-    'feedItems': []
+    'feedItems': [],
+    'feedSlug': ''
 }) as any
 
 export const sessionUserProfile = $state({

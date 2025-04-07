@@ -1,8 +1,12 @@
 ---
 title: Updates
 layout: about
-updated: 04/03/2025
+updated: 04/07/2025
 ---
+### April 7, 2025
+#### Bug Fixes
+- Fixed a smattering of issues with feeds
+
 ### April 3, 2025
 #### Bug Fixes
 - Editing posts works again
