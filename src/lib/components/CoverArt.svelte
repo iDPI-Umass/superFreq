@@ -40,6 +40,7 @@ Currently configured to server Last.fm images on the client side by default on a
         'release_group_mbid': item?.release_group_mbid ?? null
     })
 
+    console.log(coverArtItem)
     const coverArtSearchTerms = $derived({
         'artist_name': artistName ?? item?.artist_name ?? item?.avatar_artist_name ?? null,
         'release_group_name': releaseGroupName ?? item?.release_group_name?? item?.avatar_release_group_name ?? null,
@@ -53,9 +54,9 @@ Currently configured to server Last.fm images on the client side by default on a
 
 </script>
 
-{#if item && (coverArtItem['last_fm_img_url'] || coverArtItem['img_url']) } 
+{#if coverArtItem['last_fm_img_url'] || coverArtItem['img_url'] } 
     <img src={coverArtItem['last_fm_img_url'] ?? coverArtItem['img_url']} alt={altText} class={imgClass}  /> 
-{:else if !item || (item && (!coverArtItem['last_fm_img_url'] && !coverArtItem['img_url'])) }
+{:else if !(coverArtItem['last_fm_img_url'] || coverArtItem['img_url']) }
     {#await getCoverArtClientSide(coverArtSearchTerms, continuePromise)}
         <img src={wave} alt="loading" class={imgClass} />
     {:then result}
