@@ -6,6 +6,8 @@ updated: 04/07/2025
 ### April 7, 2025
 #### Bug Fixes
 - Fixed a smattering of issues with feeds
+- Fixed avatar search widget in /create-profile and /account pages
+- Continuing to tweak image loading for improve performance
 
 ### April 3, 2025
 #### Bug Fixes
