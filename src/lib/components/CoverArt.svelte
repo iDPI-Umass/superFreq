@@ -32,19 +32,19 @@ Currently configured to server Last.fm images on the client side by default on a
     }: ComponentProps = $props()
 
     const coverArtItem = $derived({
-        'img_url': imgUrl ?? item.img_url ?? item.avatar_url ?? null,
-        'last_fm_img_url': lastFmImgUrl ?? item.last_fm_img_url ?? item.last_fm_avatar_url ?? null,
-        'artist_name': artistName ?? item.artist_name ?? item.avatar_artist_name ?? null,
+        'img_url': imgUrl ?? item?.img_url ?? item?.avatar_url ?? null,
+        'last_fm_img_url': lastFmImgUrl ?? item?.last_fm_img_url ?? item?.last_fm_avatar_url ?? null,
+        'artist_name': artistName ?? item?.artist_name ?? item?.avatar_artist_name ?? null,
         'artist_mbid': item?.artist_mbid ?? null,
-        'release_group_name': releaseGroupName ?? item.release_group_name ?? item.avatar_release_group_name ?? null,
-        'release_group_mbid': item.release_group_mbid ?? null
+        'release_group_name': releaseGroupName ?? item?.release_group_name ?? item?.avatar_release_group_name ?? null,
+        'release_group_mbid': item?.release_group_mbid ?? null
     })
 
     const coverArtSearchTerms = $derived({
-        'artist_name': artistName ?? item.artist_name ?? item.avatar_artist_name ?? null,
-        'release_group_name': releaseGroupName ?? item.release_group_name?? item.avatar_release_group_name ?? null,
+        'artist_name': artistName ?? item?.artist_name ?? item?.avatar_artist_name ?? null,
+        'release_group_name': releaseGroupName ?? item?.release_group_name?? item?.avatar_release_group_name ?? null,
         'artist_mbid': item?.artist_mbid ?? null,
-        'release_group_mbid': item.release_group_mbid ?? null
+        'release_group_mbid': item?.release_group_mbid ?? null
     })
 
     const coverArtArchiveImgUrl = $derived(item ? coverArtItem['img_url'] : null)
