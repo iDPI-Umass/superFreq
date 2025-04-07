@@ -57,6 +57,7 @@
 	onMount(() => {
 		promiseStates.newItemAdded = false
 		promiseStates.imgPromise =  null
+		collectionData.singleItem = {}
 	})
 </script>
 
@@ -209,7 +210,6 @@
 			<AvatarSearch
 				displayName={displayName}
 				avatarUrl={avatarUrl}
-				avatarItem={collectionData.singleItem}
 				avatarInfo={avatarInfo}
 			></AvatarSearch>
 			<div class="actions">
