@@ -9,14 +9,12 @@
     interface ComponentProps {
         displayName: string,
         avatarUrl: string,
-        avatarItem: App.RowData,
         avatarInfo: App.RowData,
     }
 
     let {
         displayName,
         avatarUrl,
-        avatarItem = $bindable({}),
         avatarInfo,
     }: ComponentProps = $props()
 
@@ -44,7 +42,6 @@
         searchCategory="release_groups"
         searchButtonText="search"
         searchPlaceholder="Search for an album"
-        bind:addedItems={avatarItem}
         mode="single"
         limit="10"
     >
@@ -58,8 +55,8 @@
         item={avatarInfo}
         altText="{displayName}'s avatar: {avatarReleaseGroupName} by {avatarArtistName}"
     ></CoverArt>
-{:else if avatarItem && promiseStates.newItemAdded}
-    {@render editorItemImage(avatarItem, avatarReleaseGroupName)}
+{:else if collectionData.singleItem && promiseStates.newItemAdded}
+    {@render editorItemImage(collectionData.singleItem, avatarReleaseGroupName)}
 {/if}
 
 <style>

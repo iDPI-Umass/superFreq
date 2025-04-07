@@ -12,7 +12,7 @@
 
 	import wave from "$lib/assets/images/logo/freq-wave.svg"
 	import { tick } from 'svelte';
-	import { promiseStates } from '$lib/resources/states.svelte.js'
+	import { collectionData, promiseStates } from '$lib/resources/states.svelte.js'
 
 	let { data, form } = $props();
 
@@ -53,6 +53,7 @@
 	onMount(() => {
 		promiseStates.newItemAdded = false
 		promiseStates.imgPromise = null
+		collectionData.singleItem = {}
 	})
 </script>
 
@@ -213,7 +214,6 @@
 			<AvatarSearch
 				displayName={displayName}
 				avatarUrl={avatarUrl}
-				bind:avatarItem={avatarItem}
 				avatarInfo={avatarInfo}
 			></AvatarSearch>
 			<div class="actions">
