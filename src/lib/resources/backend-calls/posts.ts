@@ -485,7 +485,7 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
             const postId = post?.id as string
             const postReplies = post?.replies as string[]
             
-            if ( postReplies.length > 0  && blockingUsers.length > 0 ) {
+            if ( postReplies?.length > 0  && blockingUsers.length > 0 ) {
                 const selectReplies = await trx
                 .selectFrom('posts_and_engagement as reply')
                 .select([
@@ -515,7 +515,7 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
 
                 return { permission: true, post, replies}
             }
-            else if ( postReplies.length > 0 && blockingUsers.length == 0 ) {
+            else if ( postReplies?.length > 0 && blockingUsers.length == 0 ) {
                 const selectReplies = await trx
                 .selectFrom('posts_and_engagement as reply')
                 .select([
