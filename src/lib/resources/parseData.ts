@@ -62,6 +62,42 @@ export const validateUsernameCharacters = function ( username: string) {
     return valid
 }
 
+/* Convert object in 'options' column from 'profiles' table to format that OptionsMenu component can use. 
+
+'options' object used for selectedOptions has format:
+[
+    { 
+        'category': string,
+        'items': string[]
+    }
+]
+
+array for optionsGroups must contain objects with keys 'category', 'legend', and 'items', such as:
+    [
+        {
+            'category': 'feed_item_types',
+            'legend': 'Feed Item Types',
+            'items': ['now_playing_post', 'comment', reaction]
+        },
+        {
+            'category: 'item_owners',
+            'legend': 'Whose items?',
+            'items': ['user', 'followers', 'strangers']
+        }
+    ]
+
+*/
+
+export const consolidatedOptions = ( optionsGroups: any[], selectedOptions: any[] ) => {
+    for ( const group of optionsGroups ) {
+        const category = group.category
+        const options = selectedOptions.find((element) => element.category == category)
+        group.selectedOptions = options.items
+    }
+
+    return optionsGroups
+}
+
 /*
 //
 ** Markdown parsing
