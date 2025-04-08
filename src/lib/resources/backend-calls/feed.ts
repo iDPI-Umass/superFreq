@@ -7,11 +7,11 @@ Selects batches of data to populate session user's feed in batches within a part
 'options' specifices what type of data shows up in feed, expects an object formatted as {'options': [values]} containing any of the following values: ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits'] 
 */
 
-export const selectFeedData = async function ( sessionUserId: string, batchSize: number, batchIterator: number, timestampStart: Date, timestampEnd: Date, options: App.Lookup ) {
+export const selectFeedData = async function ( sessionUserId: string, batchSize: number, batchIterator: number, timestampStart: Date, timestampEnd: Date, options: App.Lookup = {'itemTypes': ['now_playing_post', 'social_follow', 'comment', 'reaction', 'collection_follow', 'collection_edit']} ) {
 
     const offset = batchSize * batchIterator
 
-    const feedOptions = options.options as string[]
+    const itemTypes = options.itemTypes as string[]
 
     const select = await db.transaction().execute(async (trx) => {
         const selectFollowingList = await trx
@@ -32,6 +32,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             eb('reaction_post_user_id', '=', sessionUserId),
         ]))
         .where((eb) => eb.between('timestamp', timestampStart, timestampEnd))
+        .where('item_type', 'in', itemTypes)
         .limit(batchSize)
         .orderBy('timestamp', 'desc')
         .offset(offset)

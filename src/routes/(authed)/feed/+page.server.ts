@@ -28,7 +28,6 @@ export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) 
     const batchSize = 20
     const timestampEnd = new Date()
     const timestampStart = add(timestampEnd, {days: -300})
-    const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
 
     if ( url.pathname != feedData.feedSlug ) {
         loadData = true
@@ -40,7 +39,7 @@ export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) 
     if ( loadData ) {
         feedData.feedItems.length = batchIterator * batchSize
 
-        const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
+        const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd )
 
         const totalRowCount = select.totalRowCount
         const selectedFeedData = select.feedData
