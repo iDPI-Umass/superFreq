@@ -16,15 +16,17 @@ checkedValues should be an array of values that are checked by default
 -->
 
 <script lang="ts">
+    import { enhance } from '$app/forms'
 	import { DropdownMenu, type WithoutChild } from 'bits-ui'
     import ChevronDown from '@lucide/svelte/icons/chevron-down'
-    import { consolidatedOptions } from '$lib/resources/parseData';
+    import { consolidatedOptions } from '$lib/resources/parseData'
+    import { feedData } from '$lib/resources/states.svelte'
  
 	type Props = DropdownMenu.Props & {
 		triggerText: string;
 		optionsGroups: any[];
         inputGroup: string;
-        selectedOptions: any[];
+        selectedOptions?: any[];
 		contentProps?: WithoutChild<DropdownMenu.Content.Props>;
 	};
  
@@ -40,11 +42,16 @@ checkedValues should be an array of values that are checked by default
 	}: Props = $props();
 
     const isChecked = ( value: string, checkedValues: string[] ) => {
+        console.log(value, checkedValues)
         const checked = checkedValues.includes(value) ? true : false
         return checked
     }
 
-    const options = consolidatedOptions( optionsGroups, selectedOptions )
+    const options = consolidatedOptions( optionsGroups, feedData.selectedOptions )
+
+    let loading = $state(false)
+
+    console.log(options)
 </script>
  
 <DropdownMenu.Root bind:open {...restProps}>
@@ -53,9 +60,18 @@ checkedValues should be an array of values that are checked by default
         <ChevronDown></ChevronDown>
 	</DropdownMenu.Trigger>
     <DropdownMenu.Content {...contentProps}>
-        <form method="POST">
+        <form method="POST" use:enhance={() => {
+            loading = true
+            return(({update}) => {
+                update()
+                open = false
+                loading = false
+            })
+        }}>
             {#each options as option}
-                <legend>{option.legend}</legend>
+                <legend>
+                    {option.legend}
+                </legend>
                 {#each option.items as item}
                     <label>
                         <input 
@@ -68,12 +84,18 @@ checkedValues should be an array of values that are checked by default
                         {item.id}
                     </label>
                 {/each}
-            <button type="submit" class="standard" formaction="?/applyOptions">
+            {/each}
+            <button 
+                type="submit" 
+                class="standard" 
+                formaction="?/applyOptions"
+                disabled={loading} 
+            >
                 apply
             </button>
-            <button type="submit" class="standard" formaction="?/saveDefaults">
+            <!-- <button type="submit" class="standard" formaction="?/saveDefaults">
                 save as default
-            </button>
+            </button> -->
         </form>
     </DropdownMenu.Content>
 </DropdownMenu.Root>

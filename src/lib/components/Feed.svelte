@@ -5,8 +5,9 @@
     import decoration from "$lib/assets/images/feed-item-decoration.svg"
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
     import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
-    import NowPlayingTag from './Posts/NowPlayingTag.svelte'
-    import CoverArt from 'src/lib/components/CoverArt.svelte'
+    import NowPlayingTag from '$lib/components/Posts/NowPlayingTag.svelte'
+    import CoverArt from '$lib/components/CoverArt.svelte'
+    import OptionsMenu from '$lib/components/menus/OptionsMenu.svelte'
     import wave from "$lib/assets/images/logo/freq-wave.svg"
     import { feedData } from '$lib/resources/states.svelte'
 
@@ -44,8 +45,44 @@
         return avatar
     }
 
-
     let loadingMore = $state(false)
+
+    const optionsGroups = [{
+        'legend': 'feed items',
+        'category': 'feed_item_types',
+        'items': [
+            { 
+                'id': 'posts',
+                'value': 'now_playing_post'
+            },
+            {
+                'id': 'comments',
+                'value': 'comment',
+            },
+            {
+                'id': 'likes',
+                'value': 'reaction'
+            },
+            {
+                'id': 'follows',
+                'value': 'social_follow'
+            },
+            {
+                'id': 'collection edits',
+                'value': 'collection_edit'
+            },
+            {
+                'id': 'collection follows',
+                'value': 'collection_follow'
+            },
+        ]
+    }]
+
+    let selectedOptions = $state([])
+    // $effect(() => {
+    //     selectedOptions = feedData.selectedOptions
+    //     console.log(feedData)
+    // })
 </script>
 
 {#snippet feedItemTag( feedItem: App.RowData )} 
@@ -82,6 +119,13 @@
             <span>
                 feed
             </span>
+        {/snippet}
+        {#snippet button()}
+            <OptionsMenu
+                triggerText='filter'
+                optionsGroups={optionsGroups}
+                inputGroup='selected-options'
+            ></OptionsMenu>
         {/snippet}
     </PanelHeader>
         {#if feedItems.length == 0}

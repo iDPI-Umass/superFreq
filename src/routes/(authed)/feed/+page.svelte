@@ -9,6 +9,7 @@
     let showCollectionsListModal = $derived(form?.showCollectionsModal ?? false)
     let showSaveSucessModal = $derived(form?.updateSuccess ?? false)
 
+    console.log(feedData)
 </script>
 
 <SEO title="Feed"></SEO>

@@ -22,6 +22,8 @@ let updatedReactionCount: number
 let saveItemPostId: string
 let sessionUserCollections = [] as App.RowData[]
 
+const feedOptions = {'itemTypes': ['now_playing_post', 'social_follow', 'comment', 'reaction', 'collection_follow', 'collection_edit']}
+
 export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) => {
     const { session } = await safeGetSession()
     const sessionUserId = session?.user.id as string
@@ -39,7 +41,7 @@ export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) 
     if ( loadData ) {
         feedData.feedItems.length = batchIterator * batchSize
 
-        const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd )
+        const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, feedOptions )
 
         const totalRowCount = select.totalRowCount
         const selectedFeedData = select.feedData
@@ -141,5 +143,17 @@ export const actions = {
         const update = await saveItemToCollection( sessionUserId, saveItemPostId, collectionId )
 
         return { updateSuccess: update }
-    }
-} satisfies Actions
+    },
+    applyOptions: async({ request }) => {
+        const data = await request.formData()
+        const selected = data.getAll('selected-options')
+
+        feedOptions.itemTypes = selected
+        feedData.selectedOptions = {
+            'category': 'feed_item_types',
+            'items': selected
+        }
+        batchIterator = 0
+        loadData = true
+    },
+} satisfies Action

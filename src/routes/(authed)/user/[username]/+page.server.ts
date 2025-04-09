@@ -19,6 +19,8 @@ let remaining = 0
 
 let sessionUserCollections = [] as App.RowData[]
 
+let feedOptions = {'itemTypes': ['now_playing_post', 'comment', 'reaction', 'social_follow', 'collection_follow', 'collection_edit']}
+
 export const load: PageServerLoad = async ({ params, url, locals: { safeGetSession }}) => {
 
     const { session } = await safeGetSession()
@@ -29,7 +31,6 @@ export const load: PageServerLoad = async ({ params, url, locals: { safeGetSessi
     const batchSize = 10
     const timestampEnd = new Date()
     const timestampStart = add(timestampEnd, {days: -300})
-    const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
     const updatesPageUpdatedAt = metadata.updated as string
 
     const profileData = await selectProfilePageData( sessionUserId, urlUsername )
@@ -53,7 +54,7 @@ export const load: PageServerLoad = async ({ params, url, locals: { safeGetSessi
     if ( loadData && sessionUserId == profileUserId ) {
         feedData.feedItems.length = batchIterator * batchSize
 
-        const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
+        const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, feedOptions)
 
         const totalRowCount = select.totalRowCount
         const selectedFeedData = select.feedData
@@ -298,5 +299,17 @@ export const actions = {
         const update = await saveItemToCollection( sessionUserId, postId, collectionId )
 
         return { updateSuccess: update }
-    }
+    },
+    applyOptions: async({ request }) => {
+        const data = await request.formData()
+        const selected = data.getAll('selected-options')
+
+        feedOptions.itemTypes = selected
+        feedData.selectedOptions = {
+            'category': 'feed_item_types',
+            'items': selected
+        }
+        batchIterator = 0
+        loadData = true
+    },
 } satisfies Actions

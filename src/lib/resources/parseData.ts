@@ -89,10 +89,12 @@ array for optionsGroups must contain objects with keys 'category', 'legend', and
 */
 
 export const consolidatedOptions = ( optionsGroups: any[], selectedOptions: any[] ) => {
+    console.log(optionsGroups)
+    console.log(selectedOptions)
     for ( const group of optionsGroups ) {
         const category = group.category
         const options = selectedOptions.find((element) => element.category == category)
-        group.selectedOptions = options.items
+        group.selectedOptions = options ? options.items : []
     }
 
     return optionsGroups
