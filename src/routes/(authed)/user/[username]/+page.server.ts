@@ -33,7 +33,7 @@ export const load: PageServerLoad = async ({ params, url, locals: { safeGetSessi
     const timestampStart = add(timestampEnd, {days: -300})
     const updatesPageUpdatedAt = metadata.updated as string
 
-    const profileData = await selectProfilePageData( sessionUserId, urlUsername )
+    let profileData = await selectProfilePageData( sessionUserId, urlUsername )
 
     if (!profileData.profileUserData) {
         throw redirect(303, '/')
