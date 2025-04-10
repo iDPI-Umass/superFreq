@@ -1,6 +1,7 @@
 <script lang="ts">
     import { goto } from '$app/navigation'
     import { enhance } from '$app/forms'
+    import { onMount } from 'svelte'
 
     import SEO from '$lib/components/layout/SEO.svelte'
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte';
@@ -49,6 +50,10 @@
     let showSaveSucessModal = $derived(form?.updateSuccess ?? false)
 
     let followLoading = $state(false)
+
+    onMount(() => {
+        feedData.feedItems = []
+    })
 
     $effect(() => {
         viewProfile.user_id = profileUserData?.id as string
