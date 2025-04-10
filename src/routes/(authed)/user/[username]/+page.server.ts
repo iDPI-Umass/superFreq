@@ -54,7 +54,9 @@ export const load: PageServerLoad = async ({ params, url, locals: { safeGetSessi
     if ( loadData && sessionUserId == profileUserId ) {
         feedData.feedItems.length = batchIterator * batchSize
 
-        const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, feedOptions)
+        const feedItemTypes = feedData.selectedOptions.find((element) => element.category == 'feed_item_types')
+
+        const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, feedItemTypes)
 
         const totalRowCount = select.totalRowCount
         const selectedFeedData = select.feedData
@@ -90,7 +92,7 @@ export const load: PageServerLoad = async ({ params, url, locals: { safeGetSessi
         profileData = await selectProfilePageData( sessionUserId, profileUsername )
     }
 
-    return { sessionUserId, profileData, feedItems: feedData.feedItems, totalAvailableItems, remaining, profileUsername, sessionUserCollections, updatesPageUpdatedAt }
+    return { sessionUserId, profileData, feedItems: feedData.feedItems, selectedOptions: feedData.selectedOptions, totalAvailableItems, remaining, profileUsername, sessionUserCollections, updatesPageUpdatedAt }
 }
 
 export const actions = { 
@@ -304,12 +306,9 @@ export const actions = {
         const data = await request.formData()
         const selected = data.getAll('selected-options')
 
-        feedOptions.feed_item_types = selected
-        feedData.selectedOptions = {
-            'category': 'feed_item_types',
-            'items': selected
-        }
+        const selectedOptionsIndex = feedData.selectedOptions.findIndex((item) => item.category == 'feed_item_types' )
 
+        feedData.selectedOptions[selectedOptionsIndex].items = selected
 
         batchIterator = 0
         loadData = true

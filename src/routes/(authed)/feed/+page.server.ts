@@ -55,20 +55,6 @@ export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) 
 
     }
 
-    // if ( updateReaction ) {
-    //     updateReaction = false
-
-    //     const postIndex = feedItems.findIndex((element) => element.post_id == postId)
-
-    //     if ( updatedReactionActive ) {
-    //         feedItems[postIndex]['reaction_user_ids'].push(sessionUserId)
-    //     }
-    //     else if ( !updatedReactionActive ) {
-    //         const reactionIndex = feedItems[postIndex]['reaction_user_ids'].findIndex((element) => {element == sessionUserId})
-    //         feedItems[postIndex]['reaction_user_ids'].splice(reactionIndex, 1)
-    //     }
-    // }
-
     return { sessionUserId, feedItems: feedData.feedItems, selectedOptions: feedData.selectedOptions, totalAvailableItems, remaining, sessionUserCollections } 
 }
 
@@ -151,8 +137,6 @@ export const actions = {
         const selectedOptionsIndex = feedData.selectedOptions.findIndex((item) => item.category == 'feed_item_types' )
 
         feedData.selectedOptions[selectedOptionsIndex].items = selected
-
-        console.log(feedData.selectedOptions.find((element) => element.category == 'feed_item_types'))
 
         batchIterator = 0
         loadData = true

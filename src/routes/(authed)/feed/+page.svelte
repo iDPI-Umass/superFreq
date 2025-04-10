@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { setContext } from 'svelte'
     import SEO from '$lib/components/layout/SEO.svelte'
     import Feed from '$lib/components/Feed.svelte'
     import { feedData } from '$lib/resources/states.svelte'
@@ -9,8 +8,6 @@
 
     let showCollectionsListModal = $derived(form?.showCollectionsModal ?? false)
     let showSaveSucessModal = $derived(form?.updateSuccess ?? false)
-
-    feedData.selectedOptions = data.selectedOptions
     
     $effect(() => {
         feedData.selectedOptions = selectedOptions
@@ -30,4 +27,5 @@
     collections={sessionUserCollections}
     showCollectionsListModal={showCollectionsListModal}
     showSaveSucessModal={showSaveSucessModal}
+    showFilters={true}
 ></Feed>

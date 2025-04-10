@@ -17,7 +17,6 @@ checkedValues should be an array of values that are checked by default
 
 <script lang="ts">
     import { enhance } from '$app/forms'
-    import { getContext } from 'svelte'
 	import { DropdownMenu, type WithoutChild } from 'bits-ui'
     import ChevronDown from '@lucide/svelte/icons/chevron-down'
     import { consolidatedOptions } from '$lib/resources/parseData'

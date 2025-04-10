@@ -21,6 +21,7 @@
         collections?: App.RowData[]
         showCollectionsListModal?: boolean
         showSaveSucessModal?: boolean
+        showFilters?: boolean
     }
 
     let { 
@@ -32,7 +33,8 @@
         userActionSuccess = null,
         collections = [],
         showCollectionsListModal = $bindable(false),
-        showSaveSucessModal = $bindable(false)
+        showSaveSucessModal = $bindable(false),
+        showFilters = false
     }: ComponentProps = $props()
 
     function avatarItem ( item: App.RowData ) {
@@ -114,20 +116,30 @@
 {/snippet}
 
 <div class="feed-panel">
-    <PanelHeader>
-        {#snippet headerText()}
-            <span>
-                feed
-            </span>
-        {/snippet}
-        {#snippet button()}
-            <OptionsMenu
-                triggerText='filter'
-                optionsGroups={optionsGroups}
-                inputGroup='selected-options'
-            ></OptionsMenu>
-        {/snippet}
-    </PanelHeader>
+    {#if showFilters}
+        <PanelHeader>
+            {#snippet headerText()}
+                <span>
+                    feed
+                </span>
+            {/snippet}
+            {#snippet button()}
+                <OptionsMenu
+                    triggerText='filter'
+                    optionsGroups={optionsGroups}
+                    inputGroup='selected-options'
+                ></OptionsMenu>
+            {/snippet}
+        </PanelHeader>
+    {:else}
+        <PanelHeader>
+            {#snippet headerText()}
+                <span>
+                    feed
+                </span>
+            {/snippet}
+        </PanelHeader>
+    {/if}
         {#if feedItems.length == 0}
         <div class="feed-item-one-liner">
             <p>Nothing in your feed? Try following some more <a href="/users">users</a> and <a href="/collections" >collections</a>.</p>
