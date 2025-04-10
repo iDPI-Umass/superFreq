@@ -4,10 +4,15 @@
     import { feedData } from '$lib/resources/states.svelte'
 
     let { data, form } = $props()
-    let { sessionUserId, feedItems, remaining, sessionUserCollections } = $derived(data)
+    let { sessionUserId, feedItems, selectedOptions, remaining, sessionUserCollections } = $derived(data)
 
     let showCollectionsListModal = $derived(form?.showCollectionsModal ?? false)
     let showSaveSucessModal = $derived(form?.updateSuccess ?? false)
+    
+    $effect(() => {
+        feedData.selectedOptions = selectedOptions
+        feedData.feedItems = feedItems
+    })
 
 </script>
 
@@ -16,10 +21,11 @@
 <Feed
     sessionUserId={sessionUserId}
     mode="feed"
-    feedItems={feedItems}
+    feedItems={feedData.feedItems}
     userActionSuccess={form?.userActionSuccess}
     remaining={remaining}
     collections={sessionUserCollections}
     showCollectionsListModal={showCollectionsListModal}
     showSaveSucessModal={showSaveSucessModal}
+    showFilters={true}
 ></Feed>

@@ -1,7 +1,5 @@
 <script lang="ts">
-    import { onMount } from 'svelte'
-    import type { ActionData, PageData } from './$types.js'
-    import { goto, invalidateAll } from '$app/navigation'
+    import { goto } from '$app/navigation'
     import { enhance } from '$app/forms'
 
     import SEO from '$lib/components/layout/SEO.svelte'
@@ -19,7 +17,7 @@
 
     let { data, form } = $props();
 
-    let { sessionUserId, profileData, feedItems, totalAvailableItems, remaining, profileUsername, sessionUserCollections, updatesPageUpdatedAt }: {
+    let { sessionUserId, profileData, feedItems, selectedOptions, remaining, sessionUserCollections, updatesPageUpdatedAt }: {
         sessionUserId: string
         profileData: any
         feedItems: any
@@ -69,6 +67,9 @@
         viewProfile.topAlbumsCollection = permission ? profileData?.topAlbumsCollection.slice(0, 8) as App.ProfileObject[] : []
 
         collectionData.collectionItems = profileData?.topAlbumsCollection
+
+        feedData.selectedOptions = selectedOptions
+        feedData.feedItems = feedItems
     })
     
 
@@ -274,6 +275,7 @@
             collections={sessionUserCollections}
             showCollectionsListModal={showCollectionsListModal}
             showSaveSucessModal={showSaveSucessModal}
+            showFilters={true}
         ></Feed>
     {:else}
         <NowPlayingPostsSample
