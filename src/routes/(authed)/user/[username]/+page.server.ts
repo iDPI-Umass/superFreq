@@ -19,7 +19,7 @@ let remaining = 0
 
 let sessionUserCollections = [] as App.RowData[]
 
-let feedOptions = {'itemTypes': ['now_playing_post', 'comment', 'reaction', 'social_follow', 'collection_follow', 'collection_edit']}
+const feedOptions = {'feed_item_types': ['now_playing_post', 'comment', 'reaction', 'social_follow', 'collection_follow', 'collection_edit']}
 
 export const load: PageServerLoad = async ({ params, url, locals: { safeGetSession }}) => {
 
@@ -304,11 +304,13 @@ export const actions = {
         const data = await request.formData()
         const selected = data.getAll('selected-options')
 
-        feedOptions.itemTypes = selected
+        feedOptions.feed_item_types = selected
         feedData.selectedOptions = {
             'category': 'feed_item_types',
             'items': selected
         }
+
+
         batchIterator = 0
         loadData = true
     },

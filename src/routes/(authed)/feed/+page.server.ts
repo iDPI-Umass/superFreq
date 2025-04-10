@@ -4,7 +4,7 @@ import { insertPostFlag } from '$lib/resources/backend-calls/users'
 import { insertUpdateReaction, deletePost } from '$lib/resources/backend-calls/posts'
 import { selectListSessionUserCollections, saveItemToCollection } from '$lib/resources/backend-calls/collections'
 import { add } from 'date-fns'
-import { feedData } from 'src/lib/resources/states.svelte'
+import { feedData } from '$lib/resources/states.svelte'
 
 let loadData = true
 let updateReaction = false
@@ -21,8 +21,6 @@ let updatedReactionCount: number
 
 let saveItemPostId: string
 let sessionUserCollections = [] as App.RowData[]
-
-const feedOptions = {'itemTypes': ['now_playing_post', 'social_follow', 'comment', 'reaction', 'collection_follow', 'collection_edit']}
 
 export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) => {
     const { session } = await safeGetSession()
@@ -41,7 +39,9 @@ export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) 
     if ( loadData ) {
         feedData.feedItems.length = batchIterator * batchSize
 
-        const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, feedOptions )
+        const feedItemTypes = feedData.selectedOptions.find((element) => element.category == 'feed_item_types')
+
+        const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, feedItemTypes )
 
         const totalRowCount = select.totalRowCount
         const selectedFeedData = select.feedData
@@ -69,7 +69,7 @@ export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) 
     //     }
     // }
 
-    return { sessionUserId, feedItems: feedData.feedItems, totalAvailableItems, remaining, sessionUserCollections } 
+    return { sessionUserId, feedItems: feedData.feedItems, selectedOptions: feedData.selectedOptions, totalAvailableItems, remaining, sessionUserCollections } 
 }
 
 export const actions = {
@@ -148,11 +148,12 @@ export const actions = {
         const data = await request.formData()
         const selected = data.getAll('selected-options')
 
-        feedOptions.itemTypes = selected
-        feedData.selectedOptions = {
-            'category': 'feed_item_types',
-            'items': selected
-        }
+        const selectedOptionsIndex = feedData.selectedOptions.findIndex((item) => item.category == 'feed_item_types' )
+
+        feedData.selectedOptions[selectedOptionsIndex].items = selected
+
+        console.log(feedData.selectedOptions.find((element) => element.category == 'feed_item_types'))
+
         batchIterator = 0
         loadData = true
     },

@@ -3,7 +3,10 @@ export const feedData = $state({
     'profileUserId': '',
     'feedItems': [],
     'feedSlug': '',
-    'selectedOptions': []
+    'selectedOptions': [{
+        'category': 'feed_item_types', 
+        'items': ['now_playing_post', 'social_follow', 'comment', 'reaction', 'collection_follow', 'collection_edit']
+    }]
 }) as any
 
 export const sessionUserProfile = $state({
