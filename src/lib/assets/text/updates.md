@@ -1,8 +1,12 @@
 ---
 title: Updates
 layout: about
-updated: 04/07/2025
+updated: 04/10/2025
 ---
+### April 10, 2025
+#### Updates
+- Implemented simple filtering for the feed. Next comes saving filter defaults.
+
 ### April 7, 2025
 #### Bug Fixes
 - Fixed a smattering of issues with feeds
