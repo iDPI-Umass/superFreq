@@ -19,10 +19,10 @@
     const inputGroup = 'input-group'
 </script>
 
-<div class="panel">
+<!-- <div class="panel">
     <OptionsMenu
         triggerText='options'
         items={items}
         inputGroup={inputGroup}
     ></OptionsMenu>
-</div>
+</div> -->

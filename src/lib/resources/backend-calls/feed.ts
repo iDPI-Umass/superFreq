@@ -26,13 +26,23 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
         const feedData = await trx
         .selectFrom('feed_items')
         .selectAll()
-        .where(({eb, or}) => or([
-            eb('user_id', 'in', following),
-            eb('parent_post_user_id', '=', sessionUserId),
-            eb('reaction_post_user_id', '=', sessionUserId),
+        .where(({eb, or, and, not}) => and([
+            or([
+                eb('user_id', 'in', following),
+                eb('parent_post_user_id', '=', sessionUserId),
+                eb('reaction_post_user_id', '=', sessionUserId),
+            ]),
+            not(and([
+                eb('item_type', '=', 'social_follow'),
+                eb('user_id', '=', sessionUserId)
+            ])),
+            not(and([
+                eb('item_type', '=', 'social_follow'),
+                eb('target_user_id', '!=', sessionUserId)
+            ])),
+            eb('item_type', 'in', itemTypes)
         ]))
         .where((eb) => eb.between('timestamp', timestampStart, timestampEnd))
-        .where('item_type', 'in', itemTypes)
         .limit(batchSize)
         .orderBy('timestamp', 'desc')
         .offset(offset)
@@ -50,6 +60,16 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
     const { feedData, totalFeedItemsRows } = await select
 
     const totalRowCount = totalFeedItemsRows[0]['feed_rows_count'] as number
+
+    for ( const item of feedData ) {
+        if (item.item_type == 'social_follow') {
+            console.log('social follow')
+            console.log(item.username, item.target_username)
+        }
+        else {
+            console.log('not')
+        }
+    }
 
     return { feedData, totalRowCount }
 }

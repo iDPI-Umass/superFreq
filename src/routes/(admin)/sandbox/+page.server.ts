@@ -1,23 +1,26 @@
 import type { Actions } from './$types'
+import { db } from 'src/database.ts'
+
 // import { feedRewrite } from 'src/lib/resources/backend-calls/feed'
 // import { add } from 'date-fns'
 
 
-// export const load: PageServerLoad = async ( {locals: { safeGetSession }}) => {
-//     const { session } = await safeGetSession()
-//     const sessionUserId = session?.user.id as string
-//     const batchSize = 5
-//     let batchIterator = 0
-//     const timestampEnd = new Date()
-//     const timestampStart = add(timestampEnd, {days: -300})
-//     const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
+export const load: PageServerLoad = async ( {locals: { safeGetSession }}) => {
+    const { session } = await safeGetSession()
+    const sessionUserId = session?.user.id as string
 
-//     const {feedData} = await feedRewrite( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
+    const select = await db
+    .selectFrom('feed_items')
+    .selectAll()
+    .where('target_user_id', '=', sessionUserId)
+    .execute()
 
-//     const { feedItems } = feedData
+    for ( const item of select ) {
+        console.log(item.username, item.user_blocked, item.follows_now)
+    }
 
-//     return { sessionUserId, feedItems }
-// }
+    return { sessionUserId }
+}
 
 export const actions = {
     applyOptions: async({ request }) => {
