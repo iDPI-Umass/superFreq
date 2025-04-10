@@ -51,10 +51,6 @@
 
     let followLoading = $state(false)
 
-    onMount(() => {
-        feedData.feedItems = []
-    })
-
     $effect(() => {
         viewProfile.user_id = profileUserData?.id as string
         viewProfile.username = profileUserData?.username as string
@@ -273,7 +269,7 @@
         <Feed
             sessionUserId={sessionUserId}
             mode="feed"
-            feedItems = {feedItems}
+            feedItems = {feedData.feedItems}
             postEditState={form?.editState}
             userActionSuccess={form?.userActionSuccess}
             remaining={remaining}
