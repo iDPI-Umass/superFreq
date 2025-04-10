@@ -4,7 +4,7 @@ import { insertPostFlag } from '$lib/resources/backend-calls/users'
 import { insertUpdateReaction, deletePost } from '$lib/resources/backend-calls/posts'
 import { selectListSessionUserCollections, saveItemToCollection } from '$lib/resources/backend-calls/collections'
 import { add } from 'date-fns'
-import { feedData } from 'src/lib/resources/states.svelte'
+import { feedData } from '$lib/resources/states.svelte'
 
 let loadData = true
 let updateReaction = false
@@ -28,7 +28,6 @@ export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) 
     const batchSize = 20
     const timestampEnd = new Date()
     const timestampStart = add(timestampEnd, {days: -300})
-    const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
 
     if ( url.pathname != feedData.feedSlug ) {
         loadData = true
@@ -40,7 +39,9 @@ export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) 
     if ( loadData ) {
         feedData.feedItems.length = batchIterator * batchSize
 
-        const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
+        const feedItemTypes = feedData.selectedOptions.find((element) => element.category == 'feed_item_types')
+
+        const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, feedItemTypes )
 
         const totalRowCount = select.totalRowCount
         const selectedFeedData = select.feedData
@@ -54,21 +55,7 @@ export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) 
 
     }
 
-    // if ( updateReaction ) {
-    //     updateReaction = false
-
-    //     const postIndex = feedItems.findIndex((element) => element.post_id == postId)
-
-    //     if ( updatedReactionActive ) {
-    //         feedItems[postIndex]['reaction_user_ids'].push(sessionUserId)
-    //     }
-    //     else if ( !updatedReactionActive ) {
-    //         const reactionIndex = feedItems[postIndex]['reaction_user_ids'].findIndex((element) => {element == sessionUserId})
-    //         feedItems[postIndex]['reaction_user_ids'].splice(reactionIndex, 1)
-    //     }
-    // }
-
-    return { sessionUserId, feedItems: feedData.feedItems, totalAvailableItems, remaining, sessionUserCollections } 
+    return { sessionUserId, feedItems: feedData.feedItems, selectedOptions: feedData.selectedOptions, totalAvailableItems, remaining, sessionUserCollections } 
 }
 
 export const actions = {
@@ -142,5 +129,16 @@ export const actions = {
         const update = await saveItemToCollection( sessionUserId, saveItemPostId, collectionId )
 
         return { updateSuccess: update }
-    }
-} satisfies Actions
+    },
+    applyOptions: async({ request }) => {
+        const data = await request.formData()
+        const selected = data.getAll('selected-options')
+
+        const selectedOptionsIndex = feedData.selectedOptions.findIndex((item) => item.category == 'feed_item_types' )
+
+        feedData.selectedOptions[selectedOptionsIndex].items = selected
+
+        batchIterator = 0
+        loadData = true
+    },
+} satisfies Action
