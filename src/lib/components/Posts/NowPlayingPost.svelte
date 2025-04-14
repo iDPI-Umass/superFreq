@@ -1,15 +1,15 @@
 <script lang="ts">
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte'
-    import EditPostBody from 'src/lib/components/posts/EditPostBody.svelte'
-    import LikeReact from 'src/lib/components/posts/LikeReact.svelte'
+    import EditPostBody from 'src/lib/components/Posts/EditPostBody.svelte'
+    import LikeReact from 'src/lib/components/Posts/LikeReact.svelte'
     import SaveToCollection from '$lib/components/SaveToCollection.svelte'
     import { displayDate, parseMarkdown } from '$lib/resources/parseData'
     import { interactionStates } from '$lib/resources/states.svelte'
 
     import Reply from '@lucide/svelte/icons/reply'
     import Link from '@lucide/svelte/icons/link-2'
-	import ListenEmbed from 'src/lib/components/posts/ListenEmbed.svelte'
-    import NowPlayingTag from 'src/lib/components/posts/NowPlayingTag.svelte'
+	import ListenEmbed from 'src/lib/components/Posts/ListenEmbed.svelte'
+    import NowPlayingTag from 'src/lib/components/Posts/NowPlayingTag.svelte'
     import CoverArt from '$lib/components/CoverArt.svelte'
     import InlineMarkdownText from '$lib/components/InlineMarkdownText.svelte'
 
