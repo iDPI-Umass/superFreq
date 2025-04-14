@@ -1,9 +1,8 @@
 <script lang="ts">
-    import type { PageData, ActionData } from './$types'
     import SEO from '$lib/components/layout/SEO.svelte'
-    import NowPlayingPost from 'src/lib/components/posts/NowPlayingPost.svelte'
-    import PostReply from 'src/lib/components/posts/PostReply.svelte'
-    import PostReplyEditor from 'src/lib/components/posts/PostReplyEditor.svelte'
+    import NowPlayingPost from '$lib/components/posts/NowPlayingPost.svelte'
+    import PostReply from '$lib/components/posts/PostReply.svelte'
+    import PostReplyEditor from '$lib/components/posts/PostReplyEditor.svelte'
 
     let { data, form } = $props();
 
@@ -66,12 +65,12 @@
     {@render formInputs("submitReply")}
     {@render formInputs("submitReaction")}
     {@render formInputs("delete")}
+    {@render formInputs("edit")}
     {@render formInputs("flagPost")}
     {#if post?.status != 'deleted'}
     <NowPlayingPost
         sessionUserId={sessionUserId}
         post={post}
-        editState={form?.editState}
         userActionSuccess={actionSuccess}
         collections={collections}
         showCollectionsModal={showCollectionsListModal}
@@ -80,12 +79,13 @@
     <PostReplyEditor></PostReplyEditor>
     {#each replies as reply}
         <div id={ replyId( reply.username, reply.created_at )}>
-            <PostReply
-                reply={reply}
-                parentPost={post}
-                sessionUserId={sessionUserId}
-                userActionSuccess={actionSuccess}
-            ></PostReply>
+            <div class="comment-panel">
+                <PostReply
+                    reply={reply}
+                    sessionUserId={sessionUserId}
+                    userActionSuccess={actionSuccess}
+                ></PostReply>
+            </div>
         </div>
     {/each}
     {:else}

@@ -40,6 +40,10 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 eb('item_type', '=', 'social_follow'),
                 eb('target_user_id', '!=', sessionUserId)
             ])),
+            not(and([
+                eb('item_type', '=', 'reaction'),
+                eb('reaction_post_username', '!=', sessionUserId)
+            ])),
             eb('item_type', 'in', itemTypes)
         ]))
         .where((eb) => eb.between('timestamp', timestampStart, timestampEnd))
