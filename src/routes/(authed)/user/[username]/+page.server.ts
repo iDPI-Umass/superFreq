@@ -241,19 +241,22 @@ export const actions = {
         const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
-        let editedText = data.get('edited-text') as string
+        const editedText = data.get('edited-text') as string
         const postData = JSON.parse(data.get('post-data') as string) as App.RowData
 
         const submitEdit = await updatePost( sessionUserId, postData, editedText )
 
         const success =  submitEdit ? true : false
-        const editState = submitEdit ? false : true
 
-        editedText = success ? submitEdit.text as string : editedText
-        editPost = success ? true : false
         loadData = success ? false : true
 
-        return { success, editState }
+        const feedItemIndex = feedData?.feedItems.findIndex((element) => element.post_id == postData.post_id) ?? null
+        if ( feedItemIndex >= 0 ) {
+            feedData.feedItems[feedItemIndex].text = editedText
+            feedData.feedItems[feedItemIndex]. status = 'edited'
+        } 
+
+        return { success }
     },
     deletePost: async ({ request, locals: { safeGetSession } }) => {
         const { session } = await safeGetSession()

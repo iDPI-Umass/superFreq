@@ -4,14 +4,16 @@
 	import { Reply } from '@lucide/svelte';
 
     interface ComponentProps {
-        postData: App.RowData
+        postData: App.RowData,
+        editState: boolean
     }
     let { 
         postData,
+        editState = $bindable(false)
     }: ComponentProps = $props()
 
     function toggleEditState() {
-        interactionStates.editState = !interactionStates.editState
+        editState = !editState
     }
 
     let loading = $state(false)
@@ -28,8 +30,8 @@
     use:enhance={() => {
         loading = true
         return async ({ update, result }) => {
-            toggleEditState()
             loading = false
+            toggleEditState()
             await update()
         }}
     }

@@ -75,7 +75,6 @@
 			action="?/update"
 			use:enhance={() => {
 				updateLoading = true
-				console.log(collectionData.singleItem)
 				return async ({ update }) => {
 					await update({ reset: false });
 					updateLoading = false

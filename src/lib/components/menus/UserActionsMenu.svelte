@@ -19,6 +19,7 @@
         blocked?: boolean
         flagged?: boolean
         postId?: string | null
+        editState?: boolean
         success?: boolean | null
     }
 
@@ -28,13 +29,13 @@
         blocked = false,
         flagged = false,
         postId = null,
+        editState = $bindable(false),
         success
     }: ComponentProps = $props()
 
     // let actionSuccess = $derived(success)
 
     let popOverOpenState = $state(interactionStates.popOverOpenState)
-    let editState = $state(interactionStates.editState)
     let showModal: boolean = $state(false)
     let dialog: any
 
@@ -85,9 +86,7 @@
 
     function toggleEditState() {
         editState = !editState
-        interactionStates.editState = editState
         popOverOpenState = !popOverOpenState
-        interactionStates.popOverOpenState = popOverOpenState
     }
 
     function openDialog( mode: string ) {

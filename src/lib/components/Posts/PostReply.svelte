@@ -24,14 +24,12 @@
     interface ComponentProps {
         reply: any
         sessionUserId?: string | null
-        editState?: boolean
         userActionSuccess?: boolean | null
     }
 
     let {
         reply,
         sessionUserId,
-        editState = $bindable(false),
         userActionSuccess = $bindable(null)
     }: ComponentProps = $props()
 
@@ -48,10 +46,13 @@
     const permalinkTimestamp = Date.parse(permalinkTimestampString).toString()
     const permalink = `/posts/${reply.parent_post_username}/now-playing/${parentPostTimestamp}#${reply.username?.concat(permalinkTimestamp)}`
 
+    let editState = $state(false)
+
     onMount(() => {
         interactionStates.editState = false
         interactionStates.popOverOpenState = false
     })
+
 </script>
 
 <input 
@@ -119,13 +120,14 @@
             {/if}
         </div>
     </div>
-    {#if !interactionStates.editState}
+    {#if !editState}
         <div class="comment-text">
             <InlineMarkdownText text={reply.text}></InlineMarkdownText>
         </div>
     {:else}
         <EditPostBody
             postData={reply}
+            bind:editState={editState}
         ></EditPostBody>
     {/if}
     <div class="comment-reaction-row">
@@ -161,6 +163,7 @@
                 <UserActionsMenu
                     mode='sessionUserPostMenu'
                     postId={reply.id}
+                    bind:editState={editState}
                     success={userActionSuccess}
                 ></UserActionsMenu>
             {:else if reply.user_id != sessionUserId}

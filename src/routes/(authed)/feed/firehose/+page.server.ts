@@ -103,6 +103,12 @@ export const actions = {
 
         const submitEdit = await updatePost( sessionUserId, postData, editedText )
 
+        const feedItemIndex = feedData?.feedItems.findIndex((element) => element.post_id == updateData.post_id) ?? null
+        if ( feedItemIndex >= 0 ) {
+            feedData.feedItems[feedItemIndex].text = editedText
+            feedData.feedItems[feedItemIndex]. status = 'edited'
+        } 
+
         const success =  submitEdit ? true : false
 
         return { success }
@@ -116,8 +122,6 @@ export const actions = {
         const parentPostUsername = data.get('post-username') as string
         const parentPostId = data.get('parent-post-id') as string
         const parentPostTimestamp = data.get('parent-post-timestamp') as string
-
-        console.log( sessionUserId, postId )
 
         const submitDelete = await deletePost( sessionUserId, postId )
 
