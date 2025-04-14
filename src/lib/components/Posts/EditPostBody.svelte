@@ -1,6 +1,7 @@
 <script lang="ts">
     import { enhance } from '$app/forms'
-    import { interactionStates } from '$lib/resources/states.svelte';
+    import { interactionStates, feedData } from '$lib/resources/states.svelte';
+	import { Reply } from '@lucide/svelte';
 
     interface ComponentProps {
         postData: App.RowData
@@ -14,6 +15,7 @@
     }
 
     let loading = $state(false)
+    let editedText = $state() as string
 </script>
 
 <!-- <svelte:options runes={true} /> -->
@@ -25,7 +27,7 @@
     action="?/editPost" 
     use:enhance={() => {
         loading = true
-        return async ({ update }) => {
+        return async ({ update, result }) => {
             toggleEditState()
             loading = false
             await update()
@@ -44,6 +46,7 @@
         id = "edited-text"
         name="edited-text"
         spellcheck=true 
+        bind:value={editedText}
         required
     >{postData.text}</textarea>
     <div class="edit-submit-options">

@@ -110,9 +110,8 @@ export const actions = {
         const submitEdit = await updatePost( sessionUserId, postData, editedText )
 
         const success =  submitEdit ? true : false
-        const editState = submitEdit ? false : true
 
-        return { success, editState }
+        return { success }
     },
     deletePost: async ({ request, locals: { safeGetSession } }) => {
         const { session } = await safeGetSession()

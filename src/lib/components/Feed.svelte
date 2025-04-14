@@ -4,19 +4,18 @@
     import { parseTimestamp } from '$lib/resources/parseData'
     import decoration from "$lib/assets/images/feed-item-decoration.svg"
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
-    import NowPlayingPost from 'src/lib/components/posts/NowPlayingPost.svelte'
-    import NowPlayingTag from 'src/lib/components/posts/NowPlayingTag.svelte'
+    import NowPlayingPost from '$lib/components/posts/NowPlayingPost.svelte'
+    import NowPlayingTag from '$lib/components/posts/NowPlayingTag.svelte'
+    import PostReply from '$lib/components/posts/PostReply.svelte'
     import CoverArt from '$lib/components/CoverArt.svelte'
     import OptionsMenu from '$lib/components/menus/OptionsMenu.svelte'
-    import wave from "$lib/assets/images/logo/freq-wave.svg"
-    import { feedData } from '$lib/resources/states.svelte'
+	import { feedData } from '../resources/states.svelte';
 
     interface ComponentProps {
         sessionUserId: string
         feedItems: App.RowData[]
         mode: string
         remaining?: number
-        postEditState?: boolean
         userActionSuccess?: boolean | null
         collections?: App.RowData[]
         showCollectionsListModal?: boolean
@@ -29,7 +28,6 @@
         feedItems, 
         mode,
         remaining,
-        postEditState,
         userActionSuccess = null,
         collections = [],
         showCollectionsListModal = $bindable(false),
@@ -81,10 +79,9 @@
     }]
 
     let selectedOptions = $state([])
-    // $effect(() => {
-    //     selectedOptions = feedData.selectedOptions
-    //     console.log(feedData)
-    // })
+    $effect(() => {
+        console.log(feedData.feedItems[0])
+    })
 </script>
 
 {#snippet feedItemTag( feedItem: App.RowData )} 
@@ -167,7 +164,6 @@
                                 sessionUserId={sessionUserId}
                                 post={item}
                                 mode="feed"
-                                editState={postEditState}
                                 userActionSuccess={userActionSuccess}
                                 collections={collections}
                                 bind:showCollectionsModal={showCollectionsListModal}
@@ -203,6 +199,15 @@
                             {@render feedItemTag(item)}
                         </div>
                     </a>
+                    <div class="feed-post-spacer">
+                        <div class="feed-item-now-playing">
+                            <PostReply
+                                reply={item}
+                                sessionUserId={sessionUserId}
+                                userActionSuccess={userActionSuccess}
+                            ></PostReply>
+                        </div>
+                    </div>
                 <!-- Reaction -->
                 {:else if item?.item_type == 'reaction'}
                     <a href={ item.reaction_post_type == 'now_playing' ? `/posts/${item.reaction_post_username}/now-playing/${parseTimestamp(item.reaction_post_created_at)}` : `/posts/${item.parent_post_username}/now-playing/${parseTimestamp(item.parent_post_created_at)}#${item.reaction_post_username?.concat(parseTimestamp(item.reaction_post_created_at))}`}>

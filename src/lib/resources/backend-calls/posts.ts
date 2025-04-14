@@ -168,29 +168,39 @@ export const updatePost = async function ( sessionUserId: string, postData: App.
 
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
-    
+    const postId = postData.id ?? postData.post_id
+
     const updatePost = await db.transaction().execute(async(trx) => {
         
         //validates that post belongs to session user and returns changelog
         const selectPostData = await trx
         .selectFrom('posts')
         .select(['user_id', 'changelog'])
-        .where('id', '=', postData.id)
+        .where('id', '=', postId)
         .where('user_id', '=', sessionUserId)
         .executeTakeFirstOrThrow()
 
         const changelog = selectPostData?.changelog as App.Changelog
-        changelog[timestampISOString] = {
-            text: editedText,
-            mbid: postData.mbid,
-            artist_name: postData.artistName,
-            release_group_name: postData.releaseGroupName,
-            recording_name: postData.recordingName,
-            status: "edited",
-            listen_url: postData.listenUrl,
-            episode_title: postData.episodeTitle,
-            show_title: postData.showTitle,
+        if ( postData.item_type == 'comment' ) {
+            changelog[timestampISOString] = {
+                text: editedText,
+                status: "edited",
+            }
         }
+        else {
+            changelog[timestampISOString] = {
+                text: editedText,
+                mbid: postData.mbid,
+                artist_name: postData.artistName,
+                release_group_name: postData.releaseGroupName,
+                recording_name: postData.recordingName,
+                status: "edited",
+                listen_url: postData.listenUrl,
+                episode_title: postData.episodeTitle,
+                show_title: postData.showTitle,
+            }
+        }
+
 
         //submit update
         const update = await trx
@@ -207,7 +217,7 @@ export const updatePost = async function ( sessionUserId: string, postData: App.
             show_title: postData.showTitle,
             changelog: changelog,
         })
-        .where('id','=', postData.id)
+        .where('id','=', postId)
         .returning([
             'text', 
             'artist_name', 
@@ -220,6 +230,7 @@ export const updatePost = async function ( sessionUserId: string, postData: App.
         .executeTakeFirstOrThrow()
 
         const post = await update
+        console.log(post)
         return post
     })
     return updatePost
@@ -506,6 +517,8 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                     'reaction_user_ids',
                     'type',
                     'parent_post_id',
+                    'parent_post_created_at',
+                    'parent_post_username',
                     'reply_to'
                 ])
                 .where('parent_post_id', '=', postId)
@@ -537,6 +550,8 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                     'reaction_user_ids',
                     'type',
                     'parent_post_id',
+                    'parent_post_created_at',
+                    'parent_post_username',
                     'reply_to'
                 ])
                 .where('parent_post_id', '=', postId)
