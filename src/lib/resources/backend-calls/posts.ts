@@ -1182,6 +1182,7 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
                 active: true
             }
         
+            console.log(postId, sessionUserId, reactionType)
             const insertReaction = await trx
             .insertInto('post_reactions')
             .values({
