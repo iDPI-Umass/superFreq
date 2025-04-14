@@ -1,20 +1,19 @@
 <script lang="ts">
     import { enhance } from '$app/forms'
+    import { interactionStates } from '$lib/resources/states.svelte';
 
     interface ComponentProps {
         postData: App.RowData
-        editState?: boolean
     }
     let { 
         postData,
-        editState = $bindable(false)
     }: ComponentProps = $props()
 
     function toggleEditState() {
-        editState = !editState
+        interactionStates.editState = !interactionStates.editState
     }
 
-    let editPromise = $state(false)
+    let loading = $state(false)
 </script>
 
 <!-- <svelte:options runes={true} /> -->
@@ -25,9 +24,10 @@
     class="vertical" 
     action="?/editPost" 
     use:enhance={() => {
-        editPromise = true
+        loading = true
         return async ({ update }) => {
-            editPromise = false
+            toggleEditState()
+            loading = false
             await update()
         }}
     }
@@ -57,7 +57,7 @@
             type="submit"
             class="standard" 
             formaction="?/editPost"
-            disabled={editPromise}
+            disabled={loading}
         >
             submit edit
         </button>

@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { enhance } from "$app/forms";
 
-    let posting = $state(false);
+    let loading = $state(false);
 </script>
 
 <div class="reply-editor">
     <form name="submitReply" id="submitReply" class="reply" method="post" action="?/submitReply" use:enhance={({ formElement }) => {
-        posting = true;
+        loading = true;
         return async ({ update }) => {
             await update();
-            posting = false;
+            loading = false;
             formElement.reset(); // needs formElement to reset the form
         }
     }}>
@@ -22,7 +22,7 @@
             placeholder="Reply..."
             required
         ></textarea>
-        <button class="standard" formaction="?/submitReply" disabled={posting}>
+        <button class="standard" formaction="?/submitReply" disabled={loading}>
             submit
         </button>
     </form>

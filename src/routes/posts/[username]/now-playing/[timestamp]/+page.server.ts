@@ -120,13 +120,15 @@ export const actions = {
 
         const data = await request.formData()
         const postId = data.get('post-reply-id') as string ?? data.get('post-id') as string
-        const postUsername = data.get('post-username') as string
+        const parentPostUsername = data.get('post-username') as string
+        const parentPostId = data.get('parent-post-id') as string
+        const parentPostTimestamp = data.get('parent-post-timestamp') as string
+
+        console.log( sessionUserId, postId )
 
         const submitDelete = await deletePost( sessionUserId, postId )
 
-        const parentPostId = submitDelete?.parent_post_id
-
-        const permalink = parentPostId ? `/posts/${postUsername}/now-playing/${postTimestamp}` : '/'
+        const permalink = parentPostId ? `/posts/${parentPostUsername}/now-playing/${parentPostTimestamp}` : '/'
 
         if ( submitDelete ) {
             throw redirect(303, permalink)

@@ -1,6 +1,6 @@
 <script lang="ts">
     import SEO from '$lib/components/layout/SEO.svelte'
-    import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
+    import NowPlayingPost from 'src/lib/components/posts/NowPlayingPost.svelte'
     import PanelHeader from '$lib/components/PanelHeader.svelte'
 
     let { data, form } = $props()
