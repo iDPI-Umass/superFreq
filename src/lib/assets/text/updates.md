@@ -6,6 +6,7 @@ updated: 04/14/2025
 ### April 14, 2025
 #### Bug Fixes
 - Fixed avatar update on '/account' page
+- Editing and deleting posts and comments now works consistently
 
 ### April 10, 2025
 #### Updates

@@ -48,7 +48,13 @@ export const viewProfile = $state({
 export const promiseStates = $state({
     'continueClientSideImgPromise': true,
     'newItemAdded': false,
-    'imgPromise': null as any
+    'imgPromise': null as any,
+    'userActionSuccess': false,
+})
+
+export const interactionStates = $state({
+    'editState': false,
+    'popOverOpenState': false,
 })
 
 export const collectionData = $state({

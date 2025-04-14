@@ -1,10 +1,12 @@
 <script lang="ts">
+    import { onMount } from 'svelte'
     import { slide } from 'svelte/transition'
 
     import CoverArt from '$lib/components/CoverArt.svelte'
-    import PostReplyEditor from '$lib/components/Posts/PostReplyEditor.svelte'
+    import EditPostBody from 'src/lib/components/posts/EditPostBody.svelte'
+    import PostReplyEditor from 'src/lib/components/posts/PostReplyEditor.svelte'
     import PostMenuSessionUser from 'src/lib/components/menus/PostMenuSessionUser.svelte'
-    import LikeReact from '$lib/components/Posts/LikeReact.svelte'
+    import LikeReact from 'src/lib/components/posts/LikeReact.svelte'
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte'
     import InlineMarkdownText from '$lib/components/InlineMarkdownText.svelte'
     import { displayDate, parseMarkdown } from '$lib/resources/parseData'
@@ -15,6 +17,7 @@
     import Link from '@lucide/svelte/icons/link-2'
 
     import { parseTimestamp } from '$lib/resources/parseData'
+    import { interactionStates, promiseStates } from '$lib/resources/states.svelte'
 
     import { Collapsible } from "bits-ui"
 
@@ -45,9 +48,11 @@
     const permalinkTimestamp = Date.parse(permalinkTimestampString).toString()
     const permalink = `/posts/${parentPost.username}/now-playing/${parentPostTimestamp}#${reply.username?.concat(permalinkTimestamp)}`
 
+    onMount(() => {
+        interactionStates.editState = false
+        interactionStates.popOverOpenState = false
+    })
 </script>
-
-<!-- <svelte:options runes={true} /> -->
 
 <input 
     type="hidden"
@@ -62,6 +67,20 @@
     id="post-reply-id"
     form="flagPost"
     value={reply.id}
+/>
+<input
+    type="hidden"
+    name="parent-post-id"
+    id="parent-post-id"
+    form="delete"
+    value={reply.parent_post_id}
+/>
+<input
+    type="hidden"
+    name="parent-post-timestamp"
+    id="parent-post-timestamp"
+    form="delete"
+    value={parentPostTimestamp}
 />
 
 <div class="comment-panel">    
@@ -94,9 +113,15 @@
                 {/if}
             </div>
         </div>
-        <div class="comment-text">
-            <InlineMarkdownText text={reply.text}></InlineMarkdownText>
-        </div>
+        {#if !interactionStates.editState}
+            <div class="comment-text">
+                <InlineMarkdownText text={reply.text}></InlineMarkdownText>
+            </div>
+        {:else}
+            <EditPostBody
+                postData={reply}
+            ></EditPostBody>
+        {/if}
         <div class="comment-reaction-row">
             <div class="row-group">
                 <div class="row-group-icons">
@@ -130,21 +155,16 @@
                     <UserActionsMenu
                         mode='sessionUserPostMenu'
                         postId={reply.id}
-                        bind:editState={editState}
                         success={userActionSuccess}
                     ></UserActionsMenu>
                 {:else if reply.user_id != sessionUserId}
                     <UserActionsMenu
                         mode='postMenu'
+                        postId={reply.id}
                         success={userActionSuccess}
                     ></UserActionsMenu>
                 {/if}
             </div>
         </div>
     </div>
-    <!-- <Collapsible.Root open={openState}>
-        <Collapsible.Content transition={slide}>
-            <PostReplyEditor></PostReplyEditor>
-        </Collapsible.Content>
-    </Collapsible.Root> -->
 </div>

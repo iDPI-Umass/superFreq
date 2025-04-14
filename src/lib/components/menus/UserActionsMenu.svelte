@@ -11,8 +11,9 @@
     import PenLine from '@lucide/svelte/icons/pen-line'
     import Trash2 from '@lucide/svelte/icons/trash-2'
 
+    import { interactionStates } from '$lib/resources/states.svelte';
+
     interface ComponentProps {
-        editState?: boolean | null | undefined
         mode: 'profileMenu' | 'postMenu' | 'sessionUserPostMenu'
         profileUserId?: string | null
         blocked?: boolean
@@ -22,7 +23,6 @@
     }
 
     let {
-        editState = $bindable(false),
         mode,
         profileUserId = null,
         blocked = false,
@@ -33,10 +33,11 @@
 
     // let actionSuccess = $derived(success)
 
-    let popOverOpenState: boolean = $state(false)
+    let popOverOpenState = $state(interactionStates.popOverOpenState)
+    let editState = $state(interactionStates.editState)
     let showModal: boolean = $state(false)
     let dialog: any
-    
+
     const diaglogTitleOptions: App.Lookup = {
         blockUser: 'Block uesr?',
         deletePost: 'Delete post?',
@@ -84,7 +85,9 @@
 
     function toggleEditState() {
         editState = !editState
+        interactionStates.editState = editState
         popOverOpenState = !popOverOpenState
+        interactionStates.popOverOpenState = popOverOpenState
     }
 
     function openDialog( mode: string ) {

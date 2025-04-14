@@ -7,9 +7,9 @@
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte';
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import GridList from "$lib/components/GridList.svelte"
-	import NewNowPlayingPost from '$lib/components/Posts/NewNowPlayingPost.svelte'
+	import NewNowPlayingPost from 'src/lib/components/posts/NewNowPlayingPost.svelte'
     import Feed from '$lib/components/Feed.svelte'
-	import NowPlayingPostsSample from '$lib/components/Posts/NowPlayingPostsSample.svelte'
+	import NowPlayingPostsSample from 'src/lib/components/posts/NowPlayingPostsSample.svelte'
     import CoverArt from '$lib/components/CoverArt.svelte'
     import InfoBox from '$lib/components/InfoBox.svelte'
 

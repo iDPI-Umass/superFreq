@@ -4,8 +4,8 @@
     import { parseTimestamp } from '$lib/resources/parseData'
     import decoration from "$lib/assets/images/feed-item-decoration.svg"
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
-    import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
-    import NowPlayingTag from '$lib/components/Posts/NowPlayingTag.svelte'
+    import NowPlayingPost from 'src/lib/components/posts/NowPlayingPost.svelte'
+    import NowPlayingTag from 'src/lib/components/posts/NowPlayingTag.svelte'
     import CoverArt from '$lib/components/CoverArt.svelte'
     import OptionsMenu from '$lib/components/menus/OptionsMenu.svelte'
     import wave from "$lib/assets/images/logo/freq-wave.svg"
