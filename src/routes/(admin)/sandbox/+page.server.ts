@@ -15,10 +15,6 @@ export const load: PageServerLoad = async ( {locals: { safeGetSession }}) => {
     .where('target_user_id', '=', sessionUserId)
     .execute()
 
-    for ( const item of select ) {
-        console.log(item.username, item.user_blocked, item.follows_now)
-    }
-
     return { sessionUserId }
 }
 

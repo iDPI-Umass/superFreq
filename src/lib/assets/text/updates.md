@@ -1,8 +1,12 @@
 ---
 title: Updates
 layout: about
-updated: 04/10/2025
+updated: 04/14/2025
 ---
+### April 14, 2025
+#### Bug Fixes
+- Fixed avatar update on '/account' page
+
 ### April 10, 2025
 #### Updates
 - Implemented simple filtering for the feed. Next comes saving filter defaults.

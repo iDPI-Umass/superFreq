@@ -61,16 +61,6 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
 
     const totalRowCount = totalFeedItemsRows[0]['feed_rows_count'] as number
 
-    for ( const item of feedData ) {
-        if (item.item_type == 'social_follow') {
-            console.log('social follow')
-            console.log(item.username, item.target_username)
-        }
-        else {
-            console.log('not')
-        }
-    }
-
     return { feedData, totalRowCount }
 }
 
