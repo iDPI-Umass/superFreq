@@ -276,8 +276,10 @@ export const actions = {
         const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
-        const postId = data.get('post-id') as string
+        const postId = data.get('post-id') string
         const reactionType = data.get('reaction-type') as string
+
+        console.log(postId)
 
         const { reaction } = await insertUpdateReaction( sessionUserId, postId, reactionType )
 

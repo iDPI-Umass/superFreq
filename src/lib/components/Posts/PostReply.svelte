@@ -53,22 +53,10 @@
         interactionStates.popOverOpenState = false
     })
 
+    console.log(reply.post_id)
+
 </script>
 
-<input 
-    type="hidden"
-    name="post-reply-id" 
-    id="post-reply-id"
-    form="flagPost"
-    value={reply.id}
-/>
-<input 
-    type="hidden"
-    name="post-reply-id" 
-    id="post-reply-id"
-    form="delete"
-    value={reply.id}
-/>
 <input
     type="hidden"
     name="parent-post-id"
@@ -87,6 +75,7 @@
     type="hidden"
     name="reply-data"
     id="reply-data"
+    from="submitReaction"
     value={JSON.stringify(reply)}
 />
 
@@ -134,7 +123,7 @@
         <div class="row-group">
             <div class="row-group-icons">
                 <LikeReact
-                    postId={reply.id}
+                    postId={reply.post_id}
                     reactionActive={reactionActive}
                     reactionCount={reactionCount}
                 ></LikeReact>
@@ -162,14 +151,14 @@
             {#if reply.user_id == sessionUserId }
                 <UserActionsMenu
                     mode='sessionUserPostMenu'
-                    postId={reply.id}
+                    postId={reply.post_id}
                     bind:editState={editState}
                     success={userActionSuccess}
                 ></UserActionsMenu>
             {:else if reply.user_id != sessionUserId}
                 <UserActionsMenu
                     mode='postMenu'
-                    postId={reply.id}
+                    postId={reply.post_id}
                     success={userActionSuccess}
                 ></UserActionsMenu>
             {/if}

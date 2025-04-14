@@ -90,7 +90,7 @@ export const actions = {
 
         const data = await request.formData()
         const reactionType = data.get('reaction-type') as string
-        const postId = data.get('post-id') as string
+        const postId = data.get('post-id') ?? data.get('post-reply-id') as string
 
         const { reaction } = await insertUpdateReaction( sessionUserId, postId, reactionType )
 
@@ -118,7 +118,7 @@ export const actions = {
         const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
-        const postId = data.get('post-reply-id') as string ?? data.get('post-id') as string
+        const postId = data.get('post-id') ?? data.get('post-reply-id') as string
         const parentPostUsername = data.get('post-username') as string
         const parentPostId = data.get('parent-post-id') as string
         const parentPostTimestamp = data.get('parent-post-timestamp') as string
@@ -139,7 +139,7 @@ export const actions = {
         const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
-        const postId = data.get('post-reply-id') as string ?? data.get('post-id') as string
+        const postId = data.get('post-id') ?? data.get('post-reply-id') as string
 
         const flag = await insertPostFlag( sessionUserId, postId )
 
