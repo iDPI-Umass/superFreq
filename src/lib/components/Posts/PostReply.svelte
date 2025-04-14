@@ -3,10 +3,10 @@
     import { slide } from 'svelte/transition'
 
     import CoverArt from '$lib/components/CoverArt.svelte'
-    import EditPostBody from 'src/lib/components/posts/EditPostBody.svelte'
-    import PostReplyEditor from 'src/lib/components/posts/PostReplyEditor.svelte'
+    import EditPostBody from 'src/lib/components/Posts/EditPostBody.svelte'
+    import PostReplyEditor from 'src/lib/components/Posts/PostReplyEditor.svelte'
     import PostMenuSessionUser from 'src/lib/components/menus/PostMenuSessionUser.svelte'
-    import LikeReact from 'src/lib/components/posts/LikeReact.svelte'
+    import LikeReact from 'src/lib/components/Posts/LikeReact.svelte'
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte'
     import InlineMarkdownText from '$lib/components/InlineMarkdownText.svelte'
     import { displayDate, parseMarkdown } from '$lib/resources/parseData'

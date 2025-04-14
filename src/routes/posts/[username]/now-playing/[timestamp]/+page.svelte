@@ -1,8 +1,8 @@
 <script lang="ts">
     import SEO from '$lib/components/layout/SEO.svelte'
-    import NowPlayingPost from '$lib/components/posts/NowPlayingPost.svelte'
-    import PostReply from '$lib/components/posts/PostReply.svelte'
-    import PostReplyEditor from '$lib/components/posts/PostReplyEditor.svelte'
+    import NowPlayingPost from 'src/lib/components/Posts/NowPlayingPost.svelte'
+    import PostReply from 'src/lib/components/Posts/PostReply.svelte'
+    import PostReplyEditor from 'src/lib/components/Posts/PostReplyEditor.svelte'
 
     let { data, form } = $props();
 
