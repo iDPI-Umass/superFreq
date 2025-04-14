@@ -76,6 +76,9 @@
     }
 
     const artistName = $derived(post.artist_name ?? post.user_added_artist_name) as string
+
+    let editState = $state(false)
+
 </script>
 
 <!-- <svelte:options runes={true} /> -->
@@ -120,11 +123,12 @@
                 >
                 </NowPlayingTag>
             {/if}
-            {#if !interactionStates.editState}
+            {#if !editState}
                 <InlineMarkdownText text={post.text}></InlineMarkdownText>
             {:else}
                 <EditPostBody
                     postData={post}
+                    editState={editState}
                 ></EditPostBody>
             {/if}
             <!-- {#if formData == true }
@@ -179,13 +183,14 @@
                     {#if post.user_id == sessionUserId }
                         <UserActionsMenu
                             mode='sessionUserPostMenu'
-                            postId={post.id ?? post.now_playing_post_id}
+                            postId={post.id ?? post.now_playing_post_id ?? post.post_id}
+                            bind:editState={editState}
                             success={userActionSuccess}
                         ></UserActionsMenu>
                     {:else if sessionUserId}
                         <UserActionsMenu
                             mode='postMenu'
-                            postId={post.id ?? post.now_playing_post_id}
+                            postId={post.id ?? post.now_playing_post_id ?? post.post_id}
                             success={userActionSuccess}
                         ></UserActionsMenu>
                     {/if}

@@ -23,7 +23,6 @@ export const actions = {
         const data = await request.formData()
         const selected = data.getAll('selected-options')
 
-        console.log(selected)
     },
     saveDefaults: async({ request, locals: { safeGetSession } }) => {
         const { session } = await safeGetSession()

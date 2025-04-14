@@ -26,6 +26,8 @@
         const slug = username?.concat(replyTimestamp)
         return slug
     }
+
+    let editState = $state(false)
 </script>
 
 <SEO title="{post?.display_name}'s Now Playing post"></SEO>

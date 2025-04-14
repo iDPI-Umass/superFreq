@@ -230,7 +230,6 @@ export const updatePost = async function ( sessionUserId: string, postData: App.
         .executeTakeFirstOrThrow()
 
         const post = await update
-        console.log(post)
         return post
     })
     return updatePost
@@ -239,7 +238,6 @@ export const updatePost = async function ( sessionUserId: string, postData: App.
 /* Delete a post */
 
 export const deletePost = async function ( sessionUserId: string, postId: string) {
-    
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
 

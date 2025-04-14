@@ -77,11 +77,6 @@
             },
         ]
     }]
-
-    let selectedOptions = $state([])
-    $effect(() => {
-        console.log(feedData.feedItems[0])
-    })
 </script>
 
 {#snippet feedItemTag( feedItem: App.RowData )} 

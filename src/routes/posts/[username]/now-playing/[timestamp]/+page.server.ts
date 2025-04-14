@@ -123,8 +123,6 @@ export const actions = {
         const parentPostId = data.get('parent-post-id') as string
         const parentPostTimestamp = data.get('parent-post-timestamp') as string
 
-        console.log( sessionUserId, postId )
-
         const submitDelete = await deletePost( sessionUserId, postId )
 
         const permalink = parentPostId ? `/posts/${parentPostUsername}/now-playing/${parentPostTimestamp}` : '/'
