@@ -42,7 +42,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
             ])),
             not(and([
                 eb('item_type', '=', 'reaction'),
-                eb('reaction_post_username', '!=', sessionUserId)
+                eb('reaction_post_user_id', '!=', sessionUserId),
             ])),
             eb('item_type', 'in', itemTypes)
         ]))
