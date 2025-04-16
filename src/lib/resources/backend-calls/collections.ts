@@ -344,6 +344,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
                     ])
                 ]),
             ]))
+            .where('info.collection_id', '=', collectionId)
             .select([
                 'info.collection_id as collection_id',
                 'info.status as status',

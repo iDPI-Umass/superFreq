@@ -1,8 +1,12 @@
 ---
 title: Updates
 layout: about
-updated: 04/14/2025
+updated: 04/16/2025
 ---
+### April 16, 2025
+#### Bug Fixes
+- Fixed bug affecting permissions to edit a collection
+
 ### April 14, 2025
 #### Bug Fixes
 - Fixed avatar update on '/account' page

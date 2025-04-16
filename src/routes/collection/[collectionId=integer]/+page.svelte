@@ -151,7 +151,7 @@
                     </p>
                     <p class="collection-date-text">Last updated on {updatedAt}</p>
                 </div>
-                {#if collectionInfo?.status != 'public'}
+                {#if collectionInfo?.status == 'open' || collectionInfo?.status == 'private'}
                 <InfoBox
                     mode="inline"
                 >
