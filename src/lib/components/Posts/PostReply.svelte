@@ -53,8 +53,6 @@
         interactionStates.popOverOpenState = false
     })
 
-    console.log(reply.post_id)
-
 </script>
 
 <input
