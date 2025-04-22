@@ -936,6 +936,23 @@ export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: s
                 'description_text': text
             }
 
+            const newUserAddedItems = [] as any
+            for ( const item of collectionItems ) {
+                if (!item["artist_mbid"] && !item["original_id"]) {
+                    newUserAddedItems.push({
+                        'artist_name': item['artist_name'],
+                        'release_group_name': item['release_group_name'],
+                        'recording_name': item['recording_name'],
+                        'episode_title': item['episode_title'],
+                        'show_title': item['show_title'],
+                        'added_by': sessionUserId,
+                        'added_at': timestampISO,
+                        'listen_url': item['listen_url'],
+                        'collection_id': collectionId
+                    })
+                }
+            }
+
             await trx
             .updateTable('collections_info')
             .set({
@@ -973,6 +990,33 @@ export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: s
                     .doNothing()
                 )
                 .execute()
+            }
+
+            let userAddedMetadataRows = [] as App.RowData[]
+            if ( newUserAddedItems.length > 0 ) {
+                userAddedMetadataRows = await trx
+                    .insertInto('user_added_metadata')
+                    .values(newUserAddedItems)
+                    .returningAll()
+                    .execute() as App.RowData[]
+            }
+
+            for ( const row of userAddedMetadataRows ) {
+                const artistName = row['artist_name']
+                const releaseGroupName = row['release_group_name']
+                const recordingName = row['recording_name']
+                const episodeTitle = row['episode_title']
+                const showName = row['show_title']
+    
+                const collectionItemIndex = collectionItems.findIndex((item) => (
+                    item['artist_name'] == artistName &&
+                    item['release_group_name'] == releaseGroupName &&
+                    item['recording_name'] == recordingName &&
+                    item['episode_title'] == episodeTitle &&
+                    item['show_title'] == showName
+                ))
+    
+                collectionItems[collectionItemIndex]['user_added_metadata_id'] = row['id']
             }
             
             const collectionContents = await populateCollectionContents(sessionUserId, collectionItems, collectionId) 
@@ -1031,6 +1075,23 @@ export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: s
 
             const collectionId = insertCollectionInfo?.collection_id as string
 
+            const newUserAddedItems = [] as any
+            for ( const item of collectionItems ) {
+                if (!item["artist_mbid"] && !item["original_id"]) {
+                    newUserAddedItems.push({
+                        'artist_name': item['artist_name'],
+                        'release_group_name': item['release_group_name'],
+                        'recording_name': item['recording_name'],
+                        'episode_title': item['episode_title'],
+                        'show_title': item['show_title'],
+                        'added_by': sessionUserId,
+                        'added_at': timestampISO,
+                        'listen_url': item['listen_url'],
+                        'collection_id': collectionId
+                    })
+                }
+            }
+
             await trx
                 .updateTable('profiles')
                 .set({
@@ -1048,21 +1109,55 @@ export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: s
                 })
                 .executeTakeFirst()
 
-            await trx
-                .insertInto('artists')
-                .values(artistsMetadata)
-                .onConflict((oc) => oc
-                    .doNothing()
-                )
-                .execute()
+            if ( artistsMetadata.length > 0 ) {
+                console.log(artistsMetadata)
+                await trx
+                    .insertInto('artists')
+                    .values(artistsMetadata)
+                    .onConflict((oc) => oc
+                        .doNothing()
+                    )
+                    .execute()
+            } 
 
-            await trx
+
+            if ( releaseGroupsMetadata.length > 0 ) {
+                await trx
                 .insertInto('release_groups')
                 .values(releaseGroupsMetadata)
                 .onConflict((oc) => oc
                     .doNothing()
                 )
                 .execute()
+            }
+
+            
+            let userAddedMetadataRows = [] as App.RowData[]
+            if ( newUserAddedItems.length > 0 ) {
+                userAddedMetadataRows = await trx
+                    .insertInto('user_added_metadata')
+                    .values(newUserAddedItems)
+                    .returningAll()
+                    .execute() as App.RowData[]
+            }
+    
+            for ( const row of userAddedMetadataRows ) {
+                const artistName = row['artist_name']
+                const releaseGroupName = row['release_group_name']
+                const recordingName = row['recording_name']
+                const episodeTitle = row['episode_title']
+                const showName = row['show_title']
+    
+                const collectionItemIndex = collectionItems.findIndex((item) => (
+                    item['artist_name'] == artistName &&
+                    item['release_group_name'] == releaseGroupName &&
+                    item['recording_name'] == recordingName &&
+                    item['episode_title'] == episodeTitle &&
+                    item['show_title'] == showName
+                ))
+    
+                collectionItems[collectionItemIndex]['user_added_metadata_id'] = row['id']
+            }
 
             const collectionContents = await populateCollectionContents(sessionUserId, collectionItems, collectionId) 
             
