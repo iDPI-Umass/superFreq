@@ -7,6 +7,7 @@ updated: 04/22/2025
 #### Bug Fixes
 - Track metadata now displayed when making a new Now Playing post
 - /account route 'update profile' button now works without sending a 500 error
+- Manual add fixed for Top Albums collection
 
 ### April 16, 2025
 #### Bug Fixes
