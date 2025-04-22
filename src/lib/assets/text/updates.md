@@ -1,8 +1,12 @@
 ---
 title: Updates
 layout: about
-updated: 04/16/2025
+updated: 04/22/2025
 ---
+### April 22, 2025
+#### Bug Fixes
+- Fixed issue with track metadata displaying when making a new Now Playing post
+
 ### April 16, 2025
 #### Bug Fixes
 - Fixed bug affecting permissions to edit a collection

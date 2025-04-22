@@ -16,5 +16,4 @@
 <SEO title="New Now Playing post"></SEO>
 
 <NewNowPlayingPost
-	bind:addedItem={addedItem}
 ></NewNowPlayingPost>
