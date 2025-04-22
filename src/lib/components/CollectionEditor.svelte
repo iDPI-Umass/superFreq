@@ -132,12 +132,25 @@
                         Episode / DJ Mix
                     </label>
                 </li>
+                <li>
+                    <input 
+                        class="radio"
+                        type="radio"
+                        name="item-type"
+                        id="collection"
+                        value="collection"
+                        bind:group={itemType}
+                    />
+                    <label for="episode">
+                        collection
+                    </label>
+                </li>
             </ul>
         </fieldset>
     </div>
     {/if}
     <div class="form-column">
-        {#if itemType != "episode"}
+        {#if itemType == "artist" || itemType == "release_group" || itemType == "recording" }
             <div class="collection-search-bar">
                 <span class="search-tooltip">
                     search for <em>{itemLookup[itemType]}</em> to add info automatically
