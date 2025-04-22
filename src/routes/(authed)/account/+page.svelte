@@ -32,17 +32,19 @@
 	let avatarUrl = $derived(avatarItem?.avatar_url ?? profile?.avatar_url ?? '') as string
 	let lastFmImgUrl = $derived(avatarItem?.last_fm_img_url ?? profile?.avatar_last_fm_img_url ?? '') as string
 	let avatarArtist = $derived(avatarItem?.artist_name ?? profile?.avatar_artist_name ?? '') as string
-	let avatarReleaseGroup = $derived(avatarItem?.release_group_name ?? profile?.avatar_release_group_name ?? '') as string
+	let avatarReleaseGroupName = $derived(avatarItem?.release_group_name ?? profile?.avatar_release_group_name ?? '') as string
+	let avatarReleaseGroupMbid = $derived(avatarItem?.release_group_mbid ?? profile?.avatar_release_group_mbid ?? '') as string
 
 	let avatarInfo = $derived({
 		'img_url': collectionData.singleItem.img_url ?? avatarUrl ?? null,
 		'last_fm_img_url': collectionData.singleItem.last_fm_img_url ?? lastFmImgUrl ?? null,
 		'artist_name': collectionData.singleItem.artist_name ?? avatarArtist ?? null,
 		'artist_mbid': collectionData.singleItem.artist_mbid ?? avatarMbid ?? null,
-		'release_group_name': collectionData.singleItem.release_group_name ?? avatarReleaseGroup ?? null,
-		'release_group_mbid': collectionData.singleItem.release_group_mbid ?? avatarItem?.release_group_mbid ?? null,
+		'release_group_name': collectionData.singleItem.release_group_name ?? avatarReleaseGroupName ?? null,
+		'release_group_mbid': collectionData.singleItem.release_group_mbid ?? avatarReleaseGroupMbid ?? null,
 		'label': collectionData.singleItem.label ?? avatarItem?.label ?? null,
 	}) as App.RowData
+
 
 	let updateLoading = $state(false)
 

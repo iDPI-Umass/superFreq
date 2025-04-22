@@ -5,7 +5,8 @@ updated: 04/22/2025
 ---
 ### April 22, 2025
 #### Bug Fixes
-- Fixed issue with track metadata displaying when making a new Now Playing post
+- Track metadata now displayed when making a new Now Playing post
+- /account route 'update profile' button now works without sending a 500 error
 
 ### April 16, 2025
 #### Bug Fixes
