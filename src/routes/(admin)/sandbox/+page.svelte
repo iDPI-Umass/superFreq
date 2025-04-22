@@ -1,6 +1,10 @@
 <script lang="ts">
     import OptionsMenu from "src/lib/components/menus/OptionsMenu.svelte";
 
+    const { data } = $props()
+    const { emails } = data
+
+
     const items = [
         {
             'id': 'option1',
@@ -26,3 +30,7 @@
         inputGroup={inputGroup}
     ></OptionsMenu>
 </div> -->
+
+{#each emails as email}
+<p>{email.email}</p>
+{/each}

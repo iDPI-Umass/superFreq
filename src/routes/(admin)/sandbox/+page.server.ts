@@ -9,13 +9,14 @@ export const load: PageServerLoad = async ( {locals: { safeGetSession }}) => {
     const { session } = await safeGetSession()
     const sessionUserId = session?.user.id as string
 
-    const select = await db
-    .selectFrom('feed_items')
-    .selectAll()
-    .where('target_user_id', '=', sessionUserId)
+    const emails = await db
+    .selectFrom('invites')
+    .select('email')
+    .where('approved', 'is', true)
+    .where('user_id', 'is', null)
     .execute()
 
-    return { sessionUserId }
+    return { emails }
 }
 
 export const actions = {

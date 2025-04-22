@@ -3,19 +3,22 @@
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
     import Tooltip from '$lib/components/Tooltip.svelte'
+    import { collectionData } from 'src/lib/resources/states.svelte'
 
     import { Tabs } from "bits-ui";
 
-    interface ComponentProps {
-        addedItem?: any
-    }
+    // interface ComponentProps {
+    //     addedItem?: any
+    // }
 
-    let {
-        addedItem = $bindable({}),
-    }: ComponentProps = $props()
+    // let {
+    //     addedItem = $bindable({}),
+    // }: ComponentProps = $props()
+    let addedItem = $derived(collectionData.singleItem)
 
     let imgUrl = $derived(addedItem["img_url"]) as string
     let lastFmImgUrl = $derived(addedItem["last_fm_img_url"]) as string
+
 
     let posting = $state(false)
 </script>
