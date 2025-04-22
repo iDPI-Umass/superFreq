@@ -1110,7 +1110,6 @@ export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: s
                 .executeTakeFirst()
 
             if ( artistsMetadata.length > 0 ) {
-                console.log(artistsMetadata)
                 await trx
                     .insertInto('artists')
                     .values(artistsMetadata)

@@ -220,7 +220,6 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
             .where('collections_contents.item_position', 'is not', null)
             .orderBy('collections_contents.item_position')
             .execute()
-        console.log(topAlbumsCollection)
 
         
         return { profileUserData, profileUserBlockInfo, profileUserFlagInfo, collectionCount, collectionFollowingCount, userFollowingCount, nowPlayingPostsCount, topAlbumsCollection, followInfo, permission: true }
