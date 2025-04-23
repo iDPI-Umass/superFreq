@@ -21,7 +21,7 @@
 		searchButtonText,
 		searchPlaceholder,
 		mode, // "single" | "collection" | "avatar-search"
-		limit = '25',
+		limit = '5',
 		query = '',
 		continuePromise = $bindable(true)
 	}: ComponentProps = $props()

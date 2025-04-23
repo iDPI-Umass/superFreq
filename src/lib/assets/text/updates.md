@@ -1,8 +1,12 @@
 ---
 title: Updates
 layout: about
-updated: 04/22/2025
+updated: 04/23/2025
 ---
+### April 23, 2025
+#### Updates
+- Continuing to tweak image loading, this time in the search bar in the collection editor.
+
 ### April 22, 2025
 #### Bug Fixes
 - Track metadata now displayed when making a new Now Playing post
