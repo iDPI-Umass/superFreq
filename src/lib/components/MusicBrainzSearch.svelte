@@ -59,6 +59,7 @@
 			promiseStates.newItemAdded = true
 			promiseStates.continueClientSideImgPromise = false
 			showModal = false
+			addingItem = false
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
 				const releaseGroup = {
 					release_group_mbid: releaseGroupMbid(searchCategory, item),
@@ -70,7 +71,6 @@
 				collectionData.singleItem["last_fm_img_url"] = success ? lastFmCoverArtUrl : null
 				promiseStates.imgPromise = new Promise ((resolve) => resolve(success)) 
 			}
-			addingItem = false
 			promiseStates.continueClientSideImgPromise = true
 			return { query, searchComplete, showModal }
 		}
@@ -83,6 +83,7 @@
 			searchComplete = false
 			promiseStates.newItemAdded = collectionItems.newItemAdded
 			showModal = false
+			addingItem = false
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
 				const releaseGroup = releaseGroupMetadata( searchCategory, item )
 				const { success, coverArtArchiveUrl, lastFmCoverArtUrl } = await getCoverArt(releaseGroup)
@@ -91,7 +92,6 @@
 				collectionData.collectionItems[thisItemIndex]["last_fm_img_url"] = success ? lastFmCoverArtUrl : null
 				promiseStates.imgPromise = new Promise ((resolve) => resolve(success))
 			}
-			addingItem = false
 			promiseStates.continueClientSideImgPromise = true
 			return { query, searchComplete, showModal }
 		}
