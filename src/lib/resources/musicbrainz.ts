@@ -11,7 +11,7 @@ const lastFmApiKey = PUBLIC_LAST_FM_API_KEY
 //
 */
 
-export const mbSearch = async function ( query: string, searchCategory: string, limit: string ) {
+export const mbSearch = async function ( query: string, searchCategory: string, limit: string = '10' ) {
     if ( !query ) {
         return { mbData: null, searchComplete: false }
     }
@@ -344,9 +344,9 @@ export const checkDeleted = function ( item: App.RowData, deletedItems: App.RowD
 }
 
 // Check if collection has reached limit
-export const checkLimit = function ( limit: string, addedItems: App.RowData | App.RowData[] ) {
-    const limitValue = parseInt(limit)
-    const limitReached = ( addedItems.length >= limitValue ) ? true : false
+export const checkLimit = function ( limit: string | null, addedItems: App.RowData | App.RowData[] ) {
+    const limitValue = limit ? parseInt(limit) : null
+    const limitReached =  ( limitValue && addedItems.length >= limitValue ) ? true : false
     return limitReached
 }
 
@@ -430,7 +430,7 @@ export const addCollectionItemNoImg = async function (
     item: App.RowData, 
     addedItems: App.RowData[], 
     deletedItems: App.RowData[],
-    limit: string, 
+    limit: string | null, 
     searchCategory: string,
     mbidCategory: string, 
 ) {

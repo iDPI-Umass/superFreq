@@ -11,8 +11,9 @@
 		searchButtonText: string
 		searchPlaceholder: string
 		mode: string,
-		limit?: string | null,
+		searchResultsLimit?: string,
 		query?: string,
+		collectionLimit: string | null,
 		continuePromise? : boolean
 	}
 
@@ -21,8 +22,9 @@
 		searchButtonText,
 		searchPlaceholder,
 		mode, // "single" | "collection" | "avatar-search"
-		limit = '5',
+		searchResultsLimit = '5',
 		query = '',
+		collectionLimit = null,
 		continuePromise = $bindable(true)
 	}: ComponentProps = $props()
 
@@ -32,11 +34,11 @@
 	let mbData = $state([]) as any[]
 	let searchComplete = $state(false)
 
-	async function search ( query: string, searchCategory: string, limit: string ) {
+	async function search ( query: string, searchCategory: string, searchResultsLimit: string ) {
 		promiseStates.newItemAdded = false
 		mbData = []
 		showModal = true
-		const searchResults = await mbSearch(query, searchCategory, limit)
+		const searchResults = await mbSearch(query, searchCategory, searchResultsLimit)
 		mbData = searchResults.mbData
 		searchComplete = searchResults.searchComplete
 		return { mbData, searchComplete, showModal }
@@ -74,7 +76,7 @@
 		}
 		if ( mode == 'collection' ) {
 			promiseStates.continueClientSideImgPromise = false
-			const collectionItems = await addCollectionItemNoImg( item, collectionData.collectionItems, collectionData.deletedItems, limit, searchCategory, mbidCategory )
+			const collectionItems = await addCollectionItemNoImg( item, collectionData.collectionItems, collectionData.deletedItems, collectionLimit, searchCategory, mbidCategory )
 			collectionData.collectionItems = collectionItems.addedItems
 			collectionData.deletedItems = collectionItems.deletedItems
 			query = ""
@@ -189,7 +191,7 @@
 	<form class="search">
 		<button 
 			class="double-border-top"
-			onclick={() => search(query, searchCategory, limit)} 
+			onclick={() => search(query, searchCategory, searchResultsLimit)} 
 			disabled={!searchCategory || !searchCategories.includes(searchCategory)}
 		>
 			<div class="inner-border">
