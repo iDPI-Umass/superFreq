@@ -13,6 +13,7 @@
 		mode: string,
 		limit?: string | null,
 		query?: string,
+		collectionLimit: string | null,
 		continuePromise? : boolean
 	}
 
@@ -23,6 +24,7 @@
 		mode, // "single" | "collection" | "avatar-search"
 		limit = '5',
 		query = '',
+		collectionLimit = null,
 		continuePromise = $bindable(true)
 	}: ComponentProps = $props()
 
@@ -74,7 +76,7 @@
 		}
 		if ( mode == 'collection' ) {
 			promiseStates.continueClientSideImgPromise = false
-			const collectionItems = await addCollectionItemNoImg( item, collectionData.collectionItems, collectionData.deletedItems, limit, searchCategory, mbidCategory )
+			const collectionItems = await addCollectionItemNoImg( item, collectionData.collectionItems, collectionData.deletedItems, collectionLimit, searchCategory, mbidCategory )
 			collectionData.collectionItems = collectionItems.addedItems
 			collectionData.deletedItems = collectionItems.deletedItems
 			query = ""
