@@ -11,7 +11,7 @@ const lastFmApiKey = PUBLIC_LAST_FM_API_KEY
 //
 */
 
-export const mbSearch = async function ( query: string, searchCategory: string, limit: string ) {
+export const mbSearch = async function ( query: string, searchCategory: string, limit: string = '10' ) {
     if ( !query ) {
         return { mbData: null, searchComplete: false }
     }
