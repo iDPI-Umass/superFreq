@@ -1,132 +1,120 @@
 <script lang="ts">
     import { enhance } from '$app/forms'
 	import ListModal from 'src/lib/components/modals/ListModal.svelte'
-	import { mbSearch, addCollectionItemNoImg, getCoverArt, addSingleItemNoImg, mbidCateogory, artistName, artistMbid, releaseGroupName, releaseGroupMbid, releaseGroupMetadata, recordingName, itemDate, artistOrigin } from '$lib/resources/musicbrainz'
     import { searchResults, collectionData } from '$lib/resources/states.svelte'
 
+
 	interface ComponentProps {
-		searchCategories: string[]
+        searchCategory: string
 		searchButtonText: string
 		searchPlaceholder: string
-		mode: string,
-		limit?: string | null,
-		query?: string,
+        query?: string
+		mode?: string
+		limit?: string | null
+        results: App.RowData[]
+        resultsCategory: string | null
 	}
 
 	let {
-		searchCategories, // array with any of these items: ['collections', 'users']
+        searchCategory,
 		searchButtonText,
 		searchPlaceholder,
+        query = '',
 		mode, // "search", "collection"
 		limit = '25',
-		query = '',
+        results = [],
+        resultsCategory
 	}: ComponentProps = $props()
 
-	let showModal = $state(false)
+	let showModal = $state( false )
 	let addingItem = $state(false)
 
 	let mbData = $state([]) as any[]
     let loading = $state(false)
 
-    let searchComplete = $derived( searchResults.collections.length > 0 ? true : false )
+    let searchComplete = $derived( results.length > 0 ? true : false )
 
-    async function addCollectionItem ( mode: string, item: App.RowData ) {
-    if ( mode == 'collection' ) {
-			promiseStates.continueClientSideImgPromise = false
-			const collectionItems = await addCollectionItemNoImg( item, collectionData.collectionItems, collectionData.deletedItems, limit, searchCategory, mbidCategory )
-			collectionData.collectionItems = collectionItems.addedItems
-			collectionData.deletedItems = collectionItems.deletedItems
-			query = ""
-            searchResults.collections = []
-			showModal = false
-			addingItem = false
-			return { query, searchComplete, showModal }
-		}
-    }
+    let validQuery = $derived( query && query.length > 0 ? true : false)
+
+    // async function addCollectionItem ( mode: string, item: App.RowData ) {
+    //     const collectionItems = await addCollectionItemNoImg( item, collectionData.collectionItems, collectionData.deletedItems, limit, searchCategory, mbidCategory )
+    //     collectionData.collectionItems = collectionItems.addedItems
+    //     collectionData.deletedItems = collectionItems.deletedItems
+    //     query = ""
+    //     searchResults.results = []
+    //     showModal = false
+    //     addingItem = false
+    //     return { query, searchComplete, showModal }
+    // }
 </script>
 
 <div class="search-bar">
 	<ListModal bind:showModal>
 		{#snippet headerText()}
-			{#if !query}
+			{#if !searchResults.query}
 			Please enter valid input in the search bar.
-			{:else if query && !searchComplete}
-			Loading...
-			{:else if query && searchComplete}
-			Results for <span class="dialog-header">{query}</span>
+			{:else }
+			Results for {searchResults.category} search <span class="dialog-header">{searchResults.query}</span>
 			{/if}
 		{/snippet}
 		{#snippet list()}
 			<div>
-				{#if searchComplete}
+				{#await results.length > 0 then}
 					<ol class="list-modal">
-						{#each mbData as item}
+						{#each results as item}
 						<li class="list-modal">
 							<div class="list-modal-li-row">
-								<div class="list-modal-li-row-button-spacing">
-									<button 
-										class="add"
-										aria-label="add item"
-										onclick={() => {
-											addCollectionItem(mode, item)
-											}}
-										disabled={addingItem}
-									>
-										+ add
-									</button>
-								</div>
-								{#if searchCategory == "artists"}
+                                    <!-- <div class="list-modal-li-row-button-spacing">
+                                        <button 
+                                            class="add"
+                                            aria-label="add item"
+                                            onclick={() => {
+                                                addCollectionItem(mode, item)
+                                                }}
+                                            disabled={addingItem}
+                                        >
+                                            + add
+                                        </button>
+                                    </div> -->
+								{#if resultsCategory == "collections"}
 									<span class="list-modal">
 										<span class="list-modal-bold">
-											{artistName(searchCategory, item)}
+											{item.title}
 										</span>
 										<br />
-										{artistOrigin(searchCategory, item)}
-										<br /> 
-										{itemDate(searchCategory, item)}
-									</span>
-								{:else if searchCategory == "release_groups"}
-									<span class="list-modal">
-										<span class="list-modal-bold" >
-											{releaseGroupName(searchCategory, item)}
-										</span>  
-										by 
-										{artistName(searchCategory, item)}
-										<br /> 
-										{itemDate(searchCategory, item)}
-									</span>
-								{:else if searchCategory == "recordings"}
-									<span class="list-modal">
-										<span class="list-modal-bold">
-											{recordingName(searchCategory, item)}
-										</span> 
-										by 
-										{artistName(searchCategory, item)}
-										<br />
-										{releaseGroupName(searchCategory, item)}
+										by {item.display_name} <span class="data-muted">({item.username})</span>
 									</span>
 								{/if}
 							</div>
-							{#if searchCategory == "release_groups" || searchCategory == "recordings"}
-								<div class="result-image">
-									<CoverArt
-										item={coverArtItem(item, searchCategory)}
-										altText='album {releaseGroupName(searchCategory, item)} by artist {artistName(searchCategory, item)}'
-									></CoverArt>
-								</div>
-							{/if}
 						</li>
 						{/each}
 					</ol>
-				{/if}
+                {:catch}
+                    <p>no results</p>
+				{/await}
 			</div>
 		{/snippet}
 	</ListModal>
-	<form class="search">
+	<form
+        method="POST" 
+        class="search"
+        action="?/search"
+        use:enhance={({formData, formElement}) => {
+            loading = true
+            searchResults.query = query
+            searchResults.category = searchCategory
+            return async ({ update }) => {
+                await update()
+                showModal = true
+                loading = false
+                return
+            }
+        }}
+    >
 		<button 
+            type="submit"
 			class="double-border-top"
-			onclick={() => search(query, searchCategory, limit)} 
-			disabled={!searchCategory || !searchCategories.includes(searchCategory)}
+			disabled={!validQuery || loading}
 		>
 			<div class="inner-border">
 				{searchButtonText}
@@ -136,13 +124,31 @@
 			<input
 				class="search" 
 				type="search" 
-				id="searchQuery" 
+				id="query" 
 				name="query" 
 				placeholder={searchPlaceholder}
 				aria-label={searchPlaceholder}
 				size="40" 
 				bind:value={query}
 			/>
+            <input 
+                type="hidden"
+                name="results-limit"
+                id="results-limit"
+                value={limit}
+            />
+            <input 
+                type="hidden"
+                name="search-category"
+                id="search-category"
+                value={searchCategory}
+            />
+            <input 
+                type="hidden"
+                name="query-type"
+                id="query-type"
+                value="title"
+            />
 		</div>
 	</form>
 </div>
@@ -171,6 +177,10 @@
 		margin-left: auto;
 		margin-right: 0;
 	}
+    span.username {
+        font-style: italic;
+        color: var(--freq-color-text-muted);
+    }
 	@media screen and (max-width: 600px) {
 		form.search {
 			display: flex;

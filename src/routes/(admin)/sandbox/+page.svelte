@@ -1,9 +1,11 @@
 <script lang="ts">
-    import OptionsMenu from "src/lib/components/menus/OptionsMenu.svelte";
+    import OptionsMenu from "src/lib/components/menus/OptionsMenu.svelte"
+    import GlobalSearch from "src/lib/components/GlobalSearch.svelte";
+	import { format } from "date-fns";
+    import { searchResults } from "src/lib/resources/states.svelte.js";
 
-    const { data } = $props()
-    const { emails } = data
-
+    const { data, form } = $props()
+    const { results } = $derived(data)
 
     const items = [
         {
@@ -23,14 +25,10 @@
     const inputGroup = 'input-group'
 </script>
 
-<!-- <div class="panel">
-    <OptionsMenu
-        triggerText='options'
-        items={items}
-        inputGroup={inputGroup}
-    ></OptionsMenu>
-</div> -->
-
-{#each emails as email}
-<p>{email.email}</p>
-{/each}
+<GlobalSearch
+    searchCategory='collections'
+    searchButtonText='search'
+    searchPlaceholder='placeholder'
+    resultsCategory='collections'
+    results={results}
+></GlobalSearch>
