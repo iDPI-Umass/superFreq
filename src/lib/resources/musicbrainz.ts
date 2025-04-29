@@ -1,6 +1,6 @@
 import { categoriesTable, mbidCategoryTable, itemTypeTable } from "$lib/resources/parseData"
 
-import { PUBLIC_LAST_FM_API_KEY } from '$env/static/public'
+import { PUBLIC_LAST_FM_API_KEY, PUBLIC_DISCOGS_KEY, PUBLIC_DISCOGS_SECRET,PUBLIC_DISCOGS_TOKEN } from '$env/static/public'
 import wave from "$lib/assets/images/logo/freq-wave.svg"
 
 const lastFmApiKey = PUBLIC_LAST_FM_API_KEY
@@ -65,6 +65,59 @@ export const getLabel = async function( searchCategory: string, releaseGroupMbid
 
     }
     return { name, mbid }
+}
+
+
+
+// Get URLs in artist MusicBrainz entry
+export const getArtistUrlRels = async function ( mbid: string ) {
+    const endpoint = `https://musicbrainz.org/ws/2/artist/${mbid}?inc=url-rels&fmt=json`
+
+    const url = new URL(endpoint)
+
+    const res = await fetch(url, {
+        mode: 'cors'
+    })
+    console.log(res)
+    const json = await res.json()
+    const relations = json.relations
+
+    return {relations}
+}
+
+// Get URL from MusicBrainz artist relations
+export const getRelationUrl = function ( relations: App.RowData[], relationType: string ) {
+    const thisRelation = relations.find((element) => element.type == relationType)
+
+    console.log(thisRelation)
+
+    const relationUrl = thisRelation.url.resource
+
+    return {relationUrl}
+}
+
+// Get artist photo from Discogs using URL for artist page
+export const getDiscogsArtistPhoto = async function ( url: URL ) {
+    const tokens = url.split('/')
+
+    const discogsArtistId = tokens[tokens.length-1]
+
+    const endpoint = `https://api.discogs.com/artists/${discogsArtistId}`
+    
+    const res = await fetch(endpoint, {
+        headers: {
+            "Authorization": `Discogs token=${PUBLIC_DISCOGS_TOKEN}`,
+          }
+    })
+    const json = await res.json()
+
+    const { images } =  json
+
+    const primaryImage = images.find((element) => element.type == 'primary')
+
+    const imgUrl = primaryImage.resource_url
+    
+    return { imgUrl }
 }
 
 /*
