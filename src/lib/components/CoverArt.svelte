@@ -37,7 +37,8 @@ Currently configured to server Last.fm images on the client side by default on a
         'artist_name': artistName ?? item?.artist_name ?? item?.avatar_artist_name ?? null,
         'artist_mbid': item?.artist_mbid ?? null,
         'release_group_name': releaseGroupName ?? item?.release_group_name ?? item?.avatar_release_group_name ?? null,
-        'release_group_mbid': item?.release_group_mbid ?? null
+        'release_group_mbid': item?.release_group_mbid ?? null,
+        'artist_discogs_img_url': item?.artist_discogs_img_url ?? null
     })
 
     const coverArtSearchTerms = $derived({
@@ -53,9 +54,9 @@ Currently configured to server Last.fm images on the client side by default on a
 
 </script>
 
-{#if coverArtItem['last_fm_img_url'] || coverArtItem['img_url'] } 
-    <img src={coverArtItem['last_fm_img_url'] ?? coverArtItem['img_url']} alt={altText} class={imgClass}  /> 
-{:else if !(coverArtItem['last_fm_img_url'] || coverArtItem['img_url']) }
+{#if coverArtItem['last_fm_img_url'] || coverArtItem['img_url'] || coverArtItem['artist_discogs_img_url']} 
+    <img src={coverArtItem['last_fm_img_url'] ?? coverArtItem['img_url'] ?? coverArtItem['artist_discogs_img_url']} alt={altText} class={imgClass}  /> 
+{:else if !(coverArtItem['last_fm_img_url'] || coverArtItem['img_url'] || coverArtItem['artist_discogs_img_url']) }
     {#await getCoverArtClientSide(coverArtSearchTerms, continuePromise)}
         <img src={wave} alt="loading" class={imgClass} />
     {:then result}

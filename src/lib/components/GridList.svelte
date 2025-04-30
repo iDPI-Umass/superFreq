@@ -185,16 +185,21 @@
             item={item}
             altText={item["episode_title"]}
         ></CoverArt>
+    {:else if itemType.includes("artist")}
+        <CoverArt
+            item={item}
+            altText={item["artist_name"]}
+        ></CoverArt>
     {/if}
 {/snippet}
 
 {#snippet metadataBlurb( item: any, itemType: string, mode: string )}
     {#if itemType.includes("artist")}
+        <CollectionItemTag
+            display={showTags}
+            itemType={itemType}
+        ></CollectionItemTag>
         <span class="artist">
-            <CollectionItemTag
-                display={showTags}
-                itemType={itemType}
-            ></CollectionItemTag>
             {#if item['artist_mbid'] && item['artist_mbid'].length > 0 && mode == "view"}
                 <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
                     {item["artist_name"]}
