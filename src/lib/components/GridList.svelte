@@ -185,11 +185,22 @@
             item={item}
             altText={item["episode_title"]}
         ></CoverArt>
-    {:else if itemType.includes("artist")}
+    {:else if itemType.includes("artist") && mode == "view"}
         <CoverArt
             item={item}
             altText={item["artist_name"]}
         ></CoverArt>
+    {:else if itemType.includes("artist") && mode == "edit"}
+        {#key items.length}
+            {#if ( item["artist_discogs_img_url"] != null ) || ( item["discogs_img_url"] != null )}
+                <CoverArt
+                    item={item}
+                    altText={altText(item, ( collectionType ?? item["item_type"] ))}
+                ></CoverArt>
+            {:else if ( item["artist_discogs_img_url"] == null ) && ( item["discogs_img_url"] == null )}
+                {@render editorItemImage(item, item["artist_name"])}
+            {/if}
+        {/key}
     {/if}
 {/snippet}
 
