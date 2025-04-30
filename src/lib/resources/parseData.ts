@@ -225,6 +225,7 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
                 artistsMetadata = [...artistsMetadata, {
                     "artist_mbid": thisItem["artist_mbid"],
                     "artist_name": thisItem["artist_name"],
+                    "discogs_img_url": thisItem["artist_discogs_img_url"] ?? null,
                     "added_at": timestampISO
                 }]
             }
@@ -280,6 +281,7 @@ export const prepareAvatarMetadataInsert = function ( avatarItem: App.RowData ) 
     artistsMetadata = [...artistsMetadata, {
         "artist_mbid": avatarItem["artist_mbid"],
         "artist_name": avatarItem["artist_name"],
+        "discogs_img_url": thisItem["artist_discogs_img_url"] ?? null,
         "added_at": timestampISO
     }]
 
@@ -313,13 +315,15 @@ export const prepareMusicDataUpsert = function ( collectionItems: App.RowData, c
         if ( collectionType == "artists" ) {
             upsertArtists = [...upsertArtists, {
                 "artist_mbid": thisItem["artist_mbid"],
-                "artist_name": thisItem["artist_name"]
+                "artist_name": thisItem["artist_name"],
+                "discogs_img_url": thisItem["artist_discogs_img_url"] ?? null
             }];
         }
         else if	( collectionType == "release_groups" ) {
             upsertArtists = [...upsertArtists, {
                 "artist_mbid": thisItem["artist_mbid"],
-                "artist_name": thisItem["artist_name"]
+                "artist_name": thisItem["artist_name"],
+                "discogs_img_url": thisItem["artist_discogs_img_url"] ?? null
             }];
 
             upsertReleaseGroups = [...upsertReleaseGroups, {
@@ -335,7 +339,8 @@ export const prepareMusicDataUpsert = function ( collectionItems: App.RowData, c
         else if ( collectionType == "recordings" ) {
             upsertArtists = [...upsertArtists, {
                 "artist_mbid": thisItem["artist_mbid"],
-                "artist_name": thisItem["artist_name"]
+                "artist_name": thisItem["artist_name"],
+                "discogs_img_url": thisItem["artist_discogs_img_url"] ?? null
             }];
 
             upsertReleaseGroups = [...upsertReleaseGroups, {

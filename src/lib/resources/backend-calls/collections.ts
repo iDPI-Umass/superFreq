@@ -384,6 +384,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
             'contents.artist_mbid as artist_mbid',
             'contents.item_type as item_type',
             'artists.artist_name as artist_name',
+            'artists.discogs_img_url as artist_discogs_img_url',
             'release_groups.release_group_name as release_group_name',
             'release_groups.release_group_mbid as release_group_mbid',
             'release_groups.img_url as img_url',

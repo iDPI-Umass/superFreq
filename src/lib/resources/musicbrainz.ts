@@ -76,48 +76,30 @@ export const getArtistUrlRels = async function ( mbid: string ) {
     const url = new URL(endpoint)
 
     const res = await fetch(url, {
-        mode: 'cors'
-    })
-    console.log(res)
-    const json = await res.json()
-    const relations = json.relations
+        mode: 'cors',
+        headers: {
+            "User-Agent": "Freq/0.1 ( hello@freq.social )"
+        }
 
-    return {relations}
+    })
+    const json = await res.json()
+    const relations = json.relations ?? null
+
+    return { relations }
 }
 
 // Get URL from MusicBrainz artist relations
 export const getRelationUrl = function ( relations: App.RowData[], relationType: string ) {
-    const thisRelation = relations.find((element) => element.type == relationType)
 
-    console.log(thisRelation)
+    if ( !relations || !relationType ) {
+        return { relationUrl: null }
+    }
 
-    const relationUrl = thisRelation.url.resource
+    const thisRelation = relations?.find((element) => element.type == relationType) ?? null
 
-    return {relationUrl}
-}
+    const relationUrl = thisRelation?.url?.resource ?? null
 
-// Get artist photo from Discogs using URL for artist page
-export const getDiscogsArtistPhoto = async function ( url: URL ) {
-    const tokens = url.split('/')
-
-    const discogsArtistId = tokens[tokens.length-1]
-
-    const endpoint = `https://api.discogs.com/artists/${discogsArtistId}`
-    
-    const res = await fetch(endpoint, {
-        headers: {
-            "Authorization": `Discogs token=${PUBLIC_DISCOGS_TOKEN}`,
-          }
-    })
-    const json = await res.json()
-
-    const { images } =  json
-
-    const primaryImage = images.find((element) => element.type == 'primary')
-
-    const imgUrl = primaryImage.resource_url
-    
-    return { imgUrl }
+    return { relationUrl }
 }
 
 /*
@@ -368,6 +350,51 @@ export const checkFetchedCoverArt = async function( item: App.RowData ){
     return { coverArtArchiveUrl, lastFmCoverArtUrl }
 }
 
+
+// Get artist photo from Discogs using URL for artist page
+export const getDiscogsArtistPhoto = async function ( url: URL ) {
+
+    if ( !url ) {
+        return { imgUrl: null }
+    }
+
+    const tokens = url.split('/')
+
+    const discogsArtistId = tokens[tokens.length-1]
+
+    const endpoint = `https://api.discogs.com/artists/${discogsArtistId}`
+
+    const res = await fetch(endpoint, {
+        headers: {
+            "Authorization": `Discogs token=${PUBLIC_DISCOGS_TOKEN}`,
+          }
+    })
+    const json = await res.json() ?? null
+
+    const images = json?.images ?? null
+
+    const primaryImage = images?.find((element) => element.type == 'primary') ?? null
+
+    const imgUrl = primaryImage?.resource_url ?? null
+    
+    return { imgUrl }
+}
+
+// Use artist_mbid to get a Discogs Artist photo. Include milliseconds to set timeout based on MusicBrainz and Discogs API rate limiting
+export const getArtistImage = async function ( mbid: string, milliseconds: number = 0 ) {
+    function delay ( milliseconds ) { 
+        new Promise(resolve => setTimeout(resolve, milliseconds)) 
+    }
+
+    await delay(milliseconds)
+
+    const {relations} = await getArtistUrlRels(mbid)
+    const {relationUrl} = await getRelationUrl( relations, 'discogs')
+    const {imgUrl} = await getDiscogsArtistPhoto(relationUrl)
+
+    return imgUrl
+}
+
 /*
 //
 ** Add item from search results
@@ -454,11 +481,15 @@ export const addCollectionItem = async function (
     const releaseGroup = releaseGroupMetadata(searchCategory, item )
     const coverArt = await getCoverArt( releaseGroup )
 
+    const artistMbid = artistMbid( searchCategory, item )
+    const artistImage = await getArtistImage(artistMbid)
+
     addedItems = [...addedItems, {
         "original_id": originalId ?? null,
         "item_position": addedItems.length,
-        "artist_mbid": artistMbid( searchCategory, item ),
+        "artist_mbid": artistMbid,
         "artist_name": artistName( searchCategory, item ),
+        "artist_discogs_img_url": artistImage,
         "release_group_mbid": mbid,
         "release_group_name": releaseGroupName( searchCategory, item ),
         "recording_mbid": recordingMbid( searchCategory, item ),
@@ -563,9 +594,15 @@ export const addSingleItem = async function  (
     const mbid = releaseGroupMbid( searchCategory, item )
     const releaseDate = itemDate( searchCategory, item )
     const label = await getLabel( searchCategory, mbid, releaseDate )
+
+
+    const artistMbid = artistMbid( searchCategory, item )
+    const artistImage = await getArtistImage(artistMbid)
+
     addedItems =  {
-        "artist_mbid": artistMbid( searchCategory, item ),
+        "artist_mbid": artistMbid,
         "artist_name": artistName( searchCategory, item ),
+        "artist_discogs_img_url": artistImage,
         "release_group_mbid": mbid,
         "release_group_name": releaseGroupName( searchCategory, item ),
         "recording_mbid": recordingMbid( searchCategory, item ),
