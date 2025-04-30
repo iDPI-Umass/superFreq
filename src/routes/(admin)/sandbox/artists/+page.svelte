@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 
     import { getArtistUrlRels, getRelationUrl, getDiscogsArtistPhoto } from "src/lib/resources/musicbrainz"
     const mbid = 'fea43e99-c4d5-4dac-9c27-868e864c6dc2'
@@ -26,4 +26,4 @@
 
 <form method="POST" action="?/getImages">
     <button type="submit">get images</button>
-</form>
+</form> -->
