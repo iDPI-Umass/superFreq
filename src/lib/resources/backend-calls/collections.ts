@@ -283,7 +283,66 @@ export const selectListSessionUserCollections =  async function ( sessionUserId:
 Fetches collection for viewing if collection is open or public, or session user is an owner or collaborator
 */
 
+
 export const selectViewableCollectionContents = async function ( collectionId: string, sessionUserId: string ) {
+
+    console.log(collectionId, sessionUserId)
+
+    const selectCollection = await db.transaction().execute(async (trx) => {
+        try {
+            const follows = await trx
+            .selectFrom('collection_follows')
+            .select(['collection_id', 'status', 'owner_id', 'collaborators', 'followers'])
+            .where('collection_id', '=', collectionId)
+            .where('status', '!=', 'deleted')
+            .executeTakeFirstOrThrow()
+
+            const { status, owner_id, collaborators } = follows
+
+            if (
+                ( status == 'private' && owner_id != sessionUserId ) ||
+                ( status == 'private' && !collaborators.includes(sessionUserId) )
+            )
+            { throw new Error( 'no view permission' )}
+
+            const collectionMetadata = await trx
+            .selectFrom('collection_metadata')
+            .selectAll()
+            .where('collection_id', '=', collectionId)
+            .executeTakeFirst()
+
+            const collectionContents = await trx
+            .selectFrom('collections')
+            .selectAll()
+            .where('collection_id', '=', collectionId)
+            .where('item_position', 'is not', null)
+            .execute()
+
+            return { viewPermission: true, follows, collectionContents, collectionMetadata }
+        }
+        catch ( error ) {
+            return { viewPermission: false, follows: null, collectionContents: null, collectionMetadata: null }
+        }
+    })
+
+    const { viewPermission, follows, collectionContents, collectionMetadata } = selectCollection
+
+    if ( !viewPermission ) {
+        return { viewPermission: false, editPermission: false, followsNow: false, collection: null, collectionMetadata: null}
+    }
+
+    const { status, owner_id, collaborators, followers } = follows
+    const followsNow = ( followers.includes(sessionUserId) ) ? true : false
+    const editPermission = (
+        status == 'open' ||
+        owner_id == sessionUserId ||
+        collaborators.includes(sessionUserId)
+    ) ? true : false
+
+    return { viewPermission, editPermission, followsNow, collectionContents, collectionMetadata }
+}
+
+export const oldSelectViewableCollectionContents = async function ( collectionId: string, sessionUserId: string ) {
 
     const selectCollection = await db.transaction().execute(async (trx) => {
         const collectionInfo = await trx
@@ -423,6 +482,78 @@ Fetches collection for editing if session user is owner or collaborator
 */
 
 export const selectEditableCollectionContents = async function ( collectionId: string, sessionUserId: string ) {
+
+    const selectCollection = await db.transaction().execute(async (trx) => {
+        try {
+            const follows = await trx
+            .selectFrom('collection_follows')
+            .select(['collection_id', 'status', 'owner_id', 'collaborators'])
+            .where('collection_id', '=', collectionId)
+            .where('status', '!=', 'deleted')
+            .executeTakeFirstOrThrow()
+
+            console.log(follows)
+            const { status, owner_id, collaborators } = follows
+
+            if ( 
+                (( status == 'public' || status == 'private ' ) && owner_id != sessionUserId  )
+             ) {
+                throw new Error('no edit permission')
+             }
+
+            const collectionMetadata = await trx
+            .selectFrom('collection_metadata')
+            .selectAll()
+            .where('collection_id', '=', collectionId)
+            .executeTakeFirst()
+
+            const collectionContents = await trx
+            .selectFrom('collections')
+            .selectAll()
+            .where('collection_id', '=', collectionId)
+            .execute()
+
+            console.log(collectionContents.length)
+            return { editPermission: true, collectionContents, collectionMetadata }
+        }
+        catch ( error ) {
+            return { editPermission: false, collectionContents: null, collectionMetadata: null }
+        }
+    })
+
+
+    const { editPermission, collectionMetadata } = selectCollection
+    let { collectionContents } = selectCollection
+
+    if ( !editPermission ) { 
+        return { editPermission, collectionMetadata: null, collectionContents: null, deletedCollectionContents: null }
+    }
+
+    // create an array of deleted items and remove all items where 'item_position is null' from collectionContents
+    let deletedCollectionContents = [] as App.RowData[]
+    let filteredContents = collectionContents
+
+    for ( const item of collectionContents ) {
+        if (item.item_position == null) {
+            deletedCollectionContents = [...deletedCollectionContents, item]
+            filteredContents = filteredContents.filter((element) => element != item)
+        }
+    }
+
+    filteredContents.sort(( a, b ) => a.item_position - b.item_position )
+    collectionContents = filteredContents
+
+    // create ID for each item for svelte-dnd component in colleciton editor
+    let counter = 0
+    for ( const item of collectionContents) {
+        item['id'] = counter
+        counter += 1
+    }
+
+    return { editPermission, collectionContents, collectionMetadata, deletedCollectionContents}
+}
+
+export const oldSelectEditableCollectionContents = async function ( collectionId: string, sessionUserId: string ) {
 
     const selectCollection = await db.transaction().execute(async (trx) => {
         

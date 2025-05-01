@@ -19,7 +19,7 @@
 
 
     let { data } = $props();
-    let { sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData, infoBoxText } = $state(data);
+    let { sessionUserId, collectionId, collectionMetadata, collectionContents, viewPermission, editPermission, followData, infoBoxText } = $state(data);
 
     let gridListSelect = $state("grid")
 
@@ -31,16 +31,16 @@
         "recordings": "tracks"
     }
 
-    collectionData.type = collectionInfo?.type as string
-    collectionData.status = collectionInfo?.status as string    
-    collectionData.updatedAt = collectionInfo?.updated_at as Date
+    collectionData.type = collectionMetadata?.type as string
+    collectionData.status = collectionMetadata?.status as string    
+    collectionData.updatedAt = collectionMetadata?.updated_at as Date
     collectionData.collectionItems = collectionContents as App.RowData[]
 
-    const updatedAt = $derived(new Date(collectionInfo?.updated_at).toLocaleDateString())
+    const updatedAt = $derived(new Date(collectionMetadata?.updated_at).toLocaleDateString())
 
     const sortOptions = ['default', 'reverse', 'artist A --> Z', 'artist Z --> A'] as any
 
-    let sortOption = $derived(collectionInfo.default_view_sort ?? 'default') as string
+    let sortOption = $derived(collectionMetadata.default_view_sort ?? 'default') as string
 
     let sortedItems = $state()
 
@@ -94,21 +94,21 @@
 <!-- <svelte:options runes={true} /> -->
 <svelte:head>
 	<title>
-		{collectionInfo?.title}
+		{collectionMetadata?.title}
 	</title>
 </svelte:head>
 
-<SEO title={collectionInfo?.title}></SEO>
+<SEO title={collectionMetadata?.title}></SEO>
 
 
 <div class="two-column">
     <div class="collection-container">
         <div class="collection-info">
                 <div class="collection-info-row">
-                    <h1>{collectionInfo?.title}</h1>
+                    <h1>{collectionMetadata?.title}</h1>
                     <div class="buttons-group">
                         {#if 
-                            sessionUserId && ( sessionUserId != collectionInfo?.owner_id )}
+                            sessionUserId && ( sessionUserId != collectionMetadata?.owner_id )}
                             <form
                                 method="POST"
                                 action="?/followCollection"
@@ -145,22 +145,22 @@
                 <div class="collection-info-attribution">
                     <p class="collection-info-text">
                         Collection by 
-                        <a href="/user/{collectionInfo?.username}">
-                            {collectionInfo?.display_name}
+                        <a href="/user/{collectionMetadata?.username}">
+                            {collectionMetadata?.display_name}
                         </a>
                     </p>
                     <p class="collection-date-text">Last updated on {updatedAt}</p>
                 </div>
-                {#if collectionInfo?.status == 'open' || collectionInfo?.status == 'private'}
+                {#if collectionMetadata?.status == 'open' || collectionMetadata?.status == 'private'}
                 <InfoBox
                     mode="inline"
                 >
-                    {infoBoxText[collectionInfo?.status]}
+                    {infoBoxText[collectionMetadata?.status]}
                 </InfoBox>
                 {/if}
             </div>
             <div class="collection-description-text">
-                <InlineMarkdownText text={collectionInfo?.description_text}></InlineMarkdownText>
+                <InlineMarkdownText text={collectionMetadata?.description_text}></InlineMarkdownText>
             </div>
         </div>
 
@@ -214,7 +214,7 @@
             </div>
         </div>
         <GridList
-            collectionStatus={collectionInfo.status}
+            collectionStatus={collectionMetadata.status}
             collectionReturned={viewPermission}
             layout={gridListSelect}
             mode="view"
