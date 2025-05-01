@@ -1,95 +1,172 @@
 <script lang="ts">
-    import SEO from '$lib/components/layout/SEO.svelte'
-    import PanelHeader from '$lib/components/PanelHeader.svelte';
-    import type { PageData, ActionData } from './$types'
-    import { enhance } from '$app/forms'
-    interface Props {
-        form: ActionData;
-        data: PageData;
-    }
+	import SEO from '$lib/components/layout/SEO.svelte';
+	import PanelHeader from '$lib/components/PanelHeader.svelte';
+	import type { PageData, ActionData } from './$types';
+	import { enhance } from '$app/forms';
+	import CollectionsSpotlight from 'src/lib/components/collections/CollectionsSpotlight.svelte';
+	import CollectionsFirehose from 'src/lib/components/collections/CollectionsFirehose.svelte';
+	import Feed from 'src/lib/components/Feed.svelte';
+	import CollectionsFeed from 'src/lib/components/collections/CollectionsFeed.svelte';
 
-    let { form, data }: Props = $props();
+	let { form, data } = $props();
 
-    let { collections, remaining, totalCollections, batchSize, batchIterator } = $derived(data)
+	let {
+		sessionUserId,
+		feedItems,
+		collections,
+		feedRemaining,
+		remaining,
+		totalCollections,
+		batchSize,
+		batchIterator
+	} = $derived(data);
 </script>
 
 <SEO title="Explore collections"></SEO>
 
-<div class="panel">
-    <PanelHeader>
-        {#snippet headerText()}
-        collection spotlight
-        {/snippet}
-    </PanelHeader>
-    <div class="spotlight">
-        <h2>
-            <a href="/collection/193">Freq beta test listening club, March 2025</a>
-        </h2>
-    </div>
-    
-    
+<div class="jumbotron-container">
+	<div class="jumbotron-item-wrapper">
+		<div class="jumbotron-text">
+			<h3>Collect, curate, and share. Collections are the perfect way to group Albums.</h3>
+		</div>
+		<div class="jumbotron-button">
+			<button class="double-border-top">
+				<div class="inner-border">Create a Collection</div>
+			</button>
+		</div>
+	</div>
 </div>
 
-<div class="panel">
-    <PanelHeader>
-        {#snippet headerText()}
-        all collections
-        {/snippet}
-    </PanelHeader>
-    <ul>
-        {#each (form?.collections ?? collections) as collection}
-            <li>
-                <a href='/collection/{collection.collection_id}'>
-                    {collection.title} by {collection.username} ({new Date(collection.created_at).toLocaleDateString()})
-                </a>
-            </li>
-        {/each}
-    </ul>
+<div class="content landing-page-body">
+	<div class="collections-spotlight-container">
+		<PanelHeader>
+			{#snippet headerText()}
+				Collections you might be interested in
+			{/snippet}
+		</PanelHeader>
+		<div class="collections-spotlight-content">
+			<CollectionsSpotlight collections={form?.collections ?? collections} />
+		</div>
+	</div>
 
-    <form 
-        method="POST" 
-        action="?/loadMore"
-        use:enhance
-    >
-        <input
-            type="hidden"
-            name="batch-iterator"
-            value={form?.batchIterator ?? batchIterator}
-        />
-        <input
-            type="hidden"
-            name="batch-size"
-            value={batchSize}
-        />
-        <input
-            type="hidden"
-            name="collections"
-            value={JSON.stringify(form?.collections ?? collections)}
-        />
-        {#if (form?.remaining ?? remaining) > 0}
-            <div class="button-spacer">
-                <button class="standard" formaction="?/loadMore">
-                    load more
-                </button>
-            </div>
-        {/if}
-    </form>
+	<div class="collections-activity">
+		<div class="activity-panel popular-collections">
+			<PanelHeader>
+				{#snippet headerText()}
+					Popular Collections
+				{/snippet}
+			</PanelHeader>
+			<div class="activity-content-window">
+				<CollectionsFirehose collections={form?.collections ?? collections} />
+			</div>
+		</div>
+
+		<div class="collections-feed-friends">
+			<div class="activity-panel" id="collections-feed">
+				<PanelHeader>
+					{#snippet headerText()}
+						Feed
+					{/snippet}
+				</PanelHeader>
+				<div class="activity-content-window">
+					<CollectionsFeed {sessionUserId} {feedItems} mode="feed" remaining={feedRemaining} />
+				</div>
+			</div>
+			<div class="activity-panel" id="collections-friends">
+				<PanelHeader>
+					{#snippet headerText()}
+						Friends Collections
+					{/snippet}
+				</PanelHeader>
+				<div class="activity-content-window">
+					<CollectionsFirehose
+						collections={form?.collections ?? collections}
+						showAnalytics={false}
+					/>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <style>
-    .spotlight {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    h2 {
-        margin: var(--freq-spacing-medium) auto;
-    }
-    a {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 1rem;
-    }
+	.landing-page-body {
+	}
+
+	.collections-spotlight-container {
+		margin: var(--freq-spacing-large);
+		border: var(--freq-border-panel);
+	}
+
+	.collections-activity {
+		margin: var(--freq-spacing-large);
+		max-width: 100%;
+		gap: var(--freq-width-spacer);
+		display: flex;
+		flex-direction: row;
+	}
+
+	.popular-collections {
+		width: 60%;
+		height: auto;
+	}
+
+	.collections-feed-friends {
+		width: 40%;
+		display: flex;
+		gap: var(--freq-width-spacer);
+		flex-direction: column;
+	}
+
+	.collections-spotlight-content {
+		height: 20rem;
+	}
+
+	.activity-content-window {
+		min-height: 15rem;
+	}
+
+	.jumbotron-container {
+		background-color: black;
+		min-height: 15rem;
+		max-height: fit-content;
+		align-content: center;
+	}
+
+	.jumbotron-item-wrapper {
+		max-width: 50%;
+		max-height: auto;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.jumbotron-text {
+		text-align: center;
+		text-shadow:
+			-2px 0 50px var(--freq-color-primary),
+			0 2px 50px var(--freq-color-primary),
+			2px 0 50px var(--freq-color-primary),
+			0 -2px 50px var(--freq-color-primary);
+	}
+
+	.jumbotron-button {
+		max-width: fit-content;
+
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	@media screen and (max-width: 700px) {
+		.collections-activity {
+			flex-direction: column;
+		}
+
+		.popular-collections {
+			width: 100%;
+		}
+
+		.collections-feed-friends {
+			width: 100%;
+		}
+	}
 </style>
