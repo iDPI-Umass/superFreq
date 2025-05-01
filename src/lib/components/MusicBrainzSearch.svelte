@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms'
 	import ListModal from 'src/lib/components/modals/ListModal.svelte'
-	import { mbSearch, addCollectionItemNoImg, getCoverArt, addSingleItemNoImg, mbidCateogory, artistName, artistMbid, releaseGroupName, releaseGroupMbid, releaseGroupMetadata, recordingName, itemDate, artistOrigin } from '$lib/resources/musicbrainz'
+	import { mbSearch, addCollectionItemNoImg, getCoverArt, addSingleItemNoImg, mbidCateogory, artistName, artistMbid, releaseGroupName, releaseGroupMbid, releaseGroupMetadata, recordingName, itemDate, artistOrigin, getArtistImage } from '$lib/resources/musicbrainz'
 	import CoverArt from './CoverArt.svelte'
 
     import { promiseStates, collectionData } from '$lib/resources/states.svelte';
@@ -64,12 +64,22 @@
 				const releaseGroup = {
 					release_group_mbid: releaseGroupMbid(searchCategory, item),
 					artist_name: artistName(searchCategory, item),
+					artist_mbid: artistMbid(searchCategory, item),
 					release_group_name: releaseGroupName(searchCategory, item)
 				}
+				const artistImgUrl = await getArtistImage(releaseGroup.artist_mbid)
 				const { success, coverArtArchiveUrl, lastFmCoverArtUrl } = await getCoverArt(releaseGroup)
+				collectionData.collectionItems[thisItemIndex]["artist_discogs_img_url"] = artistImgUrl
 				collectionData.singleItem['img_url'] = success ? coverArtArchiveUrl : null
 				collectionData.singleItem["last_fm_img_url"] = success ? lastFmCoverArtUrl : null
 				promiseStates.imgPromise = new Promise ((resolve) => resolve(success)) 
+			}
+			else if ( searchCategory == "artists" ) {
+				const thisArtistMbid = artistMbid(searchCategory, item)
+				const artistImgUrl = await getArtistImage(thisArtistMbid)
+				const thisItemIndex = collectionData.collectionItems.findIndex((item) => item['artist_mbid'] == thisArtistMbid)
+				collectionData.collectionItems[thisItemIndex]["artist_discogs_img_url"] = artistImgUrl
+				promiseStates.imgPromise = new Promise ((resolve) => resolve(success))
 			}
 			promiseStates.continueClientSideImgPromise = true
 			return { query, searchComplete, showModal }
@@ -85,11 +95,25 @@
 			showModal = false
 			addingItem = false
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
+				const thisArtistMbid = artistMbid(searchCategory, item)
+				console.log(thisArtistMbid)
+				const artistImgUrl = await getArtistImage(thisArtistMbid)
+				console.log(artistImgUrl)
 				const releaseGroup = releaseGroupMetadata( searchCategory, item )
 				const { success, coverArtArchiveUrl, lastFmCoverArtUrl } = await getCoverArt(releaseGroup)
 				const thisItemIndex = collectionData.collectionItems.findIndex((item) => item['release_group_mbid'] == releaseGroup.release_group_mbid)
+				collectionData.collectionItems[thisItemIndex]["artist_discogs_img_url"] = artistImgUrl
 				collectionData.collectionItems[thisItemIndex]["img_url"] = success ? coverArtArchiveUrl : null
 				collectionData.collectionItems[thisItemIndex]["last_fm_img_url"] = success ? lastFmCoverArtUrl : null
+				promiseStates.imgPromise = new Promise ((resolve) => resolve(success))
+			}
+			else if ( searchCategory == "artists" ) {
+				console.log('artists')
+				const thisArtistMbid = artistMbid(searchCategory, item)
+				const artistImgUrl = await getArtistImage(thisArtistMbid)
+				console.log(thisArtistMbid, artistImgUrl)
+				const thisItemIndex = collectionData.collectionItems.findIndex((item) => item['artist_mbid'] == thisArtistMbid)
+				collectionData.collectionItems[thisItemIndex]["artist_discogs_img_url"] = artistImgUrl
 				promiseStates.imgPromise = new Promise ((resolve) => resolve(success))
 			}
 			promiseStates.continueClientSideImgPromise = true

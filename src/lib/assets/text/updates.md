@@ -1,8 +1,12 @@
 ---
 title: Updates
 layout: about
-updated: 04/23/2025
+updated: 04/30/2025
 ---
+### April 30, 2025
+#### Updates
+- Collections now display artist photos
+
 ### April 23, 2025
 #### Updates
 - Continuing to tweak image loading, this time in the search bar in the collection editor.
