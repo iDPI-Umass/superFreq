@@ -4,6 +4,8 @@
 	import Heart from 'virtual:icons/heroicons-solid/heart';
 	import Music from 'virtual:icons/mynaui/music';
 	import Eye from 'virtual:icons/teenyicons/eye-outline';
+	import { Tooltip } from "bits-ui";
+
 
 	interface ComponentProps {
 		sessionUserId?: string;
@@ -58,9 +60,25 @@
 								<div class="numeral">
 									<p class="metric-numerals">0</p>
 								</div>
-								<div class="icon">
-									<Music />
-								</div>
+								<Tooltip.Provider>
+									<Tooltip.Root>
+										<Tooltip.Trigger style="cursor: pointer; display: flex; justify-content: center; align-items: center; width: 100%; background: transparent;">
+											<div class="icon">
+												<Music />
+											</div>
+										</Tooltip.Trigger>
+										<Tooltip.Portal>
+											<Tooltip.Content>
+												<Tooltip.Arrow />
+												<div class="icon-tooltip-content">
+													<Music />
+													This is the number of albums or tracks in this collection.
+												</div>
+											</Tooltip.Content>
+										</Tooltip.Portal>
+									</Tooltip.Root>
+								</Tooltip.Provider>
+								
 							</div>
 						</div>
 						<div class="metric" aria-label="metric">
@@ -68,9 +86,25 @@
 								<div class="numeral">
 									<p class="metric-numerals">0</p>
 								</div>
-								<div class="icon">
-									<Heart />
-								</div>
+								<Tooltip.Provider>
+									<Tooltip.Root>
+										<Tooltip.Trigger style="cursor: pointer; display: flex; justify-content: center; align-items: center; width: 100%; background: transparent;">
+											<div class="icon">
+												<Heart />
+											</div>
+										</Tooltip.Trigger>
+										<Tooltip.Portal>
+											<Tooltip.Content>
+												<Tooltip.Arrow />
+												<div class="icon-tooltip-content">
+													<Heart />
+													This is the number of users following this collection.
+												</div>
+											</Tooltip.Content>
+										</Tooltip.Portal>
+									</Tooltip.Root>
+								</Tooltip.Provider>
+								
 							</div>
 						</div>
 						<div class="metric" aria-label="metric">
@@ -78,9 +112,24 @@
 								<div class="numeral">
 									<p class="metric-numerals">0</p>
 								</div>
-								<div class="icon">
-									<Eye />
-								</div>
+								<Tooltip.Provider>
+									<Tooltip.Root>
+										<Tooltip.Trigger style="cursor: pointer; display: flex; justify-content: center; align-items: center; width: 100%; background: transparent;">
+											<div class="icon">
+												<Eye />
+											</div>
+										</Tooltip.Trigger>
+										<Tooltip.Portal>
+											<Tooltip.Content>
+												<Tooltip.Arrow />
+												<div class="icon-tooltip-content">
+													<Eye />
+													This is the number of views this collection has recieved in the past 24 hours.
+												</div>
+											</Tooltip.Content>
+										</Tooltip.Portal>
+									</Tooltip.Root>
+								</Tooltip.Provider>
 							</div>
 						</div>
 					</div>
@@ -146,6 +195,7 @@
 
 	.firehose-item-name:hover {
 		color: var(--freq-color-primary);
+		cursor: pointer;
 	}
 
 	.firehose-item-analytics {
@@ -160,7 +210,7 @@
 
 	.icon {
 		display: flex;
-		margin-top: 0.2rem;
+		margin-top: 0.4rem;
 		align-items: center;
 		justify-content: center;
 		color: var(--freq-color-mellow);
@@ -170,6 +220,18 @@
 		width: 100%;
 		display: flex;
 		justify-content: center;
+	}
+
+	.icon-tooltip-content {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		padding: 11px;
+		border: var(--freq-border-panel);
+		gap: 4px;
+		border-radius: 10px;
+		background-color: var(--freq-color-panel-background);
 	}
 
 	@media screen and (max-width: 1000px) {

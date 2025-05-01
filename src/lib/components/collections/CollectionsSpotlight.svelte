@@ -150,6 +150,12 @@
 		font-size: medium;
 	}
 
+	.spotlight-collection-info-text > h3:hover {
+		color: var(--freq-color-primary);
+		cursor: pointer;
+		font-size: medium;
+	}
+
 	.spotlight-collection-info-text > span {
 		font-size: medium;
 	}
