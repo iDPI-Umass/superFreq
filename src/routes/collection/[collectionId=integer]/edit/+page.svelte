@@ -18,19 +18,19 @@
         infoBoxText: App.StringLookupObject
     } = data
 
-    const collectionInfo = $state(collection?.info as App.RowData)
+    const collectionMetadata = $state(collection?.collectionMetadata as App.RowData)
 
-	collectionData.title = collectionInfo["title"]
-	collectionData.type = collectionInfo["type"] 
-	collectionData.status = collectionInfo["status"] 
-	collectionData.descriptionText = collectionInfo["description_text"]
-    collectionData.defaultSort = collectionInfo["default_view_sort"]
+	collectionData.title = collectionMetadata["title"]
+	collectionData.type = collectionMetadata["type"] 
+	collectionData.status = collectionMetadata["status"] 
+	collectionData.descriptionText = collectionMetadata["description_text"]
+    collectionData.defaultSort = collectionMetadata["default_view_sort"]
 
 	collectionData.collectionItems = collection?.collectionContents
 	
     collectionData.deletedItems = collection?.deletedCollectionContents
 
-    const isOwner = $derived(( sessionUserId == collectionInfo.owner_id ) ? true : false)
+    const isOwner = $derived(( sessionUserId == collectionMetadata.owner_id ) ? true : false)
 
     let showModal = $state(false)
 
@@ -40,7 +40,7 @@
     })
 </script>
 
-<SEO title="Edit {collectionInfo.title}"></SEO>
+<SEO title="Edit {collectionMetadata.title}"></SEO>
 
 <div class="collection-container">
     <PanelHeader>
