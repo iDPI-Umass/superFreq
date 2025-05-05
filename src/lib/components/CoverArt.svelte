@@ -19,6 +19,7 @@ Currently configured to server Last.fm images on the client side by default on a
         releaseGroupName?: string | null
         altText: string
         imgClass?: string | null
+        clientSideLoad?: boolean
     }
 
     let {
@@ -29,6 +30,7 @@ Currently configured to server Last.fm images on the client side by default on a
         releaseGroupName = null,
         altText,
         imgClass,
+        clientSideLoad = false
     }: ComponentProps = $props()
 
     const coverArtItem = $derived({
@@ -48,15 +50,34 @@ Currently configured to server Last.fm images on the client side by default on a
         'release_group_mbid': item?.release_group_mbid ?? null
     })
 
-    const coverArtArchiveImgUrl = $derived(item ? coverArtItem['img_url'] : null)
+    const coverArtArchiveImgUrl = $derived( item ? coverArtItem['img_url'] : null )
 
-    const continuePromise = $derived(promiseStates.continueClientSideImgPromise)
+    const continuePromise = $derived( promiseStates.continueClientSideImgPromise )
+
+    const imageSelector = function ( coverArtItem: App.RowData ) {
+        const validUrl = ( coverArtItem['last_fm_img_url'] || coverArtItem['img_url'] || coverArtItem['artist_discogs_img_url'] ) ? true : false
+        let url = ''
+
+        if ( coverArtItem['artist_discogs_img_url'] && !( coverArtItem['last_fm_img_url'] || coverArtItem['img_url'] )) {
+            url = coverArtItem['artist_discogs_img_url']
+        }
+        else if ( coverArtItem['last_fm_img_url'] ) {
+            url = coverArtItem['last_fm_img_url']
+        }
+        else if ( !coverArtItem['last_fm_img_url'] && coverArtItem['img_url'] ) {
+            url = coverArtItem['img_url']
+        }
+
+        return { validUrl, url }
+    }
+
+    const { validUrl, url } = $derived( imageSelector( coverArtItem ))
 
 </script>
 
-{#if coverArtItem['last_fm_img_url'] || coverArtItem['img_url'] || coverArtItem['artist_discogs_img_url']} 
-    <img src={coverArtItem['last_fm_img_url'] ?? coverArtItem['img_url'] ?? coverArtItem['artist_discogs_img_url']} alt={altText} class={imgClass}  /> 
-{:else if !(coverArtItem['last_fm_img_url'] || coverArtItem['img_url'] || coverArtItem['artist_discogs_img_url']) }
+{#if validUrl } 
+    <img src={url} alt={altText} class={imgClass}  /> 
+{:else if !validUrl && clientSideLoad }
     {#await getCoverArtClientSide(coverArtSearchTerms, continuePromise)}
         <img src={wave} alt="loading" class={imgClass} />
     {:then result}
@@ -64,7 +85,7 @@ Currently configured to server Last.fm images on the client side by default on a
     {:catch}
         <img src={wave} alt="not found" class={imgClass}  />
     {/await}
-{:else}
+{:else if !validUrl && !clientSideLoad }
     <img src={wave} alt="not found" class={imgClass}  />
 {/if}
 
