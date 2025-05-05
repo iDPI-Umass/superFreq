@@ -300,8 +300,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
             const { status, owner_id, collaborators } = follows
 
             if (
-                ( status == 'private' && owner_id != sessionUserId ) ||
-                ( status == 'private' && !collaborators.includes(sessionUserId) )
+                ( status == 'private' && ! ( owner_id == sessionUserId || collaborators.includes(sessionUserId)))
             )
             { throw new Error( 'no view permission' )}
 
