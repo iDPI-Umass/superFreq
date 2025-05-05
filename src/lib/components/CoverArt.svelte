@@ -76,7 +76,7 @@ Currently configured to server Last.fm images on the client side by default on a
 </script>
 
 {#if validUrl } 
-    <img src={imageSelector(coverArtItem).url} alt={altText} class={imgClass}  /> 
+    <img src={url} alt={altText} class={imgClass}  /> 
 {:else if !validUrl && clientSideLoad }
     {#await getCoverArtClientSide(coverArtSearchTerms, continuePromise)}
         <img src={wave} alt="loading" class={imgClass} />
