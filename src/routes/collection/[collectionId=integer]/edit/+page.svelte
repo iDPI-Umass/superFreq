@@ -16,7 +16,7 @@
         sessionUserId: string
         collectionId: string
         infoBoxText: App.StringLookupObject
-    } = data
+    } = $state(data)
 
     const collectionMetadata = $state(collection?.collectionMetadata as App.RowData)
 
@@ -26,9 +26,9 @@
 	collectionData.descriptionText = collectionMetadata["description_text"]
     collectionData.defaultSort = collectionMetadata["default_view_sort"]
 
-	collectionData.collectionItems = collection?.collectionContents
+	collectionData.collectionItems = collection.collectionContents as App.RowData[]
 	
-    collectionData.deletedItems = collection?.deletedCollectionContents
+    collectionData.deletedItems = collection.deletedCollectionContents as App.RowData[]
 
     const isOwner = $derived(( sessionUserId == collectionMetadata.owner_id ) ? true : false)
 

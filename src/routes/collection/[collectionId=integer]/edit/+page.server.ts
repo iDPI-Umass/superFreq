@@ -67,6 +67,7 @@ export const actions: Actions = {
       updated_by: updatedBy
     }
 
+
     const update = await updateCollection( sessionUserId, collectionInfo, activeAndDeletedCollectionItems )
 
     if ( !update ) {

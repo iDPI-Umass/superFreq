@@ -1,8 +1,12 @@
 ---
 title: Updates
 layout: about
-updated: 04/30/2025
+updated: 05/05/2025
 ---
+### May 5, 2025
+####
+- Fixed bug with deleting items in a collection
+
 ### April 30, 2025
 #### Updates
 - Collections now display artist photos
