@@ -286,8 +286,6 @@ Fetches collection for viewing if collection is open or public, or session user 
 
 export const selectViewableCollectionContents = async function ( collectionId: string, sessionUserId: string ) {
 
-    console.log(collectionId, sessionUserId)
-
     const selectCollection = await db.transaction().execute(async (trx) => {
         try {
             const follows = await trx
@@ -492,7 +490,6 @@ export const selectEditableCollectionContents = async function ( collectionId: s
             .where('status', '!=', 'deleted')
             .executeTakeFirstOrThrow()
 
-            console.log(follows)
             const { status, owner_id, collaborators } = follows
 
             if ( 
@@ -513,7 +510,6 @@ export const selectEditableCollectionContents = async function ( collectionId: s
             .where('collection_id', '=', collectionId)
             .execute()
 
-            console.log(collectionContents.length)
             return { editPermission: true, collectionContents, collectionMetadata }
         }
         catch ( error ) {
