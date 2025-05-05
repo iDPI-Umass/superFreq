@@ -96,9 +96,7 @@
 			addingItem = false
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
 				const thisArtistMbid = artistMbid(searchCategory, item)
-				console.log(thisArtistMbid)
 				const artistImgUrl = await getArtistImage(thisArtistMbid)
-				console.log(artistImgUrl)
 				const releaseGroup = releaseGroupMetadata( searchCategory, item )
 				const { success, coverArtArchiveUrl, lastFmCoverArtUrl } = await getCoverArt(releaseGroup)
 				const thisItemIndex = collectionData.collectionItems.findIndex((item) => item['release_group_mbid'] == releaseGroup.release_group_mbid)
@@ -108,10 +106,8 @@
 				promiseStates.imgPromise = new Promise ((resolve) => resolve(success))
 			}
 			else if ( searchCategory == "artists" ) {
-				console.log('artists')
 				const thisArtistMbid = artistMbid(searchCategory, item)
 				const artistImgUrl = await getArtistImage(thisArtistMbid)
-				console.log(thisArtistMbid, artistImgUrl)
 				const thisItemIndex = collectionData.collectionItems.findIndex((item) => item['artist_mbid'] == thisArtistMbid)
 				collectionData.collectionItems[thisItemIndex]["artist_discogs_img_url"] = artistImgUrl
 				promiseStates.imgPromise = new Promise ((resolve) => resolve(success))
