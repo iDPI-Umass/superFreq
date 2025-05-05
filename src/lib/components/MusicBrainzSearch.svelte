@@ -198,6 +198,7 @@
 									<CoverArt
 										item={coverArtItem(item, searchCategory)}
 										altText='album {releaseGroupName(searchCategory, item)} by artist {artistName(searchCategory, item)}'
+										clientSideLoad={true}
 									></CoverArt>
 								</div>
 							{/if}

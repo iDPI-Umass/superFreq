@@ -19,6 +19,7 @@ Currently configured to server Last.fm images on the client side by default on a
         releaseGroupName?: string | null
         altText: string
         imgClass?: string | null
+        clientSideLoad?: boolean
     }
 
     let {
@@ -29,6 +30,7 @@ Currently configured to server Last.fm images on the client side by default on a
         releaseGroupName = null,
         altText,
         imgClass,
+        clientSideLoad = false
     }: ComponentProps = $props()
 
     const coverArtItem = $derived({
@@ -69,11 +71,13 @@ Currently configured to server Last.fm images on the client side by default on a
         return { validUrl, url }
     }
 
+    const { validUrl, url } = $state( imageSelector( coverArtItem ))
+
 </script>
 
-{#if imageSelector(coverArtItem).validUrl } 
+{#if validUrl } 
     <img src={imageSelector(coverArtItem).url} alt={altText} class={imgClass}  /> 
-{:else}
+{:else if !validUrl && clientSideLoad }
     {#await getCoverArtClientSide(coverArtSearchTerms, continuePromise)}
         <img src={wave} alt="loading" class={imgClass} />
     {:then result}
@@ -81,8 +85,8 @@ Currently configured to server Last.fm images on the client side by default on a
     {:catch}
         <img src={wave} alt="not found" class={imgClass}  />
     {/await}
-<!-- {:else}
-    <img src={wave} alt="not found" class={imgClass}  /> -->
+{:else if !validUrl && !clientSideLoad }
+    <img src={wave} alt="not found" class={imgClass}  />
 {/if}
 
 <style>
