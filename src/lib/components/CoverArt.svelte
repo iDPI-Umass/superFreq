@@ -52,11 +52,28 @@ Currently configured to server Last.fm images on the client side by default on a
 
     const continuePromise = $derived(promiseStates.continueClientSideImgPromise)
 
+    const imageSelector = function ( coverArtItem: App.RowData ) {
+        const validUrl = ( coverArtItem['last_fm_img_url'] || coverArtItem['img_url'] || coverArtItem['artist_discogs_img_url'] ) ? true : false
+        let url = ''
+
+        if ( coverArtItem['artist_discogs_img_url'] && !( coverArtItem['last_fm_img_url'] || coverArtItem['img_url'] )) {
+            url = coverArtItem['artist_discogs_img_url']
+        }
+        else if ( coverArtItem['last_fm_img_url'] ) {
+            url = coverArtItem['last_fm_img_url']
+        }
+        else if (!coverArtItem['last_fm_img_url'] && coverArtItem['img_url'] ) {
+            url = coverArtItem['img_url']
+        }
+
+        return { validUrl, url }
+    }
+
 </script>
 
-{#if coverArtItem['last_fm_img_url'] || coverArtItem['img_url'] || coverArtItem['artist_discogs_img_url']} 
-    <img src={coverArtItem['last_fm_img_url'] ?? coverArtItem['img_url'] ?? coverArtItem['artist_discogs_img_url']} alt={altText} class={imgClass}  /> 
-{:else if !(coverArtItem['last_fm_img_url'] || coverArtItem['img_url'] || coverArtItem['artist_discogs_img_url']) }
+{#if imageSelector(coverArtItem).validUrl } 
+    <img src={imageSelector(coverArtItem).url} alt={altText} class={imgClass}  /> 
+{:else}
     {#await getCoverArtClientSide(coverArtSearchTerms, continuePromise)}
         <img src={wave} alt="loading" class={imgClass} />
     {:then result}
@@ -64,8 +81,8 @@ Currently configured to server Last.fm images on the client side by default on a
     {:catch}
         <img src={wave} alt="not found" class={imgClass}  />
     {/await}
-{:else}
-    <img src={wave} alt="not found" class={imgClass}  />
+<!-- {:else}
+    <img src={wave} alt="not found" class={imgClass}  /> -->
 {/if}
 
 <style>
