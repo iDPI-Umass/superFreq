@@ -61,4 +61,6 @@ declare module '*.md' {
 	export const metadata: Record<string, unknown>
 }
 
+declare module 'wink-nlp/utilities/similarity.js'
+
 export {}
