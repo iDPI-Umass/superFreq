@@ -17,15 +17,14 @@ const wikiKey = PUBLIC_WIKIDATA_KEY
 const wikiSecret = PUBLIC_WIKIDATA_SECRET
 const wikidataRequestHeader = {
     mode: 'cors',
-    data: {
-        'client_id': `${wikiKey}`,
-        'client_secret':`${wikiSecret}`
+    headers: {
+        'Authorization': `Bearer ${PUBLIC_WIKIDATA_ACCESS_TOKEN}`
     }
 }
 
 const discogsRequestHeader = {
     headers: {
-        "Authorization": `Discogs key=${PUBLIC_DISCOGS_KEY}, secret=${PUBLIC_DISCOGS_SECRET}`,
+        "Authorization": `Discogs token=${PUBLIC_DISCOGS_TOKEN}`,
       }
 }
 
