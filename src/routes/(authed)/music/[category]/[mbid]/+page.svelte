@@ -7,8 +7,7 @@
     const { data } = $props()
     const { musicbrainzMetadata, wikipediaExtract, discogsData, category, mbid } = $derived(data)
 
-    // console.log(discogsData)
-
+    console.log(discogsData)
     const pageTitle = $derived(musicbrainzMetadata?.name ?? musicbrainzMetadata?.title) as string
 
     function selectHeaderImage ( discogsData: App.RowData | null ) {

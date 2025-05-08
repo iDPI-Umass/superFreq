@@ -173,6 +173,8 @@ export const discogsLookup = async function ( discogsUrl: string | null ) {
 export const metadataLookup =  async function ( mbid: string, mbidCategory: string ) {
     const musicbrainzMetadata = await musicbrainzLookup( mbid, mbidCategory )
 
+    console.log(mbidCategory)
+
     if ( categoriesTable[mbidCategory] == 'release-group' ) {
         await delay(1000)
         const releaseMbid = musicbrainzMetadata['releases'][0]['id']
@@ -200,10 +202,6 @@ export const metadataLookup =  async function ( mbid: string, mbidCategory: stri
 
     const discogsRelation = musicbrainzMetadataRelationUrl( relations, 'discogs')
     const discogsData = await discogsLookup( discogsRelation )
-
-    console.log(discogsData)
-
-    // console.log(musicbrainzMetadata)
 
     return { musicbrainzMetadata, wikipediaExtract, discogsData }
 }
