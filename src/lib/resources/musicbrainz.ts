@@ -36,18 +36,20 @@ const discogsRequestHeader = {
 */
 
 export const musicbrainzLookup = async function ( mbid: string, mbidCategory: string ) {
-    let apiCategory = categoriesTable[mbidCategory] as string
+    const apiCategory = categoriesTable[mbidCategory] as string
 
     const apiString = `https://musicbrainz.org/ws/2/${apiCategory}/${mbid}`
     const endpoint = new URL (apiString)
 
     if ( apiCategory == 'artist' ) {
-        endpoint.searchParams.set('inc', 'aliases+release-groups+label-rels+url-rels')
+        endpoint.searchParams.set('inc', 'aliases+recordings+label-rels+url-rels+release-groups')
         endpoint.searchParams.set('type', 'album')
     }
     else if ( apiCategory == 'release-group' ) {
-        // apiCategory = 'release'
-        endpoint.searchParams.set('inc', 'artists+url-rels')
+        endpoint.searchParams.set('inc', 'artists+releases+label-rels+url-rels')
+    }
+    else if ( apiCategory == 'release' ) {
+        endpoint.searchParams.set('inc', 'recordings+labels')
     }
     else if ( apiCategory == 'recording' ) {
         endpoint.searchParams.set('inc', 'artists+release-groups+releases+url-rels')
@@ -170,6 +172,24 @@ export const discogsLookup = async function ( discogsUrl: string | null ) {
 export const metadataLookup =  async function ( mbid: string, mbidCategory: string ) {
     const musicbrainzMetadata = await musicbrainzLookup( mbid, mbidCategory )
 
+    if ( categoriesTable[mbidCategory] == 'release-group' ) {
+        await delay(1000)
+        const releaseMbid = musicbrainzMetadata['releases'][0]['id']
+        const releaseMetadata = await musicbrainzLookup( releaseMbid, 'release' )
+        const tracks = releaseMetadata['media'][0]['tracks']
+        const labelInfo = releaseMetadata['label-info'][0]
+        musicbrainzMetadata['tracks'] = tracks
+        musicbrainzMetadata['label'] = labelInfo
+    }
+    else if ( categoriesTable[mbidCategory] == 'recording' ) {
+        await delay(1000)
+        const releaseGroupMbid = musicbrainzMetadata['releases'][0]['release-group']['id']
+        const releaseGroupMetadata = await musicbrainzLookup( releaseGroupMbid, 'release-group' )
+        const releaseGroupRelations = releaseGroupMetadata['relations']
+        const appendedRelations = releaseGroupRelations.concat(releaseGroupRelations)
+        musicbrainzMetadata.relations = appendedRelations
+    }
+
     const { relations } = musicbrainzMetadata
 
     const wikidataUrl = musicbrainzMetadataRelationUrl( relations, 'wikidata' )
@@ -179,6 +199,10 @@ export const metadataLookup =  async function ( mbid: string, mbidCategory: stri
 
     const discogsRelation = musicbrainzMetadataRelationUrl( relations, 'discogs')
     const discogsData = await discogsLookup( discogsRelation )
+
+    console.log(discogsData)
+
+    // console.log(musicbrainzMetadata)
 
     return { musicbrainzMetadata, wikipediaExtract, discogsData }
 }

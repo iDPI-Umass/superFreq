@@ -152,6 +152,8 @@ export const categoriesTable: App.Lookup = {
     "release-group": "release-group",
     "release-groups": "release-group",
     "release_groups": "release-group",
+    "releases": "release",
+    "release": "release",
     "recording": "recording",
     "recordings": "recording",
     "track": "recording",

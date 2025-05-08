@@ -1,12 +1,13 @@
 <script lang="ts"> 
-    import { getYear } from 'date-fns'
+    import { getYear, format } from 'date-fns'
     import SEO from 'src/lib/components/layout/SEO.svelte'
     import wave from "$lib/assets/images/logo/freq-wave.svg"
+	import { AppWindow } from '@lucide/svelte';
 
     const { data } = $props()
-    const { musicbrainzMetadata, wikipediaExtract, discogsData, category, mbid } = $state(data)
+    const { musicbrainzMetadata, wikipediaExtract, discogsData, category, mbid } = $derived(data)
 
-    console.log(musicbrainzMetadata)
+    // console.log(discogsData)
 
     const pageTitle = $derived(musicbrainzMetadata?.name ?? musicbrainzMetadata?.title) as string
 
@@ -21,6 +22,9 @@
             imgUrl = discogsData.artist.images.find((element) => element.type == 'primary')['resource_url']
         }
         else if ( category == 'album' ) {
+            imgUrl = discogsData.release.images.find((element) => element.type == 'primary')['resource_url']
+        }
+        else if ( category == 'track' ) {
             imgUrl = discogsData.release.images.find((element) => element.type == 'primary')['resource_url']
         }
         else if ( category == 'label' ) {
@@ -38,7 +42,7 @@
         return filtered
     } 
 
-    const filteredAlbums = albumFilter(musicbrainzMetadata['release-groups'])
+    let filteredAlbums = $derived(albumFilter(musicbrainzMetadata['release-groups']))
 
     function yearFromFirstReleaseDate ( dateString: string ) {
         const releaseDate = new Date (dateString)
@@ -48,10 +52,15 @@
 
     function getArtists ( musicbrainzMetadata: App.RowData ) {
         const artists = [] as App.RowData[]
-        const artistCredits = musicbrainzMetadata['artist-credit']
+        const artistCredits = musicbrainzMetadata['artist-credit'] ?? null
+
+        if ( !artistCredits ) {
+            return null
+        }
+
         for ( const credit of artistCredits) {
             const artist = {
-                'artist_mbid': credit.id,
+                'artist_mbid': credit.artist.id,
                 'artist_name': credit.name
             }
             artists.push(artist)
@@ -59,7 +68,20 @@
         return artists
     }
 
-    const artists = $derived(getArtists(musicbrainzMetadata))
+    function getReleaseDate ( musicbrainzMetadata: App.RowData ) {
+        if ( category == 'artist' || category == 'label' ) {
+            return null
+        }
+        else if ( category == 'album' || category == 'track' ) {
+            const date = new Date(musicbrainzMetadata['first-release-date'])
+            return format(date, "MMMM do, y")
+        }
+    }
+
+    let artists = $derived(getArtists(musicbrainzMetadata))
+
+    let tracks = $derived(musicbrainzMetadata['tracks'] ?? null)
+    let label = $derived(musicbrainzMetadata['label'] ?? null)
 </script>
 
 <SEO title={pageTitle}></SEO>
@@ -71,12 +93,31 @@
         <h3>{musicbrainzMetadata?.name ?? musicbrainzMetadata?.title}</h3>
         <div>
             {#if category == 'album'}
-            <h3>
-                {#each artists as artist}
-                    <a href="/music/artist/{artist.artist_mbid}">{artist.artist_name}</a>
-                {/each}
-            </h3>
-            <p>dummy</p>
+                <h3>
+                    {#each artists as artist}
+                        <a href="/music/artist/{artist.artist_mbid}">{artist.artist_name}</a>
+                    {/each}
+                </h3>
+                <p>{label.label.name}, {label['catalog-number']}</p>
+                <p>{getReleaseDate(musicbrainzMetadata)}</p>
+                {#if tracks}
+                    <h3>tracklist</h3>
+                    <ol>
+                        {#each tracks as track}
+                            <li>
+                                <a href="/music/track/{track.recording.id}">{track.title}</a>
+                            </li>
+                        {/each}
+                    </ol>
+                {/if}
+            {:else if category == 'track'}
+                <p>Appears on <a href="/music/album/{musicbrainzMetadata['releases'][0]['release-group']['id']}">{musicbrainzMetadata['releases'][0]['title']}</a></p>
+                <p>{getReleaseDate(musicbrainzMetadata)}</p>
+                <h3>
+                    {#each artists as artist}
+                        <a href="/music/artist/{artist.artist_mbid}">{artist.artist_name}</a>
+                    {/each}
+                </h3>
             {/if}
         </div>
     </div>
@@ -112,7 +153,7 @@
     ul {
         padding-left: 0;
     }
-    li {
+    ul li {
         list-style: none;
     }
 </style>
