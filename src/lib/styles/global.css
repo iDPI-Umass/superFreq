@@ -26,7 +26,6 @@ body {
 	flex-direction: column;
 	margin: var(--freq-spacing-large);
 	width: calc(var(--freq-max-width-primary) * 0.5);
-	gap: var(--freq-width-spacer);
 }
 
 .panel {

@@ -90,18 +90,41 @@
     <div class="column-half">    
         <h2>{category}</h2>
         <img src={selectHeaderImage(discogsData)} alt={pageTitle} />
-        <h3>{musicbrainzMetadata?.name ?? musicbrainzMetadata?.title}</h3>
+        <h3 class="title">
+            {musicbrainzMetadata?.name ?? musicbrainzMetadata?.title}
+        </h3>
+
         <div>
-            {#if category == 'album'}
-                <h3>
-                    {#each artists as artist}
-                        <a href="/music/artist/{artist.artist_mbid}">{artist.artist_name}</a>
+            {#if category == 'artist'}
+            {#if filteredAlbums}
+                <h4>Discography</h4>
+                <ul>
+                    {#each filteredAlbums as album}
+                    <li>
+                        <a href="/music/album/{album.id}">
+                        {album.title} ({getYear(album['first-release-date'])})
+                        </a>
+                    </li>
                     {/each}
-                </h3>
-                <p>{label.label.name}, {label['catalog-number']}</p>
-                <p>{getReleaseDate(musicbrainzMetadata)}</p>
+                </ul>
+            {/if}
+            {:else if category == 'album'}
+                <p class="album-metadata">
+                    <span class="album-artist">
+                        {#each artists as artist}
+                            <a href="/music/artist/{artist.artist_mbid}">{artist.artist_name}</a>
+                        {/each}
+                    </span>
+                    <span>
+                        {label.label.name}, {label['catalog-number']}
+                    </span>
+                    <span>
+                        {getReleaseDate(musicbrainzMetadata)}
+                    </span>
+                </p>
                 {#if tracks}
-                    <h3>tracklist</h3>
+                <div class="data-breakout">
+                    <h4>Tracklist</h4>
                     <ol>
                         {#each tracks as track}
                             <li>
@@ -109,6 +132,7 @@
                             </li>
                         {/each}
                     </ol>
+                </div>
                 {/if}
             {:else if category == 'track'}
                 <p>Appears on <a href="/music/album/{musicbrainzMetadata['releases'][0]['release-group']['id']}">{musicbrainzMetadata['releases'][0]['title']}</a></p>
@@ -123,24 +147,15 @@
     </div>
     <div class="column-half">
         {#if wikipediaExtract}
-            <h3>From Wikipedia:</h3>
-            <p>
-                {wikipediaExtract.extract}
-            </p>
-            <a href={wikipediaExtract.url}>Continue reading at Wikipedia</a>
-            <p>Wikipedia content provided under the terms of the <a href="https://creativecommons.org/licenses/by-sa/3.0/">Creative Commons BY-SA license</a></p>
-        {/if}
-        {#if filteredAlbums}
-            <h3>Discography</h3>
-            <ul>
-                {#each filteredAlbums as album}
-                <li>
-                    <a href="/music/album/{album.id}">
-                    {album.title} ({getYear(album['first-release-date'])})
-                    </a>
-                </li>
-                {/each}
-            </ul>
+            <div class="data-breakout">
+                <h3>From Wikipedia:</h3>
+                <p class="wiki">
+                    {wikipediaExtract.extract}
+                    
+                </p>
+                <span class="link"><a class="read-more" href={wikipediaExtract.url}>Continue reading at Wikipedia</a></span>
+                <p>Wikipedia content provided under the terms of the <a href="https://creativecommons.org/licenses/by-sa/3.0/">Creative Commons BY-SA license</a></p>
+            </div>
         {/if}
     </div>
 </div>
@@ -150,10 +165,45 @@
     h2 {
         text-transform: capitalize;
     }
+    h3 {
+        margin: var(--freq-height-spacer) 0 var(--freq-height-spacer-quarter) 0;
+    }
+    p.album-metadata {
+        display: flex;
+        flex-direction: column;
+        margin: 0 0 var(--freq-height-spacer-quarter) 0;
+        gap: var(--freq-height-spacer-quarter);
+    }
+    span.album-artist {
+        font-family: var(--freq-alt-font-family);
+    }
     ul {
         padding-left: 0;
     }
     ul li {
         list-style: none;
     }
+    .data-breakout {
+        display: flex;
+        flex-direction: column;
+        width: inherit;
+        gap: var(--freq-height-spacer-half);
+    }
+    .data-breakout h4 {
+        margin: calc(var(--freq-height-spacer) * 0.4) 0 0 0;
+    }
+    .data-breakout ol {
+        margin: 0;
+        padding-left: var(--freq-width-spacer);
+    }
+    .data-breakout p {
+        margin: 0;
+    }
+    .data-breakout span.link {
+        font-style: italic;
+        text-align: right;
+    }
+    /* p.wiki {
+        text-align-last: right;
+    } */
 </style>

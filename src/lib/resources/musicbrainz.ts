@@ -109,7 +109,8 @@ export const getWikipediaPageExtract = async function ( wikiUrl: string ) {
     const tokens = wikiUrl.split('/')
     const pageTitle = tokens[tokens.length - 1]
     const extracttCharacterCount = 1000
-    const urlString = `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&titles=${pageTitle}&exchars=${extracttCharacterCount}&explaintext&exsectionform=wiki`
+    const extractLimit = 2
+    const urlString = `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&titles=${pageTitle}&exintro&explaintext`
 
     const endpoint = new URL (urlString)
     const res = await fetch( endpoint, wikidataRequestHeader )
