@@ -1,6 +1,6 @@
 import { categoriesTable, mbidCategoryTable, itemTypeTable } from "$lib/resources/parseData"
 
-import { PUBLIC_LAST_FM_API_KEY, PUBLIC_DISCOGS_KEY, PUBLIC_DISCOGS_SECRET,PUBLIC_DISCOGS_TOKEN, PUBLIC_WIKIDATA_ACCESS_TOKEN, PUBLIC_WIKIDATA_KEY, PUBLIC_WIKIDATA_SECRET } from '$env/static/public'
+import { PUBLIC_LAST_FM_API_KEY,PUBLIC_DISCOGS_TOKEN, PUBLIC_WIKIDATA_TOKEN } from '$env/static/public'
 import wave from "$lib/assets/images/logo/freq-wave.svg"
 
 const lastFmApiKey = PUBLIC_LAST_FM_API_KEY
@@ -12,13 +12,11 @@ const musicbrainzRequestHeader = {
     }
 }
 
-const wikiToken = PUBLIC_WIKIDATA_ACCESS_TOKEN
-const wikiKey = PUBLIC_WIKIDATA_KEY
-const wikiSecret = PUBLIC_WIKIDATA_SECRET
+
 const wikidataRequestHeader = {
     mode: 'cors',
     headers: {
-        'Authorization': `Bearer ${PUBLIC_WIKIDATA_ACCESS_TOKEN}`
+        'Authorization': `Bearer ${PUBLIC_WIKIDATA_TOKEN}`
     }
 }
 
