@@ -7,6 +7,7 @@ import remarkUnlink from 'remark-unlink'
 import remarkStringify from 'remark-stringify'
 import remarkRehype from 'remark-rehype'
 import {unified} from 'unified'
+import { stringSimilarity } from "string-similarity-js"
 
 export function validStringCheck ( value: string ) {
     if ( value && value.length > 0 ) {
@@ -144,11 +145,18 @@ export const profileName = function (username: string, display_name: string) {
 /* Converts values to mbid categories */
 
 export const categoriesTable: App.Lookup = {
+    "artist": "artist",
     "artists": "artist",
+    "album": "release-group",
+    "albums": "release-group",
+    "release-group": "release-group",
     "release-groups": "release-group",
     "release_groups": "release-group",
+    "releases": "release",
+    "release": "release",
+    "recording": "recording",
     "recordings": "recording",
-    "albums": "release-group",
+    "track": "recording",
     "tracks": "recording",
     "songs": "recording"
 }
@@ -682,3 +690,71 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
     }
 }
  
+//
+/*
+** Matchcing search query against search results
+*/
+//
+
+export const searchForAlbumMetadata = async function ( album: any ) {
+    async function delay ( milliseconds: number ) { 
+        new Promise(resolve => setTimeout(resolve, milliseconds)) 
+    }
+
+    await delay(20000)
+    const title = album['Album Title']
+    const artist = album['Artist']
+
+    const searchTerms = {
+        artistName: artist,
+        releaseGroupName: title
+    }
+
+    let mbid = null as string | null
+    if ( artist != 'Compilation') {
+        const {searchResults} = await musicbrainzAdvancedSearch('album', searchTerms, 3)
+
+        console.log(searchResults)
+
+        if ( searchResults['release-groups']){
+            for ( const result of searchResults['release-groups'] ) {
+                const resultTitle = result.title
+                const resultArtist = result['artist-credit'][0]['artist']['name']
+                mbid = result.id
+
+                const titleSimilarity = stringSimilarity(title, resultTitle)
+
+                const artistSimilarity = stringSimilarity(artist, resultArtist)
+
+                console.log(titleSimilarity, artistSimilarity)
+                if (titleSimilarity >=0.5 && artistSimilarity >= 0.5 ) {
+                    console.log('mbid: ', mbid)
+                }
+            }
+        }
+    }
+
+    return { mbid }
+    
+}
+
+export const getMetadataAlbumsArray = async function (albums: any) {
+    let mbidCount = 0
+    for ( const album of albums ) {
+        await delay(2000)
+        const {mbid} = await parseAlbum(album)
+        await delay(2000)
+        album.mbid = mbid
+
+
+        if (album.mbid) {
+            console.log(album)
+            mbidCount ++
+        }
+        await delay(20000)
+    }
+    console.log('done')
+    console.log('album: ', albums.length)
+    console.log('mbids: ', mbidCount)
+    return
+}
