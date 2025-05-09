@@ -34,7 +34,6 @@ export const load: PageServerLoad = async ({ parent, params, locals: { safeGetSe
     return { collection, sessionUserId, collectionId }
   }
   else {
-    console.log('no edit permission')
     throw redirect(303, `/collection/${collectionId}`)
   }
 }

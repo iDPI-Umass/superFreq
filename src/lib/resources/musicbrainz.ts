@@ -12,11 +12,11 @@ const musicbrainzRequestHeader = {
     }
 }
 
-
 const wikidataRequestHeader = {
     mode: 'cors',
     headers: {
-        'Authorization': `Bearer ${PUBLIC_WIKIDATA_TOKEN}`
+        'Authorization': `Bearer ${PUBLIC_WIKIDATA_TOKEN}`,
+        'Content-Type': 'application/json'
     }
 }
 
@@ -110,7 +110,7 @@ export const getWikipediaPageExtract = async function ( wikiUrl: string ) {
     const urlString = `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&titles=${pageTitle}&exintro&explaintext`
 
     const endpoint = new URL (urlString)
-    const res = await fetch( endpoint, wikidataRequestHeader )
+    const res = await fetch( endpoint )
     const json = await res.json()
 
     const extract = {
@@ -169,8 +169,6 @@ export const discogsLookup = async function ( discogsUrl: string | null ) {
 
 export const metadataLookup =  async function ( mbid: string, mbidCategory: string ) {
     const musicbrainzMetadata = await musicbrainzLookup( mbid, mbidCategory )
-
-    console.log(mbidCategory)
 
     if ( categoriesTable[mbidCategory] == 'release-group' ) {
         await delay(1000)
