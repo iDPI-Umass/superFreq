@@ -27,5 +27,5 @@
     collections={sessionUserCollections}
     showCollectionsListModal={showCollectionsListModal}
     showSaveSucessModal={showSaveSucessModal}
-    showFilters={true}
+    dualFeed={true}
 ></Feed>

@@ -1,6 +1,7 @@
 <script lang="ts">
     import { enhance } from '$app/forms'
     import { goto } from '$app/navigation'
+    import { Toolbar, Tabs } from 'bits-ui'
     import { parseTimestamp } from '$lib/resources/parseData'
     import decoration from "$lib/assets/images/feed-item-decoration.svg"
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
@@ -9,7 +10,8 @@
     import PostReply from 'src/lib/components/Posts/PostReply.svelte'
     import CoverArt from '$lib/components/CoverArt.svelte'
     import OptionsMenu from '$lib/components/menus/OptionsMenu.svelte'
-	import { feedData } from '../resources/states.svelte';
+    import MenuRow from '$lib/components/MenuRow.svelte'
+	import { feedData } from '$lib/resources/states.svelte'
 
     interface ComponentProps {
         sessionUserId: string
@@ -21,6 +23,7 @@
         showCollectionsListModal?: boolean
         showSaveSucessModal?: boolean
         showFilters?: boolean
+        dualFeed?: boolean
     }
 
     let { 
@@ -32,7 +35,8 @@
         collections = [],
         showCollectionsListModal = $bindable(false),
         showSaveSucessModal = $bindable(false),
-        showFilters = false
+        showFilters = false,
+        dualFeed = false
     }: ComponentProps = $props()
 
     function avatarItem ( item: App.RowData ) {
@@ -77,6 +81,8 @@
             },
         ]
     }]
+
+    let feedMode = $state('following') //'following' or 'discover'
 </script>
 
 {#snippet feedItemTag( feedItem: App.RowData )} 
@@ -107,37 +113,8 @@
     {/if}
 {/snippet}
 
-<div class="feed-panel">
-    {#if showFilters}
-        <PanelHeader>
-            {#snippet headerText()}
-                <span>
-                    feed
-                </span>
-            {/snippet}
-            {#snippet button()}
-                <OptionsMenu
-                    triggerText='filter'
-                    optionsGroups={optionsGroups}
-                    inputGroup='selected-options'
-                ></OptionsMenu>
-            {/snippet}
-        </PanelHeader>
-    {:else}
-        <PanelHeader>
-            {#snippet headerText()}
-                <span>
-                    feed
-                </span>
-            {/snippet}
-        </PanelHeader>
-    {/if}
-        {#if feedItems.length == 0}
-        <div class="feed-item-one-liner">
-            <p>Nothing in your feed? Try following some more <a href="/users">users</a> and <a href="/collections" >collections</a>.</p>
-        </div>
-        {:else}
-        {#each feedItems as item}
+{#snippet displayFeedItems( feedItems: App.RowData[] )}
+    {#each feedItems as item}
             <div class="feed-item">
                 <!-- Now Playing post -->
                 {#if item?.item_type == 'now_playing_post'}      
@@ -281,7 +258,76 @@
                 {/if}
                 </div>
         {/each}
+{/snippet}
+
+<div class="feed-panel">
+    {#if showFilters}
+        <PanelHeader>
+            {#snippet headerText()}
+                <span>
+                    feed
+                </span>
+            {/snippet}
+            {#snippet button()}
+                <OptionsMenu
+                    triggerText='filter'
+                    optionsGroups={optionsGroups}
+                    inputGroup='selected-options'
+                ></OptionsMenu>
+            {/snippet}
+        </PanelHeader>
+    {:else}
+        <PanelHeader>
+            {#snippet headerText()}
+                <span>
+                    feed
+                </span>
+            {/snippet}
+        </PanelHeader>
+    {/if}
+    {#if dualFeed}
+    <Tabs.Root bind:value={feedMode}>
+        <MenuRow>
+            <div class="tabs-list">
+                <Tabs.List>
+                    <Tabs.Trigger value="following">
+                        following
+                    </Tabs.Trigger>
+                    <Tabs.Trigger value="discover">
+                        discover
+                    </Tabs.Trigger>
+                </Tabs.List>
+            </div>
+            {#snippet button()}
+                <OptionsMenu
+                    triggerText='filter'
+                    optionsGroups={optionsGroups}
+                    inputGroup='selected-options'
+                ></OptionsMenu>
+            {/snippet}
+        </MenuRow>
+        <Tabs.Content value="following">
+            {#if feedItems.length == 0}
+            <div class="feed-item-one-liner">
+                <p>Nothing in your feed? Try following some more <a href="/users">users</a> and <a href="/collections" >collections</a>.</p>
+            </div>
+            {:else}
+                {@render displayFeedItems( feedItems )}
+            {/if}
+        </Tabs.Content>
+        <Tabs.Content value="discover">
+            {@render displayFeedItems( feedItems )}
+        </Tabs.Content>
+    </Tabs.Root>
+    {:else}
+        {#if feedItems.length == 0}
+        <div class="feed-item-one-liner">
+            <p>Nothing in your feed? Try following some more <a href="/users">users</a> and <a href="/collections" >collections</a>.</p>
+        </div>
+        {:else}
+            {@render displayFeedItems( feedItems )}
         {/if}
+    {/if}
     <form method="POST" action="?/loadMore" use:enhance={(form) => {
         loadingMore = true
         return async ({ update }) => {
@@ -332,5 +378,30 @@
     }
     span.blank {
         display: none;
+    }
+    .toolbar-text {
+        display: flex;
+        flex-direction: row;
+        width: fit-content;
+        padding:  var(--freq-spacing-2x-small) var(--freq-spacing-x-small);
+        align-items: center;
+        gap: var(--freq-inline-gap-double);
+        /* background-color: var(--freq-color-background-badge-medium); */
+        /* background: var(--freq-grid-dark-background); */
+        color: var(--freq-color-text-medium-dark);
+        font-size: var(--freq-font-size-x-small);
+        text-transform: uppercase;
+        /* color: var(--freq-color-text-medium); */
+        font-weight: var(--freq-font-weight-semi-bold);
+        letter-spacing: var(--freq-letter-spacing-looser);
+    }
+    .tabs-list {
+        margin-bottom: -1px;
+    }
+    /* .tabs-text {
+        color: var(--freq-color-text-medium);
+    } */
+    [data-tabs-root] {
+        border-top: none;
     }
 </style>
