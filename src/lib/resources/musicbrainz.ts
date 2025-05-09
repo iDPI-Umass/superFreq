@@ -12,11 +12,11 @@ const musicbrainzRequestHeader = {
     }
 }
 
-
 const wikidataRequestHeader = {
     mode: 'cors',
     headers: {
-        'Authorization': `Bearer ${PUBLIC_WIKIDATA_TOKEN}`
+        'Authorization': `Bearer ${PUBLIC_WIKIDATA_TOKEN}`,
+        'Content-Type': 'application/json'
     }
 }
 
@@ -90,6 +90,7 @@ export const getWikipediaUrlFromWikidata = async function ( wikidataId: string |
 
     const res = await fetch( endpoint, wikidataRequestHeader)
     const json = await res.json() as App.RowData
+    console.log(json)
 
     const { sitelinks } = json
     const pageLanguage = language + 'wiki'
@@ -110,7 +111,7 @@ export const getWikipediaPageExtract = async function ( wikiUrl: string ) {
     const urlString = `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&titles=${pageTitle}&exintro&explaintext`
 
     const endpoint = new URL (urlString)
-    const res = await fetch( endpoint, wikidataRequestHeader )
+    const res = await fetch( endpoint )
     const json = await res.json()
 
     const extract = {
