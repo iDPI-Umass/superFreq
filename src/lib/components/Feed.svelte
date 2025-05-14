@@ -84,7 +84,7 @@
         ]
     }]
 
-    let displayDiscoverFeed = $derived( firehoseFeedItems && (firehoseFeedItems.length > feedItems.length) ? false : true)
+    let displayDiscoverFeed = $derived( firehoseFeedItems && (firehoseFeedItems.length > feedItems.length) ? true : false)
     let feedMode = $derived( displayDiscoverFeed ? 'discover' : 'following' ) //'following' or 'discover'
 </script>
 
