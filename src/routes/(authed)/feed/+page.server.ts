@@ -1,5 +1,5 @@
 import type { PageServerLoad, Actions } from './$types'
-import { selectFeedData } from '$lib/resources/backend-calls/feed'
+import { selectFeedData, selectFirehoseFeed } from '$lib/resources/backend-calls/feed'
 import { insertPostFlag } from '$lib/resources/backend-calls/users'
 import { insertUpdateReaction, deletePost, updatePost } from '$lib/resources/backend-calls/posts'
 import { selectListSessionUserCollections, saveItemToCollection } from '$lib/resources/backend-calls/collections'
@@ -11,6 +11,7 @@ let updateReaction = false
 
 let batchIterator = 0
 const feedItems = [] as App.RowData[]
+const firehoseFeedItems = [] as App.RowData[]
 let feedItemCount = 0
 let totalAvailableItems = 0
 let remaining = 0
@@ -22,6 +23,8 @@ let updatedReactionCount: number
 let saveItemPostId: string
 let sessionUserCollections = [] as App.RowData[]
 
+let feedMode = 'following'
+
 export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) => {
     const { session } = await safeGetSession()
     const sessionUserId = session?.user.id as string
@@ -32,6 +35,7 @@ export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) 
     if ( url.pathname != feedData.feedSlug ) {
         loadData = true
         feedData.feedItems = []
+        feedData.firehoseFeedItems = []
         batchIterator = 0
         feedData.feedSlug = url.pathname
     }
@@ -41,25 +45,50 @@ export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) 
 
         const feedItemTypes = feedData.selectedOptions.find((element) => element.category == 'feed_item_types')
 
-        const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, feedItemTypes )
+        if ( batchIterator == 0 ) {
+            feedData.feedItems = []
+            feedData.firehoseFeedItems = []
+        }
 
-        const totalRowCount = select.totalRowCount
-        const selectedFeedData = select.feedData
+        if ( batchIterator == 0 || feedMode == 'following') {
+            const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, feedItemTypes )
 
-        feedData.feedItems.push(...selectedFeedData)
-        feedItemCount = feedData.feedItems.length
+            const selectedFeedData = select.feedData
+    
+            feedData.feedItems.push(...selectedFeedData)
+            feedItemCount = feedData.feedItems.length
+    
+            totalAvailableItems = select.totalRowCount as number
+            remaining = select.totalRowCount - feedItemCount
+        }
 
-        totalAvailableItems = totalRowCount as number
-        remaining = totalRowCount - feedItemCount
+        if ( batchIterator == 0 || feedMode == 'discover' ) {
+            const selectFirehose = await selectFirehoseFeed( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd )
+
+            const selectedFirehoseFeedData = selectFirehose.feedData
+            feedData.firehoseFeedItems.push(...selectedFirehoseFeedData)
+        }
+
+        // const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, feedItemTypes )
+
+        // const selectedFeedData = select.feedData
+
+        // feedData.feedItems.push(...selectedFeedData)
+        // feedItemCount = feedData.feedItems.length
+
+        // totalAvailableItems = select.totalRowCount as number
+        // remaining = totalRowCount - feedItemCount
         loadData = !loadData
 
     }
 
-    return { sessionUserId, feedItems: feedData.feedItems, selectedOptions: feedData.selectedOptions, totalAvailableItems, remaining, sessionUserCollections } 
+    return { sessionUserId, feedItems: feedData.feedItems, firehoseFeedItems: feedData.firehoseFeedItems, selectedOptions: feedData.selectedOptions, remaining, sessionUserCollections } 
 }
 
 export const actions = {
-    loadMore: async() => {
+    loadMore: async({ request }) => {
+        const data = await request.formData()
+        feedMode = data.get('feed-mode') as string
         batchIterator ++
         loadData = true
         return { loadData }

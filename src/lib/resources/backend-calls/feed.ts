@@ -101,7 +101,9 @@ export const selectFirehoseFeed = async function ( sessionUserId: string, batchS
         .where('user_id', 'in', following)
         .where(({eb, and}) => and([
             eb('item_type', '!=', 'reaction'),
-            eb('item_type', '!=', 'comment')
+            eb('item_type', '!=', 'comment'),
+            eb('item_type', '!=', 'social_follow'),
+            eb('item_type', '!=', 'collection_follow')
         ]))
         .where((eb) => eb.between('timestamp', timestampStart, timestampEnd))
         .limit(batchSize)
