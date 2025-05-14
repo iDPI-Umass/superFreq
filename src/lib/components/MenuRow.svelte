@@ -2,7 +2,7 @@
     import type { Snippet } from 'svelte'
     import decoration from "$lib/assets/images/panel-header-decoration.svg"
 
-    let { tabs, button, children } = $props()
+    let { button, children } = $props()
 </script>
 <!-- <svelte:options runes={true} /> -->
 

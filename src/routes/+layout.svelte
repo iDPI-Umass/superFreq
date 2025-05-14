@@ -40,7 +40,7 @@
 		'release_group_name': avatar_release_group_name
 	}) as App.StringLookupObject
 
-	// injectAnalytics({ mode: dev ? 'development' : 'production' })
+	injectAnalytics({ mode: dev ? 'development' : 'production' })
 
 	onMount(() => {
 		const { data } = supabase.auth.onAuthStateChange((_, newSession) => {

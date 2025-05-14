@@ -90,7 +90,6 @@ export const getWikipediaUrlFromWikidata = async function ( wikidataId: string |
 
     const res = await fetch( endpoint, wikidataRequestHeader)
     const json = await res.json() as App.RowData
-    console.log(json)
 
     const { sitelinks } = json
     const pageLanguage = language + 'wiki'
@@ -170,8 +169,6 @@ export const discogsLookup = async function ( discogsUrl: string | null ) {
 
 export const metadataLookup =  async function ( mbid: string, mbidCategory: string ) {
     const musicbrainzMetadata = await musicbrainzLookup( mbid, mbidCategory )
-
-    console.log(mbidCategory)
 
     if ( categoriesTable[mbidCategory] == 'release-group' ) {
         await delay(1000)

@@ -1,10 +1,14 @@
 ---
 title: Updates
 layout: about
-updated: 05/05/2025
+updated: 05/14/2025
 ---
+### May 14, 2025
+#### Updates
+- Added "Discover" tab to feed on '/feed' page
+
 ### May 5, 2025
-####
+#### Bugs
 - Fixed bug with deleting items in a collection
 
 ### April 30, 2025

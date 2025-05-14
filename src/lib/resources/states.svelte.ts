@@ -2,6 +2,7 @@ export const feedData = $state({
     'profileUsername': '',
     'profileUserId': '',
     'feedItems': [],
+    'firehoseFeedItems': [],
     'feedSlug': '',
     'selectedOptions': [{
         'category': 'feed_item_types', 

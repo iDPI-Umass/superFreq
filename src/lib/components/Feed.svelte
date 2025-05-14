@@ -16,6 +16,7 @@
     interface ComponentProps {
         sessionUserId: string
         feedItems: App.RowData[]
+        firehoseFeedItems?: App.RowData[]
         mode: string
         remaining?: number
         userActionSuccess?: boolean | null
@@ -29,6 +30,7 @@
     let { 
         sessionUserId, 
         feedItems, 
+        firehoseFeedItems,
         mode,
         remaining,
         userActionSuccess = null,
@@ -82,7 +84,8 @@
         ]
     }]
 
-    let feedMode = $state('following') //'following' or 'discover'
+    let displayDiscoverFeed = $derived( firehoseFeedItems && (firehoseFeedItems.length > feedItems.length) ? false : true)
+    let feedMode = $derived( displayDiscoverFeed ? 'discover' : 'following' ) //'following' or 'discover'
 </script>
 
 {#snippet feedItemTag( feedItem: App.RowData )} 
@@ -316,7 +319,7 @@
             {/if}
         </Tabs.Content>
         <Tabs.Content value="discover">
-            {@render displayFeedItems( feedItems )}
+            {@render displayFeedItems( firehoseFeedItems as App.RowData[] )}
         </Tabs.Content>
     </Tabs.Root>
     {:else}
@@ -328,13 +331,19 @@
             {@render displayFeedItems( feedItems )}
         {/if}
     {/if}
-    <form method="POST" action="?/loadMore" use:enhance={(form) => {
+    <form method="POST" action="?/loadMore" use:enhance={() => {
         loadingMore = true
         return async ({ update }) => {
             await update()
             loadingMore = false
         }
     }}>
+        <input 
+            type="hidden"
+            name="feed-mode"
+            id="feed-mode"
+            value={feedMode}
+        />
         {#if remaining && remaining > 0}
         <div class="button-spacer">
             <button
