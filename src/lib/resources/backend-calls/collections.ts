@@ -235,7 +235,7 @@ export const selectListProfileUserFollowingCollections = async function ( userna
         const profileUserId = selectProfile?.id as string
 
         const selectCollectionsList = await trx
-        .selectFrom('profile_display_dev')
+        .selectFrom('profile_display')
         .select('viewable_collection_follows')
         .where('user_id', '=', profileUserId)
         .executeTakeFirst()

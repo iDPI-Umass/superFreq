@@ -244,7 +244,10 @@
 	padding: var(--freq-spacing-small);
 	background: var(--freq-color-inactive);
     border: var(--freq-border-panel);
+	color: var(--freq-color-text-medium);
 	text-transform: uppercase;
+	font-weight: var(--freq-font-weight-semi-bold);
+	letter-spacing: var(--freq-letter-spacing-looser);
 }
 
 [data-tabs-trigger]:is(:hover, :focus) {
@@ -259,7 +262,7 @@
 	background: var(--freq-color-panel-background);
     border: var(--freq-border-panel);
 	border-bottom: 1px solid var(--freq-color-panel-background);
-	color: var(--freq-color-text);
+	color: var(--freq-color-text-medium);
     margin-bottom: -1px;
 	text-decoration: underline;
 }
