@@ -7,6 +7,11 @@
 	import CollectionsFirehose from 'src/lib/components/collections/CollectionsFirehose.svelte';
 	import Feed from 'src/lib/components/Feed.svelte';
 	import CollectionsFeed from 'src/lib/components/collections/CollectionsFeed.svelte';
+	import Info from 'virtual:icons/raphael/question';
+	import Heart from 'virtual:icons/heroicons-solid/heart';
+	import Music from 'virtual:icons/mynaui/music';
+	import Eye from 'virtual:icons/teenyicons/eye-outline';
+	import { Popover, Separator, Toggle } from 'bits-ui';
 
 	let { form, data } = $props();
 
@@ -55,9 +60,35 @@
 				{#snippet headerText()}
 					Popular Collections
 				{/snippet}
+				<!-- {#snippet button()}
+					<Popover.Root>
+						<Popover.Trigger>
+							<button class="double-border-top" style="padding: 8px;">help?</button>
+						</Popover.Trigger>
+						<Popover.Content>
+							<div class="help-popover-body">
+								<div>
+									<Music />
+									The number of tracks/albums in this collection.
+								</div>
+								<div>
+									<Heart />
+									The number of users following this collection.
+								</div>
+								<div>
+									<Eye />
+									The number of views this collection has.
+								</div>
+							</div>
+							<Popover.Close />
+							<Popover.Arrow />
+						</Popover.Content>
+					</Popover.Root>
+					
+				{/snippet} -->
 			</PanelHeader>
 			<div class="activity-content-window">
-				<CollectionsFirehose collections={form?.collections ?? collections} />
+				<CollectionsFirehose collections={form?.collections ?? collections} showAnalytics={false}/>
 			</div>
 		</div>
 
@@ -154,6 +185,10 @@
 
 		margin-left: auto;
 		margin-right: auto;
+	}
+
+	.help-button {
+
 	}
 
 	@media screen and (max-width: 700px) {

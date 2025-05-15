@@ -160,6 +160,7 @@
 		display: flex;
 		flex-direction: row;
 		align-items: center;
+		justify-content: space-between;
 		height: 80px;
 		max-height: 80px;
 		padding: 4px;
@@ -168,7 +169,6 @@
 
 	.firehose-item-info {
 		display: flex;
-		width: 50%;
 		gap: 5px;
 	}
 
@@ -177,7 +177,7 @@
 		flex-direction: row;
 		justify-content: center;
 		align-items: center;
-		width: 50%
+		margin-right: 2rem;
 	}
 
 	.firehose-item-name {
@@ -185,7 +185,7 @@
 		text-overflow: ellipsis;
 		flex-direction: column;
 		align-items: start;
-		justify-content: start;
+		justify-content: center;
 		overflow: hidden;
 	}
 
