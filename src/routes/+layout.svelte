@@ -12,10 +12,12 @@
 	import "$lib/styles/themes.css";
 
 	import { onMount } from 'svelte' 
+	import { dev } from '$app/environment'
 	import { invalidate } from '$app/navigation'
 	import Header from "src/lib/components/layout/NavHeader.svelte"
 	import type { Snippet } from 'svelte'
 	import type { LayoutData } from "./$types"
+	import { injectAnalytics } from '@vercel/analytics/sveltekit'
 
 	let { data, children }: { data: LayoutData, children: Snippet} = $props()
 	let { session, sessionUserId, supabase } = $derived(data)
@@ -37,6 +39,8 @@
 		'artist_name': avatar_artist_name,
 		'release_group_name': avatar_release_group_name
 	}) as App.StringLookupObject
+
+	injectAnalytics({ mode: dev ? 'development' : 'production' })
 
 	onMount(() => {
 		const { data } = supabase.auth.onAuthStateChange((_, newSession) => {

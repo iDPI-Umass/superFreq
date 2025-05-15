@@ -1,21 +1,36 @@
-<!-- <script lang="ts">
-    import Feed from '$lib/components/Feed.svelte'
+<script lang="ts">
+    import OptionsMenu from "src/lib/components/menus/OptionsMenu.svelte";
 
-    interface Props {
-        data: any;
-    }
+    const { data } = $props()
+    const { emails } = data
 
-    let { data }: Props = $props();
 
-    let { sessionUserId, feedItems } : { sessionUserId: string, feedData: any } = $derived(data)
+    const items = [
+        {
+            'id': 'option1',
+            'value': 'one'
+        },
+        {
+            'id': 'option1',
+            'value': 'two'
+        },
+        {
+            'id': 'option3',
+            'value': 'three'
+        }
+    ]
+
+    const inputGroup = 'input-group'
 </script>
 
-<Feed
-    sessionUserId={sessionUserId}
-    feedItems={feedItems}
-    mode="feed"
-></Feed> -->
+<!-- <div class="panel">
+    <OptionsMenu
+        triggerText='options'
+        items={items}
+        inputGroup={inputGroup}
+    ></OptionsMenu>
+</div> -->
 
-<img src="https://coverartarchive.org/release-group/f2b1df77-7c20-33cd-a953-24178d39a318/front" />
-
-f2b1df77-7c20-33cd-a953-24178d39a318
+{#each emails as email}
+<p>{email.email}</p>
+{/each}

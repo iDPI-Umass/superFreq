@@ -1,14 +1,15 @@
 <script lang="ts">
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte'
-    import EditPostBody from '$lib/components/Posts/EditPostBody.svelte'
-    import LikeReact from '$lib/components/Posts/LikeReact.svelte'
+    import EditPostBody from 'src/lib/components/Posts/EditPostBody.svelte'
+    import LikeReact from 'src/lib/components/Posts/LikeReact.svelte'
     import SaveToCollection from '$lib/components/SaveToCollection.svelte'
     import { displayDate, parseMarkdown } from '$lib/resources/parseData'
+    import { interactionStates } from '$lib/resources/states.svelte'
 
     import Reply from '@lucide/svelte/icons/reply'
     import Link from '@lucide/svelte/icons/link-2'
-	import ListenEmbed from '$lib/components/Posts/ListenEmbed.svelte'
-    import NowPlayingTag from '$lib/components/Posts/NowPlayingTag.svelte'
+	import ListenEmbed from 'src/lib/components/Posts/ListenEmbed.svelte'
+    import NowPlayingTag from 'src/lib/components/Posts/NowPlayingTag.svelte'
     import CoverArt from '$lib/components/CoverArt.svelte'
     import InlineMarkdownText from '$lib/components/InlineMarkdownText.svelte'
 
@@ -18,7 +19,6 @@
     interface ComponentProps {
         sessionUserId?: string | null
         post: any
-        editState?: boolean
         mode?: string | null
         userActionSuccess?: boolean | null
         collections?: App.RowData[]
@@ -29,7 +29,6 @@
     let {
         sessionUserId = null,
         post,
-        editState = $bindable(false),
         mode = null, // valid values are null, "feed", and "sample"
         userActionSuccess,
         collections = [],
@@ -50,10 +49,6 @@
                 'account': post?.embed_account,
                 'url': post?.listen_url
             } as App.Embed
-
-    function toggleEditState() {
-        editState = !editState
-    }
 
     let reactionActive = $derived(post?.reaction_user_ids ? post?.reaction_user_ids.includes(sessionUserId) : null) as boolean
 
@@ -81,6 +76,9 @@
     }
 
     const artistName = $derived(post.artist_name ?? post.user_added_artist_name) as string
+
+    let editState = $state(false)
+
 </script>
 
 <!-- <svelte:options runes={true} /> -->
@@ -130,7 +128,7 @@
             {:else}
                 <EditPostBody
                     postData={post}
-                    bind:editState={editState}
+                    editState={editState}
                 ></EditPostBody>
             {/if}
             <!-- {#if formData == true }
@@ -185,14 +183,14 @@
                     {#if post.user_id == sessionUserId }
                         <UserActionsMenu
                             mode='sessionUserPostMenu'
-                            postId={post.id ?? post.now_playing_post_id}
+                            postId={post.id ?? post.now_playing_post_id ?? post.post_id}
                             bind:editState={editState}
                             success={userActionSuccess}
                         ></UserActionsMenu>
                     {:else if sessionUserId}
                         <UserActionsMenu
                             mode='postMenu'
-                            postId={post.id ?? post.now_playing_post_id}
+                            postId={post.id ?? post.now_playing_post_id ?? post.post_id}
                             success={userActionSuccess}
                         ></UserActionsMenu>
                     {/if}

@@ -2,8 +2,8 @@
     import type { PageData, ActionData } from './$types'
 
     import SEO from '$lib/components/layout/SEO.svelte'
-    import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
-    import PostReply from '$lib/components/Posts/PostReply.svelte'
+    import NowPlayingPost from 'src/lib/components/Posts/NowPlayingPost.svelte'
+    import PostReply from 'src/lib/components/Posts/PostReply.svelte'
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
     import RedirectModal from '$lib/components/modals/RedirectModal.svelte'
     import NotificationModal from '$lib/components/modals/NotificationModal.svelte'

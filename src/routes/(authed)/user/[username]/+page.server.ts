@@ -9,9 +9,6 @@ import { add, parseISO } from 'date-fns'
 import { metadata } from '$lib/assets/text/updates.md'
 import { feedData } from 'src/lib/resources/states.svelte'
 
-let profileUsername = null as string | null
-let profileUserId = null as string | null
-
 let loadData = true
 let userAction = false
 
@@ -22,7 +19,9 @@ let remaining = 0
 
 let sessionUserCollections = [] as App.RowData[]
 
-export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}) => {
+const feedOptions = {'feed_item_types': ['now_playing_post', 'comment', 'reaction', 'social_follow', 'collection_follow', 'collection_edit']}
+
+export const load: PageServerLoad = async ({ params, url, locals: { safeGetSession }}) => {
 
     const { session } = await safeGetSession()
     const sessionUserId = session?.user.id as string
@@ -32,35 +31,32 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
     const batchSize = 10
     const timestampEnd = new Date()
     const timestampStart = add(timestampEnd, {days: -300})
-    const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
     const updatesPageUpdatedAt = metadata.updated as string
 
-    if ( urlUsername != profileUsername ) {
-        loadData = true
-    }
-
-    const profileData = await selectProfilePageData( sessionUserId, urlUsername )
+    let profileData = await selectProfilePageData( sessionUserId, urlUsername )
 
     if (!profileData.profileUserData) {
         throw redirect(303, '/')
     }
 
-    profileUsername = profileData.profileUserData.username as string
+    const profileUserId = profileData.profileUserData.id
+    const profileUsername = profileData.profileUserData.username
 
-    if ( profileUserId != profileData.profileUserData.id ) {
+    if ( url.pathname != feedData.feedSlug ) {
+        loadData = true
         feedData.feedItems = []
+        batchIterator = 0
+        feedData.feedSlug = url.pathname
     }
 
-    feedData.profileUsername =  profileUsername
-
-    profileUserId = profileData.profileUserData.id as string
-    feedData.profileUserId = profileUserId
 
     // if profile is session user's, load feed data
-    if ( sessionUserId == profileUserId ) {
+    if ( loadData && sessionUserId == profileUserId ) {
         feedData.feedItems.length = batchIterator * batchSize
 
-        const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
+        const feedItemTypes = feedData.selectedOptions.find((element) => element.category == 'feed_item_types')
+
+        const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, feedItemTypes)
 
         const totalRowCount = select.totalRowCount
         const selectedFeedData = select.feedData
@@ -69,9 +65,11 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
 
         totalAvailableItems = totalRowCount as number
         remaining = totalRowCount - feedItemCount
+
+        loadData = !loadData
     }
     // if profile is another user's, load their posts
-    else if ( sessionUserId != profileUserId ) {
+    else if ( loadData && sessionUserId != profileUserId ) {
         feedData.feedItems.length = batchIterator * batchSize
 
         const select = await selectUserPostsSample( sessionUserId, profileUsername, batchSize, batchIterator)
@@ -83,6 +81,8 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
 
         totalAvailableItems = totalRowCount as number
         remaining = totalRowCount - feedItemCount
+
+        loadData = !loadData
     }
     
     if ( userAction ) {
@@ -92,7 +92,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession }}
         profileData = await selectProfilePageData( sessionUserId, profileUsername )
     }
 
-    return { sessionUserId, profileData, feedItems: feedData.feedItems, totalAvailableItems, remaining, profileUsername, sessionUserCollections, updatesPageUpdatedAt }
+    return { sessionUserId, profileData, feedItems: feedData.feedItems, selectedOptions: feedData.selectedOptions, totalAvailableItems, remaining, profileUsername, sessionUserCollections, updatesPageUpdatedAt }
 }
 
 export const actions = { 
@@ -241,19 +241,22 @@ export const actions = {
         const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
-        let editedText = data.get('edited-text') as string
+        const editedText = data.get('edited-text') as string
         const postData = JSON.parse(data.get('post-data') as string) as App.RowData
 
         const submitEdit = await updatePost( sessionUserId, postData, editedText )
 
         const success =  submitEdit ? true : false
-        const editState = submitEdit ? false : true
 
-        editedText = success ? submitEdit.text as string : editedText
-        editPost = success ? true : false
         loadData = success ? false : true
 
-        return { success, editState }
+        const feedItemIndex = feedData?.feedItems.findIndex((element) => element.post_id == postData.post_id) ?? null
+        if ( feedItemIndex >= 0 ) {
+            feedData.feedItems[feedItemIndex].text = editedText
+            feedData.feedItems[feedItemIndex]. status = 'edited'
+        } 
+
+        return { success }
     },
     deletePost: async ({ request, locals: { safeGetSession } }) => {
         const { session } = await safeGetSession()
@@ -301,5 +304,16 @@ export const actions = {
         const update = await saveItemToCollection( sessionUserId, postId, collectionId )
 
         return { updateSuccess: update }
-    }
+    },
+    applyOptions: async({ request }) => {
+        const data = await request.formData()
+        const selected = data.getAll('selected-options')
+
+        const selectedOptionsIndex = feedData.selectedOptions.findIndex((item) => item.category == 'feed_item_types' )
+
+        feedData.selectedOptions[selectedOptionsIndex].items = selected
+
+        batchIterator = 0
+        loadData = true
+    },
 } satisfies Actions

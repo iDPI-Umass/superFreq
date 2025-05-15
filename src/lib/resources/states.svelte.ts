@@ -1,7 +1,13 @@
 export const feedData = $state({
     'profileUsername': '',
     'profileUserId': '',
-    'feedItems': []
+    'feedItems': [],
+    'firehoseFeedItems': [],
+    'feedSlug': '',
+    'selectedOptions': [{
+        'category': 'feed_item_types', 
+        'items': ['now_playing_post', 'social_follow', 'comment', 'reaction', 'collection_follow', 'collection_edit']
+    }]
 }) as any
 
 export const sessionUserProfile = $state({
@@ -43,7 +49,13 @@ export const viewProfile = $state({
 export const promiseStates = $state({
     'continueClientSideImgPromise': true,
     'newItemAdded': false,
-    'imgPromise': null as any
+    'imgPromise': null as any,
+    'userActionSuccess': false,
+})
+
+export const interactionStates = $state({
+    'editState': false,
+    'popOverOpenState': false,
 })
 
 export const collectionData = $state({

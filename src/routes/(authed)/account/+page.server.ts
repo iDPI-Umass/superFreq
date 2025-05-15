@@ -19,19 +19,14 @@ export const actions = {
     const sessionUserId = session.user?.id as string
 
     const formData = await request.formData()
-    const displayName = formData.get('displayName') as string
+    const displayName = formData.get('display-name') as string
     const username = formData.get('username') as string
     const website = formData.get('website') as string
-    const avatarMbid = formData.get('avatarMbid') as string
-    const newAvatarMbid = formData.get('newAvatarMbid') ?? null
-    const avatarUrl = formData.get('avatarUrl') as string
-    const newAvatarUrl = formData.get('newAvatarUrl') ?? null
-    const avatarItem = newAvatarMbid ? JSON.parse(formData.get('avatarItem') as string) : null
+    const avatarUrl = formData.get('avatar-url') as string
+    const avatarItem = JSON.parse(formData.get('avatar-item') as string) ?? null
     const about = formData.get('about') as string
 
-    const avatar = newAvatarUrl ? newAvatarUrl : avatarUrl
-    const mbid = newAvatarMbid ? newAvatarMbid : avatarMbid
-
+    sessionUserProfile.user_id = sessionUserId
     sessionUserProfile.username = username
     sessionUserProfile.display_name = displayName
     sessionUserProfile.avatar_url = avatarUrl,
@@ -39,9 +34,10 @@ export const actions = {
 
     if ( avatarItem ) {
       sessionUserProfile.avatar_url = avatarItem.img_url ?? null
-      sessionUserProfile.last_fm_avatar_url = avatarItem.last_fm_avatar_url ?? null
+      sessionUserProfile.last_fm_avatar_url = avatarItem.last_fm_img_url ?? null
       sessionUserProfile.avatar_artist_name = avatarItem.artist_name ?? null
       sessionUserProfile.avatar_release_group_name = avatarItem.release_group_name ??  null
+      sessionUserProfile.avatar_release_group_mbid = avatarItem.release_group_mbid ?? null
     }
 
     const profileData = {
@@ -49,8 +45,8 @@ export const actions = {
       display_name: displayName,
       username: username,
       website: website,
-      avatar_mbid: mbid,
-      avatar_url: avatar,
+      avatar_mbid: avatarItem.release_group_mbid,
+      avatar_url: avatarItem.img_url,
       updated_at: new Date(),
       about: about,
     } as App.RowData

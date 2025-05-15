@@ -1,16 +1,17 @@
 import type { PageServerLoad, Actions } from './$types'
-import { selectFeedData } from '$lib/resources/backend-calls/feed'
+import { selectFeedData, selectFirehoseFeed } from '$lib/resources/backend-calls/feed'
 import { insertPostFlag } from '$lib/resources/backend-calls/users'
-import { insertUpdateReaction, deletePost } from '$lib/resources/backend-calls/posts'
+import { insertUpdateReaction, deletePost, updatePost } from '$lib/resources/backend-calls/posts'
 import { selectListSessionUserCollections, saveItemToCollection } from '$lib/resources/backend-calls/collections'
 import { add } from 'date-fns'
-import { feedData } from 'src/lib/resources/states.svelte'
+import { feedData } from '$lib/resources/states.svelte'
 
 let loadData = true
 let updateReaction = false
 
 let batchIterator = 0
 const feedItems = [] as App.RowData[]
+const firehoseFeedItems = [] as App.RowData[]
 let feedItemCount = 0
 let totalAvailableItems = 0
 let remaining = 0
@@ -22,48 +23,72 @@ let updatedReactionCount: number
 let saveItemPostId: string
 let sessionUserCollections = [] as App.RowData[]
 
-export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
+let feedMode = 'following'
+
+export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) => {
     const { session } = await safeGetSession()
     const sessionUserId = session?.user.id as string
     const batchSize = 20
     const timestampEnd = new Date()
     const timestampStart = add(timestampEnd, {days: -300})
-    const options = {'options': ['nowPlayingPosts', 'comments', 'reactions', 'collectionFollows', 'collectionEdits']}
+
+    if ( url.pathname != feedData.feedSlug ) {
+        loadData = true
+        feedData.feedItems = []
+        feedData.firehoseFeedItems = []
+        batchIterator = 0
+        feedData.feedSlug = url.pathname
+    }
 
     if ( loadData ) {
         feedData.feedItems.length = batchIterator * batchSize
 
-        const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, options)
+        const feedItemTypes = feedData.selectedOptions.find((element) => element.category == 'feed_item_types')
 
-        const totalRowCount = select.totalRowCount
-        const selectedFeedData = select.feedData
-        feedData.feedItems.push(...selectedFeedData)
-        feedItemCount = feedData.feedItems.length
+        if ( batchIterator == 0 ) {
+            feedData.feedItems = []
+            feedData.firehoseFeedItems = []
+        }
 
-        totalAvailableItems = totalRowCount as number
-        remaining = totalRowCount - feedItemCount
+        if ( batchIterator == 0 || feedMode == 'following') {
+            const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, feedItemTypes )
+
+            const selectedFeedData = select.feedData
+    
+            feedData.feedItems.push(...selectedFeedData)
+            feedItemCount = feedData.feedItems.length
+    
+            totalAvailableItems = select.totalRowCount as number
+            remaining = select.totalRowCount - feedItemCount
+        }
+
+        if ( batchIterator == 0 || feedMode == 'discover' ) {
+            const selectFirehose = await selectFirehoseFeed( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd )
+
+            const selectedFirehoseFeedData = selectFirehose.feedData
+            feedData.firehoseFeedItems.push(...selectedFirehoseFeedData)
+        }
+
+        // const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, feedItemTypes )
+
+        // const selectedFeedData = select.feedData
+
+        // feedData.feedItems.push(...selectedFeedData)
+        // feedItemCount = feedData.feedItems.length
+
+        // totalAvailableItems = select.totalRowCount as number
+        // remaining = totalRowCount - feedItemCount
         loadData = !loadData
+
     }
 
-    // if ( updateReaction ) {
-    //     updateReaction = false
-
-    //     const postIndex = feedItems.findIndex((element) => element.post_id == postId)
-
-    //     if ( updatedReactionActive ) {
-    //         feedItems[postIndex]['reaction_user_ids'].push(sessionUserId)
-    //     }
-    //     else if ( !updatedReactionActive ) {
-    //         const reactionIndex = feedItems[postIndex]['reaction_user_ids'].findIndex((element) => {element == sessionUserId})
-    //         feedItems[postIndex]['reaction_user_ids'].splice(reactionIndex, 1)
-    //     }
-    // }
-
-    return { sessionUserId, feedItems: feedData.feedItems, totalAvailableItems, remaining, sessionUserCollections } 
+    return { sessionUserId, feedItems: feedData.feedItems, firehoseFeedItems: feedData.firehoseFeedItems, selectedOptions: feedData.selectedOptions, remaining, sessionUserCollections } 
 }
 
 export const actions = {
-    loadMore: async() => {
+    loadMore: async({ request }) => {
+        const data = await request.formData()
+        feedMode = data.get('feed-mode') as string
         batchIterator ++
         loadData = true
         return { loadData }
@@ -98,18 +123,50 @@ export const actions = {
 
         return { userActionSuccess }
     },
+    editPost: async ({ request, locals: { safeGetSession } }) => {
+        const { session } = await safeGetSession()
+        const sessionUserId = session?.user.id as string
+
+        const data = await request.formData()
+        const editedText = data.get('edited-text') as string
+        const postData = JSON.parse(data.get('post-data') as string) as App.RowData
+        const replyData = JSON.parse(data.get('reply-data') as string) as App.RowData
+
+        const updateData = replyData ?? postData
+
+        const submitEdit = await updatePost( sessionUserId, updateData, editedText )
+
+        const feedItemIndex = feedData?.feedItems.findIndex((element) => element.post_id == updateData.post_id) ?? null
+        if ( feedItemIndex >= 0 ) {
+            feedData.feedItems[feedItemIndex].text = editedText
+            feedData.feedItems[feedItemIndex]. status = 'edited'
+        } 
+
+        const success =  submitEdit ? true : false
+        const editState = submitEdit ? false : true
+
+        return { success, editState }
+    },
     deletePost: async ({ request, locals: { safeGetSession } }) => {
         const { session } = await safeGetSession()
         const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
-        const postId = data.get('post-id') as string
+        const postId = data.get('post-reply-id') as string ?? data.get('post-id') as string
+        const parentPostUsername = data.get('post-username') as string
+        const parentPostId = data.get('parent-post-id') as string
+        const parentPostTimestamp = data.get('parent-post-timestamp') as string
 
         const submitDelete = await deletePost( sessionUserId, postId )
 
-        const success = submitDelete ? true : false
+        const permalink = parentPostId ? `/posts/${parentPostUsername}/now-playing/${parentPostTimestamp}` : '/'
 
-        return { success }
+        if ( submitDelete ) {
+            throw redirect(303, permalink)
+        }
+        else { 
+            return { success: false }
+        }
     },
     getCollectionList: async ({ request, locals: { safeGetSession } }) => {
         const { session } = await safeGetSession()
@@ -133,5 +190,16 @@ export const actions = {
         const update = await saveItemToCollection( sessionUserId, saveItemPostId, collectionId )
 
         return { updateSuccess: update }
-    }
-} satisfies Actions
+    },
+    applyOptions: async({ request }) => {
+        const data = await request.formData()
+        const selected = data.getAll('selected-options')
+
+        const selectedOptionsIndex = feedData.selectedOptions.findIndex((item) => item.category == 'feed_item_types' )
+
+        feedData.selectedOptions[selectedOptionsIndex].items = selected
+
+        batchIterator = 0
+        loadData = true
+    },
+} satisfies Action

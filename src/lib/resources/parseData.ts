@@ -7,6 +7,7 @@ import remarkUnlink from 'remark-unlink'
 import remarkStringify from 'remark-stringify'
 import remarkRehype from 'remark-rehype'
 import {unified} from 'unified'
+import { stringSimilarity } from "string-similarity-js"
 
 export function validStringCheck ( value: string ) {
     if ( value && value.length > 0 ) {
@@ -62,6 +63,42 @@ export const validateUsernameCharacters = function ( username: string) {
     return valid
 }
 
+/* Convert object in 'options' column from 'profiles' table to format that OptionsMenu component can use. 
+
+'options' object used for selectedOptions has format:
+[
+    { 
+        'category': string,
+        'items': string[]
+    }
+]
+
+array for optionsGroups must contain objects with keys 'category', 'legend', and 'items', such as:
+    [
+        {
+            'category': 'feed_item_types',
+            'legend': 'Feed Item Types',
+            'items': ['now_playing_post', 'comment', reaction]
+        },
+        {
+            'category: 'item_owners',
+            'legend': 'Whose items?',
+            'items': ['user', 'followers', 'strangers']
+        }
+    ]
+
+*/
+
+export const consolidatedOptions = ( optionsGroups: any[], selectedOptions: any[] ) => {
+    for ( const group of optionsGroups ) {
+        const category = group.category
+        const options = selectedOptions.find((element) => element.category == category)
+        group.selectedOptions = options ? options.items : []
+    }
+
+    return optionsGroups
+}
+
 /*
 //
 ** Markdown parsing
@@ -108,11 +145,18 @@ export const profileName = function (username: string, display_name: string) {
 /* Converts values to mbid categories */
 
 export const categoriesTable: App.Lookup = {
+    "artist": "artist",
     "artists": "artist",
+    "album": "release-group",
+    "albums": "release-group",
+    "release-group": "release-group",
     "release-groups": "release-group",
     "release_groups": "release-group",
+    "releases": "release",
+    "release": "release",
+    "recording": "recording",
     "recordings": "recording",
-    "albums": "release-group",
+    "track": "recording",
     "tracks": "recording",
     "songs": "recording"
 }
@@ -189,6 +233,7 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
                 artistsMetadata = [...artistsMetadata, {
                     "artist_mbid": thisItem["artist_mbid"],
                     "artist_name": thisItem["artist_name"],
+                    "discogs_img_url": thisItem["artist_discogs_img_url"] ?? null,
                     "added_at": timestampISO
                 }]
             }
@@ -244,6 +289,7 @@ export const prepareAvatarMetadataInsert = function ( avatarItem: App.RowData ) 
     artistsMetadata = [...artistsMetadata, {
         "artist_mbid": avatarItem["artist_mbid"],
         "artist_name": avatarItem["artist_name"],
+        "discogs_img_url": thisItem["artist_discogs_img_url"] ?? null,
         "added_at": timestampISO
     }]
 
@@ -277,13 +323,15 @@ export const prepareMusicDataUpsert = function ( collectionItems: App.RowData, c
         if ( collectionType == "artists" ) {
             upsertArtists = [...upsertArtists, {
                 "artist_mbid": thisItem["artist_mbid"],
-                "artist_name": thisItem["artist_name"]
+                "artist_name": thisItem["artist_name"],
+                "discogs_img_url": thisItem["artist_discogs_img_url"] ?? null
             }];
         }
         else if	( collectionType == "release_groups" ) {
             upsertArtists = [...upsertArtists, {
                 "artist_mbid": thisItem["artist_mbid"],
-                "artist_name": thisItem["artist_name"]
+                "artist_name": thisItem["artist_name"],
+                "discogs_img_url": thisItem["artist_discogs_img_url"] ?? null
             }];
 
             upsertReleaseGroups = [...upsertReleaseGroups, {
@@ -299,7 +347,8 @@ export const prepareMusicDataUpsert = function ( collectionItems: App.RowData, c
         else if ( collectionType == "recordings" ) {
             upsertArtists = [...upsertArtists, {
                 "artist_mbid": thisItem["artist_mbid"],
-                "artist_name": thisItem["artist_name"]
+                "artist_name": thisItem["artist_name"],
+                "discogs_img_url": thisItem["artist_discogs_img_url"] ?? null
             }];
 
             upsertReleaseGroups = [...upsertReleaseGroups, {
@@ -641,3 +690,71 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
     }
 }
  
+//
+/*
+** Matchcing search query against search results
+*/
+//
+
+export const searchForAlbumMetadata = async function ( album: any ) {
+    async function delay ( milliseconds: number ) { 
+        new Promise(resolve => setTimeout(resolve, milliseconds)) 
+    }
+
+    await delay(20000)
+    const title = album['Album Title']
+    const artist = album['Artist']
+
+    const searchTerms = {
+        artistName: artist,
+        releaseGroupName: title
+    }
+
+    let mbid = null as string | null
+    if ( artist != 'Compilation') {
+        const {searchResults} = await musicbrainzAdvancedSearch('album', searchTerms, 3)
+
+        console.log(searchResults)
+
+        if ( searchResults['release-groups']){
+            for ( const result of searchResults['release-groups'] ) {
+                const resultTitle = result.title
+                const resultArtist = result['artist-credit'][0]['artist']['name']
+                mbid = result.id
+
+                const titleSimilarity = stringSimilarity(title, resultTitle)
+
+                const artistSimilarity = stringSimilarity(artist, resultArtist)
+
+                console.log(titleSimilarity, artistSimilarity)
+                if (titleSimilarity >=0.5 && artistSimilarity >= 0.5 ) {
+                    console.log('mbid: ', mbid)
+                }
+            }
+        }
+    }
+
+    return { mbid }
+    
+}
+
+export const getMetadataAlbumsArray = async function (albums: any) {
+    let mbidCount = 0
+    for ( const album of albums ) {
+        await delay(2000)
+        const {mbid} = await parseAlbum(album)
+        await delay(2000)
+        album.mbid = mbid
+
+
+        if (album.mbid) {
+            console.log(album)
+            mbidCount ++
+        }
+        await delay(20000)
+    }
+    console.log('done')
+    console.log('album: ', albums.length)
+    console.log('mbids: ', mbidCount)
+    return
+}

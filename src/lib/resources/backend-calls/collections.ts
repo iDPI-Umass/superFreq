@@ -235,7 +235,7 @@ export const selectListProfileUserFollowingCollections = async function ( userna
         const profileUserId = selectProfile?.id as string
 
         const selectCollectionsList = await trx
-        .selectFrom('profile_display_dev')
+        .selectFrom('profile_display')
         .select('viewable_collection_follows')
         .where('user_id', '=', profileUserId)
         .executeTakeFirst()
@@ -283,7 +283,63 @@ export const selectListSessionUserCollections =  async function ( sessionUserId:
 Fetches collection for viewing if collection is open or public, or session user is an owner or collaborator
 */
 
+
 export const selectViewableCollectionContents = async function ( collectionId: string, sessionUserId: string ) {
+
+    const selectCollection = await db.transaction().execute(async (trx) => {
+        try {
+            const follows = await trx
+            .selectFrom('collection_follows')
+            .select(['collection_id', 'status', 'owner_id', 'collaborators', 'followers'])
+            .where('collection_id', '=', collectionId)
+            .where('status', '!=', 'deleted')
+            .executeTakeFirstOrThrow()
+
+            const { status, owner_id, collaborators } = follows
+
+            if (
+                ( status == 'private' && ! ( owner_id == sessionUserId || collaborators.includes(sessionUserId)))
+            )
+            { throw new Error( 'no view permission' )}
+
+            const collectionMetadata = await trx
+            .selectFrom('collection_metadata')
+            .selectAll()
+            .where('collection_id', '=', collectionId)
+            .executeTakeFirst()
+
+            const collectionContents = await trx
+            .selectFrom('collections')
+            .selectAll()
+            .where('collection_id', '=', collectionId)
+            .where('item_position', 'is not', null)
+            .execute()
+
+            return { viewPermission: true, follows, collectionContents, collectionMetadata }
+        }
+        catch ( error ) {
+            return { viewPermission: false, follows: null, collectionContents: null, collectionMetadata: null }
+        }
+    })
+
+    const { viewPermission, follows, collectionContents, collectionMetadata } = selectCollection
+
+    if ( !viewPermission ) {
+        return { viewPermission: false, editPermission: false, followsNow: false, collection: null, collectionMetadata: null}
+    }
+
+    const { status, owner_id, collaborators, followers } = follows
+    const followsNow = ( followers.includes(sessionUserId) ) ? true : false
+    const editPermission = (
+        status == 'open' ||
+        owner_id == sessionUserId ||
+        collaborators.includes(sessionUserId)
+    ) ? true : false
+
+    return { viewPermission, editPermission, followsNow, collectionContents, collectionMetadata }
+}
+
+export const oldSelectViewableCollectionContents = async function ( collectionId: string, sessionUserId: string ) {
 
     const selectCollection = await db.transaction().execute(async (trx) => {
         const collectionInfo = await trx
@@ -344,6 +400,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
                     ])
                 ]),
             ]))
+            .where('info.collection_id', '=', collectionId)
             .select([
                 'info.collection_id as collection_id',
                 'info.status as status',
@@ -383,6 +440,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
             'contents.artist_mbid as artist_mbid',
             'contents.item_type as item_type',
             'artists.artist_name as artist_name',
+            'artists.discogs_img_url as artist_discogs_img_url',
             'release_groups.release_group_name as release_group_name',
             'release_groups.release_group_mbid as release_group_mbid',
             'release_groups.img_url as img_url',
@@ -422,6 +480,76 @@ Fetches collection for editing if session user is owner or collaborator
 */
 
 export const selectEditableCollectionContents = async function ( collectionId: string, sessionUserId: string ) {
+
+    const selectCollection = await db.transaction().execute(async (trx) => {
+        try {
+            const follows = await trx
+            .selectFrom('collection_follows')
+            .select(['collection_id', 'status', 'owner_id', 'collaborators'])
+            .where('collection_id', '=', collectionId)
+            .where('status', '!=', 'deleted')
+            .executeTakeFirstOrThrow()
+
+            const { status, owner_id, collaborators } = follows
+
+            if ( 
+                (( status == 'public' || status == 'private ' ) && owner_id != sessionUserId  )
+             ) {
+                throw new Error('no edit permission')
+             }
+
+            const collectionMetadata = await trx
+            .selectFrom('collection_metadata')
+            .selectAll()
+            .where('collection_id', '=', collectionId)
+            .executeTakeFirst()
+
+            const collectionContents = await trx
+            .selectFrom('collections')
+            .selectAll()
+            .where('collection_id', '=', collectionId)
+            .execute()
+
+            return { editPermission: true, collectionContents, collectionMetadata }
+        }
+        catch ( error ) {
+            return { editPermission: false, collectionContents: null, collectionMetadata: null }
+        }
+    })
+
+
+    const { editPermission, collectionMetadata } = selectCollection
+    let { collectionContents } = selectCollection
+
+    if ( !editPermission ) { 
+        return { editPermission, collectionMetadata: null, collectionContents: null, deletedCollectionContents: null }
+    }
+
+    // create an array of deleted items and remove all items where 'item_position is null' from collectionContents
+    let deletedCollectionContents = [] as App.RowData[]
+    let filteredContents = collectionContents
+
+    for ( const item of collectionContents ) {
+        if (item.item_position == null) {
+            deletedCollectionContents = [...deletedCollectionContents, item]
+            filteredContents = filteredContents.filter((element) => element != item)
+        }
+    }
+
+    filteredContents.sort(( a, b ) => a.item_position - b.item_position )
+    collectionContents = filteredContents
+
+    // create ID for each item for svelte-dnd component in colleciton editor
+    let counter = 0
+    for ( const item of collectionContents) {
+        item['id'] = counter
+        counter += 1
+    }
+
+    return { editPermission, collectionContents, collectionMetadata, deletedCollectionContents}
+}
+
+export const oldSelectEditableCollectionContents = async function ( collectionId: string, sessionUserId: string ) {
 
     const selectCollection = await db.transaction().execute(async (trx) => {
         
@@ -935,6 +1063,23 @@ export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: s
                 'description_text': text
             }
 
+            const newUserAddedItems = [] as any
+            for ( const item of collectionItems ) {
+                if (!item["artist_mbid"] && !item["original_id"]) {
+                    newUserAddedItems.push({
+                        'artist_name': item['artist_name'],
+                        'release_group_name': item['release_group_name'],
+                        'recording_name': item['recording_name'],
+                        'episode_title': item['episode_title'],
+                        'show_title': item['show_title'],
+                        'added_by': sessionUserId,
+                        'added_at': timestampISO,
+                        'listen_url': item['listen_url'],
+                        'collection_id': collectionId
+                    })
+                }
+            }
+
             await trx
             .updateTable('collections_info')
             .set({
@@ -972,6 +1117,33 @@ export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: s
                     .doNothing()
                 )
                 .execute()
+            }
+
+            let userAddedMetadataRows = [] as App.RowData[]
+            if ( newUserAddedItems.length > 0 ) {
+                userAddedMetadataRows = await trx
+                    .insertInto('user_added_metadata')
+                    .values(newUserAddedItems)
+                    .returningAll()
+                    .execute() as App.RowData[]
+            }
+
+            for ( const row of userAddedMetadataRows ) {
+                const artistName = row['artist_name']
+                const releaseGroupName = row['release_group_name']
+                const recordingName = row['recording_name']
+                const episodeTitle = row['episode_title']
+                const showName = row['show_title']
+    
+                const collectionItemIndex = collectionItems.findIndex((item) => (
+                    item['artist_name'] == artistName &&
+                    item['release_group_name'] == releaseGroupName &&
+                    item['recording_name'] == recordingName &&
+                    item['episode_title'] == episodeTitle &&
+                    item['show_title'] == showName
+                ))
+    
+                collectionItems[collectionItemIndex]['user_added_metadata_id'] = row['id']
             }
             
             const collectionContents = await populateCollectionContents(sessionUserId, collectionItems, collectionId) 
@@ -1030,6 +1202,23 @@ export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: s
 
             const collectionId = insertCollectionInfo?.collection_id as string
 
+            const newUserAddedItems = [] as any
+            for ( const item of collectionItems ) {
+                if (!item["artist_mbid"] && !item["original_id"]) {
+                    newUserAddedItems.push({
+                        'artist_name': item['artist_name'],
+                        'release_group_name': item['release_group_name'],
+                        'recording_name': item['recording_name'],
+                        'episode_title': item['episode_title'],
+                        'show_title': item['show_title'],
+                        'added_by': sessionUserId,
+                        'added_at': timestampISO,
+                        'listen_url': item['listen_url'],
+                        'collection_id': collectionId
+                    })
+                }
+            }
+
             await trx
                 .updateTable('profiles')
                 .set({
@@ -1047,21 +1236,54 @@ export const insertUpdateTopAlbumsCollection = async function ( sessionUserId: s
                 })
                 .executeTakeFirst()
 
-            await trx
-                .insertInto('artists')
-                .values(artistsMetadata)
-                .onConflict((oc) => oc
-                    .doNothing()
-                )
-                .execute()
+            if ( artistsMetadata.length > 0 ) {
+                await trx
+                    .insertInto('artists')
+                    .values(artistsMetadata)
+                    .onConflict((oc) => oc
+                        .doNothing()
+                    )
+                    .execute()
+            } 
 
-            await trx
+
+            if ( releaseGroupsMetadata.length > 0 ) {
+                await trx
                 .insertInto('release_groups')
                 .values(releaseGroupsMetadata)
                 .onConflict((oc) => oc
                     .doNothing()
                 )
                 .execute()
+            }
+
+            
+            let userAddedMetadataRows = [] as App.RowData[]
+            if ( newUserAddedItems.length > 0 ) {
+                userAddedMetadataRows = await trx
+                    .insertInto('user_added_metadata')
+                    .values(newUserAddedItems)
+                    .returningAll()
+                    .execute() as App.RowData[]
+            }
+    
+            for ( const row of userAddedMetadataRows ) {
+                const artistName = row['artist_name']
+                const releaseGroupName = row['release_group_name']
+                const recordingName = row['recording_name']
+                const episodeTitle = row['episode_title']
+                const showName = row['show_title']
+    
+                const collectionItemIndex = collectionItems.findIndex((item) => (
+                    item['artist_name'] == artistName &&
+                    item['release_group_name'] == releaseGroupName &&
+                    item['recording_name'] == recordingName &&
+                    item['episode_title'] == episodeTitle &&
+                    item['show_title'] == showName
+                ))
+    
+                collectionItems[collectionItemIndex]['user_added_metadata_id'] = row['id']
+            }
 
             const collectionContents = await populateCollectionContents(sessionUserId, collectionItems, collectionId) 
             

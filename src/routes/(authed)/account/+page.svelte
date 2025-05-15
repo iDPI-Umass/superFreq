@@ -12,7 +12,7 @@
 
 	import wave from "$lib/assets/images/logo/freq-wave.svg"
 	import { tick } from 'svelte';
-	import { promiseStates } from '$lib/resources/states.svelte.js'
+	import { collectionData, promiseStates } from '$lib/resources/states.svelte.js'
 
 	let { data, form } = $props();
 
@@ -32,17 +32,19 @@
 	let avatarUrl = $derived(avatarItem?.avatar_url ?? profile?.avatar_url ?? '') as string
 	let lastFmImgUrl = $derived(avatarItem?.last_fm_img_url ?? profile?.avatar_last_fm_img_url ?? '') as string
 	let avatarArtist = $derived(avatarItem?.artist_name ?? profile?.avatar_artist_name ?? '') as string
-	let avatarReleaseGroup = $derived(avatarItem?.release_group_name ?? profile?.avatar_release_group_name ?? '') as string
+	let avatarReleaseGroupName = $derived(avatarItem?.release_group_name ?? profile?.avatar_release_group_name ?? '') as string
+	let avatarReleaseGroupMbid = $derived(avatarItem?.release_group_mbid ?? profile?.avatar_release_group_mbid ?? '') as string
 
 	let avatarInfo = $derived({
-		'img_url': avatarUrl,
-		'last_fm_img_url': lastFmImgUrl,
-		'artist_name': avatarArtist,
-		'artist_mbid': avatarItem?.artist_mbid,
-		'release_group_name': avatarReleaseGroup,
-		'release_group_mbid': avatarItem?.release_group_mbid,
-		'label': avatarItem?.label,
+		'img_url': collectionData.singleItem.img_url ?? avatarUrl ?? null,
+		'last_fm_img_url': collectionData.singleItem.last_fm_img_url ?? lastFmImgUrl ?? null,
+		'artist_name': collectionData.singleItem.artist_name ?? avatarArtist ?? null,
+		'artist_mbid': collectionData.singleItem.artist_mbid ?? avatarMbid ?? null,
+		'release_group_name': collectionData.singleItem.release_group_name ?? avatarReleaseGroupName ?? null,
+		'release_group_mbid': collectionData.singleItem.release_group_mbid ?? avatarReleaseGroupMbid ?? null,
+		'label': collectionData.singleItem.label ?? avatarItem?.label ?? null,
 	}) as App.RowData
+
 
 	let updateLoading = $state(false)
 
@@ -53,6 +55,7 @@
 	onMount(() => {
 		promiseStates.newItemAdded = false
 		promiseStates.imgPromise = null
+		collectionData.singleItem = {}
 	})
 </script>
 
@@ -118,21 +121,21 @@
 				type="text"
 				name="username"
 				id="username"
-				form="account-data"
 				defaultValue={username}
+				value={username}
 				disabled 
 			/>
 			<label 
 				class="text-label"
-				for="displayName"
+				for="display-name"
 			>
 				Display name
 			</label>
 			<input 
 				class="text" 
 				type="text" 
-				name="displayName" 
-				id="displayName" 
+				name="display-name" 
+				id="display-name" 
 				value={displayName} 
 			/>
 
@@ -168,39 +171,15 @@
 			/>
 			<input 
 				type="hidden" 
-				name="avatarItem" 
-				id="avatarmItem" 
+				name="avatar-item" 
+				id="avatar-item" 
 				value={JSON.stringify(avatarInfo)} 
 			/>
 			<input 
 				type="hidden" 
-				name="avatarUrl" 
-				id="avatarUrl" 
+				name="avatar-url" 
+				id="avatar-url" 
 				value={avatarUrl} 
-			/>
-			<input 
-				type="hidden" 
-				name="newAvatarUrl" 
-				id="newAvatarUrl" 
-				value={avatarItem?.img_url ?? avatarItem?.last_fm_img_url ?? null} 
-			/>
-			<input 
-				type="hidden" 
-				name="avatarMbid" 
-				id="avatarMbid" 
-				value={avatarMbid} 
-			/>
-			<input 
-				type="hidden" 
-				name="newAvatarMbid" 
-				id="newAvatarMbid" 
-				value={avatarItem?.release_group_mbid ?? null} 
-			/>
-			<input 
-				type="hidden" 
-				name="avatarName" 
-				id="avatarName" 
-				value={avatarItem?.release_group_name ?? null} 
 			/>
 		</form>
 		<div class="form-column">
@@ -213,7 +192,6 @@
 			<AvatarSearch
 				displayName={displayName}
 				avatarUrl={avatarUrl}
-				bind:avatarItem={avatarItem}
 				avatarInfo={avatarInfo}
 			></AvatarSearch>
 			<div class="actions">

@@ -1,31 +1,30 @@
 <script lang="ts">
-    import { onMount } from 'svelte'
-    import type { ActionData, PageData } from './$types.js'
-    import { goto, invalidateAll } from '$app/navigation'
+    import { goto } from '$app/navigation'
     import { enhance } from '$app/forms'
+    import { onMount } from 'svelte'
 
     import SEO from '$lib/components/layout/SEO.svelte'
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte';
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import GridList from "$lib/components/GridList.svelte"
-	import NewNowPlayingPost from '$lib/components/Posts/NewNowPlayingPost.svelte'
+	import NewNowPlayingPost from 'src/lib/components/Posts/NewNowPlayingPost.svelte'
     import Feed from '$lib/components/Feed.svelte'
-	import NowPlayingPostsSample from '$lib/components/Posts/NowPlayingPostsSample.svelte'
+	import NowPlayingPostsSample from 'src/lib/components/Posts/NowPlayingPostsSample.svelte'
     import CoverArt from '$lib/components/CoverArt.svelte'
     import InfoBox from '$lib/components/InfoBox.svelte'
 
-    import { collectionData, viewProfile } from '$lib/resources/states.svelte.js'
+    import { collectionData, viewProfile, feedData } from '$lib/resources/states.svelte.js'
 
 
     let { data, form } = $props();
 
-    let { sessionUserId, profileData, feedItems, totalAvailableItems, remaining, profileUsername, sessionUserCollections, updatesPageUpdatedAt }: {
+    let { sessionUserId, profileData, feedItems, selectedOptions, remaining, sessionUserCollections, updatesPageUpdatedAt }: {
         sessionUserId: string
         profileData: any
         feedItems: any
         totalAvailableItems: number
         remaining: number
-        profileUsername: string
+        profileUsername: string | null
         sessionUserCollections: App.RowData[]
         updatesPageUpdatedAt: string
     } = $derived(data)
@@ -69,6 +68,9 @@
         viewProfile.topAlbumsCollection = permission ? profileData?.topAlbumsCollection.slice(0, 8) as App.ProfileObject[] : []
 
         collectionData.collectionItems = profileData?.topAlbumsCollection
+
+        feedData.selectedOptions = selectedOptions
+        feedData.feedItems = feedItems
     })
     
 
@@ -266,14 +268,14 @@
         <NewNowPlayingPost></NewNowPlayingPost>
         <Feed
             sessionUserId={sessionUserId}
-            feedItems={feedItems}
             mode="feed"
-            postEditState={form?.editState}
+            feedItems = {feedData.feedItems}
             userActionSuccess={form?.userActionSuccess}
             remaining={remaining}
             collections={sessionUserCollections}
             showCollectionsListModal={showCollectionsListModal}
             showSaveSucessModal={showSaveSucessModal}
+            showFilters={true}
         ></Feed>
     {:else}
         <NowPlayingPostsSample

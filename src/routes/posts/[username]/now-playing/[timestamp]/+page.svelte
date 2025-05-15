@@ -1,16 +1,16 @@
 <script lang="ts">
-    import type { PageData, ActionData } from './$types'
     import SEO from '$lib/components/layout/SEO.svelte'
-    import NowPlayingPost from '$lib/components/Posts/NowPlayingPost.svelte'
-    import PostReply from '$lib/components/Posts/PostReply.svelte'
-    import PostReplyEditor from '$lib/components/Posts/PostReplyEditor.svelte'
+    import NowPlayingPost from 'src/lib/components/Posts/NowPlayingPost.svelte'
+    import PostReply from 'src/lib/components/Posts/PostReply.svelte'
+    import PostReplyEditor from 'src/lib/components/Posts/PostReplyEditor.svelte'
 
     let { data, form } = $props();
 
-    let { post, replies, collections }: {
+    let { post, replies, collections, postTimestamp }: {
         post: App.RowData
         replies?: App.RowData[]
         collections?: App.RowData[]
+        postTimestamp: string
     } = $derived(data)
 
     let sessionUserId = data?.sessionUserId as string
@@ -26,6 +26,8 @@
         const slug = username?.concat(replyTimestamp)
         return slug
     }
+
+    let editState = $state(false)
 </script>
 
 <SEO title="{post?.display_name}'s Now Playing post"></SEO>
@@ -45,18 +47,32 @@
         form="submitReaction"
         value="like"
     />
+    <input 
+        type="hidden"
+        name="post-username"
+        id="post-username"
+        form={formName}
+        value={post?.username}
+    />
+    <input 
+        type="hidden"
+        name="post-timestamp"
+        id="post-timestamp"
+        form={formName}
+        value={postTimestamp}
+    />
 {/snippet}
 
 <div class="post-panel">
     {@render formInputs("submitReply")}
     {@render formInputs("submitReaction")}
     {@render formInputs("delete")}
+    {@render formInputs("edit")}
     {@render formInputs("flagPost")}
     {#if post?.status != 'deleted'}
     <NowPlayingPost
         sessionUserId={sessionUserId}
         post={post}
-        editState={form?.editState}
         userActionSuccess={actionSuccess}
         collections={collections}
         showCollectionsModal={showCollectionsListModal}
@@ -65,12 +81,13 @@
     <PostReplyEditor></PostReplyEditor>
     {#each replies as reply}
         <div id={ replyId( reply.username, reply.created_at )}>
-            <PostReply
-                reply={reply}
-                parentPost={post}
-                sessionUserId={sessionUserId}
-                userActionSuccess={actionSuccess}
-            ></PostReply>
+            <div class="comment-panel">
+                <PostReply
+                    reply={reply}
+                    sessionUserId={sessionUserId}
+                    userActionSuccess={actionSuccess}
+                ></PostReply>
+            </div>
         </div>
     {/each}
     {:else}

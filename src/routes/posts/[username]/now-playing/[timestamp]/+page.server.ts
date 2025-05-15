@@ -40,10 +40,10 @@ export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSe
     permission = select.permission as boolean
 
     if ( !permission ) {
-        return { sessionUserId: null, post: {}, replies: [], collections }
+        return { sessionUserId: null, post: {}, replies: [], collections, postTimestamp: null }
     }
 
-    return { sessionUserId, post, replies, collections }
+    return { sessionUserId, post, replies, collections, postTimestamp: timestamp }
 }
 
 export const actions = {
@@ -57,6 +57,8 @@ export const actions = {
         const data = await request.formData()
         const replyText = data.get('reply-text') as string
         const postId = data.get('post-id') as string
+        const postUsername = data.get('post-username') as string
+        const postTimestamp = data.get('post-timestamp') as string
 
         const postData = {
             user_id: sessionUserId,
@@ -88,7 +90,7 @@ export const actions = {
 
         const data = await request.formData()
         const reactionType = data.get('reaction-type') as string
-        const postId = data.get('post-id') as string
+        const postId = data.get('post-id') ?? data.get('post-reply-id') as string
 
         const { reaction } = await insertUpdateReaction( sessionUserId, postId, reactionType )
 
@@ -108,22 +110,22 @@ export const actions = {
         const submitEdit = await updatePost( sessionUserId, postData, editedText )
 
         const success =  submitEdit ? true : false
-        const editState = submitEdit ? false : true
 
-        return { success, editState }
+        return { success }
     },
     deletePost: async ({ request, locals: { safeGetSession } }) => {
         const { session } = await safeGetSession()
         const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
-        const postId = data.get('post-reply-id') as string ?? data.get('post-id') as string
+        const postId = data.get('post-id') ?? data.get('post-reply-id') as string
+        const parentPostUsername = data.get('post-username') as string
+        const parentPostId = data.get('parent-post-id') as string
+        const parentPostTimestamp = data.get('parent-post-timestamp') as string
 
         const submitDelete = await deletePost( sessionUserId, postId )
 
-        const parentPostId = submitDelete?.parent_post_id
-
-        const permalink = parentPostId ? `/posts/${postUsername}/now-playing/${postTimestamp}` : '/'
+        const permalink = parentPostId ? `/posts/${parentPostUsername}/now-playing/${parentPostTimestamp}` : '/'
 
         if ( submitDelete ) {
             throw redirect(303, permalink)
@@ -137,7 +139,7 @@ export const actions = {
         const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
-        const postId = data.get('post-reply-id') as string ?? data.get('post-id') as string
+        const postId = data.get('post-id') ?? data.get('post-reply-id') as string
 
         const flag = await insertPostFlag( sessionUserId, postId )
 

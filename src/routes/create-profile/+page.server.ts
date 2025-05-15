@@ -40,12 +40,9 @@ export const actions = {
             'about': about,
         }
 
-        console.log(profileData)
         const update = await newSessionProfile( sessionUserId, profileData, email, avatarItem )
 
         const { success, usernameTaken } = update as boolean
-
-        console.log(update)
 
         return { success, validUsername: true, usernameTaken }
     }
