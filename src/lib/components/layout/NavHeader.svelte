@@ -56,10 +56,6 @@
         buttonText="discover"
         items={[
           {
-            'text': 'universal feed',
-            'url': '/feed/firehose'
-          },
-          {
             'text': 'collections',
             'url': '/collections'
           },
@@ -146,10 +142,6 @@
             {
               'text': 'feed',
               'url': `/feed`
-            },
-            {
-              'text': 'universal feed',
-              'url': `/feed/firehose`
             },
             {
               'text': 'new post',

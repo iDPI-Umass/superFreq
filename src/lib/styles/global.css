@@ -13,6 +13,21 @@ body {
 	font-family: 'Roboto';
 }
 
+.two-column {
+	display: flex;
+	flex-direction: row;
+	margin: var(--freq-spacing-large);
+	max-width: calc(var(--freq-max-width-primary) * 2.1);
+	gap: var(--freq-width-spacer);
+}
+
+.column-half {
+	display: flex;
+	flex-direction: column;
+	margin: var(--freq-spacing-large);
+	width: calc(var(--freq-max-width-primary) * 0.5);
+}
+
 .panel {
 	max-width: var(--freq-max-width-primary);
 	margin: 3vh auto;
@@ -32,6 +47,7 @@ body {
 	.panel-no-border {
 		margin: 3vh 3vw;
 	}
+	.two-column,
 	.panel-no-border {
 		flex-direction: column;
 	}

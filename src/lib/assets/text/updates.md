@@ -1,8 +1,30 @@
 ---
 title: Updates
 layout: about
-updated: 04/16/2025
+updated: 05/14/2025
 ---
+### May 14, 2025
+#### Updates
+- Added "Discover" tab to feed on '/feed' page
+
+### May 5, 2025
+#### Bugs
+- Fixed bug with deleting items in a collection
+
+### April 30, 2025
+#### Updates
+- Collections now display artist photos
+
+### April 23, 2025
+#### Updates
+- Continuing to tweak image loading, this time in the search bar in the collection editor.
+
+### April 22, 2025
+#### Bug Fixes
+- Track metadata now displayed when making a new Now Playing post
+- /account route 'update profile' button now works without sending a 500 error
+- Manual add fixed for Top Albums collection
+
 ### April 16, 2025
 #### Bug Fixes
 - Fixed bug affecting permissions to edit a collection

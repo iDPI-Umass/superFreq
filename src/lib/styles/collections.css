@@ -358,3 +358,15 @@ span.search-tooltip {
 	margin: var(--freq-spacing-3x-small);
 	margin-top: var(--freq-spacing-2x-small);
 } */
+
+/* Tom's additons */
+.activity-panel {
+	border: var(--freq-border-panel);
+	margin: 0;
+}
+
+.collection-avatar {
+	max-width: 2rem;
+	object-fit: cover;
+}
+

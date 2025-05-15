@@ -185,18 +185,34 @@
             item={item}
             altText={item["episode_title"]}
         ></CoverArt>
+    {:else if itemType.includes("artist") && mode == "view"}
+        <CoverArt
+            item={item}
+            altText={item["artist_name"]}
+        ></CoverArt>
+    {:else if itemType.includes("artist") && mode == "edit"}
+        {#key items.length}
+            {#if ( item["artist_discogs_img_url"] != null ) || ( item["discogs_img_url"] != null )}
+                <CoverArt
+                    item={item}
+                    altText={altText(item, ( collectionType ?? item["item_type"] ))}
+                ></CoverArt>
+            {:else if ( item["artist_discogs_img_url"] == null ) && ( item["discogs_img_url"] == null )}
+                {@render editorItemImage(item, item["artist_name"])}
+            {/if}
+        {/key}
     {/if}
 {/snippet}
 
 {#snippet metadataBlurb( item: any, itemType: string, mode: string )}
     {#if itemType.includes("artist")}
+        <CollectionItemTag
+            display={showTags}
+            itemType={itemType}
+        ></CollectionItemTag>
         <span class="artist">
-            <CollectionItemTag
-                display={showTags}
-                itemType={itemType}
-            ></CollectionItemTag>
             {#if item['artist_mbid'] && item['artist_mbid'].length > 0 && mode == "view"}
-                <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
+                <a href={`/music/artist/${item["artist_mbid"]}`}>
                     {item["artist_name"]}
                 </a>
             {:else}
@@ -210,7 +226,7 @@
         ></CollectionItemTag>
         <span class="title">
             {#if item['release_group_mbid'] && item['release_group_mbid'].length > 0  && mode == "view"} 
-            <a href={`https://musicbrainz.org/release-group/${item["release_group_mbid"]}`}>
+            <a href={`/music/album/${item["release_group_mbid"]}`}>
                 {item["release_group_name"]}
             </a>
             {:else}
@@ -219,7 +235,7 @@
         </span>
         <span class="artist">
             {#if item['artist_mbid'] && item['artist_mbid'].length > 0  && mode == "view"}
-                <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
+                <a href={`/music/artist/${item["artist_mbid"]}`}>
                     {item["artist_name"]}
                 </a>
             {:else}
@@ -233,7 +249,7 @@
         ></CollectionItemTag>
         <span class="title">
             {#if item['recording_mbid'] && item['recording_mbid'].length > 0 && mode == "view"}
-                <a href={`https://musicbrainz.org/recording/${item["recording_mbid"]}`}>
+                <a href={`/music/track/${item["recording_mbid"]}`}>
                     {item["recording_name"]}
                 </a>
             {:else}
@@ -242,7 +258,7 @@
         </span>
         <span class="artist">
             {#if item['artist_mbid'] && item['artist_mbid'].length > 0 && mode == "view"}
-                <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
+                <a href={`/music/artist/${item["artist_mbid"]}`}>
                     {item["artist_name"]}
                 </a>
             {:else}
@@ -265,7 +281,7 @@
         </span>
         <span class="artist">
             {#if item['artist_mbid'] && item['artist_mbid'].length > 0 && mode == "view"}
-                <a href={`https://musicbrainz.org/artist/${item["artist_mbid"]}`}>
+                <a href={`/music/artist/${item["artist_mbid"]}`}>
                     {item["artist_name"]}
                 </a>
             {:else}

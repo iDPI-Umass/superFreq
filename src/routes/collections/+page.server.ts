@@ -1,9 +1,49 @@
 import type { PageServerLoad, Actions } from './$types'
 import { selectAllOpenPublicCollections } from '$lib/resources/backend-calls/collections'
+import { add } from 'date-fns'
+import { selectFirehoseFeed } from '$lib/resources/backend-calls/feed'
+import { feedData } from 'src/lib/resources/states.svelte'
 
-export const load: PageServerLoad = async () => {
+
+
+let loadFeedData = true
+
+let feedItems = [] as App.RowData[]
+let feedItemCount = 0
+let totalAvailableItems = 0
+let feedRemaining = 0
+
+
+
+export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
+    // handling the collections feed
+    const {session} = await safeGetSession()
+    const sessionUserId = session?.user.id as string
+    const feedBatchSize = 20
+    const feedTimestampEnd = new Date()
+    const feedTimestampStart = add(feedTimestampEnd, {days: -300})
+
     const batchSize = 25
     const batchIterator = 0
+
+    // ripped from the feed
+    if ( loadFeedData && ( batchSize * ( batchIterator + 1 ) != feedItems.length )) {
+
+        feedData.feedItems.length = batchIterator * batchSize
+
+        const select = await selectFirehoseFeed( sessionUserId, batchSize, batchIterator, feedTimestampStart, feedTimestampEnd )
+
+        const totalRowCount = select.totalRowCount
+        const selectedFeedData = select.feedData
+
+        feedData.feedItems.push(...selectedFeedData)
+        feedItemCount = feedData.feedItems.length
+
+        totalAvailableItems = totalRowCount as number
+        feedRemaining = totalRowCount - feedItemCount
+
+        loadFeedData = !loadFeedData
+    }
 
     const { batch, remainingCount } = await selectAllOpenPublicCollections( batchSize, batchIterator )
 
@@ -11,8 +51,14 @@ export const load: PageServerLoad = async () => {
 
     const collections = batch.collections
     const remaining = remainingCount
+    feedItems = feedData.feedItems;
+    feedItems = feedItems.filter((item) => {
+        let x = item.item_type
+        if (x === "collection_edit") { return true }
+        if (x === "collection_follow") { return true }
+    })
 
-    return { collections, remaining, totalCollections, batchSize, batchIterator }
+   return { sessionUserId, collections, feedRemaining, feedItems, remaining, totalCollections, batchSize, batchIterator }
 }
 
 export const actions = {

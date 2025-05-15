@@ -1,4 +1,5 @@
 import type { Session, SupabaseClient, User } from '@supabase/supabase-js'
+import 'unplugin-icons/types/svelte'
 
 declare global {
   namespace App {
@@ -60,5 +61,7 @@ declare module '*.md' {
 
 	export const metadata: Record<string, unknown>
 }
+
+declare module 'wink-nlp/utilities/similarity.js'
 
 export {}

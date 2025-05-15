@@ -37,6 +37,7 @@ export const actions = {
       sessionUserProfile.last_fm_avatar_url = avatarItem.last_fm_img_url ?? null
       sessionUserProfile.avatar_artist_name = avatarItem.artist_name ?? null
       sessionUserProfile.avatar_release_group_name = avatarItem.release_group_name ??  null
+      sessionUserProfile.avatar_release_group_mbid = avatarItem.release_group_mbid ?? null
     }
 
     const profileData = {

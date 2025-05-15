@@ -270,7 +270,6 @@
             sessionUserId={sessionUserId}
             mode="feed"
             feedItems = {feedData.feedItems}
-            postEditState={form?.editState}
             userActionSuccess={form?.userActionSuccess}
             remaining={remaining}
             collections={sessionUserCollections}

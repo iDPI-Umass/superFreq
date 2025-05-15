@@ -201,8 +201,9 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
         // get user's top albums collection
         const topAlbumsCollection = await trx
             .selectFrom('collections_contents')
-            .innerJoin('artists', 'artists.artist_mbid', 'collections_contents.artist_mbid')
-            .innerJoin('release_groups', 'release_groups.release_group_mbid', 'collections_contents.release_group_mbid')
+            .leftJoin('artists', 'artists.artist_mbid', 'collections_contents.artist_mbid')
+            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'collections_contents.release_group_mbid')
+            .leftJoin('user_added_metadata', 'user_added_metadata.id', 'collections_contents.user_added_metadata_id')
             .select([
                 'collections_contents.collection_id as collection_id', 
                 'collections_contents.artist_mbid as artist_mbid', 
@@ -211,9 +212,11 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
                 'artists.artist_name as artist_name', 
                 'release_groups.release_group_name as release_group_name', 
                 'release_groups.img_url as img_url',
-                'release_groups.last_fm_img_url as last_fm_img_url'
+                'release_groups.last_fm_img_url as last_fm_img_url',
+                'user_added_metadata.artist_name as user_added_artist_name',
+                'user_added_metadata.release_group_name as user_added_release_group_name'
             ])
-            .where('collection_id', '=', profileUserData?.top_albums_collection_id as string)
+            .where('collections_contents.collection_id', '=', profileUserData?.top_albums_collection_id as string)
             .where('collections_contents.item_position', 'is not', null)
             .orderBy('collections_contents.item_position')
             .execute()
