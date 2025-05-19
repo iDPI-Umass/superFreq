@@ -222,7 +222,7 @@
     </nav>
   </header>
   <div class="buttons-group">
-    <a class="report" target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSfKj4FlApgfM-Kc4rYwAxNQslBMS9rk-DdfowMa5qcHlRYhew/viewform?usp=sf_link">
+    <a class="report" target="_blank" href="/report-bug">
       <button class="standard">report a bug</button>
     </a>
     <a class="report" target="_blank" href="https://forms.gle/27Q7qg6qLWiFnLHv7">
