@@ -1,8 +1,12 @@
 ---
 title: Updates
 layout: about
-updated: 05/14/2025
+updated: 05/19/2025
 ---
+### May 19, 2025
+#### Updates
+- Bug report form is now a page on Freq instead of a Google Form
+
 ### May 14, 2025
 #### Updates
 - Added "Discover" tab to feed on '/feed' page

@@ -63,7 +63,7 @@
 	<div class="form-wrapper">
 		<form
 			class="form-column"
-			method="post"
+			method="POST"
             action="?/invite"
             use:enhance
 		>
