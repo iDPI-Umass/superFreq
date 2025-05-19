@@ -127,3 +127,24 @@ export const updateModerationItem = async function ( sessionUserId: string, mode
 
     return updateQueueItem
 }
+
+export const reportBug = async ( sessionUserId: string, bugData: App.RowData ) => {
+    if ( !sessionUserId ) {
+        return { reportId: null }
+    }
+
+    const submit = await db
+    .insertInto('bug_reports')
+    .values({
+        user_id: sessionUserId,
+        type: bugData.type,
+        path: bugData.path,
+        description: bugData.description
+    })
+    .returning('id')
+    .executeTakeFirstOrThrow()
+
+    const reportId = submit.id
+
+    return { reportId }
+}

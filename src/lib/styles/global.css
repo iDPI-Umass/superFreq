@@ -285,6 +285,14 @@ form.search {
 	flex-wrap: nowrap;
 }
 
+form.radio-group {
+	display: flex;
+	flex-direction: row;
+	width: auto;
+	align-items: center;
+	flex-wrap: nowrap;
+}
+
 /* form.search * {
 	display: flex;
 	flex-direction: row;
