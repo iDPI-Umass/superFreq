@@ -278,7 +278,6 @@
             collections={sessionUserCollections}
             showCollectionsListModal={showCollectionsListModal}
             showSaveSucessModal={showSaveSucessModal}
-            showFilters={true}
             feedTabs={['following', 'notifications']}
         ></Feed>
     {:else}
