@@ -28,5 +28,5 @@
     collections={sessionUserCollections}
     showCollectionsListModal={showCollectionsListModal}
     showSaveSucessModal={showSaveSucessModal}
-    dualFeed={true}
+    feedTabs={['following', 'discover']}
 ></Feed>

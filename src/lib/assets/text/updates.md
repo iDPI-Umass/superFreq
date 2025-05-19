@@ -6,6 +6,7 @@ updated: 05/19/2025
 ### May 19, 2025
 #### Updates
 - Bug report form is now a page on Freq instead of a Google Form
+- Added 'Notifications' tab to feed on your profile page
 
 ### May 14, 2025
 #### Updates

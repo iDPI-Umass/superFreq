@@ -31,6 +31,8 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
                 eb('user_id', 'in', following),
                 eb('parent_post_user_id', '=', sessionUserId),
                 eb('reaction_post_user_id', '=', sessionUserId),
+                eb('target_user_id', '=', sessionUserId),
+                eb('collection_owner_id', '=', sessionUserId)
             ]),
             not(and([
                 eb('item_type', '=', 'social_follow'),
@@ -68,6 +70,61 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
     return { feedData, totalRowCount }
 }
 
+// Variation on selectFeedData() for data about users session user follows
+export const selectFollowingFeed = async function ( sessionUserId: string, batchSize: number, batchIterator: number, timestampStart: Date, timestampEnd: Date, options: App.Lookup = {'items': ['now_playing_post', 'social_follow', 'comment', 'reaction', 'collection_follow', 'collection_edit']} ) {
+
+    const offset = batchSize * batchIterator
+
+    const itemTypes = options.items
+
+    const select = await db.transaction().execute(async (trx) => {
+        const selectFollowingList = await trx
+        .selectFrom('profile_display')
+        .select('users_following')
+        .where('user_id', '=', sessionUserId)
+        .executeTakeFirst()
+
+        const following = selectFollowingList?.users_following as string[]
+
+        const feedData = await trx
+        .selectFrom('feed_items')
+        .selectAll()
+        .where(({eb, and}) => and([
+            eb('user_id', 'in', following),
+            eb('item_type', 'in', itemTypes),
+            eb('item_type', '!=', 'social_follow'),
+            eb('item_type', '!=', 'reaction')
+        ]))
+        .where('user_id', 'in', following)
+        .where('item_type', 'in', itemTypes)
+        .where((eb) => eb.between('timestamp', timestampStart, timestampEnd))
+        .limit(batchSize)
+        .orderBy('timestamp', 'desc')
+        .offset(offset)
+        .execute()
+
+        const totalFeedItemsRows = await trx
+        .selectFrom('feed_items')
+        .select((eb) => eb.fn.count('timestamp').as('feed_rows_count'))
+        .where(({eb, and}) => and([
+            eb('user_id', 'in', following),
+            eb('item_type', 'in', itemTypes),
+            eb('item_type', '!=', 'social_follow'),
+            eb('item_type', '!=', 'reaction')
+        ]))
+        .where((eb) => eb.between('timestamp', timestampStart, timestampEnd))
+        .execute()
+        return { feedData, totalFeedItemsRows }
+    })
+
+    const { feedData, totalFeedItemsRows } = await select
+
+    const totalRowCount = totalFeedItemsRows[0]['feed_rows_count'] as number
+
+    return { feedData, totalRowCount }
+}
+
+// Vartion on selectFeedData() for public data
 export const selectFirehoseFeed = async function ( sessionUserId: string, batchSize: number, batchIterator: number, timestampStart: Date, timestampEnd: Date ) {
 
     const offset = batchSize * batchIterator
@@ -116,6 +173,55 @@ export const selectFirehoseFeed = async function ( sessionUserId: string, batchS
         .select((eb) => eb.fn.count('timestamp').as('feed_rows_count'))
         .where('user_id', 'in', following)
         .where((eb) => eb.between('timestamp', timestampStart, timestampEnd))
+        .execute()
+        return { feedData, totalFeedItemsRows }
+    })
+
+    const { feedData, totalFeedItemsRows } = await select
+
+    const totalRowCount = totalFeedItemsRows[0]['feed_rows_count'] as number
+
+    return { feedData, totalRowCount }
+}
+
+// Vartion on selectFeedData() for only items targetting session user
+export const selectNotificationsFeed = async function ( sessionUserId: string, batchSize: number, batchIterator: number, timestampStart: Date, timestampEnd: Date, options: App.Lookup = {'items': ['now_playing_post', 'social_follow', 'comment', 'reaction', 'collection_follow', 'collection_edit']} ) {
+
+    const offset = batchSize * batchIterator
+
+    const itemTypes = options.items as string[]
+
+    const select = await db.transaction().execute(async (trx) => {
+        const feedData = await trx
+        .selectFrom('feed_items')
+        .selectAll()
+        .where(({eb, or, and}) => and([
+            or([
+                eb('parent_post_user_id', '=', sessionUserId),
+                eb('reaction_post_user_id', '=', sessionUserId),
+                eb('target_user_id', '=', sessionUserId),
+                eb('collection_owner_id', '=', sessionUserId)
+            ]),
+            eb('item_type', 'in', itemTypes)
+        ]))
+        .where((eb) => eb.between('timestamp', timestampStart, timestampEnd))
+        .limit(batchSize)
+        .orderBy('timestamp', 'desc')
+        .offset(offset)
+        .execute()
+
+        const totalFeedItemsRows = await trx
+        .selectFrom('feed_items')
+        .select((eb) => eb.fn.count('timestamp').as('feed_rows_count'))
+        .where(({eb, or, and}) => and([
+            or([
+                eb('parent_post_user_id', '=', sessionUserId),
+                eb('reaction_post_user_id', '=', sessionUserId),
+                eb('target_user_id', '=', sessionUserId),
+                eb('collection_owner_id', '=', sessionUserId)
+            ]),
+            eb('item_type', 'in', itemTypes)
+        ]))        .where((eb) => eb.between('timestamp', timestampStart, timestampEnd))
         .execute()
         return { feedData, totalFeedItemsRows }
     })
