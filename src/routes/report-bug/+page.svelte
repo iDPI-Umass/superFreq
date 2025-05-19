@@ -4,10 +4,10 @@
     import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
 
     let { data, form } = $props()
-    let { userSession } = $derived( data )
+    let { userSession, referredPath } = $state( data )
 
     let bugType = $state() as string
-    let bugPath = $state() as string
+    let bugPath = $state( referredPath ) as string
     let bugDescription = $state() as string
 
     let success = $derived(form?.success)
@@ -186,7 +186,7 @@
 					class="text-label"  
 					for="bug-path"
 				>
-					Paste the link for page where the bug happened
+					Link page where the bug occurred
 				</label>
 			</div>
 			<input
@@ -195,6 +195,7 @@
 				name="bug-path"
 				id="bug-path"
                 bind:value={bugPath}
+                defaultValue={referredPath}
 			/>
             <div class="label-group">
 				<label 

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from '$app/state'
   import { DropdownMenu } from "bits-ui"
   import Dropdown from '$lib/components/menus/ReuseableDropdownMenu.svelte'
   import ChevronDown from '@lucide/svelte/icons/chevron-down';
@@ -20,6 +21,7 @@
     avatarItem
   }: ComponentProps = $props()
 
+  const thisUrl = page.url
 </script>
 
 <svelte:options runes={true} />
@@ -222,7 +224,7 @@
     </nav>
   </header>
   <div class="buttons-group">
-    <a class="report" target="_blank" href="/report-bug">
+    <a class="report" target="_blank" href="/report-bug?path={thisUrl}">
       <button class="standard">report a bug</button>
     </a>
     <a class="report" target="_blank" href="https://forms.gle/27Q7qg6qLWiFnLHv7">
