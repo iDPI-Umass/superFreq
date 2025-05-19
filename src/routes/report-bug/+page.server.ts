@@ -1,12 +1,14 @@
 import type { PageServerLoad, Actions } from './$types'
 import { reportBug } from '$lib/resources/backend-calls/moderation.ts'
 
-export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
+export const load: PageServerLoad = async ({ url, locals: { safeGetSession }}) => {
     const { session } = await safeGetSession()
 
     const userSession = session ? true : false
+
+    const referredPath = url.searchParams?.get('path') ?? ''
     
-    return { userSession }
+    return { userSession, referredPath  }
 }
 
 export const actions = {
