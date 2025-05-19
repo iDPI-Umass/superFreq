@@ -18,10 +18,11 @@
 
     let { data, form } = $props();
 
-    let { sessionUserId, profileData, feedItems, selectedOptions, remaining, sessionUserCollections, updatesPageUpdatedAt }: {
+    let { sessionUserId, profileData, feedItems, notificationsItems, selectedOptions, remaining, sessionUserCollections, updatesPageUpdatedAt }: {
         sessionUserId: string
         profileData: any
         feedItems: any
+        notificationsItems: any
         totalAvailableItems: number
         remaining: number
         profileUsername: string | null
@@ -71,6 +72,7 @@
 
         feedData.selectedOptions = selectedOptions
         feedData.feedItems = feedItems
+        feedData.notificationsItems = notificationsItems
     })
     
 
@@ -269,13 +271,14 @@
         <Feed
             sessionUserId={sessionUserId}
             mode="feed"
-            feedItems = {feedData.feedItems}
+            feedItems={feedData.feedItems}
+            notificationsItems={feedData.notificationsItems}
             userActionSuccess={form?.userActionSuccess}
             remaining={remaining}
             collections={sessionUserCollections}
             showCollectionsListModal={showCollectionsListModal}
             showSaveSucessModal={showSaveSucessModal}
-            showFilters={true}
+            feedTabs={['following', 'notifications']}
         ></Feed>
     {:else}
         <NowPlayingPostsSample
