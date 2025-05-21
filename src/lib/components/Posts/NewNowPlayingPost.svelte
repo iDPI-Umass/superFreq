@@ -4,9 +4,16 @@
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
     import Tooltip from '$lib/components/Tooltip.svelte'
     import { collectionData } from 'src/lib/resources/states.svelte'
-    import { getListenUrlData } from "$lib/resources/parseData"
 
     import { Tabs } from "bits-ui";
+
+    interface ComponentProps {
+        parsedUrlInfo?: App.RowData | null
+    }
+    
+    let {
+        parsedUrlInfo
+    }: ComponentProps = $props()
 
     // interface ComponentProps {
     //     addedItem?: any
@@ -24,36 +31,16 @@
     let posting = $state(false)
 
     let listenUrl = $state('')
-    let listenUrlData = $state({}) as App.RowData
+
+    // submit form to parse data at listenUrl and autocomplete 'post' form when url is entered, after a short delay to make sure user has stopped typing
     let timeout = null
     const timeoutDurationMs = 1000
+    let parseFormSubmit = null
 
-
-    let i = $state(0)
-    //auto complete form when url is entered, after a short delay to make sure user has stopped typing
     async function getUrlData ( listenUrl: string ) {
         clearTimeout(timeout)
-        i++
-        console.log('running ', i)
         timeout = await setTimeout(async function() {
-            console.log('getting data')
-            console.log(listenUrl)
-
-            listenUrlData = await getListenUrlData(listenUrl) as App.RowData
-            const itemType = listenUrlData.item_type
-            const source = listenUrlData.source
-            collectionData.singleItem = {
-                'artist_name': listenUrlData.artist,
-                'release_group_name': (itemType == 'album') ? listenUrlData.title : null,
-                'recording_name': (itemType == 'track') ? listenUrlData.title : null,
-                'img_url': listenUrlData.img_url,
-                'episode_name': ( source == 'soundcloud' ) ? listenUrlData.title : null,
-                'show_title': ( source == 'soundcloud' ) ? listenUrlData.account : null,
-            } 
-
-            console.log(listenUrlData)
-
-            return listenUrlData
+            return parseFormSubmit.requestSubmit()
         }, timeoutDurationMs)
     }
 </script>
@@ -125,7 +112,7 @@
             id="parsed-url-data"
             name="parsed-url-data"
             type="hidden"
-            value={JSON.stringify(listenUrlData)}
+            value={JSON.stringify(parsedUrlInfo)}
         />
         <div class="tooltip-group">
             <label 
@@ -282,6 +269,34 @@
         <button class="standard" formaction='?/post' type="submit" disabled={posting}>
             submit
         </button>
+    </form>
+    <form 
+        method="POST" 
+        action="?/parseListenUrl" 
+        bind:this={parseFormSubmit} 
+        use:enhance={() => {
+            return async({update}) => {
+                await update()
+                const itemType = parsedUrlInfo?.item_type
+                const source = parsedUrlInfo?.source
+                collectionData.singleItem = {
+                    'artist_name': parsedUrlInfo?.artist,
+                    'release_group_name': (itemType == 'album') ? parsedUrlInfo?.title : null,
+                    'recording_name': (itemType == 'track') ? parsedUrlInfo?.title : null,
+                    'img_url': parsedUrlInfo?.img_url,
+                    'episode_name': ( source == 'soundcloud' ) ? parsedUrlInfo?.title : null,
+                    'show_title': ( source == 'soundcloud' ) ? parsedUrlInfo?.account : null,
+                } 
+            }
+        }}
+    >
+        <input 
+            class="text" 
+            id="listen-url" 
+            name="listen-url" 
+            type="hidden"
+            value={listenUrl}
+        />
     </form>
 {/snippet}
 

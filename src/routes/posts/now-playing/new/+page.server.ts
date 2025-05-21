@@ -4,6 +4,8 @@ import type { PageServerLoad, Actions } from './$types'
 import { insertPost } from '$lib/resources/backend-calls/posts'
 import { getListenUrlData, validStringCheck } from '$lib/resources/parseData'
 
+let parsedUrlInfo = null as App.RowData | null
+
 export const load: PageServerLoad = async ({ parent, locals: { safeGetSession }}) => {
     const session = await safeGetSession()
 
@@ -17,6 +19,8 @@ export const load: PageServerLoad = async ({ parent, locals: { safeGetSession }}
     else if( session.session && !username ) {
         throw redirect(307, '/account/create-profile')
     }
+
+    return { parsedUrlInfo }
 }
 
 export const actions = {
@@ -24,9 +28,9 @@ export const actions = {
         const data = await request.formData()
         const listenUrlString = data.get('listen-url') as string
 
-        const embedInfo = await getListenUrlData(listenUrlString)
+        parsedUrlInfo = await getListenUrlData(listenUrlString)
 
-        return { embedInfo, success: true }
+        return { success: true }
     },
     post:async ({ request, locals: { safeGetSession } }) => {
         const session = await safeGetSession()
