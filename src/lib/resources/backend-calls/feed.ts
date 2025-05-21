@@ -85,6 +85,7 @@ export const selectFollowingFeed = async function ( sessionUserId: string, batch
         .executeTakeFirst()
 
         const following = selectFollowingList?.users_following as string[]
+        following.push(sessionUserId)
 
         const feedData = await trx
         .selectFrom('feed_items')
@@ -200,7 +201,7 @@ export const selectNotificationsFeed = async function ( sessionUserId: string, b
                 eb('parent_post_user_id', '=', sessionUserId),
                 eb('reaction_post_user_id', '=', sessionUserId),
                 eb('target_user_id', '=', sessionUserId),
-                eb('collection_owner_id', '=', sessionUserId)
+                eb('collection_owner_id', '=', sessionUserId),
             ]),
             eb('item_type', 'in', itemTypes)
         ]))
