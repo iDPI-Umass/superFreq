@@ -477,15 +477,16 @@ export const listenUrlWhitelistCheck = function ( urlString: string ) {
 
 export const fetchHtml = async function ( listnUrl: string ) {
     const url = new URL(listnUrl)
-    const response = await fetch(url, {
-        headers: {
-            'User-Agent': 'Freq/0.1 ( hello@freq.social )',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-            'Access-Control-Allow-Headers': '*',
-            'Access-Control-Allow-Credentials': 'true',
-        }
-    })
+    const response = await fetch(url)
+    // const response = await fetch(url, {
+    //     headers: {
+    //         'User-Agent': 'Freq/0.1 ( hello@freq.social )',
+    //         'Access-Control-Allow-Origin': '*',
+    //         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    //         'Access-Control-Allow-Headers': '*',
+    //         'Access-Control-Allow-Credentials': 'true',
+    //     }
+    // })
     if (!response.ok) {
         throw new Error(`Failed to fetch: ${response.status}`)
     }
@@ -572,8 +573,19 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
 
     const urlSource = parseUrlSource(listenUrlString)
 
+    console.log(urlSource)
+
     async function getHtml( listenUrl: URL) {
-        const response = await fetch(listenUrl)
+        const response = await fetch(listenUrl, {
+        headers: {
+            'User-Agent': 'Freq/0.1 ( hello@freq.social )',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': '*',
+            'Access-Control-Allow-Credentials': 'true',
+        }
+    })
+        console.log(response)
         if (!response.ok) {
             throw new Error(`Failed to fetch: ${response.status}`)
         }
