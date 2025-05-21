@@ -4,9 +4,10 @@ import type { LayoutLoad } from './$types'
 
 export const load: LayoutLoad = async ({ data, depends, fetch, setHeaders }) => {
   setHeaders({
-    'Access-Control-Allow-Origin': 'https://freq-git-metadata-parsing-michael-sugarmans-projects.vercel.app',
+    'User-Agent': 'Freq/0.1 ( hello@freq.social )',
+    'Access-Control-Allow-Origin': '',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers': '*',
     'Access-Control-Allow-Credentials': 'true',
   })
   /**
