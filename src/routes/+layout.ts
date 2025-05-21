@@ -2,7 +2,13 @@ import { createBrowserClient, createServerClient, isBrowser } from '@supabase/ss
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public'
 import type { LayoutLoad } from './$types'
 
-export const load: LayoutLoad = async ({ data, depends, fetch }) => {
+export const load: LayoutLoad = async ({ data, depends, fetch, setHeaders }) => {
+  setHeaders({
+    'Access-Control-Allow-Origin': 'https://freq-git-metadata-parsing-michael-sugarmans-projects.vercel.app',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true',
+  })
   /**
    * Declare a dependency so the layout can be invalidated, for example, on
    * session refresh.

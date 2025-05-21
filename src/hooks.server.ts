@@ -80,15 +80,19 @@ const authGuard: Handle = async ({ event, resolve }) => {
 
 export const handle: Handle = sequence(supabase, authGuard)
 
-export const handleFetch: HandleFetch = async({ request, fetch }) => {
-  request = new Request(
-    request, {headers: {
-            'Access-Control-Allow-Origin': 'https://freq-git-metadata-parsing-michael-sugarmans-projects.vercel.app',
-            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-            'Access-Control-Allow-Credentials': 'true',
-        }})
+// export const handleFetch: HandleFetch = async({ request, fetch }) => {
+//   request.headers.set('Access-Control-Allow-Origin', 'https://freq.social')
+//   request.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS')
+//   request.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+//   request.headers.set('Access-Control-Allow-Credentials', 'true')
+//   // request = new Request(
+//   //   request, {headers: {
+//   //           'Access-Control-Allow-Origin': 'https://freq.social',
+//   //           'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+//   //           'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+//   //           'Access-Control-Allow-Credentials': 'true',
+//   //       }})
 
-    return fetch(request)
-}
+//   return fetch(request)
+// }
 
