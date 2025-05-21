@@ -477,6 +477,7 @@ export const listenUrlWhitelistCheck = function ( urlString: string ) {
 
 export const fetchHtml = async function ( listnUrl: string ) {
     const url = new URL(listnUrl)
+
     const response = await fetch(url)
     // const response = await fetch(url, {
     //     headers: {

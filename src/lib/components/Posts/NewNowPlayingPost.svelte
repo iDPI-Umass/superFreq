@@ -28,6 +28,7 @@
     let timeout = null
     const timeoutDurationMs = 1000
 
+
     let i = $state(0)
     //auto complete form when url is entered, after a short delay to make sure user has stopped typing
     async function getUrlData ( listenUrl: string ) {
@@ -37,6 +38,7 @@
         timeout = await setTimeout(async function() {
             console.log('getting data')
             console.log(listenUrl)
+
             listenUrlData = await getListenUrlData(listenUrl) as App.RowData
             const itemType = listenUrlData.item_type
             const source = listenUrlData.source
@@ -48,7 +50,9 @@
                 'episode_name': ( source == 'soundcloud' ) ? listenUrlData.title : null,
                 'show_title': ( source == 'soundcloud' ) ? listenUrlData.account : null,
             } 
+
             console.log(listenUrlData)
+
             return listenUrlData
         }, timeoutDurationMs)
     }

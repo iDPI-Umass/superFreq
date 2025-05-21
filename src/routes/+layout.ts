@@ -3,6 +3,7 @@ import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/publi
 import type { LayoutLoad } from './$types'
 
 export const load: LayoutLoad = async ({ data, depends, fetch, setHeaders }) => {
+
   // setHeaders({
   //   'User-Agent': 'Freq/0.1 ( hello@freq.social )',
   //   'Access-Control-Allow-Origin': '',
@@ -10,6 +11,7 @@ export const load: LayoutLoad = async ({ data, depends, fetch, setHeaders }) => 
   //   'Access-Control-Allow-Headers': '*',
   //   'Access-Control-Allow-Credentials': 'true',
   // })
+
   /**
    * Declare a dependency so the layout can be invalidated, for example, on
    * session refresh.
