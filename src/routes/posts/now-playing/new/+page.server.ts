@@ -4,6 +4,8 @@ import type { PageServerLoad, Actions } from './$types'
 import { insertPost } from '$lib/resources/backend-calls/posts'
 import { getListenUrlData, validStringCheck } from '$lib/resources/parseData'
 
+let parsedUrlInfo = null as App.RowData | null
+
 export const load: PageServerLoad = async ({ parent, locals: { safeGetSession }}) => {
     const session = await safeGetSession()
 
@@ -17,6 +19,8 @@ export const load: PageServerLoad = async ({ parent, locals: { safeGetSession }}
     else if( session.session && !username ) {
         throw redirect(307, '/account/create-profile')
     }
+
+    return { parsedUrlInfo }
 }
 
 export const actions = {
@@ -24,9 +28,9 @@ export const actions = {
         const data = await request.formData()
         const listenUrlString = data.get('listen-url') as string
 
-        const embedInfo = await getListenUrlData(listenUrlString)
+        parsedUrlInfo = await getListenUrlData(listenUrlString)
 
-        return { embedInfo, success: true }
+        return { success: true }
     },
     post:async ({ request, locals: { safeGetSession } }) => {
         const session = await safeGetSession()
@@ -38,6 +42,7 @@ export const actions = {
         const data = await request.formData()
         const itemType = data.get('item-type') as string
 		const listenUrl = data.get('listen-url') as string
+        const listenUrlData = JSON.parse(data.get('parsed-url-data')) as App.RowData
         const artistMbid = data.get('artist-mbid') as string
         const artistName = data.get('artist-name') as string
         const releaseGroupMbid = data.get('release-group-mbid') as string
@@ -53,7 +58,20 @@ export const actions = {
         const showName = data.get('show') as string
         const postText = data.get('post-text') as string
 
-        const embedInfo = listenUrl ? await getListenUrlData(listenUrl) : null
+        async function urlData ( listenUrl: string, listenUrlData: App.RowData ) {
+            if ( !listenUrl ) {
+                return null
+            }
+            else if ( listenUrl && listenUrlData.id ) {
+                return listenUrlData
+            }
+            else if ( listenUrl && !listenUrlData.id ) {
+                const data = await getListenUrlData(listenUrl)
+                return data
+            }
+        }
+
+        const embedInfo = await urlData( listenUrl, listenUrlData )
 
         const postData = {
             user_id: sessionUserId,
@@ -82,6 +100,8 @@ export const actions = {
             embed_account: embedInfo?.account ?? null,
             tracklist: embedInfo?.tracklist ?? null,
         } as App.RowData
+
+        console.log(postData)
 
         const { username, createdAt } = await insertPost( postData )
         const timestampSlug = createdAt?.toISOString()
