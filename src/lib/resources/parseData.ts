@@ -476,8 +476,16 @@ export const listenUrlWhitelistCheck = function ( urlString: string ) {
 /* Gets data for populating embed. Works with Bandcamp, Soundcloud, YouTube. Mixcloud needs to be debugged. */
 
 export const fetchHtml = async function ( listnUrl: string ) {
+    const responseHeaders = {
+        headers: {
+            'Access-Control-Allow-Origin': 'https://freq-git-metadata-parsing-michael-sugarmans-projects.vercel.app',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            'Access-Control-Allow-Credentials': 'true',
+        }
+    }
     const url = new URL(listnUrl)
-    const response = await fetch(url)
+    const response = await fetch(url, responseHeaders)
     if (!response.ok) {
         throw new Error(`Failed to fetch: ${response.status}`)
     }
