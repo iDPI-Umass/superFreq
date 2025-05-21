@@ -4,6 +4,7 @@
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
     import Tooltip from '$lib/components/Tooltip.svelte'
     import { collectionData } from 'src/lib/resources/states.svelte'
+    import { getListenUrlData } from "$lib/resources/parseData"
 
     import { Tabs } from "bits-ui";
 
@@ -21,6 +22,30 @@
 
 
     let posting = $state(false)
+
+    let listenUrl = $state('')
+    let listenUrlData = $state({}) as App.RowData
+    let timeout = null
+    const timeoutDurationMs = 1000
+
+    //auto complete form when url is entered, after a short delay to make sure user has stopped typing
+    async function getUrlData ( listenUrl: string ) {
+        clearTimeout(timeout)
+        timeout = await setTimeout(async function() {
+            listenUrlData = await getListenUrlData(listenUrl) as App.RowData
+            const itemType = listenUrlData.item_type
+            const source = listenUrlData.source
+            collectionData.singleItem = {
+                'artist_name': listenUrlData.artist,
+                'release_group_name': (itemType == 'album') ? listenUrlData.title : null,
+                'recording_name': (itemType == 'track') ? listenUrlData.title : null,
+                'img_url': listenUrlData.img_url,
+                'episode_name': ( source == 'soundcloud' ) ? listenUrlData.title : null,
+                'show_title': ( source == 'soundcloud' ) ? listenUrlData.account : null,
+            } 
+            return listenUrlData
+        }, timeoutDurationMs)
+    }
 </script>
 <!-- <svelte:options runes={true} /> -->
 
@@ -86,6 +111,12 @@
             type="hidden" 
             value={lastFmImgUrl} 
         />
+        <input 
+            id="parsed-url-data"
+            name="parsed-url-data"
+            type="hidden"
+            value={JSON.stringify(listenUrlData)}
+        />
         <div class="tooltip-group">
             <label 
                 class="text-label" 
@@ -94,15 +125,17 @@
                 listen link
             </label>
             <Tooltip>
-                A link from Bandcamp, Soundcloud, or YouTube can be embedded in your post. 
+                A link from Bandcamp, Soundcloud, or YouTube can be embedded in your post.
             </Tooltip>
         </div>
         <input 
+            oninput={() => getUrlData(listenUrl)}
             class="text" 
             id="listen-url" 
             name="listen-url" 
             type="url"
-            placeholder="paste link" 
+            placeholder="paste link"
+            bind:value={listenUrl}
         />
         <div class="label-group">
             <label 

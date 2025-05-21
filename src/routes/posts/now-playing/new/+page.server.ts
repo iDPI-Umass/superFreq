@@ -38,6 +38,7 @@ export const actions = {
         const data = await request.formData()
         const itemType = data.get('item-type') as string
 		const listenUrl = data.get('listen-url') as string
+        const listenUrlData = JSON.parse(data.get('parsed-url-data')) as App.RowData
         const artistMbid = data.get('artist-mbid') as string
         const artistName = data.get('artist-name') as string
         const releaseGroupMbid = data.get('release-group-mbid') as string
@@ -53,7 +54,20 @@ export const actions = {
         const showName = data.get('show') as string
         const postText = data.get('post-text') as string
 
-        const embedInfo = listenUrl ? await getListenUrlData(listenUrl) : null
+        async function urlData ( listenUrl: string, listenUrlData: App.RowData ) {
+            if ( !listenUrl ) {
+                return null
+            }
+            else if ( listenUrl && listenUrlData.id ) {
+                return listenUrlData
+            }
+            else if ( listenUrl && !listenUrlData.id ) {
+                const data = await getListenUrlData(listenUrl)
+                return data
+            }
+        }
+
+        const embedInfo = await urlData( listenUrl, listenUrlData )
 
         const postData = {
             user_id: sessionUserId,
@@ -82,6 +96,8 @@ export const actions = {
             embed_account: embedInfo?.account ?? null,
             tracklist: embedInfo?.tracklist ?? null,
         } as App.RowData
+
+        console.log(postData)
 
         const { username, createdAt } = await insertPost( postData )
         const timestampSlug = createdAt?.toISOString()
