@@ -1,5 +1,5 @@
 import { createServerClient } from '@supabase/ssr'
-import { type Handle, redirect } from '@sveltejs/kit'
+import { type Handle, type HandleFetch, redirect } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public'
@@ -79,3 +79,16 @@ const authGuard: Handle = async ({ event, resolve }) => {
 }
 
 export const handle: Handle = sequence(supabase, authGuard)
+
+export const handleFetch: HandleFetch = async({ request, fetch }) => {
+  request = new Request(
+    request, {headers: {
+            'Access-Control-Allow-Origin': 'https://freq-git-metadata-parsing-michael-sugarmans-projects.vercel.app',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            'Access-Control-Allow-Credentials': 'true',
+        }})
+
+    return fetch(request)
+}
+
