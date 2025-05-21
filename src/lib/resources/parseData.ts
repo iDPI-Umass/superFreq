@@ -477,6 +477,7 @@ export const listenUrlWhitelistCheck = function ( urlString: string ) {
 
 export const fetchHtml = async function ( listnUrl: string ) {
     const url = new URL(listnUrl)
+
     const response = await fetch(url)
     if (!response.ok) {
         throw new Error(`Failed to fetch: ${response.status}`)
@@ -546,22 +547,25 @@ export const parseBandcampHtml  = async function ( listenUrlString: string ) {
 
 export const getListenUrlData = async function ( listenUrlString: string ) { 
 
+    let embedInfo: App.RowData
     if ( !listenUrlString ) {
-        const embedInfo = {
+        embedInfo = {
             'id': null,
             'source': null,
             'title': null,
-            'itemType': null,
+            'item_type': null,
             'artist': null,
             'account': null,
             'img_url': null,
             'tracklist': null,
             'release_date': null,
-        }
-        return embedInfo 
+        } as App.RowData
+        return embedInfo
     }
 
     const urlSource = parseUrlSource(listenUrlString)
+
+    console.log(urlSource)
 
     async function getHtml( listenUrl: URL) {
         const response = await fetch(listenUrl)
@@ -586,13 +590,13 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
             'id': itemId,
             'source': 'soundcloud',
             'title': itemTitle,
-            'itemType': null,
+            'item_type': null,
             'artist': null,
             'account': itemAccount,
             'img_url': null,
             'tracklist': null,
             'release_date': null,
-        } 
+        } as App.RowData
         return itemInfo
     }
 
@@ -620,13 +624,13 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
             'id': itemId,
             'source': 'youtube',
             'title': title ?? pageTitle,
-            'itemType': null,
+            'item_type': null,
             'artist': artist,
             'account': null,
             'img_url': null,
             'tracklist': null,
             'release_date': null,
-        }
+        } as App.RowData
         return itemInfo
     }
 
@@ -642,31 +646,28 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
             'id': itemId,
             'source': 'mixcloud',
             'title': itemTitle,
-            'itemType': null,
+            'item_type': null,
             'artist': null,
             'account': itemAccount,
             'img_url': null,
             'tracklist': null,
             'release_date': null,
-        }
+        } as App.RowData
         return itemInfo
     }
 
     if ( urlSource == 'bandcamp' ) {
-        const embedInfo = await parseBandcampHtml(listenUrlString)
-        return embedInfo
+        embedInfo = await parseBandcampHtml(listenUrlString) as App.RowData
     }
     else if ( urlSource == 'soundcloud') {
         const listenUrl = new URL(listenUrlString)
         const html = await getHtml(listenUrl)
-        const embedInfo = await parseSoundcloudHtml(html)
-        return embedInfo
+        embedInfo = await parseSoundcloudHtml(html) as App.RowData
     }
     else if ( urlSource == 'youtube' ) {
         const listenUrl = new URL(listenUrlString)
         const html = await getHtml(listenUrl)
-        const embedInfo =  await parseYouTubeHtml(html, listenUrlString)
-        return embedInfo
+        embedInfo =  await parseYouTubeHtml(html, listenUrlString) as App.RowData
     }
     // else if ( urlSource == 'mixcloud' ) {
     //     const listenUrl = new URL(listenUrlString)
@@ -675,19 +676,20 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
     //     return embedInfo
     // }
     else {
-        const embedInfo = {
+        embedInfo = {
             'id': null,
             'source': null,
             'title': null,
-            'itemType': null,
+            'item_type': null,
             'artist': null,
             'account': null,
             'img_url': null,
             'tracklist': null,
             'release_date': null,
-        }
-        return embedInfo
+        } as App.RowData
     }
+
+    return embedInfo
 }
  
 //

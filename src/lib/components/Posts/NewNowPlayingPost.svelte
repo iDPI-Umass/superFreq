@@ -7,6 +7,14 @@
 
     import { Tabs } from "bits-ui";
 
+    interface ComponentProps {
+        parsedUrlInfo?: App.RowData | null
+    }
+    
+    let {
+        parsedUrlInfo
+    }: ComponentProps = $props()
+
     // interface ComponentProps {
     //     addedItem?: any
     // }
@@ -21,6 +29,20 @@
 
 
     let posting = $state(false)
+
+    let listenUrl = $state('')
+
+    // submit form to parse data at listenUrl and autocomplete 'post' form when url is entered, after a short delay to make sure user has stopped typing
+    let timeout = null
+    const timeoutDurationMs = 1000
+    let parseFormSubmit = null
+
+    async function getUrlData ( listenUrl: string ) {
+        clearTimeout(timeout)
+        timeout = await setTimeout(async function() {
+            return parseFormSubmit.requestSubmit()
+        }, timeoutDurationMs)
+    }
 </script>
 <!-- <svelte:options runes={true} /> -->
 
@@ -86,6 +108,12 @@
             type="hidden" 
             value={lastFmImgUrl} 
         />
+        <input 
+            id="parsed-url-data"
+            name="parsed-url-data"
+            type="hidden"
+            value={JSON.stringify(parsedUrlInfo)}
+        />
         <div class="tooltip-group">
             <label 
                 class="text-label" 
@@ -94,15 +122,17 @@
                 listen link
             </label>
             <Tooltip>
-                A link from Bandcamp, Soundcloud, or YouTube can be embedded in your post. 
+                A link from Bandcamp, Soundcloud, or YouTube can be embedded in your post.
             </Tooltip>
         </div>
         <input 
+            oninput={() => getUrlData(listenUrl)}
             class="text" 
             id="listen-url" 
             name="listen-url" 
             type="url"
-            placeholder="paste link" 
+            placeholder="paste link"
+            bind:value={listenUrl}
         />
         <div class="label-group">
             <label 
@@ -239,6 +269,34 @@
         <button class="standard" formaction='?/post' type="submit" disabled={posting}>
             submit
         </button>
+    </form>
+    <form 
+        method="POST" 
+        action="?/parseListenUrl" 
+        bind:this={parseFormSubmit} 
+        use:enhance={() => {
+            return async({update}) => {
+                await update()
+                const itemType = parsedUrlInfo?.item_type
+                const source = parsedUrlInfo?.source
+                collectionData.singleItem = {
+                    'artist_name': parsedUrlInfo?.artist,
+                    'release_group_name': (itemType == 'album') ? parsedUrlInfo?.title : null,
+                    'recording_name': (itemType == 'track') ? parsedUrlInfo?.title : null,
+                    'img_url': parsedUrlInfo?.img_url,
+                    'episode_name': ( source == 'soundcloud' ) ? parsedUrlInfo?.title : null,
+                    'show_title': ( source == 'soundcloud' ) ? parsedUrlInfo?.account : null,
+                } 
+            }
+        }}
+    >
+        <input 
+            class="text" 
+            id="listen-url" 
+            name="listen-url" 
+            type="hidden"
+            value={listenUrl}
+        />
     </form>
 {/snippet}
 
