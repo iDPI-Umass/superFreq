@@ -23,12 +23,14 @@
 
     interface ComponentProps {
         reply: any
+        allowReply?: boolean
         sessionUserId?: string | null
         userActionSuccess?: boolean | null
     }
 
     let {
         reply,
+        allowReply = false,
         sessionUserId,
         userActionSuccess = $bindable(null)
     }: ComponentProps = $props()
@@ -45,8 +47,17 @@
     const permalinkTimestampString = replyCreatedAt.toISOString()
     const permalinkTimestamp = Date.parse(permalinkTimestampString).toString()
     const permalink = `/posts/${reply.parent_post_username}/now-playing/${parentPostTimestamp}#${reply.username?.concat(permalinkTimestamp)}`
+    
+    let replyToSlug = null as string | null
+
+    if ( reply.reply_to ) {
+        const replyToTimestampString = reply?.reply_to_created_at.toISOString() ?? null
+        const replyToTimestamp = Date.parse(replyToTimestampString).toString()
+        replyToSlug = `#${reply.reply_to_username.concat(replyToTimestamp)}`
+    }
 
     let editState = $state(false)
+    let showPostReplyEditor = $state(false)
 
     onMount(() => {
         interactionStates.editState = false
@@ -73,8 +84,22 @@
     type="hidden"
     name="reply-data"
     id="reply-data"
-    from="submitReaction"
+    form="submitReaction"
     value={JSON.stringify(reply)}
+/>
+<input
+    type="hidden"
+    name="reply-to-id"
+    id="reply-to-id"
+    form="submitReply"
+    value={reply.post_id ?? reply.id}
+/>
+<input
+    type="hidden"
+    name="parent-post-id"
+    id="parent-post-id"
+    form="submitReply"
+    value={reply.parent_post_id}
 />
 
 
@@ -121,10 +146,18 @@
         <div class="row-group">
             <div class="row-group-icons">
                 <LikeReact
-                    postId={reply.post_id}
+                    postId={reply.post_id ?? reply.id}
                     reactionActive={reactionActive}
                     reactionCount={reactionCount}
                 ></LikeReact>
+                {#if allowReply}
+                    <button class="like" onclick={() => showPostReplyEditor = !showPostReplyEditor}>
+                        <Reply class="icon" size="16" color="var(--freq-color-text-muted)"></Reply>
+                        <span class="descriptor">
+                            reply
+                        </span>
+                    </button>
+                {/if}
             </div>
             <!-- <Collapsible.Root bind:open={openState}>
                 <Collapsible.Trigger>
@@ -149,17 +182,20 @@
             {#if reply.user_id == sessionUserId }
                 <UserActionsMenu
                     mode='sessionUserPostMenu'
-                    postId={reply.post_id}
+                    postId={reply.post_id ?? reply.id}
                     bind:editState={editState}
                     success={userActionSuccess}
                 ></UserActionsMenu>
             {:else if reply.user_id != sessionUserId}
                 <UserActionsMenu
                     mode='postMenu'
-                    postId={reply.post_id}
+                    postId={reply.post_id ?? reply.id}
                     success={userActionSuccess}
                 ></UserActionsMenu>
             {/if}
         </div>
     </div>
+    {#if showPostReplyEditor}
+        <PostReplyEditor></PostReplyEditor>
+    {/if}
 </div>
