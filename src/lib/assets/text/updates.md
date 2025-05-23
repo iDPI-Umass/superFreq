@@ -1,8 +1,12 @@
 ---
 title: Updates
 layout: about
-updated: 05/21/2025
+updated: 05/23/2025
 ---
+### May 23, 2025
+#### Bugs
+- "Filter" tab in feed no longer breaks mobile layout
+
 ### May 21, 2025
 #### Updates
 - When creating a new post, entering a Bandcamp, Soundcloud, or YouTube listen link will automatically populate fields like "Artist Name" when data is available.
