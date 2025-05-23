@@ -304,13 +304,13 @@
                     {/each}
                 </Tabs.List>
             </div>
-            {#snippet button()}
+            <!-- {#snippet button()}
                 <OptionsMenu
                     triggerText='filter'
                     optionsGroups={optionsGroups}
                     inputGroup='selected-options'
                 ></OptionsMenu>
-            {/snippet}
+            {/snippet} -->
         </MenuRow>
         {#if feedTabs.includes('following')}
         <Tabs.Content value="following">
