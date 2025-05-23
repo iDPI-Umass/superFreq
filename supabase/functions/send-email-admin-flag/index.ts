@@ -19,6 +19,12 @@ const transport = nodemailer.createTransport({
 
 console.log(`Function "send-email-admin-flag" up and running!`)
 
+function replyId ( username: string, createdAt: Date ) {
+      const replyTimestampString = createdAt.toISOString()
+      const replyTimestamp = Date.parse(replyTimestampString).toString()
+      const slug = username?.concat(replyTimestamp)
+      return slug
+  }
 
 Deno.serve(async (req) => {
   try {
@@ -43,12 +49,27 @@ Deno.serve(async (req) => {
 
     let targetUsername = null as string | null
     let targetDisplayName = null as string | null
+    let targetPostSlug = null as string | null
+    
     if ( target_user_id && !target_post_id) {
       const targetUser = await supabase.from('profiles').select(`username, display_name`).eq('id', target_user_id)
 
       const targetUserData = targetUser['data'][0]
       targetUsername = targetUserData.username
       targetDisplayName = targetUserData.display_name
+    }
+    else if ( !target_user_id && target_post_id ) {
+      const targetPost = await supabase.from('posts_and_engagement').select(`username,created_at,parent_post_username,parent_post_created_at`).eq('id', target_post_id)
+      const targetPostData = targetPost[data][0]
+      const targetPostUsername = targetPostData.username
+      const targetPostCreatedAt = targetPostData.created_at
+      const targetPostParentPostUsername = targetPostData.parent_post_username
+      const targetPostParentPostCreatedAt = targetPostData.parent_post_created_at
+
+      targetPostSlug = replyId(targetPostUsername, targetPostCreatedAt)
+      const targetParentPostSlug = targetPostParentPostUsername ? replyId( targetPostParentPostUsername, targetPostParentPostCreatedAt ).concat('#') : null
+
+      targetPostSlug = targetParentPostSlug ? targetPostSlug.concat(targetPostSlug) : targetPostSlug
     }
 
     await new Promise<void>((resolve, reject) => {
@@ -57,8 +78,8 @@ Deno.serve(async (req) => {
           from: Deno.env.get('SMTP_FROM')!,
           to: `hello@freq.social`,
           subject: `New flag: ${id}`,
-          text: `New flag (${id}) by ${display_name} (${username}) at ${updatedAtDate}.\r\n\r\n ${ targetUsername ? `User: \r\n https://freq.social/user/${targetUsername}` : `Post:\r\n https://freq.social/posts/${target_post_slug}`}\r\n\r\n Moderation dashboard:\r\n https://freq.social/admin/moderation`,
-          html: `<h2>New flag: ${id}</h2><p>By <a href=\"https://freq.social/user/${username}\">${display_name} (${username})</a> at ${updatedAtDate}</p><p><b>${targetUsername ? 'User' : 'Post'}</b><br /> <a href=\"${targetUsername ? `https://freq.social/user/${targetUsername}` : `https://freq.social/posts/${target_post_slug}`}\">${targetUsername ? `${targetDisplayName} (${targetUsername})` : `https://freq.social/posts/${target_post_slug}`}</a></p><p>Moderation dashboard: <br /> <a href=\"https://freq.social/admin/moderation\">https://freq.social/admin/moderation</a></p>`
+          text: `New flag (${id}) by ${display_name} (${username}) at ${updatedAtDate}.\r\n\r\n ${ targetUsername ? `User: \r\n https://freq.social/user/${targetUsername}` : `Post:\r\n https://freq.social/posts/${targetPostSlug}`}\r\n\r\n Moderation dashboard:\r\n https://freq.social/admin/moderation`,
+          html: `<h2>New flag: ${id}</h2><p>By <a href=\"https://freq.social/user/${username}\">${display_name} (${username})</a> at ${updatedAtDate}</p><p><b>${targetUsername ? 'User' : 'Post'}</b><br /> <a href=\"${targetUsername ? `https://freq.social/user/${targetUsername}` : `https://freq.social/posts/${targetPostSlug}`}\">${targetUsername ? `${targetDisplayName} (${targetUsername})` : `https://freq.social/posts/${targetPostSlug}`}</a></p><p>Moderation dashboard: <br /> <a href=\"https://freq.social/admin/moderation\">https://freq.social/admin/moderation</a></p>`
         }, error => {
           if (error) {
             console.log('smtp error:', error)
