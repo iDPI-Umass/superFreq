@@ -148,3 +148,92 @@ export const reportBug = async ( sessionUserId: string, bugData: App.RowData ) =
 
     return { reportId }
 }
+
+export const getBugReports = async function ( sessionUserId: string ) {
+
+    const select = await db.transaction()
+    .execute(async(trx) => {
+        try {
+            await trx
+            .selectFrom('moderation_permissions')
+            .select(['id', 'active'])
+            .where('user_id', '=', sessionUserId)
+            .where('role', '=', 'site_admin')
+            .where('active', '=', true)
+            .executeTakeFirstOrThrow()
+
+            const reports = await trx
+            .selectFrom('bug_reports')
+            .leftJoin('profiles', 'bug_reports.user_id', 'profiles.id')
+            .select([
+                'bug_reports.id as id',
+                'bug_reports.created_at as created_at',
+                'bug_reports.type as type',
+                'bug_reports.description as description',
+                'bug_reports.path as path',
+                'bug_reports.user_id as user_id',
+                'bug_reports.dev_notes as dev_notes',
+                'profiles.username as username',
+                'profiles.display_name as display_name'
+            ])
+            .where('bug_reports.resolved', '=', false)
+            .orderBy('bug_reports.created_at desc')
+            .execute()
+
+            return { reports, permission: true }
+        }
+        catch ( error ) {
+            return { reports: null, permission: false}
+        }
+    })
+
+    const { reports, permission } = await select
+    return { reports, permission }
+}
+
+export const updateBugReport = async function ( sessionUserId: string, bugReportUpdate: App.RowData ) {
+    const timestampISOString: string = new Date().toISOString()
+
+    const updateQueueItem = await db.transaction().execute(async(trx) => {
+        try {
+            await trx
+            .selectFrom('moderation_permissions')
+            .select(['id', 'active'])
+            .where('user_id', '=', sessionUserId)
+            .where('role', '=', 'site_admin')
+            .where('active', '=', true)
+            .executeTakeFirstOrThrow()
+
+            const selectItem = await trx
+            .selectFrom('bug_reports')
+            .select('dev_log')
+            .where('id', '=', bugReportUpdate.id)
+            .executeTakeFirst()
+
+            const { dev_log } = selectItem as App.Changelog
+
+            dev_log[timestampISOString] = {
+                'dev_id': sessionUserId,
+                'notes': bugReportUpdate.notes,
+                'resolved': bugReportUpdate.resolved
+            }
+            
+            await trx
+            .updateTable('bug_reports')
+            .set({
+                dev_notes: bugReportUpdate.notes,
+                resolved: bugReportUpdate.resolved,
+                dev_log: dev_log,
+            })
+            .where('id', '=', bugReportUpdate.id)
+            .executeTakeFirstOrThrow()
+
+            return { success: true }
+        }
+        catch ( error ) {
+            return { success: false }
+        }
+    })
+
+    return updateQueueItem
+}

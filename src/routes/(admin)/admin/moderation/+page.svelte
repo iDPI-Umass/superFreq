@@ -14,7 +14,7 @@
         if ( item.target_user_id ) {
             return "user"
         }
-        else if ( item. target_post_id ) {
+        else if ( item.target_post_id ) {
             return "post"
         }
     }
