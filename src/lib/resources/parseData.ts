@@ -565,8 +565,6 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
 
     const urlSource = parseUrlSource(listenUrlString)
 
-    console.log(urlSource)
-
     async function getHtml( listenUrl: URL) {
         const response = await fetch(listenUrl)
         if (!response.ok) {
@@ -612,11 +610,24 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
         const pageTitle = document.title
         let title: string | null = null
         let artist: string | null = null
+        let type: string | null = null
 
         if ( pageTitle.includes(' - ')) {
             const elements = pageTitle.split(' - ')
             artist = elements[0]
             title = elements[1]
+            type = title ? 'track' : null
+        }
+
+        const albumExp = new RegExp('album', 'i')
+        const mixExp = new RegExp('mix', 'i')
+        const remixExmp = new RegExp('remix', 'i')
+
+        if ( title && albumExp.test(title)) {
+            type = 'album'
+        }
+        if ( title && mixExp.test(title) && !remixExmp.test(title)) {
+            type = 'episode'
         }
 
         const itemInfo = {
@@ -624,7 +635,7 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
             'id': itemId,
             'source': 'youtube',
             'title': title ?? pageTitle,
-            'item_type': null,
+            'item_type': type,
             'artist': artist,
             'account': null,
             'img_url': null,

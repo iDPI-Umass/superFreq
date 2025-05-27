@@ -26,9 +26,16 @@ export const load: PageServerLoad = async ({ parent, locals: { safeGetSession }}
 export const actions = {
     parseListenUrl: async ({ request }) => {
         const data = await request.formData()
+        const artistName = data.get('artist-name') as string
+        const releaseGroupName = data.get('release-group-name') as string
+        const recordingName = data.get('recording-name') as string
+        const episodeName = data.get('episode') as string
         const listenUrlString = data.get('listen-url') as string
 
-        parsedUrlInfo = await getListenUrlData(listenUrlString)
+        if ( !( artistName || releaseGroupName || recordingName || episodeName) )
+        {
+            parsedUrlInfo = await getListenUrlData(listenUrlString)
+        }
 
         return { success: true }
     },
