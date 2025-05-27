@@ -277,25 +277,50 @@
         use:enhance={() => {
             return async({update}) => {
                 await update()
-                const itemType = parsedUrlInfo?.item_type
-                const source = parsedUrlInfo?.source
-                collectionData.singleItem = {
-                    'artist_name': parsedUrlInfo?.artist,
-                    'release_group_name': (itemType == 'album') ? parsedUrlInfo?.title : null,
-                    'recording_name': (itemType == 'track') ? parsedUrlInfo?.title : null,
-                    'img_url': parsedUrlInfo?.img_url,
-                    'episode_name': ( source == 'soundcloud' ) ? parsedUrlInfo?.title : null,
-                    'show_title': ( source == 'soundcloud' ) ? parsedUrlInfo?.account : null,
-                } 
+                if ( parsedUrlInfo ) {
+                    const itemType = parsedUrlInfo?.item_type
+                    const source = parsedUrlInfo?.source
+                    collectionData.singleItem = {
+                        'artist_name': parsedUrlInfo?.artist,
+                        'release_group_name': (itemType == 'album') ? parsedUrlInfo?.title : null,
+                        'recording_name': (itemType == 'track') ? parsedUrlInfo?.title : null,
+                        'img_url': parsedUrlInfo?.img_url,
+                        'episode_name': ( source == 'soundcloud' || itemType == 'episode' ) ? parsedUrlInfo?.title : null,
+                        'show_title': ( source == 'soundcloud' ) ? parsedUrlInfo?.account : null,
+                    } 
+                }
             }
         }}
     >
         <input 
-            class="text" 
             id="listen-url" 
             name="listen-url" 
             type="hidden"
             value={listenUrl}
+        />
+        <input   
+            id="episode" 
+            name="episode" 
+            type="hidden"
+            value={addedItem?.episode_name ?? null}
+        />
+        <input
+            id="artist-name" 
+            name="artist-name" 
+            type="hidden"
+            value={addedItem?.artist_name ?? null}
+        />
+        <input 
+            id="release-group-name" 
+            name="release-group-name" 
+            type="hidden"
+            value={addedItem?.release_group_name ?? null}
+        />
+        <input  
+            id="recording-name" 
+            name="recording-name" 
+            type="hidden"
+            value={addedItem?.recording_name ?? null}
         />
     </form>
 {/snippet}
