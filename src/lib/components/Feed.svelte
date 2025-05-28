@@ -70,6 +70,10 @@
                 'value': 'comment',
             },
             {
+                'id': 'replies to comments',
+                'value': 'reply_to_reply'
+            },
+            {
                 'id': 'likes',
                 'value': 'reaction'
             },
@@ -174,6 +178,29 @@
                                         imgClass='feed-avatar'
                                     ></CoverArt>
                                 {item.user_id == sessionUserId ? 'You' : item.display_name} commented on {item.parent_post_user_id == sessionUserId ? 'your' : item.parent_post_display_name.concat(`'s`)} post { (item.artist_name || item.user_added_artist_name) ? 'about' : ''}
+                            </div>
+                            {@render feedItemTag(item)}
+                        </div>
+                    </a>
+                    <div class="feed-post-spacer">
+                        <div class="feed-item-now-playing">
+                            <PostReply
+                                reply={item}
+                                sessionUserId={sessionUserId}
+                                userActionSuccess={userActionSuccess}
+                            ></PostReply>
+                        </div>
+                    </div>
+                {:else if item?.item_type == 'reply_to_reply'}
+                    <a href={`/posts/${item.parent_post_username}/now-playing/${parseTimestamp(item.parent_post_created_at)}#${item.username?.concat(parseTimestamp(item.timestamp))}`}>
+                        <div class="feed-item">
+                            <div class="feed-item-two-liner-user-row">
+                                    <CoverArt
+                                        item={avatarItem(item)}
+                                        altText={`${item.display_name}'s avatar`}
+                                        imgClass='feed-avatar'
+                                    ></CoverArt>
+                                {item.user_id == sessionUserId ? 'You' : item.display_name} replied to {item.parent_post_user_id == sessionUserId ? 'your' : item.parent_post_display_name.concat(`'s`)} comment on a post { (item.artist_name || item.user_added_artist_name) ? 'about' : ''}
                             </div>
                             {@render feedItemTag(item)}
                         </div>
