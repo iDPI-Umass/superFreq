@@ -1,8 +1,12 @@
 ---
 title: Updates
 layout: about
-updated: 05/23/2025
+updated: 05/28/2025
 ---
+### May 28, 2025
+#### Updates
+- You can now reply to comments
+
 ### May 23, 2025
 #### Bugs
 - "Filter" tab in feed no longer breaks mobile layout

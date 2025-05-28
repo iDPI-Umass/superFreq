@@ -279,6 +279,7 @@
             showCollectionsListModal={showCollectionsListModal}
             showSaveSucessModal={showSaveSucessModal}
             feedTabs={['following', 'notifications']}
+            showFilters={true}
         ></Feed>
     {:else}
         <NowPlayingPostsSample
