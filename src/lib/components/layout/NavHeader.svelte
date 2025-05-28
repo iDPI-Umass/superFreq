@@ -24,10 +24,10 @@
   const thisUrl = page.url
 </script>
 
-<svelte:options runes={true} />
-<svelte:head>
+<!-- <svelte:options runes={true} /> -->
+<!-- <svelte:head>
   <title>Freq</title>
-</svelte:head>
+</svelte:head> -->
 
 <div class="grid-background">
   <header>
