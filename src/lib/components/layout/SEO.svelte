@@ -1,12 +1,22 @@
 <script lang="ts">
-    let { title = 'Welcome to Freq!' }: {title?: string} = $props()
+    let { 
+		title = 'Welcome to Freq!', 
+		description = 'A place to find music with friends.'
+	}: {
+		title?: string
+		description?: string
+	} = $props()
     const logoUrl = "/images/logo/freq-logo-dark.png"
     const logoSocialCard = "/images/logo/freq-logo-dark-social-card.png"
 
-    const description = 'A place to find music with friends.'
 </script>
 
 <svelte:head>
+	<meta property="title" content="{title} | Freq">
+	<meta property="image" content={logoSocialCard}>
+	<meta property="description" content={description}>
+
+
 	<meta property="og_site_name" content=“freq.social”>
 	<meta property="og:url" content="https://freq.social">
 	<meta property="og:type" content="website">
