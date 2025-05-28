@@ -1,5 +1,5 @@
 <script lang="ts">
-    let { title } = $props()
+    let { title = 'Welcome to Freq!' }: {title?: string} = $props()
     const logoUrl = "/images/logo/freq-logo-dark.png"
     const logoSocialCard = "/images/logo/freq-logo-dark-social-card.png"
 

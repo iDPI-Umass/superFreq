@@ -12,7 +12,7 @@
     let { form }: Props = $props();
 </script>
 
-<SEO title="Welcome to Freq!"></SEO>
+<SEO></SEO>
 
 <div class="panel-medium">
     <PanelHeader>
