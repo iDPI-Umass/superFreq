@@ -457,7 +457,11 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                     'parent_post_id',
                     'parent_post_created_at',
                     'parent_post_username',
-                    'reply_to'
+                    'reply_to',
+                    'reply_to_user_id',
+                    'reply_to_username',
+                    'reply_to_display_name',
+                    'reply_to_created_at'
                 ])
                 .where('parent_post_id', '=', postId)
                 .where('user_id', 'not in', blockingUsers)
@@ -490,7 +494,11 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                     'parent_post_id',
                     'parent_post_created_at',
                     'parent_post_username',
-                    'reply_to'
+                    'reply_to',
+                    'reply_to_user_id',
+                    'reply_to_username',
+                    'reply_to_display_name',
+                    'reply_to_created_at'
                 ])
                 .where('parent_post_id', '=', postId)
                 .orderBy('created_at asc')

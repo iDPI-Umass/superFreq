@@ -69,9 +69,11 @@ export const actions = {
             text: replyText,
             created_at: timestampISO,
             updated_at: timestampISO,
-            parent_post_id: ( parentPostId == '') ? postId : parentPostId,
-            reply_to: ( replyToId == '' ) ? postId : replyToId
+            parent_post_id: !parentPostId ? postId : parentPostId,
+            reply_to: !replyToId ? postId : replyToId
         }
+
+        // return
 
         const { username, createdAt } = await insertPost( postData )
 

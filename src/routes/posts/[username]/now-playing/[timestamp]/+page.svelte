@@ -86,6 +86,7 @@
                     reply={reply}
                     sessionUserId={sessionUserId}
                     userActionSuccess={actionSuccess}
+                    allowReply={true}
                 ></PostReply>
             </div>
         </div>

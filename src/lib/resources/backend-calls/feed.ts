@@ -71,7 +71,7 @@ export const selectFeedData = async function ( sessionUserId: string, batchSize:
 }
 
 // Variation on selectFeedData() for data about users session user follows
-export const selectFollowingFeed = async function ( sessionUserId: string, batchSize: number, batchIterator: number, timestampStart: Date, timestampEnd: Date, options: App.Lookup = {'items': ['now_playing_post', 'social_follow', 'comment', 'reaction', 'collection_follow', 'collection_edit']} ) {
+export const selectFollowingFeed = async function ( sessionUserId: string, batchSize: number, batchIterator: number, timestampStart: Date, timestampEnd: Date, options: App.Lookup = {'items': ['now_playing_post', 'social_follow', 'comment', 'reply_to_reply', 'reaction', 'collection_follow', 'collection_edit']} ) {
 
     const offset = batchSize * batchIterator
 
@@ -160,6 +160,7 @@ export const selectFirehoseFeed = async function ( sessionUserId: string, batchS
         .where(({eb, and}) => and([
             eb('item_type', '!=', 'reaction'),
             eb('item_type', '!=', 'comment'),
+            eb('item_type', '!=', 'reply_to_reply'),
             eb('item_type', '!=', 'social_follow'),
             eb('item_type', '!=', 'collection_follow')
         ]))

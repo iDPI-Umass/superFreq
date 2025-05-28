@@ -3,19 +3,21 @@
 
     interface ComponentProps {
         displayName: string
-        createdAt: string
-        replyToSlug: string
+        createdAt: string | null
+        permalinkRoot: string
+        replyToSlug: string | null
     }
     
     let {
         displayName,
         createdAt,
+        permalinkRoot,
         replyToSlug
     }: ComponentProps = $props()
 </script>
 <!-- <svelte:options runes={true} /> -->
 
-<a href={replyToSlug}>
+<a href={permalinkRoot.concat(replyToSlug as string)}>
     <span 
         class="now-playing-text"
         aria-details="Replied to {displayName} ({createdAt})"
@@ -25,3 +27,8 @@
     </span>
 </a>
 
+<style>
+    .now-playing-text {
+        margin-top: var(--freq-height-spacer-half);
+    }
+</style>

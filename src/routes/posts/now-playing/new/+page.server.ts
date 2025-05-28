@@ -101,8 +101,6 @@ export const actions = {
             tracklist: embedInfo?.tracklist ?? null,
         } as App.RowData
 
-        console.log(postData)
-
         const { username, createdAt } = await insertPost( postData )
         const timestampSlug = createdAt?.toISOString()
         const timestamp = Date.parse(timestampSlug).toString()
