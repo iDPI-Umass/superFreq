@@ -49,9 +49,9 @@ const config = {
 		// 		'report-uri': ['/']
 		// 	}
 		// },
-		// csrf: {
-		// 	checkOrigin: true
-		// }
+		csrf: {
+			checkOrigin: true
+		}
 	}
 };
 

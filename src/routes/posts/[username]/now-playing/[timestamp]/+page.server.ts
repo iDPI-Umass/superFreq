@@ -57,8 +57,12 @@ export const actions = {
         const data = await request.formData()
         const replyText = data.get('reply-text') as string
         const postId = data.get('post-id') as string
+        const replyToId = data.get('reply-to-id') as string
+        const parentPostId = data.get('parent-post-id') as string
         const postUsername = data.get('post-username') as string
         const postTimestamp = data.get('post-timestamp') as string
+
+        const postTimestampDateString = Date.parse(postTimestamp).toString()
 
         const postData = {
             user_id: sessionUserId,
@@ -67,16 +71,17 @@ export const actions = {
             text: replyText,
             created_at: timestampISO,
             updated_at: timestampISO,
-            parent_post_id: postId,
-            reply_to: postId
+            parent_post_id: !parentPostId ? postId : parentPostId,
+            reply_to: !replyToId ? postId : replyToId
         }
 
-        const { username, createdAt} = await insertPost( postData )
+        const { username, createdAt } = await insertPost( postData )
 
         const commentTimestampSlug = createdAt.toString()
         const commentTimestamp = Date.parse(commentTimestampSlug).toString()
-        const permalink = `/posts/${postUsername}/now-playing/${postTimestamp}#${username.concat(commentTimestamp)}`
+        const permalink = `/posts/${postUsername}/now-playing/${postTimestampDateString}#${username.concat(commentTimestamp)}`
 
+        console.log(permalink)
         if (createdAt) {
             throw redirect(303, permalink)
         }

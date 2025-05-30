@@ -7,32 +7,21 @@
 
     let { data } = $props()
 
-    let { queueItems }: { queueItems: App.RowData[]} = $derived(data)
+    let { reports }: { reports: App.RowData[]} = $derived(data)
     let resolvePromise = $state(false)
 
-    function itemType ( item: App.RowData ) {
-        if ( item.target_user_id ) {
-            return "user"
-        }
-        else if ( item. target_post_id ) {
-            return "post"
-        }
-    }
-
-    let showModerationLog = $state(false)
-    let showChangelog = $state(false)
 </script>
 
 <svelte:head>
     <title>
-        Moderation Dashboard
+        Bug Reports
     </title>
 </svelte:head>
 
 <SEO title="Moderation Dashboard"></SEO>
 
 <div class="panel">
-    <h1>Moderation Dashboard</h1>
+    <h1>Bug Reports</h1>
     <table>
         <thead>
             <tr>
@@ -46,81 +35,41 @@
                     User
                 </th>
                 <th scope="col">
-                    Target User
+                    Path
                 </th>
                 <th scope="col">
-                    Target Post
+                    Description
                 </th>
                 <th scope="col">
-                    Moderate
+                    Resolve
                 </th>
             </tr>
         </thead>
         <tbody>
-            {#each queueItems as item}
+            {#each reports as item}
                 <tr>
                     <td>
-                        {item.timestamp}
+                        {item.created_at}
                     </td>
                     <td>
                         {item.type}
                     </td>
                     <td>
                         <a href="/user/{item.username}">
-                            {item.username}
+                            {item.display_name} ({item.username})
                         </a>
                     </td>
                     <td>
-                        {#if item.target_username}
-                            <a href="/user/{item.target_username}">
-                                {item.target_username}
-                            </a>
-                        {/if}
+                        <a href="/user/{item.path}">
+                            {item.path}
+                        </a>
                     </td>
                     <td>
-                        {#if item.target_post_timestamp}
-                            {#if Object.keys(item.post_changelog).length > 0}
-                                <button
-                                    class="more-info"
-                                    onclick={() => showChangelog = true}
-                                >
-                                    post changelog
-                                </button>
-                                <NotificationModal
-                                    showModal={showChangelog}
-                                >
-                                    {#snippet headerText()}
-                                    Post Changelog
-                                    {/snippet}
-                                    {#snippet message()}
-                                    {JSON.stringify(item.post_changelog)}
-                                    {/snippet}
-                                </NotificationModal>
-                            {/if}
-                            <a href="/posts/{item.target_post_username}/now-playing/{parseTimestamp(item.target_post_timestamp)}">
-                                {item.target_post_username}: {item.target_post_timestamp}
-                            </a>
-                        {/if}
+                        <p>
+                            {item.description}
+                        </p>
                     </td>
                     <td>
-                        {#if Object.keys(item.moderation_log).length > 0}
-                            <button
-                                class="more-info"
-                                onclick={() => showModerationLog = true}
-                            >
-                                moderation log
-                            </button>
-                            <NotificationModal
-                                showModal={showModerationLog}
-                            >
-                                {#snippet headerText()}
-                                Moderation Log
-                                {/snippet}
-                                {#snippet message()}
-                                {JSON.stringify(item.moderation_log)}
-                                {/snippet}
-                            </NotificationModal>
-                        {/if}
                         <form
                             method="POST"
                             action="?/update"
@@ -136,13 +85,7 @@
                                 type="hidden"
                                 name="item-id"
                                 id="item-id"
-                                value={item.moderation_item_id}
-                            />
-                            <input
-                                type="hidden"
-                                name="item-type"
-                                id="item-type"
-                                value={itemType(item)}
+                                value={item.id}
                             />
                             <textarea
                                 name="notes"
@@ -151,7 +94,7 @@
                             <div class="cell-row">
                                 <div class="input-column">
                                     <label for="resolved">
-                                        archive
+                                        resolved
                                     </label>
                                     <input 
                                         type="checkbox" 

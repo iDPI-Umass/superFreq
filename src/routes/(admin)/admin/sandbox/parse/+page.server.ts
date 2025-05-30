@@ -8,5 +8,6 @@ export const load: PageServerLoad = async () => {
     // const parsedDocument = JSON.stringify(document, null, 2)
     const bandcampInfo = await parseBandcampHtml(listenUrl)
     // console.log(parsedDocument)
+    console.log(bandcampInfo)
     return { bandcampInfo }
 }

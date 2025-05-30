@@ -4,7 +4,6 @@ import { timestampISO } from '$lib/resources/parseData'
 import { selectEditableCollectionContents, updateCollection, deleteCollection } from '$lib/resources/backend-calls/collections'
 
 let collectionId: string
-let collectionType: string
 let updatedBy: string
 
 export const load: PageServerLoad = async ({ parent, params, locals: { safeGetSession } }) => {
@@ -27,15 +26,15 @@ export const load: PageServerLoad = async ({ parent, params, locals: { safeGetSe
   const sessionUserId = session.user?.id as string
 
   const collection = await selectEditableCollectionContents(collectionId, sessionUserId)
+  const editPermission = collection.editPermission
 
-  collectionType = collection.info?.type as string
   updatedBy = sessionUserId
 
-  if ( collection ) {
-      return { collection, sessionUserId, collectionId };
+  if ( editPermission ) {
+    return { collection, sessionUserId, collectionId }
   }
   else {
-    throw redirect(303, '/collections')
+    throw redirect(303, `/collection/${collectionId}`)
   }
 }
 
@@ -60,13 +59,13 @@ export const actions: Actions = {
     const collectionInfo = {
       title: collectionTitle,
       status: collectionStatus,
-      type: collectionType ?? null,
       default_view_sort: sort,
       collection_id: collectionId,
       description_text: collectionDescription,
       updated_at: timestampISO,
       updated_by: updatedBy
     }
+
 
     const update = await updateCollection( sessionUserId, collectionInfo, activeAndDeletedCollectionItems )
 

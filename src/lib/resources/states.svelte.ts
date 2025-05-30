@@ -2,10 +2,12 @@ export const feedData = $state({
     'profileUsername': '',
     'profileUserId': '',
     'feedItems': [],
+    'firehoseFeedItems': [],
+    'notificationsItems': [],
     'feedSlug': '',
     'selectedOptions': [{
         'category': 'feed_item_types', 
-        'items': ['now_playing_post', 'social_follow', 'comment', 'reaction', 'collection_follow', 'collection_edit']
+        'items': ['now_playing_post', 'social_follow', 'comment', 'reply_to_reply', 'reaction', 'collection_follow', 'collection_edit']
     }]
 }) as any
 

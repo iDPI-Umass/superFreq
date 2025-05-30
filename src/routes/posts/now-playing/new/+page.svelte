@@ -6,6 +6,10 @@
 	
 	let addedItem = $state({})
 
+
+    const { data } = $props()
+    const { parsedUrlInfo } = $derived(data)
+
 	onMount(() => {
 		promiseStates.imgPromise =  null
 	})
@@ -16,4 +20,5 @@
 <SEO title="New Now Playing post"></SEO>
 
 <NewNowPlayingPost
+	parsedUrlInfo={parsedUrlInfo}
 ></NewNowPlayingPost>

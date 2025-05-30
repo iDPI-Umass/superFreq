@@ -30,7 +30,10 @@
     let editState = $state(false)
 </script>
 
-<SEO title="{post?.display_name}'s Now Playing post"></SEO>
+<SEO
+    title="{post?.display_name}'s Now Playing post"
+    description="{post?.artist_name ?? post?.user_added_artist_name}: {post?.release_group_name ?? post.user_added_release_group_name ?? post?.recording_name?? post?.user_added_recording_name ?? post?.episode_title}"
+></SEO>
 
 {#snippet formInputs(formName: string)}
     <input 
@@ -86,6 +89,7 @@
                     reply={reply}
                     sessionUserId={sessionUserId}
                     userActionSuccess={actionSuccess}
+                    allowReply={true}
                 ></PostReply>
             </div>
         </div>
