@@ -1,8 +1,12 @@
 ---
 title: Updates
 layout: about
-updated: 05/28/2025
+updated: 05/30/2025
 ---
+### May 30, 2025
+#### Bugs
+- Fixed issue with redirect after replying to a comment
+
 ### May 28, 2025
 #### Updates
 - You can now reply to comments
