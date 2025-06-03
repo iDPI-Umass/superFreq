@@ -1,5 +1,5 @@
 import type { PageServerLoad, Actions } from "./$types"
-import { searchUsersAndCollections } from "$lib/resources/backend-calls/search"
+import { searchUsersAndCollections, searchUsers, searchPgUsersCollections } from "$lib/resources/backend-calls/search"
 
 const results = [] as App.RowData[]
 
@@ -14,13 +14,15 @@ export const actions = {
 
         results.length = 0
 
-        const searchResults = await searchUsersAndCollections(collectionQuery)
+        const searchResults = await searchUsersAndCollections(collectionQuery, 25)
+
+        // console.log(searchResults)
 
         results.push(...searchResults.results)
 
-        const success = results.length > 0 ? true : false
+        // const success = results.length > 0 ? true : false
         
-        return { success }
+        return { success: true }
 
     }
 } satisfies Actions
