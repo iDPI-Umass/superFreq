@@ -50,17 +50,11 @@
 
 <div class="two-column">
 	<div class="column-two-thirds">
-		<div class="panel">
-			<PanelHeader>
-				{#snippet headerText()}
-					recently updated collections
-				{/snippet}
-			</PanelHeader>
-			<CollectionsList 
-				collections={form?.collections ?? collections}
-				mode="wide"
-			></CollectionsList>
-		</div>
+		<CollectionsList 
+			headerText="recently updated collections"
+			collections={form?.collections ?? collections}
+			mode="wide"
+		></CollectionsList>
 	</div>
 
 	<div class="column-one-third">
@@ -69,18 +63,12 @@
 			feedItems={feedItems}
 			mode="feed"
 		></Feed>
-		<div class="panel" id="collections-friends">
-			<PanelHeader>
-				{#snippet headerText()}
-					friends' collections
-				{/snippet}
-			</PanelHeader>
-			<CollectionsList
-				collections={form?.collections ?? collections}
-				showAnalytics={false}
-				mode="narrow"
-			></CollectionsList>
-		</div>
+		<CollectionsList
+			headerText="friends' collections"
+			collections={form?.collections ?? collections}
+			showAnalytics={false}
+			mode="narrow"
+		></CollectionsList>
 	</div>
 </div>
 

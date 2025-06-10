@@ -2,6 +2,7 @@
 	import { displayDate } from '$lib/resources/parseData'
 	import wave from '$lib/assets/images/logo/freq-wave.svg';
 	import CollectionImage from './CollectionImage.svelte';
+	import PanelHeader from '$lib/components/PanelHeader.svelte';
 	import Heart from '@lucide/svelte/icons/heart';
 	import MusicNote from '@lucide/svelte/icons/music';
 	import Eye from '@lucide/svelte/icons/eye';
@@ -10,6 +11,7 @@
 
 	interface ComponentProps {
 		sessionUserId?: string;
+		headerText: string;
 		mode?: string;
 		remaining?: number;
 		collections: App.RowData[];
@@ -23,17 +25,12 @@
 
 	let {
 		sessionUserId,
+		headerText,
 		mode = 'wide',
 		remaining,
 		collections = [],
 		showAnalytics = false
 	}: ComponentProps = $props();
-
-	let visible = $state(10);
-
-	let start = $state(0);
-
-	let visibleCollections: App.RowData[] = $derived(collections.slice(start, start + visible));
 
 	const cssMode = {
 		'narrow': 'collection-identity-full',
@@ -147,9 +144,14 @@
 	</li>
 {/snippet}
 
-<div class="firehose-wrapper">
+<div class="panel">
+	<PanelHeader>
+		{#snippet headerText()}
+			{headerText}
+		{/snippet}
+	</PanelHeader>
 	<ul>
-		{#each visibleCollections as collection}
+		{#each collections as collection}
 			{@render listItem(collection)}
 		{/each}
 	</ul>
