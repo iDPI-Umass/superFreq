@@ -1,9 +1,9 @@
 <script lang="ts">
 	import wave from '$lib/assets/images/logo/freq-wave.svg';
 	import CollectionImage from './CollectionImage.svelte';
-	import Heart from 'virtual:icons/heroicons-solid/heart';
-	import Music from 'virtual:icons/mynaui/music';
-	import Eye from 'virtual:icons/teenyicons/eye-outline';
+	import Heart from '@lucide/svelte/icons/heart';
+	import MusicNote from '@lucide/svelte/icons/music';
+	import Eye from '@lucide/svelte/icons/eye';
 	import { Tooltip } from "bits-ui";
 
 
@@ -63,15 +63,13 @@
 								<Tooltip.Provider>
 									<Tooltip.Root>
 										<Tooltip.Trigger style="cursor: pointer; display: flex; justify-content: center; align-items: center; width: 100%; background: transparent;">
-											<div class="icon">
-												<Music />
-											</div>
+											 <MusicNote size="16" color="var(--freq-color-text-medium-dark)"></MusicNote>
 										</Tooltip.Trigger>
 										<Tooltip.Portal>
 											<Tooltip.Content>
 												<Tooltip.Arrow />
 												<div class="icon-tooltip-content">
-													<Music />
+													<MusicNote size="16" color="var(--freq-color-text-medium-dark)"></MusicNote>
 													This is the number of albums or tracks in this collection.
 												</div>
 											</Tooltip.Content>
@@ -89,9 +87,7 @@
 								<Tooltip.Provider>
 									<Tooltip.Root>
 										<Tooltip.Trigger style="cursor: pointer; display: flex; justify-content: center; align-items: center; width: 100%; background: transparent;">
-											<div class="icon">
-												<Heart />
-											</div>
+											<Heart size="16" color="var(--freq-color-text-medium-dark)"></Heart>
 										</Tooltip.Trigger>
 										<Tooltip.Portal>
 											<Tooltip.Content>
@@ -115,15 +111,13 @@
 								<Tooltip.Provider>
 									<Tooltip.Root>
 										<Tooltip.Trigger style="cursor: pointer; display: flex; justify-content: center; align-items: center; width: 100%; background: transparent;">
-											<div class="icon">
-												<Eye />
-											</div>
+											<Eye size="16" color="var(--freq-color-text-medium-dark)"></Eye>
 										</Tooltip.Trigger>
 										<Tooltip.Portal>
 											<Tooltip.Content>
 												<Tooltip.Arrow />
 												<div class="icon-tooltip-content">
-													<Eye />
+													<Eye size="16" color="var(--freq-color-text-medium-dark)"></Eye>
 													This is the number of views this collection has recieved in the past 24 hours.
 												</div>
 											</Tooltip.Content>
