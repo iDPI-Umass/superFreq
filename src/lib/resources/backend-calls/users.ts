@@ -136,7 +136,7 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
 
         // get metrics
         const countCollections = await trx
-            .selectFrom('collections_social as social')
+            .selectFrom('social_graph as social')
             .innerJoin('collections_info as info', 'info.collection_id', 'social.collection_id')
             .select((eb) => eb
                 .fn.count<number>('id')
@@ -144,6 +144,7 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
             )
             .where(({eb, and, or, not}) => and([
                 eb('social.user_id', '=', profileUserId),
+                eb('social.collection_id', 'is not', null),
                 or([
                     eb('social.user_role','=', 'owner'),
                     eb('social.user_role', '=', 'collaborator')
@@ -155,7 +156,7 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
         const collectionCount = countCollections[0]['count']
 
         const countCollectionsFollowing = await trx
-            .selectFrom('collections_social')
+            .selectFrom('social_graph')
             .select((eb) => eb
                 .fn.count<number>('id')
                 .as('count')
@@ -165,6 +166,7 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
                 follows_now: true,
                 user_id: profileUserId
             }))
+            .where('collection_id', 'is not', null)
             .execute()
 
         const collectionFollowingCount = countCollectionsFollowing[0]['count']
@@ -179,6 +181,7 @@ export const selectProfilePageData = async function ( sessionUserId: string, pro
                 user_id: profileUserId,
                 follows_now: true
             }))
+            .where('target_user_id', 'is not', null)
             .execute()
 
         const userFollowingCount = countUsersFollowing[0]['count']
@@ -823,12 +826,13 @@ export const insertUpdateCollectionFollow =  async function ( sessionUserId: str
     const follow = await db.transaction().execute(async (trx) => {
         try {
             const selectCollectionFollow = await trx
-            .selectFrom('collections_social')
+            .selectFrom('social_graph')
             .selectAll()
             .where(({ eb }) => eb.and({
                 user_id: sessionUserId,
                 collection_id: collectionId
             }))
+            .where('collection_id', 'is not', null)
             .executeTakeFirstOrThrow()
 
             const collectionFollow = await selectCollectionFollow
@@ -844,7 +848,7 @@ export const insertUpdateCollectionFollow =  async function ( sessionUserId: str
             }
 
             const updateCollectionFollow = await trx
-            .updateTable('collections_social')
+            .updateTable('social_graph')
             .set({
                 follows_now: !followsNow,
                 updated_at: timestampISO,
@@ -864,7 +868,7 @@ export const insertUpdateCollectionFollow =  async function ( sessionUserId: str
             }
 
             const insertCollectionFollow = await trx
-            .insertInto('collections_social')
+            .insertInto('social_graph')
             .values({
                 user_id: sessionUserId,
                 collection_id: collectionId,
