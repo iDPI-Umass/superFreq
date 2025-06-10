@@ -1,8 +1,37 @@
 ---
 title: Updates
 layout: about
-updated: 04/30/2025
+updated: 05/30/2025
 ---
+### May 30, 2025
+#### Bugs
+- Fixed issue with redirect after replying to a comment
+
+### May 28, 2025
+#### Updates
+- You can now reply to comments
+
+### May 23, 2025
+#### Bugs
+- "Filter" tab in feed no longer breaks mobile layout
+
+### May 21, 2025
+#### Updates
+- When creating a new post, entering a Bandcamp, Soundcloud, or YouTube listen link will automatically populate fields like "Artist Name" when data is available.
+
+### May 19, 2025
+#### Updates
+- Bug report form is now a page on Freq instead of a Google Form
+- Added 'Notifications' tab to feed on your profile page
+
+### May 14, 2025
+#### Updates
+- Added "Discover" tab to feed on '/feed' page
+
+### May 5, 2025
+#### Bugs
+- Fixed bug with deleting items in a collection
+
 ### April 30, 2025
 #### Updates
 - Collections now display artist photos

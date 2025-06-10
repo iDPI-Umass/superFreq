@@ -1,7 +1,7 @@
 import type { PageServerLoad, Actions, Posts } from './$types'
 import { redirect } from '@sveltejs/kit'
 import { selectProfilePageData, insertUpdateBlock, insertUserFlag, insertUpdateUserFollow, insertPostFlag } from '$lib/resources/backend-calls/users'
-import { selectFeedData } from '$lib/resources/backend-calls/feed'
+import { selectFeedData, selectNotificationsFeed, selectFollowingFeed } from '$lib/resources/backend-calls/feed'
 import { selectUserPostsSample, insertPost, insertUpdateReaction, updatePost, deletePost } from '$lib/resources/backend-calls/posts'
 import { selectListSessionUserCollections, saveItemToCollection } from 'src/lib/resources/backend-calls/collections'
 import { getListenUrlData, validStringCheck } from '$lib/resources/parseData'
@@ -14,10 +14,14 @@ let userAction = false
 
 let batchIterator = 0
 let feedItemCount = 0
-let totalAvailableItems = 0
-let remaining = 0
+let totalAvailableFollowingItems = 0
+let totalAvailableNotificationsItems = 0
+let remainingFollowingItems = 0
+let remainingNotificationsItems = 0
 
 let sessionUserCollections = [] as App.RowData[]
+
+let feedMode = 'following'
 
 const feedOptions = {'feed_item_types': ['now_playing_post', 'comment', 'reaction', 'social_follow', 'collection_follow', 'collection_edit']}
 
@@ -49,22 +53,41 @@ export const load: PageServerLoad = async ({ params, url, locals: { safeGetSessi
         feedData.feedSlug = url.pathname
     }
 
+    const feedItemTypes = feedData.selectedOptions.find((element) => element.category == 'feed_item_types')
 
     // if profile is session user's, load feed data
     if ( loadData && sessionUserId == profileUserId ) {
-        feedData.feedItems.length = batchIterator * batchSize
+        if ( batchIterator == 0 ) {
+            feedData.feedItems = []
+            feedData.notificationsItems = []
+        }
 
-        const feedItemTypes = feedData.selectedOptions.find((element) => element.category == 'feed_item_types')
+        if ( batchIterator == 0 || feedMode == 'following' ) {
+            feedData.feedItems.length = batchIterator * batchSize
 
-        const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, feedItemTypes)
+            const select = await selectFollowingFeed( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, feedItemTypes )
 
-        const totalRowCount = select.totalRowCount
-        const selectedFeedData = select.feedData
-        feedData.feedItems.push(...selectedFeedData)
-        feedItemCount = feedData.feedItems.length
+            const selectedFeedData = select.feedData
+    
+            feedData.feedItems.push(...selectedFeedData)
+            feedItemCount = feedData.feedItems.length
+    
+            totalAvailableFollowingItems = select.totalRowCount as number
+            remainingFollowingItems = select.totalRowCount - feedItemCount
+        }
 
-        totalAvailableItems = totalRowCount as number
-        remaining = totalRowCount - feedItemCount
+        if ( batchIterator == 0 || feedMode == 'notifications' ) {
+            feedData.notificationsItems.length = batchIterator * batchSize
+
+            const select = await selectNotificationsFeed( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, feedItemTypes )
+            const selectedFeedData = select.feedData
+
+            feedData.notificationsItems.push(...selectedFeedData)
+            feedItemCount = feedData.notificationsItems.length
+
+            totalAvailableNotificationsItems = select.totalRowCount as number
+            remainingNotificationsItems = select.totalRowCount - feedItemCount
+        }
 
         loadData = !loadData
     }
@@ -79,8 +102,8 @@ export const load: PageServerLoad = async ({ params, url, locals: { safeGetSessi
         feedData.feedItems.push(...selectedFeedData)
         feedItemCount = feedData.feedItems.length
 
-        totalAvailableItems = totalRowCount as number
-        remaining = totalRowCount - feedItemCount
+        totalAvailableFollowingItems = totalRowCount as number
+        remainingFollowingItems = totalRowCount - feedItemCount
 
         loadData = !loadData
     }
@@ -92,11 +115,16 @@ export const load: PageServerLoad = async ({ params, url, locals: { safeGetSessi
         profileData = await selectProfilePageData( sessionUserId, profileUsername )
     }
 
-    return { sessionUserId, profileData, feedItems: feedData.feedItems, selectedOptions: feedData.selectedOptions, totalAvailableItems, remaining, profileUsername, sessionUserCollections, updatesPageUpdatedAt }
+    const totalAvailableItems = ( feedMode == 'following' ) ? totalAvailableFollowingItems : totalAvailableNotificationsItems
+    const remaining = ( feedMode == 'following' ) ? remainingFollowingItems : remainingNotificationsItems
+
+    return { sessionUserId, profileData, feedItems: feedData.feedItems, notificationsItems: feedData.notificationsItems, selectedOptions: feedData.selectedOptions, totalAvailableItems, remaining, profileUsername, sessionUserCollections, updatesPageUpdatedAt }
 }
 
 export const actions = { 
-    loadMore: async() => {
+    loadMore: async({ request }) => {
+        const data = await request.formData()
+        feedMode = data.get('feed-mode') as string
         batchIterator ++
         loadData = true
         return { loadData }

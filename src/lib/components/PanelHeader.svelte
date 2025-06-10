@@ -2,7 +2,7 @@
     import type { Snippet } from 'svelte'
     import decoration from "$lib/assets/images/panel-header-decoration.svg"
 
-    let { headerText, button }: { headerText: Snippet, button?: Snippet } = $props()
+    let { headerText, button }: {headerText: any, button?: any} = $props()
 </script>
 <!-- <svelte:options runes={true} /> -->
 
@@ -11,6 +11,7 @@
     <h1>
         {@render headerText()}
     </h1>
+    <!-- {@render children?.()} -->
     <div class="button-spacing">
         {@render button?.()}
     </div>

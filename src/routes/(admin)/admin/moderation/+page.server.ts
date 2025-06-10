@@ -12,6 +12,9 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
     if ( permission ) {
         return { queueItems }
     }
+    else {
+        redirect(401, '/')
+    }
 }
 
 export const actions = {

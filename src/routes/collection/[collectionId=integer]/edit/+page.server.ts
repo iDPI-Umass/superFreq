@@ -34,7 +34,6 @@ export const load: PageServerLoad = async ({ parent, params, locals: { safeGetSe
     return { collection, sessionUserId, collectionId }
   }
   else {
-    console.log('no edit permission')
     throw redirect(303, `/collection/${collectionId}`)
   }
 }
@@ -66,6 +65,7 @@ export const actions: Actions = {
       updated_at: timestampISO,
       updated_by: updatedBy
     }
+
 
     const update = await updateCollection( sessionUserId, collectionInfo, activeAndDeletedCollectionItems )
 

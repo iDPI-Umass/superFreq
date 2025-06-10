@@ -16,11 +16,11 @@
 
 <SEO title="Welcome to Freq!"></SEO>
 
-<svelte:head>
+<!-- <svelte:head>
 	<title>
 		Welcome to Freq
 	</title>
-</svelte:head>
+</svelte:head> -->
 
 
 <div class="panel-medium">

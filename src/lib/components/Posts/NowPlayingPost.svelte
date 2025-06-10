@@ -128,7 +128,7 @@
             {:else}
                 <EditPostBody
                     postData={post}
-                    editState={editState}
+                    bind:editState={editState}
                 ></EditPostBody>
             {/if}
             <!-- {#if formData == true }
