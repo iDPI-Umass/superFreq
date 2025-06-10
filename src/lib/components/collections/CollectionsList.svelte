@@ -23,7 +23,7 @@
 
 	let {
 		sessionUserId,
-		mode,
+		mode = 'wide',
 		remaining,
 		collections = [],
 		showAnalytics = false
@@ -34,14 +34,23 @@
 	let start = $state(0);
 
 	let visibleCollections: App.RowData[] = $derived(collections.slice(start, start + visible));
+
+	const cssMode = {
+		'narrow': 'collection-identity-full',
+		'wide': 'collection-identity-half'
+	} as App.StringLookupObject
+
+	const modeWidth = $derived(cssMode[mode])
 </script>
 
 {#snippet listItem(collection: App.RowData)}
-	<li class="firehose-item-container">
-		<CollectionImage src={collection.avatar_url} />
-		<a href="/collection/{collection.collection_id}">
-			<h3>{collection.title}</h3>
-		</a>
+	<li>
+		<div class={modeWidth}>
+			<CollectionImage src={collection.avatar_url} />
+			<a class="collection-title-link" href="/collection/{collection.collection_id}">
+				{collection.title}
+			</a>
+		</div>
 		<div class="collection-info-attribution">
 			<p class="collection-info-text">
 				Collection by 
@@ -150,6 +159,11 @@
 </div>
 
 <style>
+	ul {
+		padding: 0;
+		margin: 0;
+		list-style: none;
+	}
 	.firehose-wrapper {
 		height: max-content;
 		padding: 2px;
@@ -157,16 +171,32 @@
 		flex-direction: column;
 	}
 
-	.firehose-item-container {
+	li {
+		display: flex;
+		flex-flow: row wrap;
+		align-items: center;
+		gap: var(--freq-inline-gap-double);
+		border-bottom: var(--freq-border-panel);
+		padding: var(--freq-spacing-small) 0;
+	}
+	.collection-identity-full {
 		display: flex;
 		flex-direction: row;
+		gap: var(--freq-inline-gap-double);
 		align-items: center;
-		height: 80px;
-		max-height: 80px;
-		padding: 4px;
-		border-bottom: var(--freq-border-panel);
+		width: inherit;
 	}
-
+	.collection-identity-half {
+		display: flex;
+		flex-direction: row;
+		gap: var(--freq-inline-gap-double);
+		align-items: center;
+		width: 50%;
+	}
+	.collection-title-link {
+		font-family: var(--freq-alt-font-family);
+		font-size: var(--freq-font-size-medium);
+	}
 	.firehose-item-info {
 		display: flex;
 		width: 50%;

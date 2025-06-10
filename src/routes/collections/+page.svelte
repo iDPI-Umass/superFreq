@@ -4,7 +4,7 @@
 	import type { PageData, ActionData } from './$types';
 	import { enhance } from '$app/forms';
 	import CollectionsSpotlight from 'src/lib/components/collections/CollectionsSpotlight.svelte';
-	import CollectionsFirehose from 'src/lib/components/collections/CollectionsList.svelte';
+	import CollectionsList from 'src/lib/components/collections/CollectionsList.svelte';
 	import Feed from 'src/lib/components/Feed.svelte';
 
 	let { form, data } = $props();
@@ -56,7 +56,10 @@
 					recently updated collections
 				{/snippet}
 			</PanelHeader>
-			<CollectionsFirehose collections={form?.collections ?? collections} />
+			<CollectionsList 
+				collections={form?.collections ?? collections}
+				mode="wide"
+			></CollectionsList>
 		</div>
 	</div>
 
@@ -72,10 +75,11 @@
 					friends' collections
 				{/snippet}
 			</PanelHeader>
-			<CollectionsFirehose
+			<CollectionsList
 				collections={form?.collections ?? collections}
 				showAnalytics={false}
-			></CollectionsFirehose>
+				mode="narrow"
+			></CollectionsList>
 		</div>
 	</div>
 </div>
