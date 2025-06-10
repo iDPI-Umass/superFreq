@@ -14,7 +14,7 @@
 
 <svelte:head>
     <title>
-        Moderation Dashboard
+        Bug Reports
     </title>
 </svelte:head>
 
