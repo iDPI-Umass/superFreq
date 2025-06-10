@@ -4,9 +4,8 @@
 	import type { PageData, ActionData } from './$types';
 	import { enhance } from '$app/forms';
 	import CollectionsSpotlight from 'src/lib/components/collections/CollectionsSpotlight.svelte';
-	import CollectionsFirehose from 'src/lib/components/collections/CollectionsFirehose.svelte';
+	import CollectionsFirehose from 'src/lib/components/collections/CollectionsList.svelte';
 	import Feed from 'src/lib/components/Feed.svelte';
-	import CollectionsFeed from 'src/lib/components/collections/CollectionsFeed.svelte';
 
 	let { form, data } = $props();
 
@@ -37,57 +36,50 @@
 	</div>
 </div>
 
-<div class="content landing-page-body">
-	<div class="collections-spotlight-container">
-		<PanelHeader>
-			{#snippet headerText()}
-				Collections you might be interested in
-			{/snippet}
-		</PanelHeader>
-		<div class="collections-spotlight-content">
-			<CollectionsSpotlight collections={form?.collections ?? collections} />
+
+<div class="collections-spotlight-container">
+	<PanelHeader>
+		{#snippet headerText()}
+			spotlight
+		{/snippet}
+	</PanelHeader>
+	<div class="collections-spotlight-content">
+		<CollectionsSpotlight collections={form?.collections ?? collections} />
+	</div>
+</div>
+
+<div class="two-column">
+	<div class="column-two-thirds">
+		<div class="panel">
+			<PanelHeader>
+				{#snippet headerText()}
+					recently updated collections
+				{/snippet}
+			</PanelHeader>
+			<CollectionsFirehose collections={form?.collections ?? collections} />
 		</div>
 	</div>
 
-	<div class="collections-activity">
-		<div class="activity-panel popular-collections">
+	<div class="column-one-third">
+		<Feed
+			sessionUserId={sessionUserId}
+			feedItems={feedItems}
+			mode="feed"
+		></Feed>
+		<div class="panel" id="collections-friends">
 			<PanelHeader>
 				{#snippet headerText()}
-					Popular Collections
+					friends' collections
 				{/snippet}
 			</PanelHeader>
-			<div class="activity-content-window">
-				<CollectionsFirehose collections={form?.collections ?? collections} />
-			</div>
-		</div>
-
-		<div class="collections-feed-friends">
-			<div class="activity-panel" id="collections-feed">
-				<PanelHeader>
-					{#snippet headerText()}
-						Feed
-					{/snippet}
-				</PanelHeader>
-				<div class="activity-content-window">
-					<CollectionsFeed {sessionUserId} {feedItems} mode="feed" remaining={feedRemaining} />
-				</div>
-			</div>
-			<div class="activity-panel" id="collections-friends">
-				<PanelHeader>
-					{#snippet headerText()}
-						Friends Collections
-					{/snippet}
-				</PanelHeader>
-				<div class="activity-content-window">
-					<CollectionsFirehose
-						collections={form?.collections ?? collections}
-						showAnalytics={false}
-					/>
-				</div>
-			</div>
+			<CollectionsFirehose
+				collections={form?.collections ?? collections}
+				showAnalytics={false}
+			></CollectionsFirehose>
 		</div>
 	</div>
 </div>
+
 
 <style>
 	.landing-page-body {

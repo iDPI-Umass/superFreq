@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { displayDate } from '$lib/resources/parseData'
 	import wave from '$lib/assets/images/logo/freq-wave.svg';
 	import CollectionImage from './CollectionImage.svelte';
 	import Heart from '@lucide/svelte/icons/heart';
@@ -25,7 +26,7 @@
 		mode,
 		remaining,
 		collections = [],
-		showAnalytics = true
+		showAnalytics = false
 	}: ComponentProps = $props();
 
 	let visible = $state(10);
@@ -35,18 +36,22 @@
 	let visibleCollections: App.RowData[] = $derived(collections.slice(start, start + visible));
 </script>
 
-{#snippet firehoseItem(collection: App.RowData)}
-	<div class="firehose-item-container">
-		<div class="firehose-item-info">
-			<CollectionImage src={collection.avatar_url} />
-			<div class="firehose-item-name">
-				<div class="firehose-title-holder">
-					<h3>{collection.title}</h3>
-				</div>
-				<span>By {collection.display_name}</span>
-			</div>
+{#snippet listItem(collection: App.RowData)}
+	<li class="firehose-item-container">
+		<CollectionImage src={collection.avatar_url} />
+		<a href="/collection/{collection.collection_id}">
+			<h3>{collection.title}</h3>
+		</a>
+		<div class="collection-info-attribution">
+			<p class="collection-info-text">
+				Collection by 
+				<a href="/user/{collection.username}">
+					{collection.display_name}
+				</a>
+			</p>
+			<p class="collection-date-text">Last updated on {displayDate(collection.updated_at)}</p>
 		</div>
-		<div class="firehose-item-actions">
+		<!-- <div class="firehose-item-actions">
 			<div class="firehose-item-button">
 				<button class="double-border-top">
 					<div class="inner-border">Follow</div>
@@ -129,14 +134,16 @@
 					</div>
 				</div>
 			{/if}
-		</div>
-	</div>
+		</div> -->
+	</li>
 {/snippet}
 
 <div class="firehose-wrapper">
-	{#each visibleCollections as collection}
-		{@render firehoseItem(collection)}
-	{/each}
+	<ul>
+		{#each visibleCollections as collection}
+			{@render listItem(collection)}
+		{/each}
+	</ul>
 	<div class="load-button-container">
 		<button class="standard"> load more </button>
 	</div>
