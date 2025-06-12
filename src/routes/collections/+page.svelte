@@ -6,7 +6,6 @@
 	import CollectionsSpotlight from 'src/lib/components/collections/CollectionsSpotlight.svelte';
 	import CollectionsList from 'src/lib/components/collections/CollectionsList.svelte';
 	import Feed from 'src/lib/components/Feed.svelte';
-	import CollectionsFeed from 'src/lib/components/collections/CollectionsFeed.svelte';
 
 	let { form, data } = $props();
 
