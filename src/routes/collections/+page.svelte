@@ -55,6 +55,7 @@
 			collections={form?.collections ?? collections}
 			mode="wide"
 		></CollectionsList>
+		<p>random change</p>
 	</div>
 
 	<div class="column-one-third">
