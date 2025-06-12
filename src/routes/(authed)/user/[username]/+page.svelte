@@ -4,7 +4,8 @@
     import { onMount } from 'svelte'
 
     import SEO from '$lib/components/layout/SEO.svelte'
-    import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte';
+    import NowPlayingTag from '$lib/components/Posts/NowPlayingTag.svelte'
+    import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte'
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import GridList from "$lib/components/GridList.svelte"
 	import NewNowPlayingPost from 'src/lib/components/Posts/NewNowPlayingPost.svelte'
@@ -89,6 +90,12 @@
                         item={avatarItem}
                         altText={`${viewProfile.display_name}'s avatar: ${viewProfile.avatar_release_group_name} by ${viewProfile.avatar_artist_name}`}
                     ></CoverArt>
+                    <br />
+                    <NowPlayingTag
+                        artistName={viewProfile.avatar_artist_name}
+                        itemTitle={viewProfile.avatar_release_group_name}
+                        itemType="avatar"
+                    ></NowPlayingTag>
                 </div>
                 {#if isSessionUserProfile}
                     <button 
