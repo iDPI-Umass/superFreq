@@ -54,8 +54,10 @@
 </script>
 
 {#snippet spotlightItem(collection: App.RowData)}
-	<div class="activity-panel spotlight-item">
-		<CollectionImageSpotlight imgUrl={collection.avatar_url} />
+	<div class="spotlight-item">
+		<CollectionImageSpotlight 
+			imgUrl={collection.avatar_url}
+		></CollectionImageSpotlight>
 		<div class="spotlight-collection-info">
 			<div class="spotlight-collection-info-text">
 				<h3>{collection.title}</h3>
@@ -119,7 +121,6 @@
 	}
 
 	.spotlight-item {
-		height: 100%;
 		display: flex;
 		flex-direction: column;
 	}
@@ -130,7 +131,6 @@
 		justify-content: space-between;
 		text-align: center;
 		align-items: center;
-		height: 50%;
 		padding: 0.5rem;
 	}
 
