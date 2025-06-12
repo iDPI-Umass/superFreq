@@ -93,4 +93,23 @@ Currently configured to server Last.fm images on the client side by default on a
     img {
         width: inherit;
     }
+    .spotlight-image-trio-first {
+		object-fit: cover;
+		position: absolute;
+        z-index: 3;
+	}
+	.spotlight-image-trio-second {
+		object-fit: cover;
+		position: absolute;
+        left: -33%;
+		filter: brightness(50%);
+        z-index: 2;
+	}
+	.spotlight-image-trio-third {
+		object-fit: cover;
+		position: absolute;
+        left: -66%;
+		filter: brightness(25%);
+        z-index: 1;
+	}
 </style>

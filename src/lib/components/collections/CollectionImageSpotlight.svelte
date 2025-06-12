@@ -1,104 +1,41 @@
 <script lang="ts">
-	import wave from '$lib/assets/images/logo/freq-wave.svg';
+	import CoverArt from '$lib/components/CoverArt.svelte'
 
-	interface Props {
-		src: string;
+	interface ComponentProps {
+		imgUrl?: string
+		imgUrls?: string[]
 	}
 
-	let { src }: Props = $props();
+	let { imgUrl, imgUrls }: ComponentProps = $props()
 
-	let loaded = $state(false);
-	let failed = $state(false);
-	let loading = $state(false);
-	let currentLoad: HTMLImageElement | null = null;
-
-
-	$effect(() => {
-		loaded = false;
-		failed = false;
-		loading = false;
-
-		if (!src || typeof src !== 'string') {
-			failed = true;
-			return;
-		}
-
-		if (currentLoad) {
-			currentLoad.onload = null;
-			currentLoad.onerror = null;
-		}
-
-		// initialize a new image
-		const img = new Image();
-		currentLoad = img;
-		loading = true;
-
-		img.src = src;
-
-		// set loading
-		img.onload = () => {
-			if (img === currentLoad) {
-				loading = false;
-				loaded = true;
-			}
-		};
-
-		// set error
-		img.onerror = () => {
-			if (img === currentLoad) {
-				loading = false;
-				failed = true;
-			}
-		};
-
-		// clear
-		return () => {
-			currentLoad = null;
-		};
-	});
+	let firstImage = $derived(imgUrls ? imgUrls[0] : null)
+	let secondImage = $derived(imgUrls ? imgUrls[1] : null)
+	let thirdImage = $derived(imgUrls ? imgUrls[2] : null)
 </script>
 
-<div class="spotlight-image-cover">
-	{#if loaded}
-		<img {src} alt="Collection" class="spotlight-image" />
-		<img {src} alt="Collection" class="spotlight-image-2" />
-		<img {src} alt="Collection" class="spotlight-image-3" />
-	{:else if failed}
-		<img src={wave} alt="Not Found" class="spotlight-image" />
-		<img src={wave} alt="Not Found" class="spotlight-image-2" />
-		<img src={wave} alt="Not Found" class="spotlight-image-3" />
-	{:else}
-		<img src={wave} alt="Loading" class="spotlight-image" />
-		<img src={wave} alt="Loading" class="spotlight-image-2" />
-		<img src={wave} alt="Loading" class="spotlight-image-3" />
-	{/if}
+<div class="spotlight-image-trio">
+		<CoverArt
+			imgUrl={imgUrl ?? firstImage ?? null}
+			altText="first album cover"
+			imgClass="spotlight-image-trio-first"
+		></CoverArt>
+		<CoverArt
+			imgUrl={imgUrl ?? secondImage ?? null}
+			altText="second album cover"
+			imgClass="spotlight-image-trio-second"
+		></CoverArt>
+		<CoverArt
+			imgUrl={imgUrl ?? thirdImage ?? null}
+			altText="third album cover"
+			imgClass="spotlight-image-trio-third"
+		></CoverArt>
 </div>
 
 <style>
-	.spotlight-image-3 {
-		max-width: 6rem;
-		object-fit: cover;
-		position: absolute;
-		bottom: 0;
-	}
-
-	.spotlight-image-2 {
-		max-width: 5rem;
-		object-fit: cover;
-		position: absolute;
-		bottom: 2rem;
-	}
-
-	.spotlight-image {
-		max-width: 4rem;
-		object-fit: cover;
-		position: absolute;
-		bottom: 4rem;
-	}
-
-    .spotlight-image-cover {
+    .spotlight-image-trio {
 		display: flex;
-		height: 50%;
+		flex-direction: row;
+		width: 200px;
 		align-items: end;
 		justify-content: center;
 		background-color: var(--freq-color-info-box-background);

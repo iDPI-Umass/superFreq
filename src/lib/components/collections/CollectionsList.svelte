@@ -51,7 +51,7 @@
 <div class="panel">
 	<PanelHeader>
 		{#snippet headerText()}
-			{@html headerText}
+			text
 		{/snippet}
 	</PanelHeader>
 	<ul>
