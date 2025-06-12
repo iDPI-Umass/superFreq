@@ -48,17 +48,16 @@
 	</div>
 </div>
 
-	<div class="collections-activity">
-		<div class="activity-panel popular-collections">
-			<PanelHeader>
-				{#snippet headerText()}
-					Popular Collections
-				{/snippet}
-			</PanelHeader>
-			<div class="activity-content-window">
-				<CollectionsFirehose collections={form?.collections ?? collections} />
-			</div>
-		</div>
+
+<div class="two-column">
+	<div class="column-two-thirds">
+		<CollectionsList 
+			headerText="recently updated collections"
+			collections={form?.collections ?? collections}
+			mode="wide"
+		></CollectionsList>
+		<p>random change</p>
+	</div>
 
 	<div class="column-one-third">
 		<Feed
