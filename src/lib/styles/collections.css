@@ -360,10 +360,7 @@ span.search-tooltip {
 } */
 
 /* Tom's additons */
-.activity-panel {
-	border: var(--freq-border-panel);
-	margin: 0;
-}
+
 
 .collection-avatar {
 	max-width: 2rem;

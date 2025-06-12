@@ -364,66 +364,6 @@ export const selectPost = async function ( sessionUserId: string, username: stri
     return post
 }
 
-/* Select all replies to a post from users that don't block sesssion user */
-
-export const selectPostReplies = async function ( sessionUserId: string, postId: string ) {
-
-    const getReplies = await db
-    .selectFrom('posts as comments')
-    .innerJoin('profiles as commenter', 'commenter.id', 'comments.user_id')
-    .leftJoin('release_groups', 'release_groups.release_group_mbid', 'commenter.avatar_mbid')
-    .innerJoin('posts as parent_post', 'parent_post.id', 'parent_post_id')
-    .innerJoin((eb) => eb
-        .selectFrom('profiles as original_poster')
-        .select(['id', 'username'])
-        .where('id', '=', 'parent_post.user_id')
-        .as('original_poster'),
-        (join) => join
-        .onRef('parent_post.user_id', '=', 'original_poster.id')
-    )
-    .innerJoin((eb) =>  eb
-        .selectFrom('post_reactions')
-        .select(['post_id', (eb) => eb.fn.count<number>('id').as('reaction_count')])
-        .whereRef('post_id', '=', 'comments.id')
-        .as('reactions'),
-        (join) => join
-        .onRef('reactions.post_id', '=', 'comments.id')
-    )
-    .select([
-        'comments.id as id', 
-        'comments.text as text', 
-        'comments.user_id as user_id', 
-        'comments.status as status', 
-        'comments.created_at as created_at', 
-        'comments.parent_post_id as parent_post_id', 
-        'commenter.username as username', 
-        'commenter.display_name as display_name', 
-        'release_groups.img_url as avatar_url',
-        'release_groups.last_fm_img_url as avatar_last_fm_img_url',
-        'parent_post.created_at as parent_post_date', 
-        'parent_post.user_id as parent_post_user_id', 
-        'original_poster.username as parent_post_username', 
-        'reactions.reaction_count as reaction_count'
-    ])
-    .where(({eb, and, not, exists, selectFrom}) => and([
-        eb( 'parent_post_id', '=', postId ),
-        eb( 'status', '!=', 'deleted' ),
-        not(
-            exists(
-                selectFrom('user_moderation_actions')
-                .select('id')
-                .whereRef('user_moderation_actions.user_id', '=', 'parent_post.user_id')
-                .where('user_moderation_actions.target_user_id', '=', sessionUserId)
-            )
-        )
-    ]))
-    .orderBy('comments.id asc')
-    .execute()
-
-    const replies = await getReplies
-    return replies
-}
-
 /* Select post and replies session user has permission to see */
 
 export const selectPostAndReplies = async function( sessionUserId: string, username: string, timestampString: string ) {
@@ -517,7 +457,11 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                     'parent_post_id',
                     'parent_post_created_at',
                     'parent_post_username',
-                    'reply_to'
+                    'reply_to',
+                    'reply_to_user_id',
+                    'reply_to_username',
+                    'reply_to_display_name',
+                    'reply_to_created_at'
                 ])
                 .where('parent_post_id', '=', postId)
                 .where('user_id', 'not in', blockingUsers)
@@ -550,7 +494,11 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
                     'parent_post_id',
                     'parent_post_created_at',
                     'parent_post_username',
-                    'reply_to'
+                    'reply_to',
+                    'reply_to_user_id',
+                    'reply_to_username',
+                    'reply_to_display_name',
+                    'reply_to_created_at'
                 ])
                 .where('parent_post_id', '=', postId)
                 .orderBy('created_at asc')
@@ -567,165 +515,6 @@ export const selectPostAndReplies = async function( sessionUserId: string, usern
     })
     const { permission, post, replies } = await select
     return { permission, post, replies }
-}
-
-/* OLD Select post and replies session user has permission to see */
-
-export const oldSelectPostsAndReplies = async function( sessionUserId: string, username: string, timestampString: string, postType: string ) {
-
-    const select = await db.transaction().execute(async(trx) => {
-        try {
-            const selectPostUserId = await trx
-            .selectFrom('profiles')
-            .select('id')
-            .where('username', '=', username)
-            .executeTakeFirst()
-
-            const postUserId = selectPostUserId?.id as string
-
-            await trx
-            .selectFrom('user_moderation_actions')
-            .select(['id'])
-            .where(({eb}) => eb.and({
-                user_id: postUserId,
-                target_user_id: sessionUserId,
-                type: 'block',
-                active: true
-            }))
-            .executeTakeFirstOrThrow()
-
-
-            return { post: null, replies: null, permission: false }
-        }
-        catch ( error ) {
-            const post = await trx
-            .selectFrom('posts')
-            .innerJoin('profiles as profile', 'profile.id', 'posts.user_id')
-            .leftJoin('release_groups as avatar_release_group', 'avatar_release_group.release_group_mbid', 'profile.avatar_mbid')
-            .leftJoin('artists as avatar_artist', 'avatar_artist.artist_mbid', 'avatar_release_group.artist_mbid')
-            .leftJoin('post_reactions as reaction',
-                (join) => join
-                .onRef('reaction.post_id', '=', 'posts.id')
-                .on('reaction.active', '=', true)
-                .on('reaction.user_id', '=', sessionUserId)
-            )
-            .leftJoin('post_reactions as all_reactions',
-                (join) => join
-                .onRef('all_reactions.post_id', '=', 'posts.id')
-                .on('all_reactions.active', '=', true)
-            )
-            .select([
-                'posts.id as id', 
-                'posts.text as text', 
-                'posts.user_id as user_id', 
-                'posts.type as type', 
-                'posts.artist_mbid as artist_mbid',
-                'posts.release_group_mbid as release_group_mbid',
-                'posts.recording_mbid as recording_mbid',
-                'posts.artist_name as artist_name', 
-                'posts.release_group_name as release_group_name', 
-                'posts.recording_name as recording_name', 
-                'posts.episode_title as episode_title', 
-                'posts.show_title as show_title', 
-                'posts.status as status', 
-                'posts.created_at as created_at', 
-                'posts.updated_at as updated_at', 
-                'posts.listen_url as listen_url', 
-                'posts.embed_id as embed_id',
-                'posts.embed_source as embed_source',
-                'posts.embed_account as embed_account',
-                'posts.item_type as item_type',
-                'posts.user_added_metadata_id as user_added_metadata_id',
-                'profile.username as username', 
-                'profile.display_name as display_name', 
-                'avatar_release_group.img_url as avatar_url',
-                'avatar_release_group.last_fm_img_url as avatar_last_fm_img_url',
-                'avatar_release_group.release_group_name as avatar_release_group_name',
-                'avatar_artist.artist_name as avatar_artist_name',
-                'reaction.active as reaction_active',
-                (eb) => eb.fn.count('all_reactions.id').as('reaction_count')
-            ])
-            .where(({ eb, and }) => and([
-                eb('posts.user_id', '=', eb
-                    .selectFrom('profiles')
-                    .select('id')
-                    .where('username', '=', username)
-                    .limit(1),
-                ),
-                eb('posts.type', '=', postType),
-                eb('posts.created_at', '=', parseISO(timestampString))
-            ]))
-            .groupBy([
-                'posts.id',
-                'profile.username',
-                'profile.display_name',
-                'profile.avatar_url',
-                'avatar_release_group.img_url',
-                'avatar_release_group.last_fm_img_url',
-                'avatar_artist.artist_name',
-                'avatar_release_group.release_group_name',
-                'avatar_release_group.img_url',
-                'reaction.active'
-            ])
-            .executeTakeFirst()
-
-            const postId = post?.id as string
-
-            const replies = await trx
-            .selectFrom('posts as comments')
-            .innerJoin('profiles as commenter', 'commenter.id', 'comments.user_id')
-            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'commenter.avatar_mbid')
-            .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
-            .innerJoin('posts as original_post', 'comments.parent_post_id', 'original_post.id')
-            .innerJoin('profiles as original_poster', 'original_post.user_id', 'original_poster.id')
-            // .innerJoin(
-            //     (eb) => eb
-            //         .selectFrom('post_reactions')
-            //         .select(['post_id', (eb) => eb.fn.count<number>('id').as('reaction_count')])
-            //         .groupBy('post_reactions.post_id')
-            //         .as('reactions'),
-            //     (join) => join
-            //         .onRef('reactions.post_id', '=', 'comments.id')
-            // )
-            .select([
-                'comments.id as id', 
-                'comments.text as text', 
-                'comments.user_id as user_id', 
-                'comments.status as status', 
-                'comments.created_at as created_at', 
-                'comments.parent_post_id as parent_post_id', 
-                'commenter.username as username', 
-                'commenter.display_name as display_name', 
-                'release_groups.img_url as avatar_url', 
-                'release_groups.last_fm_img_url as avatar_last_fm_url', 
-                'release_groups.release_group_name as avatar_release_group_name',
-                'artists.artist_name as avatar_artist_name',
-                'original_post.created_at as original_post_date', 
-                'original_post.user_id as original_poster_user_id', 
-                'original_poster.username as original_poster_username', 
-                // 'reactions.reaction_count as reaction_count'
-            ])
-            .where(({eb, and, not, exists, selectFrom}) => and([
-                eb( 'comments.parent_post_id', '=', postId ),
-                eb( 'comments.status', '!=', 'deleted' ),
-                not(
-                    exists(
-                        selectFrom('user_moderation_actions')
-                        .select('id')
-                        .whereRef('user_moderation_actions.user_id', '=', 'comments.user_id')
-                        .where('user_moderation_actions.target_user_id', '=', sessionUserId)
-                    )
-                )
-            ]))
-            .orderBy('id', 'asc')
-            .execute()
-
-            return { post, replies, permission: true}
-        }
-    })
-
-    const post = await select
-    return post
 }
 
 /* Select random posts without user data */
@@ -871,129 +660,6 @@ export const selectUserNowPlayingPosts = async function ( sessionUserId: string,
     return posts
 }
 
-/* Select a user's posts and comments */
-
-export const selectUserPostsAndComments = async function ( sessionUserId: string, username: string ) {
-    const selectPosts = await db.transaction().execute(async(trx) => {
-
-        const userProfile = await trx
-        .selectFrom('profiles')
-        .select('id')
-        .where('username', '=', username)
-        .executeTakeFirst()
-
-        const profileUserId = userProfile?.id as string
-
-        try {
-            const blockInfo = await trx
-            .selectFrom('user_moderation_actions')
-            .select(['id', 'type', 'active'])
-            .where(({eb, and}) => and([
-                eb('user_id', '=', profileUserId),
-                eb('target_user_id', '=', sessionUserId),
-                eb('type', '=', 'block'),
-                eb('active', '=', true)
-            ]))
-            .executeTakeFirstOrThrow()
-
-            if ( blockInfo ) {
-                return { permission: false, posts: null, comments: null }
-            }
-        }
-        catch ( error ) {
-            const selectPosts = await trx
-            .selectFrom('posts')
-            .innerJoin('profiles', 'profiles.id', 'posts.user_id')
-            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profiles.avatar_mbid')
-            .leftJoin('post_reactions as reaction',
-                (join) => join
-                .onRef('reaction.post_id', '=', 'posts.id')
-                .on('reaction.active', '=', true)
-                .on('reaction.user_id', '=', sessionUserId)
-            )
-            .select([
-                'posts.id as id',
-                'posts.text as text',
-                'posts.created_at as created_at',
-                'posts.updated_at as updated_at',
-                'posts.type as type',
-                'posts.status as status',
-                'posts.artist_mbid as artist_mbid',
-                'posts.release_group_mbid as release_group_mbid',
-                'posts.recording_mbid as recording_mbid',
-                'posts.artist_name as artist_name',
-                'posts.release_group_name as release_group_name',
-                'posts.recording_name as recording_name',
-                'posts.episode_title as episode_title',
-                'posts.show_title as show_title',
-                'posts.listen_url as listen_url',
-                'posts.embed_id as embed_id',
-                'posts.embed_source as embed_source',
-                'posts.embed_account as embed_account',
-                'posts.item_type as item_type',
-                'posts.user_added_metadata_id as user_added_metadata_id',
-                'profiles.id as user_id',
-                'profiles.username as username',
-                'profiles.display_name as display_name',
-                'release_groups.img_url as avatar_url',
-                'release_groups.last_fm_img_url as avatar_last_fm_img_url',
-                'reaction.active as reaction_active'
-            ])
-            .where('profiles.id', '=', profileUserId)
-            .where('posts.parent_post_id', 'is', null)
-            .where('posts.status', '!=', 'deleted')
-            .orderBy('posts.created_at desc')
-            .execute()
-
-            const selectComments = await trx
-            .selectFrom('posts')
-            .innerJoin('profiles', 'profiles.id', 'posts.user_id')
-            .innerJoin('posts as parent_post', 'parent_post.id', 'posts.parent_post_id')
-            .innerJoin('profiles as parent_poster', 'parent_poster.id', 'parent_post.user_id')
-            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profiles.avatar_mbid')
-            .select([
-                'posts.id as id',
-                'posts.text as text',
-                'posts.created_at as created_at',
-                'posts.updated_at as updated_at',
-                'posts.type as type',
-                'posts.status as status',
-                'posts.artist_name as artist_name',
-                'posts.release_group_name as release_group_name',
-                'posts.recording_name as recording_name',
-                'posts.episode_title as episode_title',
-                'posts.show_title as show_title',
-                'posts.listen_url as listen_url',
-                'posts.embed_id as embed_id',
-                'posts.embed_source as embed_source',
-                'posts.embed_account as embed_account',
-                'profiles.id as user_id',
-                'profiles.username as username',
-                'profiles.display_name as display_name',
-                'release_groups.img_url as avatar_url',
-                'release_groups.last_fm_img_url as avatar_last_fm_img_url',
-                'parent_post.created_at as original_post_date',
-                'parent_poster.username as original_poster_username'
-            ])
-            .where('profiles.id', '=', profileUserId)
-            .where('posts.parent_post_id', 'is not', null)
-            .where('posts.status', '!=', 'deleted')
-            .orderBy('posts.created_at desc')
-            .execute()
-
-            const posts = selectPosts
-            const comments = selectComments
-            return { permission: true, posts, comments }
-        }
-    })
-    const { permission, posts, comments } = await selectPosts
-    let postsAndComments = [] as object[]
-    postsAndComments = postsAndComments.concat( posts, comments )
-    postsAndComments.sort(( a: App.RowData, b: App.RowData ) => b.created_at - a.created_at )
-
-    return {permission, postsAndComments}
-}
-
 /* Select a user's posts sample */
 
 export const selectUserPostsSample = async function ( sessionUserId: string, username: string, batchSize: number, batchIterator: number ) {
@@ -1039,99 +705,6 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
 
     const { permission, feedData, totalRowCount } = selectPosts
     return { permission, feedData, totalRowCount }
-}
-
-/* OLD Select a user's posts sample */
-
-export const oldSelectUserPostsSample = async function ( sessionUserId: string, username: string, batchSize: number ) {
-    const selectPosts = await db.transaction().execute(async(trx) => {
-
-        const userProfile = await trx
-        .selectFrom('profiles')
-        .select('id')
-        .where('username', '=', username)
-        .executeTakeFirst()
-
-        const profileUserId = userProfile?.id as string
-
-        try {
-            const blockInfo = await trx
-            .selectFrom('user_moderation_actions')
-            .select(['id', 'type', 'active'])
-            .where(({eb, and}) => and([
-                eb('user_id', '=', profileUserId),
-                eb('target_user_id', '=', sessionUserId),
-                eb('type', '=', 'block'),
-                eb('active', '=', true)
-            ]))
-            .executeTakeFirstOrThrow()
-
-            if ( blockInfo ) {
-                return { posts: null }
-            }
-        }
-        catch ( error ) {
-            const selectPosts = await trx
-            .selectFrom('posts')
-            .leftJoin('post_reactions as reaction', 'reaction.post_id', 'posts.id')
-            .leftJoin('post_reactions as all_reactions',
-                (join) => join
-                .onRef('all_reactions.post_id', '=', 'posts.id')
-                .on('all_reactions.active', '=', true)
-            )
-            .innerJoin('profiles', 'profiles.id', 'posts.user_id')
-            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profiles.avatar_mbid')
-            .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
-            .select([
-                'posts.id as now_playing_post_id',
-                'posts.text as text',
-                'posts.artist_mbid as artist_mbid',
-                'posts.release_group_mbid as release_group_mbid',
-                'posts.recording_mbid as recording_mbid',
-                'posts.artist_name as artist_name',
-                'posts.release_group_name as release_group_name',
-                'posts.recording_name as recording_name',
-                'posts.created_at as created_at',
-                'posts.updated_at as updated_at',
-                'posts.episode_title as episode_title',
-                'posts.show_title as show_title',
-                'posts.embed_id as embed_id',
-                'posts.embed_source as embed_source',
-                'posts.parent_post_id as parent_post_id',
-                'posts.item_type as item_type',
-                'posts.user_added_metadata_id as user_added_metadata_id',
-                'profiles.id as user_id',
-                'profiles.username as username',
-                'profiles.display_name as display_name',
-                'release_groups.img_url as avatar_url',
-                'release_groups.last_fm_img_url as avatar_last_fm_img_url',
-                'release_groups.release_group_name as avatar_release_group_name',
-                'artists.artist_name as avatar_artist_name',
-                'reaction.active as reaction_active',
-                (eb) => eb.fn.count('all_reactions.id').as('reaction_count')
-            ])
-            .where('posts.user_id', '=', profileUserId)
-            .where('posts.parent_post_id', 'is', null)
-            .where('posts.status', '!=', 'deleted')
-            .groupBy([
-                'profiles.id',
-                'posts.id',
-                'release_groups.release_group_name',
-                'release_groups.img_url',
-                'release_groups.last_fm_img_url',
-                'artists.artist_name',
-                'reaction.active'
-            ])
-            .orderBy('posts.created_at desc')
-            .limit(batchSize)
-            .execute()
-
-            const posts = selectPosts
-            return { posts }
-        }
-    })
-    const posts = await selectPosts
-    return posts
 }
 
 /* Inserts a reaction to a post, or updates reaction row if sesssion user has already submitted that reaction */

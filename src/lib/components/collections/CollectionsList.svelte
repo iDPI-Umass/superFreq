@@ -1,14 +1,17 @@
 <script lang="ts">
+	import { displayDate } from '$lib/resources/parseData'
 	import wave from '$lib/assets/images/logo/freq-wave.svg';
 	import CollectionImage from './CollectionImage.svelte';
-	import Heart from 'virtual:icons/heroicons-solid/heart';
-	import Music from 'virtual:icons/mynaui/music';
-	import Eye from 'virtual:icons/teenyicons/eye-outline';
+	import PanelHeader from '$lib/components/PanelHeader.svelte';
+	import Heart from '@lucide/svelte/icons/heart';
+	import MusicNote from '@lucide/svelte/icons/music';
+	import Eye from '@lucide/svelte/icons/eye';
 	import { Tooltip } from "bits-ui";
 
 
 	interface ComponentProps {
 		sessionUserId?: string;
+		headerText: string;
 		mode?: string;
 		remaining?: number;
 		collections: App.RowData[];
@@ -22,31 +25,39 @@
 
 	let {
 		sessionUserId,
-		mode,
+		headerText,
+		mode = 'wide',
 		remaining,
 		collections = [],
-		showAnalytics = true
+		showAnalytics = false
 	}: ComponentProps = $props();
 
-	let visible = $state(10);
+	const cssMode = {
+		'narrow': 'collection-identity-full',
+		'wide': 'collection-identity-half'
+	} as App.StringLookupObject
 
-	let start = $state(0);
-
-	let visibleCollections: App.RowData[] = $derived(collections.slice(start, start + visible));
+	const modeWidth = $derived(cssMode[mode])
 </script>
 
-{#snippet firehoseItem(collection: App.RowData)}
-	<div class="firehose-item-container">
-		<div class="firehose-item-info">
+{#snippet listItem(collection: App.RowData)}
+	<li>
+		<div class={modeWidth}>
 			<CollectionImage src={collection.avatar_url} />
-			<div class="firehose-item-name">
-				<div class="firehose-title-holder">
-					<h3>{collection.title}</h3>
-				</div>
-				<span>By {collection.display_name}</span>
-			</div>
+			<a class="collection-title-link" href="/collection/{collection.collection_id}">
+				{collection.title}
+			</a>
 		</div>
-		<div class="firehose-item-actions">
+		<div class="collection-info-attribution">
+			<p class="collection-info-text">
+				Collection by 
+				<a href="/user/{collection.username}">
+					{collection.display_name}
+				</a>
+			</p>
+			<p class="collection-date-text">Last updated on {displayDate(collection.updated_at)}</p>
+		</div>
+		<!-- <div class="firehose-item-actions">
 			<div class="firehose-item-button">
 				<button class="double-border-top">
 					<div class="inner-border">Follow</div>
@@ -63,15 +74,13 @@
 								<Tooltip.Provider>
 									<Tooltip.Root>
 										<Tooltip.Trigger style="cursor: pointer; display: flex; justify-content: center; align-items: center; width: 100%; background: transparent;">
-											<div class="icon">
-												<Music />
-											</div>
+											 <MusicNote size="16" color="var(--freq-color-text-medium-dark)"></MusicNote>
 										</Tooltip.Trigger>
 										<Tooltip.Portal>
 											<Tooltip.Content>
 												<Tooltip.Arrow />
 												<div class="icon-tooltip-content">
-													<Music />
+													<MusicNote size="16" color="var(--freq-color-text-medium-dark)"></MusicNote>
 													This is the number of albums or tracks in this collection.
 												</div>
 											</Tooltip.Content>
@@ -89,9 +98,7 @@
 								<Tooltip.Provider>
 									<Tooltip.Root>
 										<Tooltip.Trigger style="cursor: pointer; display: flex; justify-content: center; align-items: center; width: 100%; background: transparent;">
-											<div class="icon">
-												<Heart />
-											</div>
+											<Heart size="16" color="var(--freq-color-text-medium-dark)"></Heart>
 										</Tooltip.Trigger>
 										<Tooltip.Portal>
 											<Tooltip.Content>
@@ -115,15 +122,13 @@
 								<Tooltip.Provider>
 									<Tooltip.Root>
 										<Tooltip.Trigger style="cursor: pointer; display: flex; justify-content: center; align-items: center; width: 100%; background: transparent;">
-											<div class="icon">
-												<Eye />
-											</div>
+											<Eye size="16" color="var(--freq-color-text-medium-dark)"></Eye>
 										</Tooltip.Trigger>
 										<Tooltip.Portal>
 											<Tooltip.Content>
 												<Tooltip.Arrow />
 												<div class="icon-tooltip-content">
-													<Eye />
+													<Eye size="16" color="var(--freq-color-text-medium-dark)"></Eye>
 													This is the number of views this collection has recieved in the past 24 hours.
 												</div>
 											</Tooltip.Content>
@@ -135,20 +140,32 @@
 					</div>
 				</div>
 			{/if}
-		</div>
-	</div>
+		</div> -->
+	</li>
 {/snippet}
 
-<div class="firehose-wrapper">
-	{#each visibleCollections as collection}
-		{@render firehoseItem(collection)}
-	{/each}
+<div class="panel">
+	<PanelHeader>
+		{#snippet headerText()}
+			{headerText}
+		{/snippet}
+	</PanelHeader>
+	<ul>
+		{#each collections as collection}
+			{@render listItem(collection)}
+		{/each}
+	</ul>
 	<div class="load-button-container">
 		<button class="standard"> load more </button>
 	</div>
 </div>
 
 <style>
+	ul {
+		padding: 0;
+		margin: 0;
+		list-style: none;
+	}
 	.firehose-wrapper {
 		height: max-content;
 		padding: 2px;
@@ -156,17 +173,32 @@
 		flex-direction: column;
 	}
 
-	.firehose-item-container {
+	li {
+		display: flex;
+		flex-flow: row wrap;
+		align-items: center;
+		gap: var(--freq-inline-gap-double);
+		border-bottom: var(--freq-border-panel);
+		padding: var(--freq-spacing-small) 0;
+	}
+	.collection-identity-full {
 		display: flex;
 		flex-direction: row;
+		gap: var(--freq-inline-gap-double);
 		align-items: center;
-		justify-content: space-between;
-		height: 80px;
-		max-height: 80px;
-		padding: 4px;
-		border-bottom: var(--freq-border-panel);
+		width: inherit;
 	}
-
+	.collection-identity-half {
+		display: flex;
+		flex-direction: row;
+		gap: var(--freq-inline-gap-double);
+		align-items: center;
+		width: 50%;
+	}
+	.collection-title-link {
+		font-family: var(--freq-alt-font-family);
+		font-size: var(--freq-font-size-medium);
+	}
 	.firehose-item-info {
 		display: flex;
 		gap: 5px;

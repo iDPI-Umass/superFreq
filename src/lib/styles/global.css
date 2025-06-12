@@ -25,7 +25,21 @@ body {
 	display: flex;
 	flex-direction: column;
 	margin: var(--freq-spacing-large);
-	width: calc(var(--freq-max-width-primary) * 0.5);
+	max-width: calc(var(--freq-max-width-primary) * 0.5);
+}
+
+.column-two-thirds {
+	display: flex;
+	flex-direction: column;
+	margin: var(--freq-spacing-large);
+	max-width: calc(100% * 0.66);
+}
+
+.column-one-third {
+	display: flex;
+	flex-direction: column;
+	margin: var(--freq-spacing-large);
+	max-width: calc(100% * 0.33);
 }
 
 .panel {
@@ -47,9 +61,18 @@ body {
 	.panel-no-border {
 		margin: 3vh 3vw;
 	}
+
 	.two-column,
 	.panel-no-border {
 		flex-direction: column;
+	}
+
+	.column-half,
+	.column-two-thirds,
+	.column-one-third {
+		max-width: var(--freq-max-width-primary);
+		align-items: center;
+		justify-content: center;
 	}
 }
 
@@ -278,6 +301,14 @@ form.horizontal {
 }
 
 form.search {
+	display: flex;
+	flex-direction: row;
+	width: auto;
+	align-items: center;
+	flex-wrap: nowrap;
+}
+
+form.radio-group {
 	display: flex;
 	flex-direction: row;
 	width: auto;

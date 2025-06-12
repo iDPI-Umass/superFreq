@@ -4,14 +4,9 @@
 	import type { PageData, ActionData } from './$types';
 	import { enhance } from '$app/forms';
 	import CollectionsSpotlight from 'src/lib/components/collections/CollectionsSpotlight.svelte';
-	import CollectionsFirehose from 'src/lib/components/collections/CollectionsFirehose.svelte';
+	import CollectionsList from 'src/lib/components/collections/CollectionsList.svelte';
 	import Feed from 'src/lib/components/Feed.svelte';
 	import CollectionsFeed from 'src/lib/components/collections/CollectionsFeed.svelte';
-	import Info from 'virtual:icons/raphael/question';
-	import Heart from 'virtual:icons/heroicons-solid/heart';
-	import Music from 'virtual:icons/mynaui/music';
-	import Eye from 'virtual:icons/teenyicons/eye-outline';
-	import { Popover, Separator, Toggle } from 'bits-ui';
 
 	let { form, data } = $props();
 
@@ -42,17 +37,17 @@
 	</div>
 </div>
 
-<div class="content landing-page-body">
-	<div class="collections-spotlight-container">
-		<PanelHeader>
-			{#snippet headerText()}
-				Collections you might be interested in
-			{/snippet}
-		</PanelHeader>
-		<div class="collections-spotlight-content">
-			<CollectionsSpotlight collections={form?.collections ?? collections} />
-		</div>
+
+<div class="collections-spotlight-container">
+	<PanelHeader>
+		{#snippet headerText()}
+			spotlight
+		{/snippet}
+	</PanelHeader>
+	<div class="collections-spotlight-content">
+		<CollectionsSpotlight collections={form?.collections ?? collections} />
 	</div>
+</div>
 
 	<div class="collections-activity">
 		<div class="activity-panel popular-collections">
@@ -60,65 +55,27 @@
 				{#snippet headerText()}
 					Popular Collections
 				{/snippet}
-				<!-- {#snippet button()}
-					<Popover.Root>
-						<Popover.Trigger>
-							<button class="double-border-top" style="padding: 8px;">help?</button>
-						</Popover.Trigger>
-						<Popover.Content>
-							<div class="help-popover-body">
-								<div>
-									<Music />
-									The number of tracks/albums in this collection.
-								</div>
-								<div>
-									<Heart />
-									The number of users following this collection.
-								</div>
-								<div>
-									<Eye />
-									The number of views this collection has.
-								</div>
-							</div>
-							<Popover.Close />
-							<Popover.Arrow />
-						</Popover.Content>
-					</Popover.Root>
-					
-				{/snippet} -->
 			</PanelHeader>
 			<div class="activity-content-window">
-				<CollectionsFirehose collections={form?.collections ?? collections} showAnalytics={false}/>
+				<CollectionsFirehose collections={form?.collections ?? collections} />
 			</div>
 		</div>
 
-		<div class="collections-feed-friends">
-			<div class="activity-panel" id="collections-feed">
-				<PanelHeader>
-					{#snippet headerText()}
-						Feed
-					{/snippet}
-				</PanelHeader>
-				<div class="activity-content-window">
-					<CollectionsFeed {sessionUserId} {feedItems} mode="feed" remaining={feedRemaining} />
-				</div>
-			</div>
-			<div class="activity-panel" id="collections-friends">
-				<PanelHeader>
-					{#snippet headerText()}
-						Friends Collections
-					{/snippet}
-				</PanelHeader>
-				<div class="activity-content-window">
-					<CollectionsFirehose
-						collections={form?.collections ?? collections}
-						showAnalytics={false}
-					/>
-				</div>
-			</div>
-		</div>
+	<div class="column-one-third">
+		<Feed
+			sessionUserId={sessionUserId}
+			feedItems={feedItems}
+			mode="feed"
+		></Feed>
+		<CollectionsList
+			headerText="friends' collections"
+			collections={form?.collections ?? collections}
+			showAnalytics={false}
+			mode="narrow"
+		></CollectionsList>
 	</div>
 </div>
+
 
 <style>
 	.landing-page-body {

@@ -1,7 +1,9 @@
 <script lang="ts">
-	import { enhance } from "$app/forms";
+	import { enhance } from "$app/forms"
 
-    let loading = $state(false);
+    let { reply }: { reply?: App.RowData } = $props()
+
+    let loading = $state(false)
 </script>
 
 <div class="reply-editor">
@@ -13,6 +15,30 @@
             formElement.reset(); // needs formElement to reset the form
         }
     }}>
+        <input
+            type="hidden"
+            name="reply-to-id"
+            id="reply-to-id"
+            value={reply?.post_id ?? reply?.id ?? null}
+        />
+        <input
+            type="hidden"
+            name="parent-post-id"
+            id="parent-post-id"
+            value={reply?.parent_post_id ?? null}
+        />
+        <input 
+            type="hidden"
+            name="post-username"
+            id="post-username"
+            value={reply?.parent_post_username ?? null}
+        />
+        <input 
+            type="hidden"
+            name="post-timestamp"
+            id="post-timestamp"
+            value={reply?.parent_post_created_at ?? null}
+        />
         <textarea
             rows="4"
             cols="1"

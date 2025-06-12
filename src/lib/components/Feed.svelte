@@ -17,6 +17,7 @@
         sessionUserId: string
         feedItems: App.RowData[]
         firehoseFeedItems?: App.RowData[]
+        notificationsItems?: App.RowData[]
         mode: string
         remaining?: number
         userActionSuccess?: boolean | null
@@ -25,12 +26,14 @@
         showSaveSucessModal?: boolean
         showFilters?: boolean
         dualFeed?: boolean
+        feedTabs?: string[] // can include ['following', 'discover', 'notifications']
     }
 
     let { 
         sessionUserId, 
         feedItems, 
         firehoseFeedItems,
+        notificationsItems,
         mode,
         remaining,
         userActionSuccess = null,
@@ -38,7 +41,8 @@
         showCollectionsListModal = $bindable(false),
         showSaveSucessModal = $bindable(false),
         showFilters = false,
-        dualFeed = false
+        dualFeed = false,
+        feedTabs = ['following']
     }: ComponentProps = $props()
 
     function avatarItem ( item: App.RowData ) {
@@ -64,6 +68,10 @@
             {
                 'id': 'comments',
                 'value': 'comment',
+            },
+            {
+                'id': 'replies to comments',
+                'value': 'reply_to_reply'
             },
             {
                 'id': 'likes',
@@ -183,6 +191,29 @@
                             ></PostReply>
                         </div>
                     </div>
+                {:else if item?.item_type == 'reply_to_reply'}
+                    <a href={`/posts/${item.parent_post_username}/now-playing/${parseTimestamp(item.parent_post_created_at)}#${item.username?.concat(parseTimestamp(item.timestamp))}`}>
+                        <div class="feed-item">
+                            <div class="feed-item-two-liner-user-row">
+                                    <CoverArt
+                                        item={avatarItem(item)}
+                                        altText={`${item.display_name}'s avatar`}
+                                        imgClass='feed-avatar'
+                                    ></CoverArt>
+                                {item.user_id == sessionUserId ? 'You' : item.display_name} replied to {item.parent_post_user_id == sessionUserId ? 'your' : item.parent_post_display_name.concat(`'s`)} comment on a post { (item.artist_name || item.user_added_artist_name) ? 'about' : ''}
+                            </div>
+                            {@render feedItemTag(item)}
+                        </div>
+                    </a>
+                    <div class="feed-post-spacer">
+                        <div class="feed-item-now-playing">
+                            <PostReply
+                                reply={item}
+                                sessionUserId={sessionUserId}
+                                userActionSuccess={userActionSuccess}
+                            ></PostReply>
+                        </div>
+                    </div>
                 <!-- Reaction -->
                 {:else if item?.item_type == 'reaction'}
                     <a href={ item.reaction_post_type == 'now_playing' ? `/posts/${item.reaction_post_username}/now-playing/${parseTimestamp(item.reaction_post_created_at)}` : `/posts/${item.parent_post_username}/now-playing/${parseTimestamp(item.parent_post_created_at)}#${item.reaction_post_username?.concat(parseTimestamp(item.reaction_post_created_at))}`}>
@@ -194,7 +225,7 @@
                                     imgClass='feed-avatar'
                                 ></CoverArt>
 
-                                {item.user_id == sessionUserId ? 'You' : item.display_name} liked {item.reaction_post_user_id == sessionUserId ? 'your' : item.reaction_post_display_name.concat(`'s`)} { item.reaction_post_type == 'now_playing' ? 'post' : 'reply' } { (item.artist_name || item.user_added_artist_name) ? 'about' : ''}
+                                {item.user_id == sessionUserId ? 'You' : item.display_name} liked {item.reaction_post_user_id == sessionUserId ? 'your' : item.reaction_post_display_name.concat(`'s`)} { item.reaction_post_type == 'now_playing' ? 'post' : 'reply' } {( item.artist_name || item.user_added_artist_name) ? 'about' : ''} {( item.parent_post_artist_name || item.parent_post_user_added_artist_name ) ? 'on a post about' : ''}
                             </div>
                             {@render feedItemTag(item)}
 
@@ -212,7 +243,7 @@
                             ></CoverArt>
                             <span class="blurb">
                             {item.user_id == sessionUserId ? 'You' : item.display_name}
-                            followed {item.collection_owner_id == sessionUserId ? 'your' : 'a'} collection: 
+                            followed {item.collection_owner_id == sessionUserId ? 'your' : 'the'} collection: 
                             <span class="feed-item-subject">
                                 {item.collection_title}
                             </span>
@@ -230,7 +261,7 @@
                             ></CoverArt>
                             <span class="blurb">
                             {item.user_id == sessionUserId ? 'You' : item.display_name}
-                            edited the collection: 
+                            edited {item.collection_owner_id == sessionUserId ? 'your' : 'the'} collection: 
                             <span class="feed-item-subject">
                                 {item.collection_title}
                             </span>
@@ -288,27 +319,27 @@
             {/snippet}
         </PanelHeader>
     {/if}
-    {#if dualFeed}
+    {#if dualFeed || feedTabs.length > 1 }
     <Tabs.Root bind:value={feedMode}>
         <MenuRow>
             <div class="tabs-list">
                 <Tabs.List>
-                    <Tabs.Trigger value="following">
-                        following
-                    </Tabs.Trigger>
-                    <Tabs.Trigger value="discover">
-                        discover
-                    </Tabs.Trigger>
+                    {#each feedTabs as tabValue}
+                        <Tabs.Trigger value={tabValue}>
+                            {tabValue}
+                        </Tabs.Trigger>
+                    {/each}
                 </Tabs.List>
             </div>
-            {#snippet button()}
+            <!-- {#snippet button()}
                 <OptionsMenu
                     triggerText='filter'
                     optionsGroups={optionsGroups}
                     inputGroup='selected-options'
                 ></OptionsMenu>
-            {/snippet}
+            {/snippet} -->
         </MenuRow>
+        {#if feedTabs.includes('following')}
         <Tabs.Content value="following">
             {#if feedItems.length == 0}
             <div class="feed-item-one-liner">
@@ -318,9 +349,17 @@
                 {@render displayFeedItems( feedItems )}
             {/if}
         </Tabs.Content>
+        {/if}
+        {#if feedTabs.includes('discover')}
         <Tabs.Content value="discover">
             {@render displayFeedItems( firehoseFeedItems as App.RowData[] )}
         </Tabs.Content>
+        {/if}
+        {#if feedTabs.includes('notifications')}
+        <Tabs.Content value="notifications">
+            {@render displayFeedItems( notificationsItems as App.RowData[] )}
+        </Tabs.Content>
+        {/if}
     </Tabs.Root>
     {:else}
         {#if feedItems.length == 0}

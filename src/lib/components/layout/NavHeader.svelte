@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from '$app/state'
   import { DropdownMenu } from "bits-ui"
   import Dropdown from '$lib/components/menus/ReuseableDropdownMenu.svelte'
   import ChevronDown from '@lucide/svelte/icons/chevron-down';
@@ -20,12 +21,13 @@
     avatarItem
   }: ComponentProps = $props()
 
+  const thisUrl = page.url
 </script>
 
-<svelte:options runes={true} />
-<svelte:head>
+<!-- <svelte:options runes={true} /> -->
+<!-- <svelte:head>
   <title>Freq</title>
-</svelte:head>
+</svelte:head> -->
 
 <div class="grid-background">
   <header>
@@ -222,7 +224,7 @@
     </nav>
   </header>
   <div class="buttons-group">
-    <a class="report" target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSfKj4FlApgfM-Kc4rYwAxNQslBMS9rk-DdfowMa5qcHlRYhew/viewform?usp=sf_link">
+    <a class="report" target="_blank" href="/report-bug?path={thisUrl}">
       <button class="standard">report a bug</button>
     </a>
     <a class="report" target="_blank" href="https://forms.gle/27Q7qg6qLWiFnLHv7">
