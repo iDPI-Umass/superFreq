@@ -33,7 +33,6 @@
 
 	const modeWidth = $derived(cssMode[mode])
 
-	const imgUrls = ['https://ia601609.us.archive.org/19/items/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad-2051756196.jpg','https://ia601609.us.archive.org/19/items/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad-2051756196.jpg','https://ia601609.us.archive.org/19/items/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad-2051756196.jpg']
 </script>
 
 {#snippet listItem(collection: App.RowData)}
@@ -42,7 +41,7 @@
 			<div class="item-images">
 				<div class="item-images-layout">
 					<CollectionImageSpotlight 
-						imgUrls={imgUrls}
+						collection={collection}
 						orientation='row'
 					></CollectionImageSpotlight>
 				</div>

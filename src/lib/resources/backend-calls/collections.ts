@@ -57,6 +57,49 @@ export const selectAllOpenPublicCollections = async function ( batchSize: number
     return { batch, remainingCount }
 }
 
+export const selectRecentOpenPublicCollections = async function ( batchSize: number, batchIterator: number ) {
+    const selectCollections = await db.transaction().execute(async (trx) => {
+        const selectCollectionsMetadata = await trx
+        .selectFrom('collection_metadata')
+        .select([
+            'collection_id',
+            'title',
+            'username',
+            'display_name',
+            'updated_at'
+        ])
+        .orderBy('updated_at desc')
+        .limit(batchSize)
+        .offset(batchIterator)
+        .execute()
+
+        const collections = selectCollectionsMetadata as App.RowData[]
+
+        for ( const collection of collections ) {
+            const collectionId = collection.collection_id
+            const collectionImages = await trx
+            .selectFrom('collections')
+            .select([
+                'original_id',
+                'img_url',
+                'last_fm_img_url',
+                'artist_name',
+                'release_group_name'
+            ])
+            .where('collection_id', '=', collectionId)
+            .limit(3)
+            .execute()
+
+            collection.images = collectionImages
+        }
+
+        return { collections }
+    })
+
+    const { collections } = selectCollections
+    return { collections }
+}
+
 export const selectSpotlightCollections = async function ( batchSize: number, batchIterator: number ) {
 
     const offset = batchSize * batchIterator
@@ -153,6 +196,59 @@ export const selectNewestSpotlightCollections = async function ( batchSize: numb
     const { collections } = selectCollections
     return { collections }
     
+}
+
+export const selectFollowedUsersOpenPublicCollections = async function ( sessionUserId: string, batchSize: number, batchIterator: number ) {
+    const selectCollections = await db.transaction().execute(async (trx) => {
+        const selectFollowing = await trx
+        .selectFrom('profile_display')
+        .select('users_following')
+        .where('user_id', '=', sessionUserId)
+        .executeTakeFirst()
+
+        const following = selectFollowing?.users_following as string[]
+
+        const selectFollowingUsersCollections = await trx
+        .selectFrom('collection_metadata')
+        .select([
+            'collection_id',
+            'title',
+            'username',
+            'display_name',
+            'updated_at'
+        ])
+        .where('owner_id', 'in', following)
+        .limit(batchSize)
+        .offset(batchIterator)
+        .orderBy('updated_at desc')
+        .execute()
+
+        const collections = selectFollowingUsersCollections as App.RowData[]
+
+        for ( const collection of collections ) {
+            const collectionId = collection.collection_id
+            const collectionImages = await trx
+            .selectFrom('collections')
+            .select([
+                'original_id',
+                'img_url',
+                'last_fm_img_url',
+                'artist_name',
+                'release_group_name'
+            ])
+            .where('collection_id', '=', collectionId)
+            .limit(3)
+            .execute()
+
+            collection.images = collectionImages
+        }
+
+        return { collections }
+    })
+
+    const { collections } = selectCollections
+
+    return { collections }
 }
 
 export const selectListProfileUserViewableCollections = async function ( sessionUserId: string, username: string ) {

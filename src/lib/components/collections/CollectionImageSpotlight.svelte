@@ -29,6 +29,10 @@
 			'collection-image-trio-column-third'
 		]
 	} as any
+
+	$effect(() => {
+		console.log(images)
+	})
 </script>
 
 <div class={imgOrientation[orientation][0]}>

@@ -1,24 +1,18 @@
 <script lang="ts">
 	import SEO from '$lib/components/layout/SEO.svelte';
-	import PanelHeader from '$lib/components/PanelHeader.svelte';
-	import type { PageData, ActionData } from './$types';
-	import { enhance } from '$app/forms';
-	import CollectionsSpotlight from 'src/lib/components/collections/CollectionsSpotlight.svelte';
-	import CollectionsList from 'src/lib/components/collections/CollectionsList.svelte';
+	import PanelHeader from '$lib/components/PanelHeader.svelte'
+	import CollectionsList from '$lib/components/collections/CollectionsList.svelte';
 	import CollectionImageSpotlight from '$lib/components/collections/CollectionImageSpotlight.svelte';
-	import Feed from 'src/lib/components/Feed.svelte';
+	import Feed from '$lib/components/Feed.svelte'
 
-	let { form, data } = $props();
+	let { data } = $props();
 
 	let {
 		sessionUserId,
-		feedItems,
-		collections,
-		feedRemaining,
-		remaining,
-		totalCollections,
-		batchSize,
-		batchIterator
+		spotlightCollections,
+		recentCollections,
+		collectionsFeed,
+		followingUsersCollections,
 	} = $derived(data);
 	
 </script>
@@ -78,18 +72,18 @@
 		{/snippet}
 	</PanelHeader>
 	<div class="spotlight-row">
-		{#each collections as collection}
+		{#each spotlightCollections as collection}
 			{@render spotlightItem(collection)}
 		{/each}
 	</div>
 </div>
 
 
-<!-- <div class="two-column">
+<div class="two-column">
 	<div class="column-two-thirds">
 		<CollectionsList 
 			headerText="recently updated collections"
-			collections={form?.collections ?? collections}
+			collections={recentCollections}
 			mode="wide"
 			imgMode="trio"
 		></CollectionsList>
@@ -99,19 +93,19 @@
 		{#if sessionUserId}
 			<Feed
 				sessionUserId={sessionUserId}
-				feedItems={feedItems}
+				feedItems={collectionsFeed.feedData}
 				mode="feed"
 				type="collections"
 			></Feed>
+			<CollectionsList
+				headerText="friends' collections"
+				collections={followingUsersCollections}
+				mode="narrow"
+				imgMode="trio"
+			></CollectionsList>
 		{/if}
-		<CollectionsList
-			headerText="friends' collections"
-			collections={form?.collections ?? collections}
-			mode="narrow"
-			imgMode="trio"
-		></CollectionsList>
 	</div>
-</div> -->
+</div>
 
 
 <style>
@@ -137,13 +131,6 @@
 	hr.spotlight-item-divider {
 		width: 35%;
 		background: linear-gradient(90deg, var(--freq-color-primary) 35%, #000000 100%) padding-box;
-	}
-	.collections-spotlight-container {
-		margin: var(--freq-spacing-large);
-		border: var(--freq-border-panel);
-	}
-	.collections-spotlight-content {
-		height: 20rem;
 	}
 	.jumbotron-container {
 		background-color: black;
