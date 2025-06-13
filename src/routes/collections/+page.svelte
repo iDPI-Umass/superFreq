@@ -82,7 +82,7 @@
 <div class="two-column">
 	<div class="column-two-thirds">
 		<CollectionsList 
-			headerText="recently updated collections"
+			panelHeaderText="recently updated collections"
 			collections={recentCollections}
 			mode="wide"
 			imgMode="trio"
@@ -98,7 +98,7 @@
 				type="collections"
 			></Feed>
 			<CollectionsList
-				headerText="friends' collections"
+				panelHeaderText="friends' collections"
 				collections={followingUsersCollections}
 				mode="narrow"
 				imgMode="trio"

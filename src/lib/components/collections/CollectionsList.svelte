@@ -8,7 +8,7 @@
 
 	interface ComponentProps {
 		sessionUserId?: string
-		headerText: string
+		panelHeaderText: string
 		mode?: string
 		imgMode?: string
 		remaining?: number
@@ -18,7 +18,7 @@
 
 	let {
 		sessionUserId,
-		headerText,
+		panelHeaderText,
 		mode = 'wide',
 		imgMode = 'single',
 		remaining,
@@ -32,7 +32,7 @@
 	} as App.StringLookupObject
 
 	const modeWidth = $derived(cssMode[mode])
-
+	const displayTitle = $derived(headerText)
 </script>
 
 {#snippet listItem(collection: App.RowData)}
@@ -73,7 +73,7 @@
 <div class="panel">
 	<PanelHeader>
 		{#snippet headerText()}
-			text
+			{@html panelHeaderText}
 		{/snippet}
 	</PanelHeader>
 	<ul>
@@ -81,9 +81,9 @@
 			{@render listItem(collection)}
 		{/each}
 	</ul>
-	<div class="load-button-container">
+	<!-- <div class="load-button-container">
 		<button class="standard"> load more </button>
-	</div>
+	</div> -->
 </div>
 
 <style>
@@ -101,6 +101,9 @@
 		border-bottom: var(--freq-border-panel);
 		padding: var(--freq-spacing-medium) var(--freq-spacing-2x-small);
 
+	}
+	li:last-child {
+		border-bottom: none;
 	}
 	.collection-identity-full {
 		display: flex;
