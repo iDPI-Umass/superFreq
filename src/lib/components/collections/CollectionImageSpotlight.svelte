@@ -49,9 +49,9 @@
 
 <style>
     .spotlight-image-trio-row {
+		position: relative;
 		display: flex;
 		flex-direction: row;
-		width: 60%;
 		justify-content: center;
 		align-items: end;
 		/* position: relative; */

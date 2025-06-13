@@ -136,7 +136,8 @@ span.search-tooltip {
 	gap: var(--freq-height-spacer-gap-quarter);
 }
 
-.collection-info-attribution p {
+.collection-info-attribution p,
+.collection-info-attribution span {
 	margin: 0;
 }
 
@@ -149,6 +150,14 @@ span.search-tooltip {
 .collection-info-text a {
 	color: var(--freq-color-text-muted);
 	font-weight: var(--freq-font-weight-bold);
+}
+
+.collection-info-text a:is(:hover, :focus) {
+	color: var(--freq-color-link);
+}
+
+.collection-info-text a:active {
+	color: var(--freq-color-text-dark);
 }
 
 .collection-date-text {

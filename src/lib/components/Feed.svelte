@@ -19,6 +19,7 @@
         firehoseFeedItems?: App.RowData[]
         notificationsItems?: App.RowData[]
         mode: string
+        type?: string
         remaining?: number
         userActionSuccess?: boolean | null
         collections?: App.RowData[]
@@ -35,6 +36,7 @@
         firehoseFeedItems,
         notificationsItems,
         mode,
+        type,
         remaining,
         userActionSuccess = null,
         collections = [],
@@ -235,7 +237,7 @@
                 <!-- Collection follow -->
                 {:else if item?.item_type == 'collection_follow' && ( item?.user_id != item?.collection_owner_id )}
                     <a href={`/collection/${item.collection_id}`}>
-                        <div class="feed-item-one-liner">
+                        <div class={ type == "collections" ? "collection-feed-item-one-liner" : "feed-item-one-liner" }>
                             <CoverArt
                                 item={avatarItem(item)}
                                 altText={`${item.display_name}'s avatar`}
@@ -253,7 +255,7 @@
                 <!-- Collection edit -->
                 {:else if item?.item_type == 'collection_edit' && !item?.item_type.is_top_albums}
                     <a href={`/collection/${item.collection_id}`}>
-                        <div class="feed-item-one-liner">
+                        <div class={ type == "collections" ? "collection-feed-item-one-liner" : "feed-item-one-liner" }>
                             <CoverArt
                                 item={avatarItem(item)}
                                 altText={`${item.display_name}'s avatar`}

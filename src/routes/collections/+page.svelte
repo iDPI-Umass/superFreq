@@ -91,8 +91,8 @@
 			headerText="recently updated collections"
 			collections={form?.collections ?? collections}
 			mode="wide"
+			imgMode="trio"
 		></CollectionsList>
-		<p>random change</p>
 	</div>
 
 	<div class="column-one-third">
@@ -100,13 +100,14 @@
 			sessionUserId={sessionUserId}
 			feedItems={feedItems}
 			mode="feed"
+			type="collections"
 		></Feed>
-		<!-- <CollectionsList
+		<CollectionsList
 			headerText="friends' collections"
 			collections={form?.collections ?? collections}
-			showAnalytics={false}
 			mode="narrow"
-		></CollectionsList> -->
+			imgMode="trio"
+		></CollectionsList>
 	</div>
 </div>
 
@@ -144,6 +145,7 @@
 	span.collection-title {
 		font-size: var(--freq-font-size-small);
 		text-transform: uppercase;
+		font-weight: var(--freq-font-weight-medium);
 	}
 	span.collection-owner {
 		color: var(--freq-color-mellow);
