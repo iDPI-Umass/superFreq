@@ -6,10 +6,9 @@ Currently configured to server Last.fm images on the client side by default on a
 
 
 <script lang="ts">
-    import { onMount } from "svelte"
-    import { checkFetchedCoverArt, getLastFmCoverArt, getCoverArt, getCoverArtClientSide } from "$lib/resources/musicbrainz"
+    import { getCoverArtClientSide } from "$lib/resources/musicbrainz"
     import wave from "$lib/assets/images/logo/freq-wave.svg"
-    import { promiseStates } from "$lib/resources/states.svelte";
+    import { promiseStates } from "$lib/resources/states.svelte"
 
     interface ComponentProps {
         item?: any
@@ -88,58 +87,3 @@ Currently configured to server Last.fm images on the client side by default on a
 {:else if !validUrl && !clientSideLoad }
     <img src={wave} alt="not found" class={imgClass}  />
 {/if}
-
-<style>
-    img {
-        width: inherit;
-    }
-    .spotlight-image-trio-row-first {
-        position: absolute;
-        width: var(--freq-image-thumbnail-x-small);
-        margin: auto 0;
-        top: 0;
-        bottom: 0;
-        left: 0px;
-        filter: brightness(25%);
-        z-index: 1;
-	}
-	.spotlight-image-trio-row-second {
-        position: absolute;
-        width: var(--freq-image-thumbnail-x-small);
-        margin: auto 0;
-        top: 0;
-        bottom: 0;
-        left: 10px;
-		filter: brightness(50%);
-        z-index: 2;
-	}
-	.spotlight-image-trio-row-third {
-        position: absolute;
-        width: var(--freq-image-thumbnail-x-small);
-        margin: auto 0;
-        top: 0;
-        bottom: 0;
-        left: 20px;
-        z-index: 3;
-	}
-    .spotlight-image-trio-column-first {
-        position: absolute;
-        width: var(--freq-image-thumbnail-medium);
-        top: 0px;
-        filter: brightness(25%);
-        z-index: 1;
-	}
-	.spotlight-image-trio-column-second {
-        position: absolute;
-        width: var(--freq-image-thumbnail-medium);
-        top: 15px;
-		filter: brightness(50%);
-        z-index: 2;
-	}
-	.spotlight-image-trio-column-third {
-        position: absolute;
-        width: var(--freq-image-thumbnail-medium);
-        top: 30px;
-        z-index: 3;
-	}
-</style>

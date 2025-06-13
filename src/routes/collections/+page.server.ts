@@ -1,5 +1,5 @@
 import type { PageServerLoad, Actions } from './$types'
-import { selectAllOpenPublicCollections } from '$lib/resources/backend-calls/collections'
+import { selectAllOpenPublicCollections, selectNewestSpotlightCollections } from '$lib/resources/backend-calls/collections'
 import { add } from 'date-fns'
 import { selectFirehoseFeed } from '$lib/resources/backend-calls/feed'
 import { feedData } from 'src/lib/resources/states.svelte'
@@ -45,12 +45,14 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
         loadFeedData = !loadFeedData
     }
 
-    const { batch, remainingCount } = await selectAllOpenPublicCollections( batchSize, batchIterator )
+    // const { batch, remainingCount } = await selectAllOpenPublicCollections( batchSize, batchIterator )
 
-    const totalCollections = batch.collectionsCount[0].count
+    const { collections } = await selectNewestSpotlightCollections(6) 
 
-    const collections = batch.collections
-    const remaining = remainingCount
+    // const totalCollections = batch.collectionsCount[0].count
+
+    // const collections = batch.collections
+    // const remaining = remainingCount
     feedItems = feedData.feedItems;
     feedItems = feedItems.filter((item) => {
         let x = item.item_type
@@ -69,7 +71,7 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
         }
     }
 
-   return { sessionUserId, collections, feedRemaining, feedItems, remaining, totalCollections, batchSize, batchIterator }
+   return { sessionUserId, collections, feedRemaining, feedItems, batchSize, batchIterator }
 }
 
 export const actions = {

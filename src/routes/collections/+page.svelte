@@ -41,24 +41,24 @@
 
 {#snippet spotlightItem(collection: App.RowData)}
 	<div class="spotlight-item">
-		<div class="spotlight-images">
+		<div class="spotlight-item-images">
 			<CollectionImageSpotlight 
-				imgUrl={collection.avatar_url}
+				collection={collection}
 				orientation='column'
 			></CollectionImageSpotlight>
 		</div>
 		<div class="spotlight-collection-info">
 			<div class="spotlight-collection-info-text">
-				<span class="collection-title">
+				<span class="spotlight-collection-title">
 					{collection.title}
 				</span>
 				<br />
-				<span class="collection-owner">
+				<span class="spotlight-collection-owner">
 					by {collection.display_name}
 				</span>
 			</div>
 			<hr class="spotlight-item-divider" />
-			<span>
+			<span class="spotlight-collection-description">
 				{collection.description}
 			</span>
 		</div>
@@ -85,7 +85,7 @@
 </div>
 
 
-<div class="two-column">
+<!-- <div class="two-column">
 	<div class="column-two-thirds">
 		<CollectionsList 
 			headerText="recently updated collections"
@@ -96,12 +96,14 @@
 	</div>
 
 	<div class="column-one-third">
-		<Feed
-			sessionUserId={sessionUserId}
-			feedItems={feedItems}
-			mode="feed"
-			type="collections"
-		></Feed>
+		{#if sessionUserId}
+			<Feed
+				sessionUserId={sessionUserId}
+				feedItems={feedItems}
+				mode="feed"
+				type="collections"
+			></Feed>
+		{/if}
 		<CollectionsList
 			headerText="friends' collections"
 			collections={form?.collections ?? collections}
@@ -109,47 +111,28 @@
 			imgMode="trio"
 		></CollectionsList>
 	</div>
-</div>
+</div> -->
 
 
 <style>
 	.panel {
 		max-width: 90vw;
 	}
-	.spotlight-row {
-        display: flex;
-        flex-direction: row;
-    }
-	.spotlight-item {
-		display: flex;
-		flex-direction: column;
-        width: calc( 100% / 6 );
-        margin-top: 0;
-        padding-top: 0;
-        align-items: start;
-        justify-content: start;
-		border-right: var(--freq-border-panel);
-    }
-	.spotlight-item:last-child {
-		border-right: none;
-	}
-	.spotlight-images {
-		height: calc(var(--freq-image-thumbnail-medium) + 30px);
-		width: 100%;
-		padding-top: 10px;
-		background-color: var(--freq-color-background-badge);
-	}
 	.spotlight-collection-info {
 		margin: var(--freq-spacing-small);
 	}
-	span.collection-title {
+	span.spotlight-collection-title {
 		font-size: var(--freq-font-size-small);
 		text-transform: uppercase;
 		font-weight: var(--freq-font-weight-medium);
 	}
-	span.collection-owner {
+	span.spotlight-collection-owner {
 		color: var(--freq-color-mellow);
 		font-size: var(--freq-font-size-small);
+	}
+	span.spotlight-collection-description {
+		color: var(--freq-color-reading-text);
+		font-size: var(--freq-font-size-medium);
 	}
 	hr.spotlight-item-divider {
 		width: 35%;

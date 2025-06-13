@@ -38,36 +38,25 @@
 
 {#snippet listItem(collection: App.RowData)}
 	<li>
-		<div class={modeWidth}>
-			<div class="collection-image-container">
-				{#if imgMode == 'single' && collection}
-					<CoverArt
-						item={collection}
-						altText='image'
-					></CoverArt>
-				{:else if imgMode = 'trio'}
-					<div class="collection-images">
-						<CollectionImageSpotlight 
-							imgUrls={imgUrls}
-							orientation='row'
-						></CollectionImageSpotlight>
-					</div>
-				{/if}
+		<a class={modeWidth} href="/collection/{collection.collection_id}">
+			<div class="item-images">
+				<div class="item-images-layout">
+					<CollectionImageSpotlight 
+						imgUrls={imgUrls}
+						orientation='row'
+					></CollectionImageSpotlight>
+				</div>
 			</div>
-			<div class="collection-links">
-				<a class="collection-title-link" href="/collection/{collection.collection_id}">
-					{collection.title}
-				</a>
+			<div class="item-links">
+				{collection.title}
 				{#if mode == 'narrow'}
 					<span class="collection-info-text">
-						by 
-						<a href="/user/{collection.username}">
-							{collection.display_name}
-						</a>
+						by {collection.display_name}
 					</span>
 				{/if}
+				
 			</div>
-		</div>
+		</a>
 		{#if mode == 'wide'}
 			<div class="collection-info-attribution">
 				<span class="collection-info-text">
@@ -121,6 +110,8 @@
 		justify-content: start;
 		width: fit-content;
 		margin: auto 0;
+		font-size: var(--freq-font-size-medium);
+		color: var(--freq-color-text);
 	}
 	.collection-identity-half {
 		display: flex;
@@ -129,32 +120,28 @@
 		justify-content: start;
 		width: 50%;
 		margin: auto 0;
+		font-size: var(--freq-font-size-medium);
+		color: var(--freq-color-text);
 	}
-	.collection-image-container {
+	.collection-identity-full:active,
+	.collection-identity-half:active {
+		color: var(--freq-color-link);
+	}
+	.item-images {
 		width: fit-content;
 		height: fit-content;
 		margin: auto 0;
 	}
-	.collection-images {
+	.item-images-layout {
 		display: inline-block;
 		width: calc(var(--freq-image-thumbnail-x-small) + 20px);
 		height: inherit;
 		margin: var(--freq-height-spacer) var(--freq-width-spacer-half);
 	}
-	.collection-links {
+	.item-links {
 		display: flex;
 		flex-direction: column;
 		width: 100%;
-	}
-	.collection-title-link {
-		font-size: var(--freq-font-size-medium);
-		color: var(--freq-color-text);
-	}
-	.collection-title-link:is(:hover, :focus) {
-		color: var(--freq-color-link);
-	}
-	.collection-title-link:active {
-		color: var(--freq-color-text-dark);
 	}
 	.collection-info-text {
 		margin: 0;

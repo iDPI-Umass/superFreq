@@ -107,6 +107,53 @@ export const selectSpotlightCollections = async function ( batchSize: number, ba
     return { collections, remainingCount }
 }
 
+export const selectNewestSpotlightCollections = async function ( batchSize: number ) {
+    const selectCollections = await db.transaction().execute(async (trx) => {
+
+        const selectCollectionsMetadata = await trx
+        .selectFrom('collection_metadata')
+        .select([
+            'collection_id',
+            'title',
+            'username',
+            'display_name',
+            'updated_at',
+            'description',
+            'spotlight',
+            'spotlight_added_at'
+        ])
+        .where('spotlight', '=', true)
+        .orderBy('spotlight_added_at desc')
+        .limit(batchSize)
+        .execute()
+
+        const collections = selectCollectionsMetadata as App.RowData[]
+
+        for ( const collection of collections ) {
+            const collectionId = collection.collection_id
+            const collectionImages = await trx
+            .selectFrom('collections')
+            .select([
+                'original_id',
+                'img_url',
+                'last_fm_img_url',
+                'artist_name',
+                'release_group_name'
+            ])
+            .where('collection_id', '=', collectionId)
+            .limit(3)
+            .execute()
+
+            collection.images = collectionImages
+        }
+
+        return { collections }
+    })
+
+    const { collections } = selectCollections
+    return { collections }
+    
+}
 
 export const selectListProfileUserViewableCollections = async function ( sessionUserId: string, username: string ) {
     const selectCollections = await db.transaction().execute(async (trx) => {
