@@ -42,6 +42,7 @@
     <div class="spotlight-item">
         <CollectionImageSpotlight
             imgUrl={item.imgUrl}
+            orientation="column"
         ></CollectionImageSpotlight>
         <span>{item.title}</span>
         <span>{item.user}</span>

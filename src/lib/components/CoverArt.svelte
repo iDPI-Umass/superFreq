@@ -108,16 +108,23 @@ Currently configured to server Last.fm images on the client side by default on a
         z-index: 3;
 	}
     .spotlight-image-trio-column-first {
-        margin-bottom: -60%;
+        position: absolute;
+        width: var(--freq-image-thumbnail-medium);
+        top: 0px;
         filter: brightness(25%);
         z-index: 1;
 	}
 	.spotlight-image-trio-column-second {
-        margin-bottom: -60%;
+        position: absolute;
+        width: var(--freq-image-thumbnail-medium);
+        top: 15px;
 		filter: brightness(50%);
         z-index: 2;
 	}
 	.spotlight-image-trio-column-third {
+        position: absolute;
+        width: var(--freq-image-thumbnail-medium);
+        top: 30px;
         z-index: 3;
 	}
 </style>

@@ -57,12 +57,11 @@
 		/* position: relative; */
 	}
 	.spotlight-image-trio-column {
-		margin-top: 0;
+		position: relative;
 		display: flex;
 		flex-direction: column;
-		max-height: 200px;
-		width: 80%;
-		align-items: end;
-		justify-content: end;
+		padding-top: 30px;
+		align-items: center;
+		justify-content: center;
 	}
 </style>

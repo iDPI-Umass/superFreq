@@ -5,6 +5,7 @@
 	import { enhance } from '$app/forms';
 	import CollectionsSpotlight from 'src/lib/components/collections/CollectionsSpotlight.svelte';
 	import CollectionsList from 'src/lib/components/collections/CollectionsList.svelte';
+	import CollectionImageSpotlight from '$lib/components/collections/CollectionImageSpotlight.svelte';
 	import Feed from 'src/lib/components/Feed.svelte';
 
 	let { form, data } = $props();
@@ -19,6 +20,7 @@
 		batchSize,
 		batchIterator
 	} = $derived(data);
+	
 </script>
 
 <SEO title="Explore collections"></SEO>
@@ -37,14 +39,48 @@
 </div>
 
 
-<div class="collections-spotlight-container">
+{#snippet spotlightItem(collection: App.RowData)}
+	<div class="spotlight-item">
+		<div class="spotlight-images">
+			<CollectionImageSpotlight 
+				imgUrl={collection.avatar_url}
+				orientation='column'
+			></CollectionImageSpotlight>
+		</div>
+		<div class="spotlight-collection-info">
+			<div class="spotlight-collection-info-text">
+				<span class="collection-title">
+					{collection.title}
+				</span>
+				<br />
+				<span class="collection-owner">
+					by {collection.display_name}
+				</span>
+			</div>
+			<hr class="spotlight-item-divider" />
+			<span>
+				{collection.description}
+			</span>
+		</div>
+	</div>
+{/snippet}
+
+
+<div class="panel">
 	<PanelHeader>
 		{#snippet headerText()}
 			spotlight
 		{/snippet}
+		{#snippet button()}
+			<button class="standard">
+				see all
+			</button>
+		{/snippet}
 	</PanelHeader>
-	<div class="collections-spotlight-content">
-		<CollectionsSpotlight collections={form?.collections ?? collections} />
+	<div class="spotlight-row">
+		{#each collections as collection}
+			{@render spotlightItem(collection)}
+		{/each}
 	</div>
 </div>
 
@@ -65,53 +101,65 @@
 			feedItems={feedItems}
 			mode="feed"
 		></Feed>
-		<CollectionsList
+		<!-- <CollectionsList
 			headerText="friends' collections"
 			collections={form?.collections ?? collections}
 			showAnalytics={false}
 			mode="narrow"
-		></CollectionsList>
+		></CollectionsList> -->
 	</div>
 </div>
 
 
 <style>
-	.landing-page-body {
+	.panel {
+		max-width: 90vw;
 	}
-
+	.spotlight-row {
+        display: flex;
+        flex-direction: row;
+    }
+	.spotlight-item {
+		display: flex;
+		flex-direction: column;
+        width: calc( 100% / 6 );
+        margin-top: 0;
+        padding-top: 0;
+        align-items: start;
+        justify-content: start;
+		border-right: var(--freq-border-panel);
+    }
+	.spotlight-item:last-child {
+		border-right: none;
+	}
+	.spotlight-images {
+		height: calc(var(--freq-image-thumbnail-medium) + 30px);
+		width: 100%;
+		padding-top: 10px;
+		background-color: var(--freq-color-background-badge);
+	}
+	.spotlight-collection-info {
+		margin: var(--freq-spacing-small);
+	}
+	span.collection-title {
+		font-size: var(--freq-font-size-small);
+		text-transform: uppercase;
+	}
+	span.collection-owner {
+		color: var(--freq-color-mellow);
+		font-size: var(--freq-font-size-small);
+	}
+	hr.spotlight-item-divider {
+		width: 35%;
+		background: linear-gradient(90deg, var(--freq-color-primary) 35%, #000000 100%) padding-box;
+	}
 	.collections-spotlight-container {
 		margin: var(--freq-spacing-large);
 		border: var(--freq-border-panel);
 	}
-
-	.collections-activity {
-		margin: var(--freq-spacing-large);
-		max-width: 100%;
-		gap: var(--freq-width-spacer);
-		display: flex;
-		flex-direction: row;
-	}
-
-	.popular-collections {
-		width: 60%;
-		height: auto;
-	}
-
-	.collections-feed-friends {
-		width: 40%;
-		display: flex;
-		gap: var(--freq-width-spacer);
-		flex-direction: column;
-	}
-
 	.collections-spotlight-content {
 		height: 20rem;
 	}
-
-	.activity-content-window {
-		min-height: 15rem;
-	}
-
 	.jumbotron-container {
 		background-color: black;
 		min-height: 15rem;
@@ -140,23 +188,5 @@
 
 		margin-left: auto;
 		margin-right: auto;
-	}
-
-	.help-button {
-
-	}
-
-	@media screen and (max-width: 700px) {
-		.collections-activity {
-			flex-direction: column;
-		}
-
-		.popular-collections {
-			width: 100%;
-		}
-
-		.collections-feed-friends {
-			width: 100%;
-		}
 	}
 </style>

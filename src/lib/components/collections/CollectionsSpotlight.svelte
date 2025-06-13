@@ -57,6 +57,7 @@
 	<div class="spotlight-item">
 		<CollectionImageSpotlight 
 			imgUrl={collection.avatar_url}
+			orientation='column'
 		></CollectionImageSpotlight>
 		<div class="spotlight-collection-info">
 			<div class="spotlight-collection-info-text">

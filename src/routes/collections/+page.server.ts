@@ -58,6 +58,17 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
         if (x === "collection_follow") { return true }
     })
 
+    collections.length = 6
+
+    for ( const collection of collections ) {
+        if ( collection.description.length > 100 ) {
+            let splitPosition = collection.description.indexOf(' ', 100)
+            let splitString = collection.description.substring(0, splitPosition)
+            splitString = splitString.concat('...')
+            collection.description = splitString
+        }
+    }
+
    return { sessionUserId, collections, feedRemaining, feedItems, remaining, totalCollections, batchSize, batchIterator }
 }
 
