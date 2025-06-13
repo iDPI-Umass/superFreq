@@ -642,7 +642,7 @@ export const updateCollection = async function ( sessionUserId: string, collecti
         .where('collection_id', '=', collectionId)
         .executeTakeFirst()
 
-        const infoChangelog = await selectInfoChangelog as App.Changelog
+        const infoChangelog = await selectInfoChangelog.changelog as App.Changelog
 
         infoChangelog[timestampISOString] = {
             'updated_by': collectionInfo['updated_by'],
