@@ -345,16 +345,7 @@ span.search-tooltip {
 	inset-block-start: calc(var(--line-offset) * -1);
 }
 
-/* .media-list-item::before {
-	inline-size: var(--freq-grid-gap);
-	block-size: 100vh;
-	inset-block-start: calc(var(--line-offset) * -1);
-} */
-
-/* Icon styling */
-
-/* .grid-list-icon {
-	height:  var(--freq-button-font-size-x-large);
-	margin: var(--freq-spacing-3x-small);
-	margin-top: var(--freq-spacing-2x-small);
-} */
+img.grid-list-image {
+	max-height: var(--freq-image-thumbnail-medium);
+	object-fit: cover;
+}
