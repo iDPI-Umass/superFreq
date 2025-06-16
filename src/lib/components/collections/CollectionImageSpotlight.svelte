@@ -27,6 +27,12 @@
 			'collection-image-trio-column-first',
 			'collection-image-trio-column-second',
 			'collection-image-trio-column-third'
+		],
+		'diagonal-stack': [
+			'collection-image-trio-diagonal-stack',
+			'collection-image-trio-diagonal-stack-first',
+			'collection-image-trio-diagonal-stack-second',
+			'collection-image-trio-diagonal-stack-third'
 		]
 	} as any
 
