@@ -65,7 +65,9 @@
         'episode': 'episode',
         'episodes': 'episode',
         'mix': 'episode',
-        'mixes': 'episode'
+        'mixes': 'episode',
+        'collection': 'collection',
+        'collections': 'collection'
     } as any
 
     let showManualAddModal = $state(false)
@@ -142,7 +144,7 @@
                         value="collection"
                         bind:group={itemType}
                     />
-                    <label for="episode">
+                    <label for="collection">
                         collection
                     </label>
                 </li>

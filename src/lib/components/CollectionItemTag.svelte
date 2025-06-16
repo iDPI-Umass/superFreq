@@ -35,7 +35,7 @@
                 <BoomBox size="12" color="var(--freq-color-text-medium-dark)"></BoomBox>
                 <span>mix</span>
             {:else if itemType && itemType.includes("collection")}
-                <!-- <SquareLibrary size="12" color="var(--freq-color-text-medium-dark)"></SquareLibrary> -->
+                <SquareLibrary size="12" color="var(--freq-color-text-medium-dark)"></SquareLibrary>
                 <span>collection</span>
             {:else}
                 <span>item</span>

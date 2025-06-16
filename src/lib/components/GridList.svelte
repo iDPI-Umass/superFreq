@@ -228,10 +228,12 @@
             {/if}
         {/key}
     {:else if itemType.includes("collection") && mode == "view"}
-        <CollectionImageTrio
-            collection={item}
-            orientation="diagonal-stack"
-        ></CollectionImageTrio>
+        <div class="grid-list-image">
+            <CollectionImageTrio
+                collection={item}
+                orientation="diagonal-stack"
+            ></CollectionImageTrio>
+        </div>
     {/if}
 {/snippet}
 
@@ -394,10 +396,10 @@
             {#each collectionData.collectionItems as contentItem}                  
                 <li class={format[layout][1]}>
                     {@render coverArt(contentItem, ( contentItem["item_type"] ?? collectionType ), mode)}
-                    <div class="metadata-blurb">
-                        {@render metadataBlurb(contentItem, ( contentItem["item_type"] ?? collectionType ), mode)}
-                    </div>
-                    {@render itemAttribution(contentItem, collectionStatus)}
+                        <div class="metadata-blurb">
+                            {@render metadataBlurb(contentItem, ( contentItem["item_type"] ?? collectionType ), mode)}
+                        </div>
+                        <!-- {@render itemAttribution(contentItem, collectionStatus)} -->
                 </li>
             {/each}
             {@render underSizedCollection()}
