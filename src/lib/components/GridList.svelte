@@ -289,6 +289,10 @@
             {/if}
         </span>
     {:else if itemType.includes("collection")}
+        <CollectionItemTag
+            display={showTags}
+            itemType={itemType}
+        ></CollectionItemTag>
         <span class="title">
             {#if mode == "view"}
                 <a href="/collection/{item["connected_collection_id"]}">
