@@ -3,10 +3,11 @@
     import { slide } from 'svelte/transition'
 
     import CoverArt from '$lib/components/CoverArt.svelte'
-    import EditPostBody from 'src/lib/components/Posts/EditPostBody.svelte'
-    import PostReplyEditor from 'src/lib/components/Posts/PostReplyEditor.svelte'
+    import EditPostBody from '$lib/components/Posts/EditPostBody.svelte'
+    import PostReplyEditor from '$lib/components/Posts/PostReplyEditor.svelte'
+    import ReplyTag from '$lib/components/Posts/ReplyTag.svelte'
     import PostMenuSessionUser from 'src/lib/components/menus/PostMenuSessionUser.svelte'
-    import LikeReact from 'src/lib/components/Posts/LikeReact.svelte'
+    import LikeReact from '$lib/components/Posts/LikeReact.svelte'
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte'
     import InlineMarkdownText from '$lib/components/InlineMarkdownText.svelte'
     import { displayDate, parseMarkdown } from '$lib/resources/parseData'
@@ -23,12 +24,14 @@
 
     interface ComponentProps {
         reply: any
+        allowReply?: boolean
         sessionUserId?: string | null
         userActionSuccess?: boolean | null
     }
 
     let {
         reply,
+        allowReply = false,
         sessionUserId,
         userActionSuccess = $bindable(null)
     }: ComponentProps = $props()
@@ -44,9 +47,23 @@
     const parentPostTimestamp = Date.parse(parentPostTimestampString).toString()
     const permalinkTimestampString = replyCreatedAt.toISOString()
     const permalinkTimestamp = Date.parse(permalinkTimestampString).toString()
-    const permalink = `/posts/${reply.parent_post_username}/now-playing/${parentPostTimestamp}#${reply.username?.concat(permalinkTimestamp)}`
+    const permalinkRoot = `/posts/${reply.parent_post_username}/now-playing/${parentPostTimestamp}`
+    const permalink = permalinkRoot.concat(`#${reply.username?.concat(permalinkTimestamp)}`)
+    
+    let replyToSlug = $state(null) as string | null
+
+    if ( reply.reply_to ) {
+        const replyToCreatedAt = reply?.reply_to_created_at ?? reply?.parent_post_created_at ?? null
+        const replyToTimestampString = replyToCreatedAt?.toISOString() ?? null
+        const replyToTimestamp = Date.parse(replyToTimestampString).toString()
+        const replyToUsername = reply?.reply_to_username ?? reply?.parent_post_username ??null
+        replyToSlug = `#${replyToUsername?.concat(replyToTimestamp)}`
+    }
 
     let editState = $state(false)
+    let showPostReplyEditor = $state(false)
+
+    let isReplyToReply = $state( reply?.parent_post_id != reply?.reply_to ? true : false ) 
 
     onMount(() => {
         interactionStates.editState = false
@@ -73,10 +90,9 @@
     type="hidden"
     name="reply-data"
     id="reply-data"
-    from="submitReaction"
+    form="submitReaction"
     value={JSON.stringify(reply)}
 />
-
 
 <div class="comment">
     <div class="comment-metadata">
@@ -107,24 +123,42 @@
             {/if}
         </div>
     </div>
-    {#if !editState}
-        <div class="comment-text">
-            <InlineMarkdownText text={reply.text}></InlineMarkdownText>
-        </div>
-    {:else}
-        <EditPostBody
-            postData={reply}
-            bind:editState={editState}
-        ></EditPostBody>
-    {/if}
+    <div class="comment-text">
+        {#if isReplyToReply}
+            <ReplyTag
+                displayName={reply?.reply_to_display_name}
+                createdAt={displayDate(reply?.reply_to_created_at)}
+                permalinkRoot={permalinkRoot}
+                replyToSlug={replyToSlug}
+            ></ReplyTag>
+        {/if}
+        {#if !editState}
+            
+                <InlineMarkdownText text={reply.text}></InlineMarkdownText>
+            
+        {:else}
+            <EditPostBody
+                postData={reply}
+                bind:editState={editState}
+            ></EditPostBody>
+        {/if}
+    </div>
     <div class="comment-reaction-row">
         <div class="row-group">
             <div class="row-group-icons">
                 <LikeReact
-                    postId={reply.post_id}
+                    postId={reply.post_id ?? reply.id}
                     reactionActive={reactionActive}
                     reactionCount={reactionCount}
                 ></LikeReact>
+                {#if allowReply}
+                    <button class="like" onclick={() => showPostReplyEditor = !showPostReplyEditor}>
+                        <Reply class="icon" size="16" color="var(--freq-color-text-muted)"></Reply>
+                        <span class="descriptor">
+                            reply
+                        </span>
+                    </button>
+                {/if}
             </div>
             <!-- <Collapsible.Root bind:open={openState}>
                 <Collapsible.Trigger>
@@ -149,17 +183,22 @@
             {#if reply.user_id == sessionUserId }
                 <UserActionsMenu
                     mode='sessionUserPostMenu'
-                    postId={reply.post_id}
+                    postId={reply.post_id ?? reply.id}
                     bind:editState={editState}
                     success={userActionSuccess}
                 ></UserActionsMenu>
             {:else if reply.user_id != sessionUserId}
                 <UserActionsMenu
                     mode='postMenu'
-                    postId={reply.post_id}
+                    postId={reply.post_id ?? reply.id}
                     success={userActionSuccess}
                 ></UserActionsMenu>
             {/if}
         </div>
     </div>
 </div>
+{#if showPostReplyEditor}
+    <PostReplyEditor
+        reply={reply}
+    ></PostReplyEditor>
+{/if}

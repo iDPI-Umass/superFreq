@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms'
 	import ListModal from 'src/lib/components/modals/ListModal.svelte'
-	import { mbSearch, addCollectionItemNoImg, getCoverArt, addSingleItemNoImg, mbidCateogory, artistName, artistMbid, releaseGroupName, releaseGroupMbid, releaseGroupMetadata, recordingName, itemDate, artistOrigin } from '$lib/resources/musicbrainz'
+	import { mbSearch, addCollectionItemNoImg, getCoverArt, addSingleItemNoImg, mbidCateogory, artistName, artistMbid, releaseGroupName, releaseGroupMbid, releaseGroupMetadata, recordingName, itemDate, artistOrigin, getArtistImage } from '$lib/resources/musicbrainz'
 	import CoverArt from './CoverArt.svelte'
 
     import { promiseStates, collectionData } from '$lib/resources/states.svelte';
@@ -11,8 +11,9 @@
 		searchButtonText: string
 		searchPlaceholder: string
 		mode: string,
-		limit?: string | null,
+		searchResultsLimit?: string,
 		query?: string,
+		collectionLimit: string | null,
 		continuePromise? : boolean
 	}
 
@@ -21,8 +22,9 @@
 		searchButtonText,
 		searchPlaceholder,
 		mode, // "single" | "collection" | "avatar-search"
-		limit = '25',
+		searchResultsLimit = '5',
 		query = '',
+		collectionLimit = null,
 		continuePromise = $bindable(true)
 	}: ComponentProps = $props()
 
@@ -32,11 +34,11 @@
 	let mbData = $state([]) as any[]
 	let searchComplete = $state(false)
 
-	async function search ( query: string, searchCategory: string, limit: string ) {
+	async function search ( query: string, searchCategory: string, searchResultsLimit: string ) {
 		promiseStates.newItemAdded = false
 		mbData = []
 		showModal = true
-		const searchResults = await mbSearch(query, searchCategory, limit)
+		const searchResults = await mbSearch(query, searchCategory, searchResultsLimit)
 		mbData = searchResults.mbData
 		searchComplete = searchResults.searchComplete
 		return { mbData, searchComplete, showModal }
@@ -57,39 +59,59 @@
 			promiseStates.newItemAdded = true
 			promiseStates.continueClientSideImgPromise = false
 			showModal = false
+			addingItem = false
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
 				const releaseGroup = {
 					release_group_mbid: releaseGroupMbid(searchCategory, item),
 					artist_name: artistName(searchCategory, item),
+					artist_mbid: artistMbid(searchCategory, item),
 					release_group_name: releaseGroupName(searchCategory, item)
 				}
+				const artistImgUrl = await getArtistImage(releaseGroup.artist_mbid)
 				const { success, coverArtArchiveUrl, lastFmCoverArtUrl } = await getCoverArt(releaseGroup)
+				collectionData.collectionItems[thisItemIndex]["artist_discogs_img_url"] = artistImgUrl
 				collectionData.singleItem['img_url'] = success ? coverArtArchiveUrl : null
 				collectionData.singleItem["last_fm_img_url"] = success ? lastFmCoverArtUrl : null
 				promiseStates.imgPromise = new Promise ((resolve) => resolve(success)) 
 			}
-			addingItem = false
+			else if ( searchCategory == "artists" ) {
+				const thisArtistMbid = artistMbid(searchCategory, item)
+				const artistImgUrl = await getArtistImage(thisArtistMbid)
+				const thisItemIndex = collectionData.collectionItems.findIndex((item) => item['artist_mbid'] == thisArtistMbid)
+				collectionData.collectionItems[thisItemIndex]["artist_discogs_img_url"] = artistImgUrl
+				promiseStates.imgPromise = new Promise ((resolve) => resolve(success))
+			}
 			promiseStates.continueClientSideImgPromise = true
 			return { query, searchComplete, showModal }
 		}
 		if ( mode == 'collection' ) {
 			promiseStates.continueClientSideImgPromise = false
-			const collectionItems = await addCollectionItemNoImg( item, collectionData.collectionItems, collectionData.deletedItems, limit, searchCategory, mbidCategory )
+			const collectionItems = await addCollectionItemNoImg( item, collectionData.collectionItems, collectionData.deletedItems, collectionLimit, searchCategory, mbidCategory )
 			collectionData.collectionItems = collectionItems.addedItems
 			collectionData.deletedItems = collectionItems.deletedItems
 			query = ""
 			searchComplete = false
 			promiseStates.newItemAdded = collectionItems.newItemAdded
 			showModal = false
+			addingItem = false
 			if ( searchCategory == "release_groups" || searchCategory == "recordings" ) {
+				const thisArtistMbid = artistMbid(searchCategory, item)
+				const artistImgUrl = await getArtistImage(thisArtistMbid)
 				const releaseGroup = releaseGroupMetadata( searchCategory, item )
 				const { success, coverArtArchiveUrl, lastFmCoverArtUrl } = await getCoverArt(releaseGroup)
 				const thisItemIndex = collectionData.collectionItems.findIndex((item) => item['release_group_mbid'] == releaseGroup.release_group_mbid)
+				collectionData.collectionItems[thisItemIndex]["artist_discogs_img_url"] = artistImgUrl
 				collectionData.collectionItems[thisItemIndex]["img_url"] = success ? coverArtArchiveUrl : null
 				collectionData.collectionItems[thisItemIndex]["last_fm_img_url"] = success ? lastFmCoverArtUrl : null
 				promiseStates.imgPromise = new Promise ((resolve) => resolve(success))
 			}
-			addingItem = false
+			else if ( searchCategory == "artists" ) {
+				const thisArtistMbid = artistMbid(searchCategory, item)
+				const artistImgUrl = await getArtistImage(thisArtistMbid)
+				const thisItemIndex = collectionData.collectionItems.findIndex((item) => item['artist_mbid'] == thisArtistMbid)
+				collectionData.collectionItems[thisItemIndex]["artist_discogs_img_url"] = artistImgUrl
+				promiseStates.imgPromise = new Promise ((resolve) => resolve(success))
+			}
 			promiseStates.continueClientSideImgPromise = true
 			return { query, searchComplete, showModal }
 		}
@@ -176,6 +198,7 @@
 									<CoverArt
 										item={coverArtItem(item, searchCategory)}
 										altText='album {releaseGroupName(searchCategory, item)} by artist {artistName(searchCategory, item)}'
+										clientSideLoad={true}
 									></CoverArt>
 								</div>
 							{/if}
@@ -189,7 +212,7 @@
 	<form class="search">
 		<button 
 			class="double-border-top"
-			onclick={() => search(query, searchCategory, limit)} 
+			onclick={() => search(query, searchCategory, searchResultsLimit)} 
 			disabled={!searchCategory || !searchCategories.includes(searchCategory)}
 		>
 			<div class="inner-border">

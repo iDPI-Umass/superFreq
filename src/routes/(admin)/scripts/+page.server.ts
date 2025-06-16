@@ -3,7 +3,7 @@ import type { PageServerLoad, Actions } from './$types';
 import { insertUpdateTopAlbumsCollection, selectEditableTopAlbumsCollection } from '$lib/resources/backend-calls/collections';
 import { db } from 'src/database.ts'
 
-let metadata  = [] as App.RowData[]
+const collectionsSocial  = [] as App.RowData[]
 
 let itemLookup = {
     'release_groups': 'release_group',
@@ -12,67 +12,47 @@ let itemLookup = {
 } as App.StringLookupObject
 
 export const load: PageServerLoad = async () => {
+    collectionsSocial.length = 0 
 
-    const selectMetadata = await db
-    .selectFrom('user_added_metadata')
+    const select = await db
+    .selectFrom('collections_social')
     .selectAll()
-    .where('artist_name', 'is', null)
-    .where('release_group_name', 'is', null)
-    .where('recording_name', 'is', null)
-    .where('episode_title', 'is', null)
     .execute()
 
-    metadata = selectMetadata
+    collectionsSocial.push(...select)
 
-    return {metadata}
+    console.log(collectionsSocial.length, ' collections_social')
+
+    return { collectionsSocial }
 }
 
 export const actions = {
     default: async () => {
-        const updatedPostIds = []
-        for ( const item of metadata ) {
-            const metadataId = item['id']
-            const postId = item['post_id']
 
-            // const insertUserAddedMetadataRow = await db
-            //     .insertInto('user_added_metadata')
-            //     .values({
-            //         artist_name: artistName,
-            //         release_group_name: releaseGroupName,
-            //         recording_name: recordingName,
-            //         episode_title: episodeTitle,
-            //         show_name: showName,
-            //         listen_url: listenUrl,
-            //         post_id: postId,
-            //         added_by: userId
-            //     })
-            //     .returning('id')
-            //     .executeTakeFirst()
-            
-            // const metadataId = insertUserAddedMetadataRow?.id as string
+        const preparedCollectionsSocial = [] 
+        for ( const item of collectionsSocial ) {
+            const preparedItem = {
+                'user_id': item.user_id,
+                'collection_id': item.collection_id,
+                'follows_now': item.follows_now,
+                'user_role': item.user_role,
+                'updated_at': item.updated_at,
+                'changelog': item.changelog
+            }
 
-            const updatePost = await db
-            .updateTable('posts')
-            .set({
-                user_added_metadata_id: null
-            })
-            .where('id', '=', postId)
-            .returning('id')
-            .executeTakeFirst()
-
-            updatedPostIds.push(updatePost?.id)
-
-            await db
-            .deleteFrom('user_added_metadata')
-            .where('id', '=', metadataId)
-            .execute()
+            preparedCollectionsSocial.push(preparedItem)
         }
-        
 
-        const updatedCount = updatedPostIds.length
+        console.log(preparedCollectionsSocial)
 
-        const success = updatedCount > 0 ? true : false
+        const insert = await db
+        .insertInto('social_graph')
+        .values(preparedCollectionsSocial)
+        .returning('id')
+        .execute()
 
-        return ( success )
+        console.log(insert.length)
+
+        return { success: true }
     }
 } satisfies Actions

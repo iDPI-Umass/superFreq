@@ -107,48 +107,6 @@ export const selectSpotlightCollections = async function ( batchSize: number, ba
     return { collections, remainingCount }
 }
 
-export const selectListViewableCollections = async function ( username: string ) {
-    const selectCollections = await db.transaction().execute(async (trx) => {
-
-        const selectProfile = await trx
-        .selectFrom('profiles')
-        .select(['id', 'username'])
-        .where('username', '=', username)
-        .executeTakeFirst()
-
-        const profileUserId = selectProfile?.id as string
-
-        const selectInfo = await trx
-        .selectFrom('collections_info as info')
-        .innerJoin('collections_social as social', 'social.collection_id', 'info.collection_id')
-        .innerJoin('profiles', 'profiles.id', 'social.user_id')
-        .select([
-            'info.collection_id as id',
-            'info.title as title',
-            'info.updated_at as updated_at',
-            'profiles.display_name as display_name'
-        ])
-        .where(({eb, and, or}) => and([
-            eb('social.user_id', '=', profileUserId),
-            or([
-                eb('info.status', '=', 'public'),
-                eb('info.status', '=', 'open')
-            ]),
-            or([
-                eb('social.user_role', '=', 'owner'),
-                eb('social.user_role', '=', 'collaborator')
-            ])
-        ]))
-        .execute()
-
-        const info = selectInfo
-        return info
-    })
-
-    const collections = await selectCollections
-    return collections
-}
-
 
 export const selectListProfileUserViewableCollections = async function ( sessionUserId: string, username: string ) {
     const selectCollections = await db.transaction().execute(async (trx) => {
@@ -166,7 +124,7 @@ export const selectListProfileUserViewableCollections = async function ( session
         if ( sessionUserId == profileUserId ) {
             selectInfo = await trx
             .selectFrom('collections_info as info')
-            .innerJoin('collections_social as social', 'social.collection_id', 'info.collection_id')
+            .innerJoin('social_graph as social', 'social.collection_id', 'info.collection_id')
             .innerJoin('profiles', 'profiles.id', 'social.user_id')
             .select([
                 'info.collection_id as id',
@@ -176,6 +134,7 @@ export const selectListProfileUserViewableCollections = async function ( session
             ])
             .where(({eb, and, or}) => and([
                 eb('social.user_id', '=', profileUserId),
+                eb('social.collection_id', 'is not', null),
                 or([
                     eb('info.status', '=', 'public'),
                     eb('info.status', '=', 'open'),
@@ -192,7 +151,7 @@ export const selectListProfileUserViewableCollections = async function ( session
         else if ( sessionUserId != profileUserId ) {
             selectInfo = await trx
             .selectFrom('collections_info as info')
-            .innerJoin('collections_social as social', 'social.collection_id', 'info.collection_id')
+            .innerJoin('social_graph as social', 'social.collection_id', 'info.collection_id')
             .innerJoin('profiles', 'profiles.id', 'social.user_id')
             .select([
                 'info.collection_id as id',
@@ -202,6 +161,7 @@ export const selectListProfileUserViewableCollections = async function ( session
             ])
             .where(({eb, and, or}) => and([
                 eb('social.user_id', '=', profileUserId),
+                eb('social.collection_id', 'is not', null),
                 or([
                     eb('info.status', '=', 'public'),
                     eb('info.status', '=', 'open')
@@ -235,7 +195,7 @@ export const selectListProfileUserFollowingCollections = async function ( userna
         const profileUserId = selectProfile?.id as string
 
         const selectCollectionsList = await trx
-        .selectFrom('profile_display_dev')
+        .selectFrom('profile_display')
         .select('viewable_collection_follows')
         .where('user_id', '=', profileUserId)
         .executeTakeFirst()
@@ -283,139 +243,60 @@ export const selectListSessionUserCollections =  async function ( sessionUserId:
 Fetches collection for viewing if collection is open or public, or session user is an owner or collaborator
 */
 
+
 export const selectViewableCollectionContents = async function ( collectionId: string, sessionUserId: string ) {
 
     const selectCollection = await db.transaction().execute(async (trx) => {
-        const collectionInfo = await trx
-        .selectFrom('collections_info')
-        .innerJoin('profiles as profile', 'profile.id', 'collections_info.owner_id')
-        .leftJoin('release_groups', 'profile.avatar_mbid', 'release_groups.release_group_mbid')
-        .select([
-            'collections_info.collection_id as collection_id', 
-            'collections_info.created_at as created_at', 
-            'collections_info.updated_at as updated_at', 
-            'collections_info.owner_id as owner_id', 
-            'collections_info.status as status', 
-            'collections_info.created_by as created_by', 
-            'collections_info.title as title', 
-            'collections_info.type as type', 
-            'collections_info.default_view_sort as default_view_sort',
-            'collections_info.description_text as description_text',
-            'profile.username as username',
-            'profile.display_name as display_name',
-            'profile.avatar_url as avatar_url',
-            'release_groups.last_fm_img_url as last_fm_img_url'
-        ])
-        .where(({eb, and, or, exists, selectFrom, not}) => and([
-            eb('collections_info.collection_id', '=', collectionId),
-            or([
-                eb('status', '=', 'open'),
-                eb('status', '=', 'public'),
-                exists(
-                    selectFrom('collections_social')
-                    .whereRef('collections_info.collection_id', '=', 'collections_social.collection_id')
-                    .where(({eb, and}) => and([
-                        eb('collections_social.user_role', '=', 'owner')
-                        .or('collections_social.user_role', '=', 'collaborator'),
-                        eb('collections_social.user_id', '=', sessionUserId)
-                    ]) 
-                    )
-                    .selectAll('collections_social')
-                ),
-            ]),
-            not(
-                eb('collections_info.status', '=', 'deleted')
+        try {
+            const follows = await trx
+            .selectFrom('collection_follows')
+            .select(['collection_id', 'status', 'owner_id', 'collaborators', 'followers'])
+            .where('collection_id', '=', collectionId)
+            .where('status', '!=', 'deleted')
+            .executeTakeFirstOrThrow()
+
+            const { status, owner_id, collaborators } = follows
+
+            if (
+                ( status == 'private' && ! ( owner_id == sessionUserId || collaborators.includes(sessionUserId)))
             )
-        ]))
-        .executeTakeFirst()
+            { throw new Error( 'no view permission' )}
 
-        const editPermission = await trx
-            .selectFrom('collections_info as info')
-            .innerJoin('collections_social', 'info.collection_id', 'collections_social.collection_id')
-            .where(({eb, and, or}) => or([
-                eb('info.status', '=', 'open'),
-                and([
-                    eb('collections_social.collection_id', '=', collectionId),
-                    eb('collections_social.user_id', '=', sessionUserId),
-                    or([
-                        eb('collections_social.user_role', '=', 'owner'),
-                        eb('collections_social.user_role', '=', 'collaborator'),
-                        
-                    ])
-                ]),
-            ]))
-            .where('info.collection_id', '=', collectionId)
-            .select([
-                'info.collection_id as collection_id',
-                'info.status as status',
-                'collections_social.user_id as user_id', 
-                'collections_social.user_role as user_role'
-            ])
+            const collectionMetadata = await trx
+            .selectFrom('collection_metadata')
+            .selectAll()
+            .where('collection_id', '=', collectionId)
             .executeTakeFirst()
 
-        const followData = await trx
-            .selectFrom('collections_social')
-            .select([
-                'id', 
-                'collection_id', 
-                'user_id', 
-                'follows_now', 
-                'user_role', 
-                'updated_at'
-            ])
-            .where(({and, eb}) => and([
-                eb('user_id', '=', sessionUserId),
-                eb('collection_id', '=', collectionId)
-            ]))
-            .executeTakeFirst()
+            const collectionContents = await trx
+            .selectFrom('collections')
+            .selectAll()
+            .where('collection_id', '=', collectionId)
+            .where('item_position', 'is not', null)
+            .execute()
 
-        const collectionContents = await trx
-        .selectFrom('collections_contents as contents')
-        .leftJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
-        .leftJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
-        .leftJoin('recordings', 'recordings.recording_mbid', 'contents.recording_mbid')
-        .leftJoin('user_added_metadata', 'user_added_metadata.id', 'contents.user_added_metadata_id')
-        .leftJoin('profiles as insert_profile', 'contents.inserted_by', 'insert_profile.id')
-        .leftJoin('profiles as update_user', 'contents.updated_by', 'update_user.id')
-        .select([
-            'contents.id as id',
-            'contents.collection_id as collection_id',
-            'contents.item_position as item_position',
-            'contents.artist_mbid as artist_mbid',
-            'contents.item_type as item_type',
-            'artists.artist_name as artist_name',
-            'release_groups.release_group_name as release_group_name',
-            'release_groups.release_group_mbid as release_group_mbid',
-            'release_groups.img_url as img_url',
-            'release_groups.last_fm_img_url as last_fm_img_url',
-            'recordings.recording_name as recording_name',
-            'recordings.recording_mbid as recording_mbid',
-            'user_added_metadata.artist_name as user_added_artist_name',
-            'user_added_metadata.release_group_name as user_added_release_group_name',
-            'user_added_metadata.recording_name as user_added_recording_name',
-            'user_added_metadata.episode_title as user_added_episode_title',
-            'user_added_metadata.show_title as user_added_show_title',
-            'user_added_metadata.listen_url as user_added_listen_url',
-            'insert_profile.username as inserted_by_username',
-            'insert_profile.display_name as inserted_by_display_name',
-            'update_user.username as updated_by_username',
-            'update_user.display_name as updated_by_display_name'
-        ])
-        .where('contents.collection_id', '=', collectionId)
-        .where('contents.item_position', 'is not', null)
-        .orderBy('item_position')
-        .execute()
-
-        return {collectionInfo, collectionContents, viewPermission: true, editPermission, followData}
+            return { viewPermission: true, follows, collectionContents, collectionMetadata }
+        }
+        catch ( error ) {
+            return { viewPermission: false, follows: null, collectionContents: null, collectionMetadata: null }
+        }
     })
 
-    const collection =  await selectCollection
-    const collectionInfo = collection?.collectionInfo
-    const collectionContents = collection?.collectionContents
-    const viewPermission = collection?.viewPermission ?? false
-    const editPermission = collection?.editPermission ?? false
-    const followData = collection?.followData ?? null
-    return {collectionInfo, collectionContents, viewPermission, editPermission, followData}
+    const { viewPermission, follows, collectionContents, collectionMetadata } = selectCollection
+
+    if ( !viewPermission ) {
+        return { viewPermission: false, editPermission: false, followsNow: false, collection: null, collectionMetadata: null}
+    }
+
+    const { status, owner_id, collaborators, followers } = follows
+    const followsNow = ( followers.includes(sessionUserId) ) ? true : false
+    const editPermission = (
+        status == 'open' ||
+        owner_id == sessionUserId ||
+        collaborators.includes(sessionUserId)
+    ) ? true : false
+
+    return { viewPermission, editPermission, followsNow, collectionContents, collectionMetadata }
 }
 
 /*
@@ -425,100 +306,71 @@ Fetches collection for editing if session user is owner or collaborator
 export const selectEditableCollectionContents = async function ( collectionId: string, sessionUserId: string ) {
 
     const selectCollection = await db.transaction().execute(async (trx) => {
-        
-        const selectCollectionInfo = await trx
-        .selectFrom('collections_info as info')
-        .leftJoin('collections_social as social', 'social.collection_id', 'info.collection_id')
-        .select([
-            'info.collection_id as collection_id',
-            'info.title as title',
-            'info.type as type',
-            'info.status as status',
-            'info.default_view_sort',
-            'info.owner_id as owner_id',
-            'info.created_at as created_at',
-            'info.created_by as created_by',
-            'info.updated_at as updated_at',
-            'info.description_text as description_text'
-        ])
-        .where(({eb, and, or}) => and([
-            eb('info.collection_id', '=', collectionId),
-            eb('info.status', '!=', 'deleted'),
-            or([
-                eb('info.owner_id', '=', sessionUserId),
-                eb('social.user_role', '=', 'owner'),
-                eb('social.user_role', '=', 'collaborator'),
-                eb('info.status', '=', 'open')
-            ])
-        ]))
-        .executeTakeFirst()
+        try {
+            const follows = await trx
+            .selectFrom('collection_follows')
+            .select(['collection_id', 'status', 'owner_id', 'collaborators'])
+            .where('collection_id', '=', collectionId)
+            .where('status', '!=', 'deleted')
+            .executeTakeFirstOrThrow()
 
-        const selectCollectionContents = await trx
-            .selectFrom('collections_contents as contents')
-            .leftJoin('artists', 'artists.artist_mbid', 'contents.artist_mbid')
-            .leftJoin('release_groups', 'release_groups.release_group_mbid', 'contents.release_group_mbid')
-            .leftJoin('recordings', 'recordings.recording_mbid', 'contents.recording_mbid')
-            .leftJoin('user_added_metadata', 'user_added_metadata.id', 'contents.user_added_metadata_id')
-            .leftJoin('profiles as insert_profile', 'contents.inserted_by', 'insert_profile.id')
-            .leftJoin('profiles as update_user', 'contents.updated_by', 'update_user.id')
-            .select([
-                'contents.id as original_id',
-                'contents.collection_id as collection_id',
-                'contents.inserted_at as inserted_at',
-                'contents.artist_mbid as artist_mbid',
-                'contents.item_position as item_position',
-                'contents.item_type as item_type',
-                'contents.episode_url as episode_url',
-                'artists.artist_name as artist_name',
-                'release_groups.release_group_mbid as release_group_mbid',
-                'release_groups.release_group_name as release_group_name',
-                'release_groups.img_url as img_url',
-                'release_groups.last_fm_img_url as last_fm_img_url',
-                'release_groups.release_date as release_date',
-                'recordings.recording_mbid as recording_mbid',
-                'recordings.recording_name as recording_name',
-                'recordings.remixer_artist_mbid as remixer_artist_mbid',
-                'user_added_metadata.artist_name as user_added_artist_name',
-                'user_added_metadata.release_group_name as user_added_release_group_name',
-                'user_added_metadata.recording_name as user_added_recording_name',
-                'user_added_metadata.episode_title as user_added_episode_title',
-                'user_added_metadata.show_title as user_added_show_title',
-                'insert_profile.username as inserted_by_username',
-                'insert_profile.display_name as inserted_by_display_name',
-                'update_user.username as updated_by_username',
-                'update_user.display_name as updated_by_display_name'
-            ])
-            .where('contents.collection_id', '=', collectionId)
+            const { status, owner_id, collaborators } = follows
+
+            if ( 
+                (( status == 'public' || status == 'private ' ) && owner_id != sessionUserId  )
+             ) {
+                throw new Error('no edit permission')
+             }
+
+            const collectionMetadata = await trx
+            .selectFrom('collection_metadata')
+            .selectAll()
+            .where('collection_id', '=', collectionId)
+            .executeTakeFirst()
+
+            const collectionContents = await trx
+            .selectFrom('collections')
+            .selectAll()
+            .where('collection_id', '=', collectionId)
             .execute()
 
-        const info = selectCollectionInfo
-        let collectionContents = selectCollectionContents as App.RowData[]
-
-        // create an array of deleted items and remove all items where 'item_position is null' from collectionContents
-        let deletedCollectionContents = [] as App.RowData[]
-        let filteredContents = collectionContents
-
-        for ( const item of collectionContents ) {
-            if (item.item_position == null) {
-                deletedCollectionContents = [...deletedCollectionContents, item]
-                filteredContents = filteredContents.filter((element) => element != item)
-            }
+            return { editPermission: true, collectionContents, collectionMetadata }
         }
-
-        filteredContents.sort(( a, b ) => a.item_position - b.item_position )
-        collectionContents = filteredContents
-
-        // create ID for each item for svelte-dnd component in colleciton editor
-        let counter = 0
-        for ( const item of collectionContents) {
-            item['id'] = counter
-            counter += 1
+        catch ( error ) {
+            return { editPermission: false, collectionContents: null, collectionMetadata: null }
         }
-        return { info, collectionContents, deletedCollectionContents }
     })
 
-    const collection =  await selectCollection
-    return collection
+
+    const { editPermission, collectionMetadata } = selectCollection
+    let { collectionContents } = selectCollection
+
+    if ( !editPermission ) { 
+        return { editPermission, collectionMetadata: null, collectionContents: null, deletedCollectionContents: null }
+    }
+
+    // create an array of deleted items and remove all items where 'item_position is null' from collectionContents
+    let deletedCollectionContents = [] as App.RowData[]
+    let filteredContents = collectionContents
+
+    for ( const item of collectionContents ) {
+        if (item.item_position == null) {
+            deletedCollectionContents = [...deletedCollectionContents, item]
+            filteredContents = filteredContents.filter((element) => element != item)
+        }
+    }
+
+    filteredContents.sort(( a, b ) => a.item_position - b.item_position )
+    collectionContents = filteredContents
+
+    // create ID for each item for svelte-dnd component in colleciton editor
+    let counter = 0
+    for ( const item of collectionContents) {
+        item['id'] = counter
+        counter += 1
+    }
+
+    return { editPermission, collectionContents, collectionMetadata, deletedCollectionContents}
 }
 
 /* Select top albums collection for session user editing */
@@ -653,7 +505,7 @@ export const insertCollection = async function ( sessionUserId: string, collecti
         }
         
         await trx
-        .insertInto('collections_social')
+        .insertInto('social_graph')
         .values({
             collection_id: collectionId,
             user_id: sessionUserId,
@@ -790,7 +642,7 @@ export const updateCollection = async function ( sessionUserId: string, collecti
         .where('collection_id', '=', collectionId)
         .executeTakeFirst()
 
-        const infoChangelog = await selectInfoChangelog as App.Changelog
+        const infoChangelog = await selectInfoChangelog?.changelog as App.Changelog
 
         infoChangelog[timestampISOString] = {
             'updated_by': collectionInfo['updated_by'],
@@ -1242,38 +1094,6 @@ export const deleteCollection = async function ( sessionUserId: string, collecti
     
 }
 
-export const selectCollectionUserFollowData = async function ( sessionUserId: string, collectionId: string ) {
-    const selectCollectionFollowData = await db.transaction().execute(async (trx) => {
-        let followData
-        try {
-            followData = await trx
-            .selectFrom('collections_social')
-            .select([
-                'id', 
-                'collection_id', 
-                'user_id', 
-                'follows_now', 
-                'user_role', 
-                'updated_at'
-            ])
-            .where(({and, eb}) => and([
-                eb('user_id', '=', sessionUserId),
-                eb('collection_id', '=', collectionId),
-                eb('follows_now', '=', true)
-            ]))
-            .executeTakeFirst()
-
-            return followData
-        }
-        catch( error ) {
-            return followData = null
-        }
-    })
-
-    const followData = await selectCollectionFollowData
-    return followData
-}
-
 export const saveItemToCollection = async function ( sessionUserId: string, itemId: string, collectionId: string ) {
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
@@ -1282,7 +1102,7 @@ export const saveItemToCollection = async function ( sessionUserId: string, item
         try {
             const collectionInfo = await trx
             .selectFrom('collections_info as info')
-            .leftJoin('collections_social as social', 'social.collection_id', 'info.collection_id')
+            .leftJoin('social_graph as social', 'social.collection_id', 'info.collection_id')
             .leftJoin('collections_contents as contents', 'contents.collection_id', 'info.collection_id')
             .select([
                 'info.collection_id as id',

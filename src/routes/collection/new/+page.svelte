@@ -1,5 +1,5 @@
 <!--
-	Search MusicBrainz database, populate an object with collection items, and insert rows into tables collections_info, collections_contents, and collections_social to create new collection in database.
+	Search MusicBrainz database, populate an object with collection items, and insert rows into tables collections_info, collections_contents, and social_graph to create new collection in database.
 -->
 
 <script lang="ts">

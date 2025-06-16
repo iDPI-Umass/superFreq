@@ -1,6 +1,7 @@
 <script lang="ts">
     import { enhance } from '$app/forms'
     import { goto } from '$app/navigation'
+    import { Toolbar, Tabs } from 'bits-ui'
     import { parseTimestamp } from '$lib/resources/parseData'
     import decoration from "$lib/assets/images/feed-item-decoration.svg"
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
@@ -9,11 +10,14 @@
     import PostReply from 'src/lib/components/Posts/PostReply.svelte'
     import CoverArt from '$lib/components/CoverArt.svelte'
     import OptionsMenu from '$lib/components/menus/OptionsMenu.svelte'
-	import { feedData } from '../resources/states.svelte';
+    import MenuRow from '$lib/components/MenuRow.svelte'
+	import { feedData } from '$lib/resources/states.svelte'
 
     interface ComponentProps {
         sessionUserId: string
         feedItems: App.RowData[]
+        firehoseFeedItems?: App.RowData[]
+        notificationsItems?: App.RowData[]
         mode: string
         remaining?: number
         userActionSuccess?: boolean | null
@@ -21,18 +25,24 @@
         showCollectionsListModal?: boolean
         showSaveSucessModal?: boolean
         showFilters?: boolean
+        dualFeed?: boolean
+        feedTabs?: string[] // can include ['following', 'discover', 'notifications']
     }
 
     let { 
         sessionUserId, 
         feedItems, 
+        firehoseFeedItems,
+        notificationsItems,
         mode,
         remaining,
         userActionSuccess = null,
         collections = [],
         showCollectionsListModal = $bindable(false),
         showSaveSucessModal = $bindable(false),
-        showFilters = false
+        showFilters = false,
+        dualFeed = false,
+        feedTabs = ['following']
     }: ComponentProps = $props()
 
     function avatarItem ( item: App.RowData ) {
@@ -60,6 +70,10 @@
                 'value': 'comment',
             },
             {
+                'id': 'replies to comments',
+                'value': 'reply_to_reply'
+            },
+            {
                 'id': 'likes',
                 'value': 'reaction'
             },
@@ -77,6 +91,9 @@
             },
         ]
     }]
+
+    let displayDiscoverFeed = $derived( firehoseFeedItems && (firehoseFeedItems.length > feedItems.length) ? true : false)
+    let feedMode = $derived( displayDiscoverFeed ? 'discover' : 'following' ) //'following' or 'discover'
 </script>
 
 {#snippet feedItemTag( feedItem: App.RowData )} 
@@ -107,37 +124,8 @@
     {/if}
 {/snippet}
 
-<div class="feed-panel">
-    {#if showFilters}
-        <PanelHeader>
-            {#snippet headerText()}
-                <span>
-                    feed
-                </span>
-            {/snippet}
-            {#snippet button()}
-                <OptionsMenu
-                    triggerText='filter'
-                    optionsGroups={optionsGroups}
-                    inputGroup='selected-options'
-                ></OptionsMenu>
-            {/snippet}
-        </PanelHeader>
-    {:else}
-        <PanelHeader>
-            {#snippet headerText()}
-                <span>
-                    feed
-                </span>
-            {/snippet}
-        </PanelHeader>
-    {/if}
-        {#if feedItems.length == 0}
-        <div class="feed-item-one-liner">
-            <p>Nothing in your feed? Try following some more <a href="/users">users</a> and <a href="/collections" >collections</a>.</p>
-        </div>
-        {:else}
-        {#each feedItems as item}
+{#snippet displayFeedItems( feedItems: App.RowData[] )}
+    {#each feedItems as item}
             <div class="feed-item">
                 <!-- Now Playing post -->
                 {#if item?.item_type == 'now_playing_post'}      
@@ -203,6 +191,29 @@
                             ></PostReply>
                         </div>
                     </div>
+                {:else if item?.item_type == 'reply_to_reply'}
+                    <a href={`/posts/${item.parent_post_username}/now-playing/${parseTimestamp(item.parent_post_created_at)}#${item.username?.concat(parseTimestamp(item.timestamp))}`}>
+                        <div class="feed-item">
+                            <div class="feed-item-two-liner-user-row">
+                                    <CoverArt
+                                        item={avatarItem(item)}
+                                        altText={`${item.display_name}'s avatar`}
+                                        imgClass='feed-avatar'
+                                    ></CoverArt>
+                                {item.user_id == sessionUserId ? 'You' : item.display_name} replied to {item.parent_post_user_id == sessionUserId ? 'your' : item.parent_post_display_name.concat(`'s`)} comment on a post { (item.artist_name || item.user_added_artist_name) ? 'about' : ''}
+                            </div>
+                            {@render feedItemTag(item)}
+                        </div>
+                    </a>
+                    <div class="feed-post-spacer">
+                        <div class="feed-item-now-playing">
+                            <PostReply
+                                reply={item}
+                                sessionUserId={sessionUserId}
+                                userActionSuccess={userActionSuccess}
+                            ></PostReply>
+                        </div>
+                    </div>
                 <!-- Reaction -->
                 {:else if item?.item_type == 'reaction'}
                     <a href={ item.reaction_post_type == 'now_playing' ? `/posts/${item.reaction_post_username}/now-playing/${parseTimestamp(item.reaction_post_created_at)}` : `/posts/${item.parent_post_username}/now-playing/${parseTimestamp(item.parent_post_created_at)}#${item.reaction_post_username?.concat(parseTimestamp(item.reaction_post_created_at))}`}>
@@ -214,7 +225,7 @@
                                     imgClass='feed-avatar'
                                 ></CoverArt>
 
-                                {item.user_id == sessionUserId ? 'You' : item.display_name} liked {item.reaction_post_user_id == sessionUserId ? 'your' : item.reaction_post_display_name.concat(`'s`)} { item.reaction_post_type == 'now_playing' ? 'post' : 'reply' } { (item.artist_name || item.user_added_artist_name) ? 'about' : ''}
+                                {item.user_id == sessionUserId ? 'You' : item.display_name} liked {item.reaction_post_user_id == sessionUserId ? 'your' : item.reaction_post_display_name.concat(`'s`)} { item.reaction_post_type == 'now_playing' ? 'post' : 'reply' } {( item.artist_name || item.user_added_artist_name) ? 'about' : ''} {( item.parent_post_artist_name || item.parent_post_user_added_artist_name ) ? 'on a post about' : ''}
                             </div>
                             {@render feedItemTag(item)}
 
@@ -232,7 +243,7 @@
                             ></CoverArt>
                             <span class="blurb">
                             {item.user_id == sessionUserId ? 'You' : item.display_name}
-                            followed {item.collection_owner_id == sessionUserId ? 'your' : 'a'} collection: 
+                            followed {item.collection_owner_id == sessionUserId ? 'your' : 'the'} collection: 
                             <span class="feed-item-subject">
                                 {item.collection_title}
                             </span>
@@ -250,7 +261,7 @@
                             ></CoverArt>
                             <span class="blurb">
                             {item.user_id == sessionUserId ? 'You' : item.display_name}
-                            edited the collection: 
+                            edited {item.collection_owner_id == sessionUserId ? 'your' : 'the'} collection: 
                             <span class="feed-item-subject">
                                 {item.collection_title}
                             </span>
@@ -281,14 +292,97 @@
                 {/if}
                 </div>
         {/each}
+{/snippet}
+
+<div class="feed-panel">
+    {#if showFilters}
+        <PanelHeader>
+            {#snippet headerText()}
+                <span>
+                    feed
+                </span>
+            {/snippet}
+            {#snippet button()}
+                <OptionsMenu
+                    triggerText='filter'
+                    optionsGroups={optionsGroups}
+                    inputGroup='selected-options'
+                ></OptionsMenu>
+            {/snippet}
+        </PanelHeader>
+    {:else}
+        <PanelHeader>
+            {#snippet headerText()}
+                <span>
+                    feed
+                </span>
+            {/snippet}
+        </PanelHeader>
+    {/if}
+    {#if dualFeed || feedTabs.length > 1 }
+    <Tabs.Root bind:value={feedMode}>
+        <MenuRow>
+            <div class="tabs-list">
+                <Tabs.List>
+                    {#each feedTabs as tabValue}
+                        <Tabs.Trigger value={tabValue}>
+                            {tabValue}
+                        </Tabs.Trigger>
+                    {/each}
+                </Tabs.List>
+            </div>
+            <!-- {#snippet button()}
+                <OptionsMenu
+                    triggerText='filter'
+                    optionsGroups={optionsGroups}
+                    inputGroup='selected-options'
+                ></OptionsMenu>
+            {/snippet} -->
+        </MenuRow>
+        {#if feedTabs.includes('following')}
+        <Tabs.Content value="following">
+            {#if feedItems.length == 0}
+            <div class="feed-item-one-liner">
+                <p>Nothing in your feed? Try following some more <a href="/users">users</a> and <a href="/collections" >collections</a>.</p>
+            </div>
+            {:else}
+                {@render displayFeedItems( feedItems )}
+            {/if}
+        </Tabs.Content>
         {/if}
-    <form method="POST" action="?/loadMore" use:enhance={(form) => {
+        {#if feedTabs.includes('discover')}
+        <Tabs.Content value="discover">
+            {@render displayFeedItems( firehoseFeedItems as App.RowData[] )}
+        </Tabs.Content>
+        {/if}
+        {#if feedTabs.includes('notifications')}
+        <Tabs.Content value="notifications">
+            {@render displayFeedItems( notificationsItems as App.RowData[] )}
+        </Tabs.Content>
+        {/if}
+    </Tabs.Root>
+    {:else}
+        {#if feedItems.length == 0}
+        <div class="feed-item-one-liner">
+            <p>Nothing in your feed? Try following some more <a href="/users">users</a> and <a href="/collections" >collections</a>.</p>
+        </div>
+        {:else}
+            {@render displayFeedItems( feedItems )}
+        {/if}
+    {/if}
+    <form method="POST" action="?/loadMore" use:enhance={() => {
         loadingMore = true
         return async ({ update }) => {
             await update()
             loadingMore = false
         }
     }}>
+        <input 
+            type="hidden"
+            name="feed-mode"
+            id="feed-mode"
+            value={feedMode}
+        />
         {#if remaining && remaining > 0}
         <div class="button-spacer">
             <button
@@ -332,5 +426,30 @@
     }
     span.blank {
         display: none;
+    }
+    .toolbar-text {
+        display: flex;
+        flex-direction: row;
+        width: fit-content;
+        padding:  var(--freq-spacing-2x-small) var(--freq-spacing-x-small);
+        align-items: center;
+        gap: var(--freq-inline-gap-double);
+        /* background-color: var(--freq-color-background-badge-medium); */
+        /* background: var(--freq-grid-dark-background); */
+        color: var(--freq-color-text-medium-dark);
+        font-size: var(--freq-font-size-x-small);
+        text-transform: uppercase;
+        /* color: var(--freq-color-text-medium); */
+        font-weight: var(--freq-font-weight-semi-bold);
+        letter-spacing: var(--freq-letter-spacing-looser);
+    }
+    .tabs-list {
+        margin-bottom: -1px;
+    }
+    /* .tabs-text {
+        color: var(--freq-color-text-medium);
+    } */
+    [data-tabs-root] {
+        border-top: none;
     }
 </style>

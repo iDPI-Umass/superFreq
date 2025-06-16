@@ -4,7 +4,8 @@
     import { onMount } from 'svelte'
 
     import SEO from '$lib/components/layout/SEO.svelte'
-    import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte';
+    import NowPlayingTag from '$lib/components/Posts/NowPlayingTag.svelte'
+    import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte'
     import PanelHeader from '$lib/components/PanelHeader.svelte'
     import GridList from "$lib/components/GridList.svelte"
 	import NewNowPlayingPost from 'src/lib/components/Posts/NewNowPlayingPost.svelte'
@@ -18,10 +19,11 @@
 
     let { data, form } = $props();
 
-    let { sessionUserId, profileData, feedItems, selectedOptions, remaining, sessionUserCollections, updatesPageUpdatedAt }: {
+    let { sessionUserId, profileData, feedItems, notificationsItems, selectedOptions, remaining, sessionUserCollections, updatesPageUpdatedAt }: {
         sessionUserId: string
         profileData: any
         feedItems: any
+        notificationsItems: any
         totalAvailableItems: number
         remaining: number
         profileUsername: string | null
@@ -71,6 +73,7 @@
 
         feedData.selectedOptions = selectedOptions
         feedData.feedItems = feedItems
+        feedData.notificationsItems = notificationsItems
     })
     
 
@@ -87,6 +90,12 @@
                         item={avatarItem}
                         altText={`${viewProfile.display_name}'s avatar: ${viewProfile.avatar_release_group_name} by ${viewProfile.avatar_artist_name}`}
                     ></CoverArt>
+                    <br />
+                    <NowPlayingTag
+                        artistName={viewProfile.avatar_artist_name}
+                        itemTitle={viewProfile.avatar_release_group_name}
+                        itemType="avatar"
+                    ></NowPlayingTag>
                 </div>
                 {#if isSessionUserProfile}
                     <button 
@@ -269,12 +278,14 @@
         <Feed
             sessionUserId={sessionUserId}
             mode="feed"
-            feedItems = {feedData.feedItems}
+            feedItems={feedData.feedItems}
+            notificationsItems={feedData.notificationsItems}
             userActionSuccess={form?.userActionSuccess}
             remaining={remaining}
             collections={sessionUserCollections}
             showCollectionsListModal={showCollectionsListModal}
             showSaveSucessModal={showSaveSucessModal}
+            feedTabs={['following', 'notifications']}
             showFilters={true}
         ></Feed>
     {:else}

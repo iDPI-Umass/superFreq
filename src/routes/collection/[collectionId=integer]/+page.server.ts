@@ -7,7 +7,7 @@ let loadData = true
 let updateFollow = false
 
 let collectionId: string
-let collectionInfo: App.RowData
+let collectionMetadata: App.RowData
 let collectionContents: App.RowData[]
 let viewPermission: boolean
 let editPermission: boolean
@@ -25,11 +25,14 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession } 
     if ( loadData ) {
         const collection =  await selectViewableCollectionContents(collectionId, sessionUserId)
 
-        collectionInfo = collection.collectionInfo as App.RowData
+        collectionMetadata = collection.collectionMetadata as App.RowData
         collectionContents = collection.collectionContents as App.RowData[]
         viewPermission = collection.viewPermission as boolean
         editPermission = collection.editPermission as boolean
-        followData = collection.followData as App.RowData ?? {'follows_now': false} as App.RowData
+
+        followData = {
+            'follows_now': collection.followsNow ?? false
+        } as App.RowData 
 
         if ( !viewPermission ) {
             throw redirect(307, '/collections')
@@ -43,7 +46,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession } 
         followData['follows_now'] = followsNow
     }
 
-    return { sessionUserId, collectionId, collectionInfo, collectionContents, viewPermission, editPermission, followData }
+    return { sessionUserId, collectionId, collectionMetadata, collectionContents, viewPermission, editPermission, followData }
 }
 
 export const actions = {

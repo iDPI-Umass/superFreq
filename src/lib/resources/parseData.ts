@@ -7,6 +7,7 @@ import remarkUnlink from 'remark-unlink'
 import remarkStringify from 'remark-stringify'
 import remarkRehype from 'remark-rehype'
 import {unified} from 'unified'
+import { stringSimilarity } from "string-similarity-js"
 
 export function validStringCheck ( value: string ) {
     if ( value && value.length > 0 ) {
@@ -144,11 +145,18 @@ export const profileName = function (username: string, display_name: string) {
 /* Converts values to mbid categories */
 
 export const categoriesTable: App.Lookup = {
+    "artist": "artist",
     "artists": "artist",
+    "album": "release-group",
+    "albums": "release-group",
+    "release-group": "release-group",
     "release-groups": "release-group",
     "release_groups": "release-group",
+    "releases": "release",
+    "release": "release",
+    "recording": "recording",
     "recordings": "recording",
-    "albums": "release-group",
+    "track": "recording",
     "tracks": "recording",
     "songs": "recording"
 }
@@ -225,6 +233,7 @@ export const prepareMusicMetadataInsert = function ( collectionItems: App.RowDat
                 artistsMetadata = [...artistsMetadata, {
                     "artist_mbid": thisItem["artist_mbid"],
                     "artist_name": thisItem["artist_name"],
+                    "discogs_img_url": thisItem["artist_discogs_img_url"] ?? null,
                     "added_at": timestampISO
                 }]
             }
@@ -280,6 +289,7 @@ export const prepareAvatarMetadataInsert = function ( avatarItem: App.RowData ) 
     artistsMetadata = [...artistsMetadata, {
         "artist_mbid": avatarItem["artist_mbid"],
         "artist_name": avatarItem["artist_name"],
+        "discogs_img_url": thisItem["artist_discogs_img_url"] ?? null,
         "added_at": timestampISO
     }]
 
@@ -313,13 +323,15 @@ export const prepareMusicDataUpsert = function ( collectionItems: App.RowData, c
         if ( collectionType == "artists" ) {
             upsertArtists = [...upsertArtists, {
                 "artist_mbid": thisItem["artist_mbid"],
-                "artist_name": thisItem["artist_name"]
+                "artist_name": thisItem["artist_name"],
+                "discogs_img_url": thisItem["artist_discogs_img_url"] ?? null
             }];
         }
         else if	( collectionType == "release_groups" ) {
             upsertArtists = [...upsertArtists, {
                 "artist_mbid": thisItem["artist_mbid"],
-                "artist_name": thisItem["artist_name"]
+                "artist_name": thisItem["artist_name"],
+                "discogs_img_url": thisItem["artist_discogs_img_url"] ?? null
             }];
 
             upsertReleaseGroups = [...upsertReleaseGroups, {
@@ -335,7 +347,8 @@ export const prepareMusicDataUpsert = function ( collectionItems: App.RowData, c
         else if ( collectionType == "recordings" ) {
             upsertArtists = [...upsertArtists, {
                 "artist_mbid": thisItem["artist_mbid"],
-                "artist_name": thisItem["artist_name"]
+                "artist_name": thisItem["artist_name"],
+                "discogs_img_url": thisItem["artist_discogs_img_url"] ?? null
             }];
 
             upsertReleaseGroups = [...upsertReleaseGroups, {
@@ -464,6 +477,7 @@ export const listenUrlWhitelistCheck = function ( urlString: string ) {
 
 export const fetchHtml = async function ( listnUrl: string ) {
     const url = new URL(listnUrl)
+
     const response = await fetch(url)
     if (!response.ok) {
         throw new Error(`Failed to fetch: ${response.status}`)
@@ -533,19 +547,20 @@ export const parseBandcampHtml  = async function ( listenUrlString: string ) {
 
 export const getListenUrlData = async function ( listenUrlString: string ) { 
 
+    let embedInfo: App.RowData
     if ( !listenUrlString ) {
-        const embedInfo = {
+        embedInfo = {
             'id': null,
             'source': null,
             'title': null,
-            'itemType': null,
+            'item_type': null,
             'artist': null,
             'account': null,
             'img_url': null,
             'tracklist': null,
             'release_date': null,
-        }
-        return embedInfo 
+        } as App.RowData
+        return embedInfo
     }
 
     const urlSource = parseUrlSource(listenUrlString)
@@ -573,13 +588,13 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
             'id': itemId,
             'source': 'soundcloud',
             'title': itemTitle,
-            'itemType': null,
+            'item_type': null,
             'artist': null,
             'account': itemAccount,
             'img_url': null,
             'tracklist': null,
             'release_date': null,
-        } 
+        } as App.RowData
         return itemInfo
     }
 
@@ -595,11 +610,24 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
         const pageTitle = document.title
         let title: string | null = null
         let artist: string | null = null
+        let type: string | null = null
 
         if ( pageTitle.includes(' - ')) {
             const elements = pageTitle.split(' - ')
             artist = elements[0]
             title = elements[1]
+            type = title ? 'track' : null
+        }
+
+        const albumExp = new RegExp('album', 'i')
+        const mixExp = new RegExp('mix', 'i')
+        const remixExmp = new RegExp('remix', 'i')
+
+        if ( title && albumExp.test(title)) {
+            type = 'album'
+        }
+        if ( title && mixExp.test(title) && !remixExmp.test(title)) {
+            type = 'episode'
         }
 
         const itemInfo = {
@@ -607,13 +635,13 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
             'id': itemId,
             'source': 'youtube',
             'title': title ?? pageTitle,
-            'itemType': null,
+            'item_type': type,
             'artist': artist,
             'account': null,
             'img_url': null,
             'tracklist': null,
             'release_date': null,
-        }
+        } as App.RowData
         return itemInfo
     }
 
@@ -629,31 +657,28 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
             'id': itemId,
             'source': 'mixcloud',
             'title': itemTitle,
-            'itemType': null,
+            'item_type': null,
             'artist': null,
             'account': itemAccount,
             'img_url': null,
             'tracklist': null,
             'release_date': null,
-        }
+        } as App.RowData
         return itemInfo
     }
 
     if ( urlSource == 'bandcamp' ) {
-        const embedInfo = await parseBandcampHtml(listenUrlString)
-        return embedInfo
+        embedInfo = await parseBandcampHtml(listenUrlString) as App.RowData
     }
     else if ( urlSource == 'soundcloud') {
         const listenUrl = new URL(listenUrlString)
         const html = await getHtml(listenUrl)
-        const embedInfo = await parseSoundcloudHtml(html)
-        return embedInfo
+        embedInfo = await parseSoundcloudHtml(html) as App.RowData
     }
     else if ( urlSource == 'youtube' ) {
         const listenUrl = new URL(listenUrlString)
         const html = await getHtml(listenUrl)
-        const embedInfo =  await parseYouTubeHtml(html, listenUrlString)
-        return embedInfo
+        embedInfo =  await parseYouTubeHtml(html, listenUrlString) as App.RowData
     }
     // else if ( urlSource == 'mixcloud' ) {
     //     const listenUrl = new URL(listenUrlString)
@@ -662,18 +687,87 @@ export const getListenUrlData = async function ( listenUrlString: string ) {
     //     return embedInfo
     // }
     else {
-        const embedInfo = {
+        embedInfo = {
             'id': null,
             'source': null,
             'title': null,
-            'itemType': null,
+            'item_type': null,
             'artist': null,
             'account': null,
             'img_url': null,
             'tracklist': null,
             'release_date': null,
-        }
-        return embedInfo
+        } as App.RowData
     }
+
+    return embedInfo
 }
  
+//
+/*
+** Matchcing search query against search results
+*/
+//
+
+export const searchForAlbumMetadata = async function ( album: any ) {
+    async function delay ( milliseconds: number ) { 
+        new Promise(resolve => setTimeout(resolve, milliseconds)) 
+    }
+
+    await delay(20000)
+    const title = album['Album Title']
+    const artist = album['Artist']
+
+    const searchTerms = {
+        artistName: artist,
+        releaseGroupName: title
+    }
+
+    let mbid = null as string | null
+    if ( artist != 'Compilation') {
+        const {searchResults} = await musicbrainzAdvancedSearch('album', searchTerms, 3)
+
+        console.log(searchResults)
+
+        if ( searchResults['release-groups']){
+            for ( const result of searchResults['release-groups'] ) {
+                const resultTitle = result.title
+                const resultArtist = result['artist-credit'][0]['artist']['name']
+                mbid = result.id
+
+                const titleSimilarity = stringSimilarity(title, resultTitle)
+
+                const artistSimilarity = stringSimilarity(artist, resultArtist)
+
+                console.log(titleSimilarity, artistSimilarity)
+                if (titleSimilarity >=0.5 && artistSimilarity >= 0.5 ) {
+                    console.log('mbid: ', mbid)
+                }
+            }
+        }
+    }
+
+    return { mbid }
+    
+}
+
+export const getMetadataAlbumsArray = async function (albums: any) {
+    let mbidCount = 0
+    for ( const album of albums ) {
+        await delay(2000)
+        const {mbid} = await parseAlbum(album)
+        await delay(2000)
+        album.mbid = mbid
+
+
+        if (album.mbid) {
+            console.log(album)
+            mbidCount ++
+        }
+        await delay(20000)
+    }
+    console.log('done')
+    console.log('album: ', albums.length)
+    console.log('mbids: ', mbidCount)
+    return
+}
