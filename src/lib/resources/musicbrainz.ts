@@ -809,7 +809,13 @@ export const addCollectionItemNoImg = async function (
     const mbid = releaseGroupMbid( searchCategory, item )
     const releaseDate = itemDate( searchCategory, item )
     const label = await getLabel( searchCategory, mbid, releaseDate )
-    const collectionId = ( idCatgeory == 'collection' ) ? item.collection_id : null
+    const collectionMetadata = ( idCatgeory == 'collection' ) ? {
+        'id': item.collection_id,
+        'title': item.title,
+        'display_name': item.display_name,
+        'username': item.username,
+        'created_at': item.created_at
+    } : null
 
     addedItems = [...addedItems, {
         "original_id": originalId ?? null,
@@ -821,7 +827,11 @@ export const addCollectionItemNoImg = async function (
         "recording_mbid": recordingMbid( searchCategory, item ),
         "recording_name": recordingName( searchCategory, item ),
         "remixer_mbid": remixerMbid( searchCategory, item ) ?? null,
-        'collected_collection_id': collectionId,
+        "connected_collection_id": collectionMetadata?.id ?? null,
+        "collection_title": collectionMetadata?.title ?? null,
+        "collection_display_name": collectionMetadata?.display_name ?? null,
+        "collection_username": collectionMetadata?.username ?? null,
+        "colllection_created_at": collectionMetadata?.created_at ?? null,
         "release_date": releaseDate,
         "img_url": null,
         "last_fm_img_url": null,

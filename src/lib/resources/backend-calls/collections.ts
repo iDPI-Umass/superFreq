@@ -644,12 +644,15 @@ export const updateCollection = async function ( sessionUserId: string, collecti
 
         const infoChangelog = await selectInfoChangelog?.changelog as App.Changelog
 
+        console.log(infoChangelog)
         infoChangelog[timestampISOString] = {
             'updated_by': collectionInfo['updated_by'],
             'status': collectionInfo['status'],
             'title': collectionInfo['title'],
             'description_text': collectionInfo['description_text']
         }
+
+        console.log(infoChangelog)
 
         await trx
             .updateTable('collections_info')

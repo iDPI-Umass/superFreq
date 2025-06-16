@@ -178,7 +178,9 @@ export const itemTypeTable: App.Lookup = {
     "episode": "episode",
     "episodes": "episode",
     "mix": "episode",
-    "mixes": "episode"
+    "mixes": "episode",
+    "collections": "collection",
+    "collection": "collection"
 }
 
 /* Converts values to mbid slug */
@@ -410,6 +412,7 @@ export const populateCollectionContents = function ( sessionUserId: string, coll
                 "item_type": thisItem["item_type"],
                 "notes": thisItem["notes"],
                 "user_added_metadata_id": thisItem["user_added_metadata_id"] ?? null,
+                "connected_collection_id": thisItem["connected_collection_id"] ?? null,
                 "changelog": changelog
             }];
         }
@@ -427,6 +430,7 @@ export const populateCollectionContents = function ( sessionUserId: string, coll
                 "item_type": thisItem["item_type"],
                 "notes": thisItem["notes"],
                 "user_added_metadata_id": thisItem["user_added_metadata_id"] ?? null,
+                "connected_collection_id": thisItem["connected_collection_id"] ?? null,
                 "changelog": changelog
             }];
         }

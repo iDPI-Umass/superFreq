@@ -12,7 +12,7 @@
 
     import CoverArt from "$lib/components/CoverArt.svelte"
     import CollectionItemTag from "$lib/components/CollectionItemTag.svelte"
-    import { listenUrlWhitelistCheck } from "$lib/resources/parseData";
+    import { displayDate, listenUrlWhitelistCheck } from "$lib/resources/parseData";
     import { promiseStates, collectionData } from "$lib/resources/states.svelte";
 
     interface ComponentProps {
@@ -286,6 +286,25 @@
                 </a>
             {:else}
                 {item["artist_name"] ?? item["user_added_artist_name"]}
+            {/if}
+        </span>
+    {:else if itemType.includes("collection")}
+        <span class="title">
+            {#if mode == "view"}
+                <a href="/collection/{item["connected_collection_id"]}">
+                    {item["connected_collection_title"]}
+                </a>
+            {:else}
+                {item["connected_collection_title"]}
+            {/if}
+        </span>
+        <span class="artist">
+            {#if mode == "view"}
+                <a href="/user/{item["connected_collection_owner_username"]}">
+                by {item["connected_collection_owner_display_name"]} ({item["connected_collection_owner_username"]})
+                </a>
+            {:else}
+                by {item["connected_collection_owner_display_name"]} ({item["connected_collection_owner_username"]})
             {/if}
         </span>
     {/if}
