@@ -32,7 +32,7 @@
 	} as App.StringLookupObject
 
 	const modeWidth = $derived(cssMode[mode])
-	const displayTitle = $derived(headerText)
+	// const displayTitle = $derived(panelHeaderText)
 </script>
 
 {#snippet listItem(collection: App.RowData)}
