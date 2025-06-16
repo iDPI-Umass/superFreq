@@ -1,8 +1,6 @@
 <script lang="ts">
   import { page } from '$app/state'
-  import { DropdownMenu } from "bits-ui"
   import Dropdown from '$lib/components/menus/ReuseableDropdownMenu.svelte'
-  import ChevronDown from '@lucide/svelte/icons/chevron-down';
   import logo from "$lib/assets/images/logo/freq-logo-dark.svg"
 
   import CoverArt from "src/lib/components/CoverArt.svelte";
