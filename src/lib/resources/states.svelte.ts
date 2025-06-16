@@ -71,3 +71,9 @@ export const collectionData = $state({
     'descriptionText': null as string | null,
     'updatedAt': null  as Date | null
 }) 
+
+export const searchResults = $state({
+    'query': '' as string,
+    'category': '' as string,
+    'results': [] as App.RowData[]
+})
