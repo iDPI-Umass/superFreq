@@ -12,6 +12,7 @@
 
     import CoverArt from "$lib/components/CoverArt.svelte"
     import CollectionItemTag from "$lib/components/CollectionItemTag.svelte"
+    import CollectionImageSpotlight from "$lib/components/collections/CollectionImageSpotlight.svelte"
     import { displayDate, listenUrlWhitelistCheck } from "$lib/resources/parseData";
     import { promiseStates, collectionData } from "$lib/resources/states.svelte";
 
@@ -118,6 +119,24 @@
     }
 
     const gridSpacers = $derived(getGridSpacers(items, layout))
+
+    const sampleCollection = {'images' : [
+        {
+            'last_fm_img_url': 'https://ia601609.us.archive.org/19/items/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad-2051756196.jpg',
+            'release_group_name': 'herbie',
+            'artist_name': 'village life'
+        },
+                {
+            'last_fm_img_url': 'https://ia601609.us.archive.org/19/items/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad-2051756196.jpg',
+            'release_group_name': 'herbie',
+            'artist_name': 'village life'
+        },
+                {
+            'last_fm_img_url': 'https://ia601609.us.archive.org/19/items/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad-2051756196.jpg',
+            'release_group_name': 'herbie',
+            'artist_name': 'village life'
+        }
+    ]}
 </script>
 
 <!-- <svelte:options runes={true} /> -->
@@ -208,6 +227,11 @@
                 {@render editorItemImage(item, item["artist_name"])}
             {/if}
         {/key}
+    {:else if itemType.includes("collection") && mode == "view"}
+        <CollectionImageSpotlight
+            collection={sampleCollection}
+            orientation="diagonal-stack"
+        ></CollectionImageSpotlight>
     {/if}
 {/snippet}
 
@@ -352,7 +376,9 @@
                     animate:flip="{{duration: flipDurationMs}}" 
                     class={format[layout][1]}
                 >
-                    {@render coverArt(contentItem, ( contentItem["item_type"] ?? collectionType ), mode)}
+                    <div>
+                        {@render coverArt(contentItem, ( contentItem["item_type"] ?? collectionType ), mode)}
+                    </div>
                     <div class="metadata-blurb">
                         {@render metadataBlurb(contentItem, ( contentItem["item_type"] ?? collectionType ), mode)}
                     </div>
