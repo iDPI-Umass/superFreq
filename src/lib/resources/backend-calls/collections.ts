@@ -124,7 +124,7 @@ export const selectListProfileUserViewableCollections = async function ( session
         if ( sessionUserId == profileUserId ) {
             selectInfo = await trx
             .selectFrom('collections_info as info')
-            .innerJoin('collections_social as social', 'social.collection_id', 'info.collection_id')
+            .innerJoin('social_graph as social', 'social.collection_id', 'info.collection_id')
             .innerJoin('profiles', 'profiles.id', 'social.user_id')
             .select([
                 'info.collection_id as id',
@@ -134,6 +134,7 @@ export const selectListProfileUserViewableCollections = async function ( session
             ])
             .where(({eb, and, or}) => and([
                 eb('social.user_id', '=', profileUserId),
+                eb('social.collection_id', 'is not', null),
                 or([
                     eb('info.status', '=', 'public'),
                     eb('info.status', '=', 'open'),
@@ -150,7 +151,7 @@ export const selectListProfileUserViewableCollections = async function ( session
         else if ( sessionUserId != profileUserId ) {
             selectInfo = await trx
             .selectFrom('collections_info as info')
-            .innerJoin('collections_social as social', 'social.collection_id', 'info.collection_id')
+            .innerJoin('social_graph as social', 'social.collection_id', 'info.collection_id')
             .innerJoin('profiles', 'profiles.id', 'social.user_id')
             .select([
                 'info.collection_id as id',
@@ -160,6 +161,7 @@ export const selectListProfileUserViewableCollections = async function ( session
             ])
             .where(({eb, and, or}) => and([
                 eb('social.user_id', '=', profileUserId),
+                eb('social.collection_id', 'is not', null),
                 or([
                     eb('info.status', '=', 'public'),
                     eb('info.status', '=', 'open')
@@ -503,7 +505,7 @@ export const insertCollection = async function ( sessionUserId: string, collecti
         }
         
         await trx
-        .insertInto('collections_social')
+        .insertInto('social_graph')
         .values({
             collection_id: collectionId,
             user_id: sessionUserId,
@@ -640,7 +642,7 @@ export const updateCollection = async function ( sessionUserId: string, collecti
         .where('collection_id', '=', collectionId)
         .executeTakeFirst()
 
-        const infoChangelog = await selectInfoChangelog as App.Changelog
+        const infoChangelog = await selectInfoChangelog?.changelog as App.Changelog
 
         infoChangelog[timestampISOString] = {
             'updated_by': collectionInfo['updated_by'],
@@ -1100,7 +1102,7 @@ export const saveItemToCollection = async function ( sessionUserId: string, item
         try {
             const collectionInfo = await trx
             .selectFrom('collections_info as info')
-            .leftJoin('collections_social as social', 'social.collection_id', 'info.collection_id')
+            .leftJoin('social_graph as social', 'social.collection_id', 'info.collection_id')
             .leftJoin('collections_contents as contents', 'contents.collection_id', 'info.collection_id')
             .select([
                 'info.collection_id as id',
