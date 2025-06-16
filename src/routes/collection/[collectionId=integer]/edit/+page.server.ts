@@ -2,9 +2,12 @@ import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
 import { timestampISO } from '$lib/resources/parseData'
 import { selectEditableCollectionContents, updateCollection, deleteCollection } from '$lib/resources/backend-calls/collections'
+import { searchCollections } from 'src/lib/resources/backend-calls/search'
 
 let collectionId: string
 let updatedBy: string
+
+const collectionSearchResults = [] as App.RowData[]
 
 export const load: PageServerLoad = async ({ parent, params, locals: { safeGetSession } }) => {
   const session = await safeGetSession()
@@ -31,7 +34,7 @@ export const load: PageServerLoad = async ({ parent, params, locals: { safeGetSe
   updatedBy = sessionUserId
 
   if ( editPermission ) {
-    return { collection, sessionUserId, collectionId }
+    return { collection, sessionUserId, collectionId, collectionSearchResults }
   }
   else {
     throw redirect(303, `/collection/${collectionId}`)
@@ -84,5 +87,18 @@ export const actions: Actions = {
       redirect(303, '/')
     }
     else { return success }
+  },
+  search: async ({ request }) => {
+    const data = await request.formData()
+    const query = data.get('query') as string
+    const resultsLimit = parseInt(data.get('results-limit') as string)
+    const searchCategory = data.get('search-category') as string
+    const queryType = data.get('query-type') as string
+
+    collectionSearchResults.length = 0
+
+    const searchResults = await searchCollections( query, queryType, resultsLimit )
+
+    collectionSearchResults.push(...searchResults.results)
   }
 }

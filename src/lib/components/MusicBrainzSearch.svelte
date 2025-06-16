@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { enhance } from '$app/forms'
 	import ListModal from 'src/lib/components/modals/ListModal.svelte'
 	import { mbSearch, addCollectionItemNoImg, getCoverArt, addSingleItemNoImg, mbidCateogory, artistName, artistMbid, releaseGroupName, releaseGroupMbid, releaseGroupMetadata, recordingName, itemDate, artistOrigin, getArtistImage } from '$lib/resources/musicbrainz'
 	import CoverArt from './CoverArt.svelte'
@@ -31,17 +30,17 @@
 	let showModal = $state(false)
 	let addingItem = $state(false)
 
-	let mbData = $state([]) as any[]
+	let searchData = $state([]) as any[]
 	let searchComplete = $state(false)
 
 	async function search ( query: string, searchCategory: string, searchResultsLimit: string ) {
 		promiseStates.newItemAdded = false
-		mbData = []
+		searchData = []
 		showModal = true
 		const searchResults = await mbSearch(query, searchCategory, searchResultsLimit)
-		mbData = searchResults.mbData
+		searchData = searchResults.mbData
 		searchComplete = searchResults.searchComplete
-		return { mbData, searchComplete, showModal }
+		return { searchData, searchComplete, showModal }
 	}
 
 	const searchCategories = ['artists', 'release_groups', 'recordings']
@@ -145,7 +144,7 @@
 			<div>
 				{#if searchComplete}
 					<ol class="list-modal">
-						{#each mbData as item}
+						{#each searchData as item}
 						<li class="list-modal">
 							<div class="list-modal-li-row">
 								<div class="list-modal-li-row-button-spacing">

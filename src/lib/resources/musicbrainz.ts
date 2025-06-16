@@ -809,6 +809,7 @@ export const addCollectionItemNoImg = async function (
     const mbid = releaseGroupMbid( searchCategory, item )
     const releaseDate = itemDate( searchCategory, item )
     const label = await getLabel( searchCategory, mbid, releaseDate )
+    const collectionId = ( idCatgeory == 'collection' ) ? item.collection_id : null
 
     addedItems = [...addedItems, {
         "original_id": originalId ?? null,
@@ -820,6 +821,7 @@ export const addCollectionItemNoImg = async function (
         "recording_mbid": recordingMbid( searchCategory, item ),
         "recording_name": recordingName( searchCategory, item ),
         "remixer_mbid": remixerMbid( searchCategory, item ) ?? null,
+        'collected_collection_id': collectionId,
         "release_date": releaseDate,
         "img_url": null,
         "last_fm_img_url": null,

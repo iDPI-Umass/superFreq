@@ -1,6 +1,7 @@
 <script lang="ts">
     import { enhance } from '$app/forms'
 	import ListModal from 'src/lib/components/modals/ListModal.svelte'
+	import { addCollectionItemNoImg } from '$lib/resources/musicbrainz';
     import { searchResults, collectionData } from '$lib/resources/states.svelte'
 
 
@@ -13,6 +14,7 @@
 		limit?: string | null
         results: App.RowData[]
         resultsCategory: string | null
+		collectionEditor?: boolean
 	}
 
 	let {
@@ -20,32 +22,36 @@
 		searchButtonText,
 		searchPlaceholder,
         query = '',
-		mode, // "search", "collection"
+		mode = 'search', // "search", "collection"
 		limit = '25',
         results = [],
-        resultsCategory
+        resultsCategory,
+		collectionEditor = false
 	}: ComponentProps = $props()
 
 	let showModal = $state( false )
 	let addingItem = $state(false)
 
-	let mbData = $state([]) as any[]
     let loading = $state(false)
 
     let searchComplete = $derived( results.length > 0 ? true : false )
 
     let validQuery = $derived( query && query.length > 0 ? true : false)
 
-    // async function addCollectionItem ( mode: string, item: App.RowData ) {
-    //     const collectionItems = await addCollectionItemNoImg( item, collectionData.collectionItems, collectionData.deletedItems, limit, searchCategory, mbidCategory )
-    //     collectionData.collectionItems = collectionItems.addedItems
-    //     collectionData.deletedItems = collectionItems.deletedItems
-    //     query = ""
-    //     searchResults.results = []
-    //     showModal = false
-    //     addingItem = false
-    //     return { query, searchComplete, showModal }
-    // }
+    async function addCollectionItem ( mode: string, item: App.RowData ) {
+        const collectionItems = await addCollectionItemNoImg( item, collectionData.collectionItems, collectionData.deletedItems, limit, searchCategory, mode )
+        collectionData.collectionItems = collectionItems.addedItems
+        collectionData.deletedItems = collectionItems.deletedItems
+        query = ""
+        searchResults.results = []
+        showModal = false
+        addingItem = false
+        return { query, searchComplete, showModal }
+    }
+
+	$effect(() => {
+		console.log('results returned: ', searchResults.results.length)
+	})
 </script>
 
 <div class="search-bar">
@@ -64,7 +70,8 @@
 						{#each results as item}
 						<li class="list-modal">
 							<div class="list-modal-li-row">
-                                    <!-- <div class="list-modal-li-row-button-spacing">
+								{#if collectionEditor}
+                                    <div class="list-modal-li-row-button-spacing">
                                         <button 
                                             class="add"
                                             aria-label="add item"
@@ -75,7 +82,8 @@
                                         >
                                             + add
                                         </button>
-                                    </div> -->
+                                    </div>
+								{/if}
 								{#if resultsCategory == "collections"}
 									<span class="list-modal">
 										<span class="list-modal-bold">

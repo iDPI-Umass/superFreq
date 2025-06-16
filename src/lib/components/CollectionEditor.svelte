@@ -2,9 +2,10 @@
     import { enhance } from '$app/forms'
     import GridList from '$lib/components/GridList.svelte'
     import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
+    import GlobalSearch from '$lib/components/GlobalSearch.svelte'
     import ManualAddModal from '$lib/components/modals/ManualAddModal.svelte'
     import CollectionItemTag from '$lib/components/CollectionItemTag.svelte'
-    import { collectionData } from '$lib/resources/states.svelte'
+    import { collectionData, searchResults } from '$lib/resources/states.svelte'
 
     interface ComponentProps {
         mode?: string | null
@@ -165,28 +166,40 @@
             </div>
             <span class="or">— or —</span>
         {/if}
-        <span class="search-tooltip">
-            add <em>{itemLookup[itemType]}</em> info yourself
-        </span>
-        <ManualAddModal
-            bind:showModal={showManualAddModal}
-            itemType={itemType}
-        >
-            {#snippet headerText()}
-                manually add {itemLookup[itemType]}
-            {/snippet}
-        </ManualAddModal>
-        <div class="manual-add-button">
-            <button
-                class="double-border-top"
-                onclick={() => showManualAddModal = true}
-                disabled={itemType == ''}
+        {#if itemType && itemType != "collection" }
+            <span class="search-tooltip">
+                add <em>{itemLookup[itemType]}</em> info yourself
+            </span>
+            <ManualAddModal
+                bind:showModal={showManualAddModal}
+                itemType={itemType}
             >
-                <div class="inner-border">
-                    Add {itemLookup[itemType]} manually
-                </div>
-            </button>
-        </div>
+                {#snippet headerText()}
+                    manually add {itemLookup[itemType]}
+                {/snippet}
+            </ManualAddModal>
+            <div class="manual-add-button">
+                <button
+                    class="double-border-top"
+                    onclick={() => showManualAddModal = true}
+                    disabled={itemType == ''}
+                >
+                    <div class="inner-border">
+                        Add {itemLookup[itemType]} manually
+                    </div>
+                </button>
+            </div>
+        {:else if itemType == "collection"}
+            <GlobalSearch
+                searchCategory="collection"
+                searchButtonText="search"
+                searchPlaceholder="search collections"
+                mode="collection"
+                results={searchResults.results}
+                resultsCategory={searchResults.category}
+                collectionEditor={true}
+            ></GlobalSearch>
+        {/if}
     </div>
 </div>
 <div class="bottom-double-border"></div>
