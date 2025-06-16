@@ -12,14 +12,11 @@
     import GridList from "$lib/components/GridList.svelte"
     import InfoBox from '$lib/components/InfoBox.svelte'
     import InlineMarkdownText from '$lib/components/InlineMarkdownText.svelte'
-	import { onMount, tick } from 'svelte'
 
     import { collectionData } from '$lib/resources/states.svelte.js'
-    // import { insertCollectionFollow, updateCollectionFollow } from '$lib/resources/backend-calls/collectionInsertUpsertUpdateFunctions';
-
 
     let { data } = $props();
-    let { sessionUserId, collectionId, collectionMetadata, collectionContents, viewPermission, editPermission, followData, infoBoxText } = $state(data);
+    let { sessionUserId, collectionId, collectionMetadata, collectionContents, viewPermission, editPermission, followData, infoBoxText } = $derived(data);
 
     let gridListSelect = $state("grid")
 
@@ -30,11 +27,6 @@
         "release_groups": "albums",
         "recordings": "tracks"
     }
-
-    collectionData.type = collectionMetadata?.type as string
-    collectionData.status = collectionMetadata?.status as string    
-    collectionData.updatedAt = collectionMetadata?.updated_at as Date
-    collectionData.collectionItems = collectionContents as App.RowData[]
 
     const updatedAt = $derived(new Date(collectionMetadata?.updated_at).toLocaleDateString())
 
@@ -87,6 +79,11 @@
 
     $effect(() => {
         sortedItems =  sort(sortOption)
+
+        collectionData.type = collectionMetadata?.type as string
+        collectionData.status = collectionMetadata?.status as string    
+        collectionData.updatedAt = collectionMetadata?.updated_at as Date
+        collectionData.collectionItems = collectionContents as App.RowData[]
     })
 
 </script>

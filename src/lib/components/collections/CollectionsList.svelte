@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { displayDate } from '$lib/resources/parseData'
 	import CollectionImage from './CollectionImage.svelte'
-	import CollectionImageSpotlight from './CollectionImageSpotlight.svelte';
+	import CollectionImageTrio from './CollectionImageTrio.svelte';
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
 	import CoverArt from '../CoverArt.svelte';
 
@@ -40,10 +40,10 @@
 		<a class={modeWidth} href="/collection/{collection.collection_id}">
 			<div class="item-images">
 				<div class="item-images-layout">
-					<CollectionImageSpotlight 
+					<CollectionImageTrio 
 						collection={collection}
 						orientation='row'
-					></CollectionImageSpotlight>
+					></CollectionImageTrio>
 				</div>
 			</div>
 			<div class="item-links">

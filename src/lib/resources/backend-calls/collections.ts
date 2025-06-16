@@ -416,7 +416,33 @@ export const selectViewableCollectionContents = async function ( collectionId: s
             .selectAll()
             .where('collection_id', '=', collectionId)
             .where('item_position', 'is not', null)
-            .execute()
+            .execute() as App.RowData[]
+
+            for ( const collection of collectionContents ) {
+                if ( collection.item_type == 'collection' ) {
+                    const connectedCollection = collection.connected_collection_id
+
+                    const collectionImageTrio = await trx
+                    .selectFrom('collections')
+                    .select([
+                        'img_url',
+                        'last_fm_img_url',
+                        'artist_name',
+                        'release_group_name'
+                    ])
+                    .where('collection_id', '=', connectedCollection)
+                    .where('item_position', 'is not', null)
+                    .where('last_fm_img_url', 'is not', null)
+                    // .where('img_url', '!=', null)
+                    .limit(3)
+                    .execute()
+
+                    collection.image_trio = collectionImageTrio
+
+                    console.log(collection)
+                    console.log(collectionImageTrio)
+                }
+            }
 
             return { viewPermission: true, follows, collectionContents, collectionMetadata }
         }

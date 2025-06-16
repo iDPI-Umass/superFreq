@@ -9,7 +9,7 @@
 
 	let { imgUrl, collection, orientation='column' }: ComponentProps = $props()
 
-	let images = $derived(collection?.images)
+	let images = $derived(collection?.images ?? collection?.image_trio)
 
 	let imageOne = $derived(images[0])
 	let imageTwo = $derived(images[1])
@@ -38,6 +38,7 @@
 
 	$effect(() => {
 		console.log(images)
+		console.log(collection)
 	})
 </script>
 

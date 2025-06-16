@@ -12,7 +12,7 @@
 
     import CoverArt from "$lib/components/CoverArt.svelte"
     import CollectionItemTag from "$lib/components/CollectionItemTag.svelte"
-    import CollectionImageSpotlight from "$lib/components/collections/CollectionImageSpotlight.svelte"
+    import CollectionImageTrio from "src/lib/components/collections/CollectionImageTrio.svelte"
     import { displayDate, listenUrlWhitelistCheck } from "$lib/resources/parseData";
     import { promiseStates, collectionData } from "$lib/resources/states.svelte";
 
@@ -228,10 +228,10 @@
             {/if}
         {/key}
     {:else if itemType.includes("collection") && mode == "view"}
-        <CollectionImageSpotlight
-            collection={sampleCollection}
+        <CollectionImageTrio
+            collection={item}
             orientation="diagonal-stack"
-        ></CollectionImageSpotlight>
+        ></CollectionImageTrio>
     {/if}
 {/snippet}
 
@@ -339,7 +339,7 @@
                 by {item["connected_collection_owner_display_name"]} ({item["connected_collection_owner_username"]})
                 </a>
             {:else}
-                by {item["connected_collection_owner_display_name"]} ({item["connected_collection_owner_username"]})
+                by {item["connected_collection_owner_display_name"]} 
             {/if}
         </span>
     {/if}

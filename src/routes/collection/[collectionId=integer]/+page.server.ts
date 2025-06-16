@@ -1,4 +1,6 @@
 import { redirect } from '@sveltejs/kit'
+import { db } from 'src/database.ts'
+
 import type { PageServerLoad, Actions } from './$types'
 import { selectViewableCollectionContents } from '$lib/resources/backend-calls/collections'
 import { insertUpdateCollectionFollow } from '$lib/resources/backend-calls/users'

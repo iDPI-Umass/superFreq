@@ -2,7 +2,7 @@
 	import SEO from '$lib/components/layout/SEO.svelte';
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
 	import CollectionsList from '$lib/components/collections/CollectionsList.svelte';
-	import CollectionImageSpotlight from '$lib/components/collections/CollectionImageSpotlight.svelte';
+	import CollectionImageTrio from 'src/lib/components/collections/CollectionImageTrio.svelte';
 	import Feed from '$lib/components/Feed.svelte'
 
 	let { data } = $props();
@@ -36,10 +36,10 @@
 {#snippet spotlightItem(collection: App.RowData)}
 	<div class="spotlight-item">
 		<div class="spotlight-item-images">
-			<CollectionImageSpotlight 
+			<CollectionImageTrio 
 				collection={collection}
 				orientation='column'
-			></CollectionImageSpotlight>
+			></CollectionImageTrio>
 		</div>
 		<div class="spotlight-collection-info">
 			<div class="spotlight-collection-info-text">
