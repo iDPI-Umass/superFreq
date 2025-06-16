@@ -23,5 +23,3 @@ export const db = new Kysely<DB>({
         }),
     }),
 })
-
-//jkhjkl
