@@ -1,95 +1,164 @@
 <script lang="ts">
-    import SEO from '$lib/components/layout/SEO.svelte'
-    import PanelHeader from '$lib/components/PanelHeader.svelte';
-    import type { PageData, ActionData } from './$types'
-    import { enhance } from '$app/forms'
-    interface Props {
-        form: ActionData;
-        data: PageData;
-    }
+	import SEO from '$lib/components/layout/SEO.svelte';
+	import PanelHeader from '$lib/components/PanelHeader.svelte'
+	import CollectionsList from '$lib/components/collections/CollectionsList.svelte';
+	import CollectionImageSpotlight from '$lib/components/collections/CollectionImageSpotlight.svelte';
+	import Feed from '$lib/components/Feed.svelte'
 
-    let { form, data }: Props = $props();
+	let { data } = $props();
 
-    let { collections, remaining, totalCollections, batchSize, batchIterator } = $derived(data)
+	let {
+		sessionUserId,
+		spotlightCollections,
+		recentCollections,
+		collectionsFeed,
+		followingUsersCollections,
+	} = $derived(data);
+	
 </script>
 
 <SEO title="Explore collections"></SEO>
 
-<div class="panel">
-    <PanelHeader>
-        {#snippet headerText()}
-        collection spotlight
-        {/snippet}
-    </PanelHeader>
-    <div class="spotlight">
-        <h2>
-            <a href="/collection/193">Freq beta test listening club, March 2025</a>
-        </h2>
-    </div>
-    
-    
+<div class="jumbotron-container">
+	<div class="jumbotron-item-wrapper">
+		<div class="jumbotron-text">
+			<h3>Collect, curate, and share. Collections are the perfect way to group Albums.</h3>
+		</div>
+		<div class="jumbotron-button">
+			<button class="double-border-top">
+				<div class="inner-border">Create a Collection</div>
+			</button>
+		</div>
+	</div>
 </div>
 
-<div class="panel">
-    <PanelHeader>
-        {#snippet headerText()}
-        all collections
-        {/snippet}
-    </PanelHeader>
-    <ul>
-        {#each (form?.collections ?? collections) as collection}
-            <li>
-                <a href='/collection/{collection.collection_id}'>
-                    {collection.title} by {collection.username} ({new Date(collection.created_at).toLocaleDateString()})
-                </a>
-            </li>
-        {/each}
-    </ul>
 
-    <form 
-        method="POST" 
-        action="?/loadMore"
-        use:enhance
-    >
-        <input
-            type="hidden"
-            name="batch-iterator"
-            value={form?.batchIterator ?? batchIterator}
-        />
-        <input
-            type="hidden"
-            name="batch-size"
-            value={batchSize}
-        />
-        <input
-            type="hidden"
-            name="collections"
-            value={JSON.stringify(form?.collections ?? collections)}
-        />
-        {#if (form?.remaining ?? remaining) > 0}
-            <div class="button-spacer">
-                <button class="standard" formaction="?/loadMore">
-                    load more
-                </button>
-            </div>
-        {/if}
-    </form>
+{#snippet spotlightItem(collection: App.RowData)}
+	<div class="spotlight-item">
+		<div class="spotlight-item-images">
+			<CollectionImageSpotlight 
+				collection={collection}
+				orientation='column'
+			></CollectionImageSpotlight>
+		</div>
+		<div class="spotlight-collection-info">
+			<div class="spotlight-collection-info-text">
+				<span class="spotlight-collection-title">
+					{collection.title}
+				</span>
+				<br />
+				<span class="spotlight-collection-owner">
+					by {collection.display_name}
+				</span>
+			</div>
+			<hr class="spotlight-item-divider" />
+			<span class="spotlight-collection-description">
+				{collection.description}
+			</span>
+		</div>
+	</div>
+{/snippet}
+
+
+<div class="panel">
+	<PanelHeader>
+		{#snippet headerText()}
+			spotlight
+		{/snippet}
+		{#snippet button()}
+			<button class="standard">
+				see all
+			</button>
+		{/snippet}
+	</PanelHeader>
+	<div class="spotlight-row">
+		{#each spotlightCollections as collection}
+			{@render spotlightItem(collection)}
+		{/each}
+	</div>
 </div>
+
+
+<div class="two-column">
+	<div class="column-two-thirds">
+		<CollectionsList 
+			panelHeaderText="recently updated collections"
+			collections={recentCollections}
+			mode="wide"
+			imgMode="trio"
+		></CollectionsList>
+	</div>
+
+	<div class="column-one-third">
+		{#if sessionUserId}
+			<Feed
+				sessionUserId={sessionUserId}
+				feedItems={collectionsFeed.feedData}
+				mode="feed"
+				type="collections"
+			></Feed>
+			<CollectionsList
+				panelHeaderText="friends' collections"
+				collections={followingUsersCollections}
+				mode="narrow"
+				imgMode="trio"
+			></CollectionsList>
+		{/if}
+	</div>
+</div>
+
 
 <style>
-    .spotlight {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    h2 {
-        margin: var(--freq-spacing-medium) auto;
-    }
-    a {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 1rem;
-    }
+	.panel {
+		max-width: 90vw;
+	}
+	.spotlight-collection-info {
+		margin: var(--freq-spacing-small);
+	}
+	span.spotlight-collection-title {
+		font-size: var(--freq-font-size-small);
+		text-transform: uppercase;
+		font-weight: var(--freq-font-weight-medium);
+	}
+	span.spotlight-collection-owner {
+		color: var(--freq-color-mellow);
+		font-size: var(--freq-font-size-small);
+	}
+	span.spotlight-collection-description {
+		color: var(--freq-color-reading-text);
+		font-size: var(--freq-font-size-medium);
+	}
+	hr.spotlight-item-divider {
+		width: 35%;
+		background: linear-gradient(90deg, var(--freq-color-primary) 35%, #000000 100%) padding-box;
+	}
+	.jumbotron-container {
+		background-color: black;
+		min-height: 15rem;
+		max-height: fit-content;
+		align-content: center;
+	}
+
+	.jumbotron-item-wrapper {
+		max-width: 50%;
+		max-height: auto;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.jumbotron-text {
+		text-align: center;
+		text-shadow:
+			-2px 0 50px var(--freq-color-primary),
+			0 2px 50px var(--freq-color-primary),
+			2px 0 50px var(--freq-color-primary),
+			0 -2px 50px var(--freq-color-primary);
+	}
+
+	.jumbotron-button {
+		max-width: fit-content;
+
+		margin-left: auto;
+		margin-right: auto;
+	}
 </style>

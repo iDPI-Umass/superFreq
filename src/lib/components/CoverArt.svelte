@@ -6,10 +6,9 @@ Currently configured to server Last.fm images on the client side by default on a
 
 
 <script lang="ts">
-    import { onMount } from "svelte"
-    import { checkFetchedCoverArt, getLastFmCoverArt, getCoverArt, getCoverArtClientSide } from "$lib/resources/musicbrainz"
+    import { getCoverArtClientSide } from "$lib/resources/musicbrainz"
     import wave from "$lib/assets/images/logo/freq-wave.svg"
-    import { promiseStates } from "$lib/resources/states.svelte";
+    import { promiseStates } from "$lib/resources/states.svelte"
 
     interface ComponentProps {
         item?: any
@@ -88,9 +87,3 @@ Currently configured to server Last.fm images on the client side by default on a
 {:else if !validUrl && !clientSideLoad }
     <img src={wave} alt="not found" class={imgClass}  />
 {/if}
-
-<style>
-    img {
-        width: inherit;
-    }
-</style>
