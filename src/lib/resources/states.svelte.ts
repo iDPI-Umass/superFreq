@@ -73,5 +73,7 @@ export const collectionData = $state({
 }) 
 
 export const searchResults = $state({
-    'collections': [] as App.RowData[]
+    'query': '' as string,
+    'category': '' as string,
+    'results': [] as App.RowData[]
 })
