@@ -227,13 +227,13 @@
                 {@render editorItemImage(item, item["artist_name"])}
             {/if}
         {/key}
-    {:else if itemType.includes("collection") && mode == "view"}
+    <!-- {:else if itemType.includes("collection") && mode == "view"}
         <div class="grid-list-image">
             <CollectionImageTrio
                 collection={item}
                 orientation="diagonal-stack"
             ></CollectionImageTrio>
-        </div>
+        </div> -->
     {/if}
 {/snippet}
 
