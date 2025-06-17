@@ -135,7 +135,7 @@
                         Episode / DJ Mix
                     </label>
                 </li>
-                <li>
+                <!-- <li>
                     <input 
                         class="radio"
                         type="radio"
@@ -147,7 +147,7 @@
                     <label for="collection">
                         collection
                     </label>
-                </li>
+                </li> -->
             </ul>
         </fieldset>
     </div>
