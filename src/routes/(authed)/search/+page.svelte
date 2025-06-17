@@ -16,6 +16,7 @@
             search results for "{query}"
         {/snippet}
     </PanelHeader>
+    {#if siteSearchResults.length > 0}
     <ol class="search-results">
         {#each siteSearchResults as result}
             {#if result.result_type == 'collection'}
@@ -43,4 +44,9 @@
             {/if}
         {/each}
     </ol>
+    {:else}
+    <div class="info-box-compact">
+        <p>No search results for "{query}"</p>
+    </div>
+    {/if}
 </div>
