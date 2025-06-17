@@ -358,3 +358,9 @@ span.search-tooltip {
 	margin: var(--freq-spacing-3x-small);
 	margin-top: var(--freq-spacing-2x-small);
 } */
+
+.grid-list-img {
+	height: var(--freq-image-thumbnail-medium);
+	width: var(--freq-image-thumbnail-medium);
+	object-fit:cover;
+}
