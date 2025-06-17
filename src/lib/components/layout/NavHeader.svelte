@@ -278,7 +278,7 @@
     height: 50px;
   }
   nav.wide * {
-    font-size: var(--freq-font-size-medium);
+    font-size: var(--freq-font-size-);
   }
   nav.narrow {
     display: none
