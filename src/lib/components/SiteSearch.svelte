@@ -11,6 +11,7 @@
         formAction: string
         results?: App.RowData[]
         mode?: string
+        screenSize?: string
     }
 
     let { 
@@ -18,7 +19,8 @@
         searchPlaceholder,
         formAction, 
         results,
-        mode = 'site'
+        mode = 'site',
+        screenSize='desktop'
     }: ComponentProps = $props()
 
     let loading = $state(false)
@@ -26,6 +28,17 @@
     let searchResultsOpen = $state(false)
 
     let siteSearchResults = $state(results) as App.RowData[]
+
+    const responsiveStyling = {
+        'mobile': {
+            'fontSize': 'xx-small-font',
+            'iconSize': 14
+        },
+        'desktop': {
+            'fontSize': 'medium-font',
+            'iconSize': 16
+        }
+    } as any
 
     $effect(() => {
         console.log(siteSearchResults)
@@ -36,8 +49,8 @@
 <div class="constrain">
 <Popover.Root bind:open={searchBarOpen}>
     <Popover.Trigger class="search">
-        <Search size="16" color="var(--freq-color-text-medium-dark)"></Search>
-        Search
+        <Search size={responsiveStyling[screenSize]['iconSize']} color="var(--freq-color-text-medium-dark)"></Search>
+        <span class={responsiveStyling[screenSize]['fontSize']}>Search</span>
     </Popover.Trigger>
     <Popover.Content class="search">
         {#if mode == "redirect"}
@@ -134,5 +147,16 @@
     .data-muted {
         font-size: var(--freq-font-size-small);
     }
-
+    .xx-small-font {
+        font-size: var(--freq-font-size-2x-small);
+    }
+    .x-small-font {
+        font-size: var(--freq-font-size-x-small);
+    }
+    .small-font {
+        font-size: var(--freq-font-size-small);
+    }
+    .medium-font {
+        font-size: var(--freq-font-size-medium);
+    }
 </style>
