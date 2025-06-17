@@ -2,25 +2,35 @@
     import { enhance } from "$app/forms"
     import { Popover } from "bits-ui"
     import Search from '@lucide/svelte/icons/search'
-
+    import { searchResults } from "$lib/resources/states.svelte"
+	import { goto } from "$app/navigation";
 
     interface ComponentProps {
         query?: string
         searchPlaceholder?: string
         formAction: string
-        results: App.RowData[]
+        results?: App.RowData[]
+        mode?: string
     }
 
     let { 
         query, 
         searchPlaceholder,
         formAction, 
-        results 
+        results,
+        mode = 'site'
     }: ComponentProps = $props()
 
     let loading = $state(false)
     let searchBarOpen = $state(false)
     let searchResultsOpen = $state(false)
+
+    let siteSearchResults = $state(results) as App.RowData[]
+
+    $effect(() => {
+        console.log(siteSearchResults)
+        console.log(searchResults.results)
+    })
 </script>
 
 <div class="constrain">
@@ -30,6 +40,24 @@
         Search
     </Popover.Trigger>
     <Popover.Content class="search">
+        {#if mode == "redirect"}
+        <form>
+            <input
+                type="text"
+                name="query"
+                id="query"
+                placeholder={searchPlaceholder}
+                bind:value={query}
+                required
+            />
+            <button type="submit" class="standard" disabled={loading} onclick={() => {
+                goto(`/search?type=site&query=${query}`)
+                searchBarOpen = false
+            }}>
+                search
+            </button>
+        </form>
+        {:else if mode == "dropdown"}
         <form 
             method="POST" 
             action="?/{formAction}" 
@@ -37,14 +65,15 @@
                 loading = true
                 return async ({ update }) => {            
                     await update()
+                    siteSearchResults = searchResults.results
                     loading = false
                     searchResultsOpen = true
             }}}
         >
             <input
                 type="text"
-                name="collection-query"
-                id="collection-query"
+                name="query"
+                id="query"
                 placeholder={searchPlaceholder}
                 bind:value={query}
                 required
@@ -54,7 +83,7 @@
             </button>
         </form>
         <ul class="search-results">
-            {#each results as result}
+            {#each siteSearchResults as result}
                 {#if result.result_type == 'collection'}
                     <li>
                         <a href="/collection/{result.collection_id}">
@@ -79,7 +108,8 @@
                     </li>
                 {/if}
             {/each}
-            </ul>
+        </ul>
+        {/if}
     </Popover.Content>
 </Popover.Root>
 </div>
@@ -93,53 +123,7 @@
         align-items: center;
         gap: var(--freq-inline-gap-double);
         margin: var(--freq-spacing-small) auto var(--freq-spacing-2x-small) auto;
-        padding: 0;
-    }
-    .search-results {
-        display: flex;
-        flex-direction: column;
-        list-style: none;
-        margin: 0;
-        padding: 0;
-    }
-    .search-results a {
-        color: var(--freq-color-text);
-        padding: var(--freq-spacing-medium);
-    }
-    .search-results li {
-        display: flex;
-        flex-direction: column;
-        gap: var(--freq-height-spacer-gap-quarter);
-        border-bottom: var(--freq-border-panel);
-    }
-    .search-results li:first-child {
-        border-top: var(--freq-border-panel);
-    }
-    .search-results li:last-child {
-        border-bottom: none;
-    }
-    .search-results li:is(:hover, :focus) {
-        color: var(--freq-color-text-dark);
-	    background: var(--freq-color-button-lens-active);
-        text-decoration: underline;
-        text-decoration-color: var(--freq-color-text);
-    }
-    .search-results li:active {
-        background: var(--freq-color-primary);
-        color: var(--freq-color-text-dark);
-        text-decoration: underline;
-        text-decoration-color: var(--freq-color-text-dark);
-        transition: all;
-    }
-    .search-results li:is(:hover, :focus, :active) .search-result-tag {
-        text-decoration: none !important;
-    }
-    .search-result-tag {
-        color: var(--freq-color-text-medium);
-        font-size: var(--freq-font-size-x-small);
-        text-transform: uppercase;
-        font-weight: var(--freq-font-weight-semi-bold);
-        letter-spacing: var(--freq-letter-spacing-looser);
+        padding: 0 var(--freq-spacing-medium);
     }
     .result-row {
         display: flex;
@@ -150,4 +134,5 @@
     .data-muted {
         font-size: var(--freq-font-size-small);
     }
+
 </style>

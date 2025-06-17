@@ -1,9 +1,11 @@
 <script lang="ts">
   import { page } from '$app/state'
   import Dropdown from '$lib/components/menus/ReuseableDropdownMenu.svelte'
+  import SiteSearch from '$lib/components/SiteSearch.svelte';
   import logo from "$lib/assets/images/logo/freq-logo-dark.svg"
 
   import CoverArt from "src/lib/components/CoverArt.svelte";
+  import { searchResults } from "$lib/resources/states.svelte"
 
   interface ComponentProps {
     sessionUserId: string | null
@@ -20,6 +22,7 @@
   }: ComponentProps = $props()
 
   const thisUrl = page.url
+
 </script>
 
 <!-- <svelte:options runes={true} /> -->
@@ -39,33 +42,30 @@
           feed
         </button>
       </a>
+      <a href="/posts/now-playing/new">
+        <button class="nav">
+          post
+        </button>
+      </a>
       <Dropdown
-        buttonText="create"
+        buttonText="collections"
         items={[
           {
-            'text': 'new post',
-            'url': '/posts/now-playing/new'
-          },
-          {
-            'text': 'new collection',
-            'url': '/collection/new'
-          },
-        ]}
-      ></Dropdown>
-      <Dropdown
-        buttonText="discover"
-        items={[
-          {
-            'text': 'collections',
+            'text': 'discover',
             'url': '/collections'
           },
           {
-            'text': 'users',
-            'url': '/users'
-          },
+            'text': 'create',
+            'url': '/collection/new'
+          }
         ]}
       ></Dropdown>
-      <Dropdown
+      <SiteSearch
+          searchPlaceholder="search"
+          formAction="search"
+          mode="redirect"
+      ></SiteSearch>
+      <!-- <Dropdown
         buttonText="about"
         items={[
           {
@@ -81,7 +81,7 @@
             'url': '/about/guidelines'
           },
         ]}
-      ></Dropdown>
+      ></Dropdown> -->
       <Dropdown
         avatar={avatarItem}
         buttonText={displayName ?? 'display name'} 
@@ -101,6 +101,10 @@
           {
             'text': 'account',
             'url': `/account`
+          },
+          {
+            'text': 'about Freq',
+            'url': '/about'
           },
           {
             'text': 'sign out',

@@ -198,6 +198,7 @@
 [data-popover-trigger].search {
 	display: flex;
 	flex-direction: row;
+	gap: var(--freq-inline-gap);
 	color: var( --freq-color-text-muted);
 	background: transparent;
 	font-family: 'Krona_One', monospace;
@@ -208,18 +209,18 @@
     text-transform: uppercase;
 }
 
-[data-popover-root].search {
+/* [data-popover-root].search {
 	display: flex;
-	flex-direction: column;
+	flex-direction: column; */
 	/* align-items: end; */
-	justify-items:right;
-	max-width: 400px;
-}
+	/* justify-items:right;
+	max-width: 400px; */
+/* } */
 
-[data-popover-root].search{
+/* [data-popover-root].search{
 	margin-left: 0;
 	margin-right: auto
-}
+} */
 
 [data-popover-trigger].search:is(:hover, :focus) {
 	background: var(--freq-color-button-lens);
@@ -238,7 +239,8 @@
 [data-popover-content].search {
 	overflow-y: auto;
 	max-height: 400px;
-	padding: 0;
+	/* margin: 0 var(--freq-with-spacer); */
+	/* padding: auto; */
 }
 
 /* Collapsible  */
