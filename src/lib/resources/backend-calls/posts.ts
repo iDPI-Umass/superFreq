@@ -314,7 +314,7 @@ export const selectPost = async function ( sessionUserId: string, username: stri
             .innerJoin('profiles as profile', 'profile.id', 'posts.user_id')
             .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profile.avatar_mbid')
             .innerJoin((eb) =>  eb
-                .selectFrom('post_reactions')
+                .selectFrom('reactions')
                 .select(['post_id', (eb) => eb.fn.count<number>('id').as('reaction_count')])
                 .whereRef('post_id', '=', 'posts.id')
                 .as('reactions'),
@@ -610,7 +610,7 @@ export const selectUserNowPlayingPosts = async function ( sessionUserId: string,
             .innerJoin('profiles', 'profiles.id', 'posts.user_id')
             .leftJoin('release_groups', 'release_groups.release_group_mbid', 'profiles.avatar_mbid')
             .leftJoin('artists', 'artists.artist_mbid', 'release_groups.artist_mbid')
-            .leftJoin('post_reactions as reaction',
+            .leftJoin('reactions',
                 (join) => join
                 .onRef('reaction.post_id', '=', 'posts.id')
                 .on('reaction.active', '=', true)
@@ -717,7 +717,7 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
     const insertUpdateReaction = await db.transaction().execute(async (trx) => {
         try {
             const selectReaction = await trx
-            .selectFrom('post_reactions')
+            .selectFrom('reactions')
             .select(['id', 'active', 'changelog'])
             .where(({eb}) => eb.and({
                 post_id: postId,
@@ -735,7 +735,7 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
             const { id } = selectReaction
 
             const updateReaction = await trx
-            .updateTable('post_reactions')
+            .updateTable('reactions')
             .set({
                 active: !active,
                 updated_at: timestampISO,
@@ -756,7 +756,7 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
             }
         
             const insertReaction = await trx
-            .insertInto('post_reactions')
+            .insertInto('reactions')
             .values({
                 id: sql`default`,
                 post_id: postId,
@@ -786,12 +786,12 @@ export const getReactionData = async function ( post_id: string, user_id: string
 
     const getReactionData = await db
     .with('permissioned_collection', (db) => db
-        .selectFrom('post_reactions')
+        .selectFrom('reactions')
         .selectAll()
         .where('post_id', '=', post_id)
         .where('active', '=', true)
     )
-    .selectFrom('post_reactions as reactions')
+    .selectFrom('reactions')
     .select(({fn, eb}) => [
         fn.count<number>('reactions.id').as('reactions_count'),
         eb.selectFrom('reactions')
