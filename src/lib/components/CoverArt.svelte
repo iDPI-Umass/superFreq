@@ -89,8 +89,8 @@ Currently configured to server Last.fm images on the client side by default on a
     <img src={wave} alt="not found" class={imgClass}  />
 {/if}
 
-<style>
+<!-- <style>
     img {
         width: inherit;
     }
-</style>
+</style> -->

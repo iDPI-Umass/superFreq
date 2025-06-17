@@ -302,15 +302,16 @@ span.search-tooltip {
 	overflow: hidden;
 	--line-offset: calc(var(--freq-grid-gap)/2);
 }
-
+/* 
 .media-list img {
 	max-height: inherit;
-}
+} */
 
 .media-list-item {
 	display: flex;
 	flex-direction: row;
-	max-height: var(--freq-image-thumbnail-small);
+	width: auto;
+	/* max-height: var(--freq-image-thumbnail-small); */
 	padding: var(--freq-spacing-medium);
 	/* padding: 0 5%; */
 	/* background-color: black; */
@@ -321,7 +322,7 @@ span.search-tooltip {
 }
 
 .media-list-item img {
-	max-height: inherit;
+	width: var(--freq-image-thumbnail-small);
 	padding: 5px;
 }
 

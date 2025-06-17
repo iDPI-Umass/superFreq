@@ -173,7 +173,6 @@
                 <CoverArt
                     item={item}
                     altText={`"${item['release_group_name']}" by ${item['artist_name']}`}
-                    imgClass="grid-list-image"
                 ></CoverArt>
             {:else if ( item["img_url"] == null ) && ( item["last_fm_img_url"] == null )}
                 {@render editorItemImage(item, item["release_group_name"])}
@@ -183,7 +182,6 @@
         <CoverArt
             item={item}
             altText={item['release_group_name']}
-            imgClass="grid-list-image"
         ></CoverArt>
     {:else if itemType.includes("recording") && mode == "edit"}
         {#key items.length}
@@ -191,7 +189,6 @@
                 <CoverArt
                     item={item}
                     altText={altText(item, ( collectionType ?? item["item_type"] ))}
-                    imgClass="grid-list-image"
                 ></CoverArt>
             {:else if ( item["img_url"] == null ) && ( item["last_fm_img_url"] == null )}
                 {@render editorItemImage(item, item["recording_name"])}
@@ -201,19 +198,16 @@
         <CoverArt
             item={item}
             altText={item["recording_name"]}
-            imgClass="grid-list-image"
         ></CoverArt>
     {:else if itemType.includes("episode")}
         <CoverArt
             item={item}
             altText={item["episode_title"]}
-            imgClass="grid-list-image"
         ></CoverArt>
     {:else if itemType.includes("artist") && mode == "view"}
         <CoverArt
             item={item}
             altText={item["artist_name"]}
-            imgClass="grid-list-image"
         ></CoverArt>
     {:else if itemType.includes("artist") && mode == "edit"}
         {#key items.length}
@@ -221,7 +215,6 @@
                 <CoverArt
                     item={item}
                     altText={altText(item, ( collectionType ?? item["item_type"] ))}
-                    imgClass="grid-list-image"
                 ></CoverArt>
             {:else if ( item["artist_discogs_img_url"] == null ) && ( item["discogs_img_url"] == null )}
                 {@render editorItemImage(item, item["artist_name"])}
