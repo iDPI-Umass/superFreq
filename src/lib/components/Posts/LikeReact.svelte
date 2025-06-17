@@ -3,13 +3,15 @@
     import Heart from '@lucide/svelte/icons/heart'
 
     interface ComponentProps {
-        postId: string
+        postId?: string
+        collectionId?: string
         reactionCount?: number
         reactionActive: boolean
     }
     
     let {
         postId,
+        collectionId,
         reactionCount = 0,
         reactionActive
     }: ComponentProps = $props()
@@ -47,6 +49,12 @@
         name="post-id"
         id="post-id"
         value={postId}
+    />
+    <input
+        type="hidden"
+        name="collection-id"
+        id="collection-id"
+        value={collectionId}
     />
     <input
         type="hidden"

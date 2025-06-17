@@ -12,6 +12,7 @@
     import GridList from "$lib/components/GridList.svelte"
     import InfoBox from '$lib/components/InfoBox.svelte'
     import InlineMarkdownText from '$lib/components/InlineMarkdownText.svelte'
+    import LikeReact from '$lib/components/Posts/LikeReact.svelte'
 	import { onMount, tick } from 'svelte'
 
     import { collectionData } from '$lib/resources/states.svelte.js'
@@ -85,6 +86,8 @@
         return items
     }
 
+    let reactionActive = $state(false)
+
     $effect(() => {
         sortedItems =  sort(sortOption)
     })
@@ -130,6 +133,14 @@
                                 {/if}
                                 </button>
                             </form>
+                        {/if}
+                        {#if sessionUserId}
+                            <LikeReact
+                                collectionId={collectionMetadata.collection_id}
+                                reactionCount={collectionMetadata.reaction_count}
+                                reactionActive={reactionActive}
+                            >
+                            </LikeReact>
                         {/if}
                         {#if sessionUserId && editPermission}
                             <button 
