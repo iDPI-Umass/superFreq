@@ -39,8 +39,8 @@
     let validQuery = $derived( query && query.length > 0 ? true : false)
 
     async function addCollectionItem ( mode: string, item: App.RowData ) {
-		console.log(item)
-        const collectionItems = await addCollectionItemNoImg( item, collectionData.collectionItems, collectionData.deletedItems, limit, searchCategory, 'collection' )
+		console.log(item, collectionData.collectionItems, collectionData.deletedItems, limit, 'collection', 'collection_id')
+        const collectionItems = await addCollectionItemNoImg( item, collectionData.collectionItems, collectionData.deletedItems, limit, 'collection', 'collection_id' )
         collectionData.collectionItems = collectionItems.addedItems
         collectionData.deletedItems = collectionItems.deletedItems
         query = ""

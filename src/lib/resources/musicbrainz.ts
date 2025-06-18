@@ -654,7 +654,8 @@ export const getArtistImage = async function ( mbid: string, milliseconds: numbe
 
 // Check if item is already in collection
 export const checkDuplicate = function ( mbid: string, addedItems: App.RowData | App.RowData[], deletedItems: App.RowData[], mbidCategory: string ) {
-    if ( deletedItems.length < 1 ) {
+    console.log(mbid, mbidCategory, addedItems)
+    if ( deletedItems.length < 1 || !mbid ) {
         return { isDuplicate: false, duplicateItem: null }
     }
     const findMbidDuplicate = addedItems.find((element) => element[mbidCategory] == mbid)
@@ -769,23 +770,20 @@ export const addCollectionItemNoImg = async function (
     searchCategory: string,
     idCatgeory: string,
 ) {
-    const { isDuplicate } = checkDuplicate( item["id"], addedItems, deletedItems, idCatgeory )
+    const itemId = item["id"] || item["collection_id"]
+    const { isDuplicate } = checkDuplicate( itemId, addedItems, deletedItems, idCatgeory )
     const wasDeleted = checkDeleted( item, deletedItems, idCatgeory )
     const limitReached = checkLimit ( limit, addedItems )
 
-    const itemId = item['id']
-
     // Warn if item already in collection and don't add new item.
-    // if ( isDuplicate ) {
-    //     alert(`That item is already in this collection.`)
-    //     return {
-    //         addedItems,
-    //         deletedItems,
-    //         newItemAdded: false
-    //     }
-    // }
-
-
+    if ( isDuplicate ) {
+        alert(`That item is already in this collection.`)
+        return {
+            addedItems,
+            deletedItems,
+            newItemAdded: false
+        }
+    }
 
     // Delete item from deletedItems and warn that it was previously deleted from this collection, but let rest of function proceed.
     let originalId: string |  null = null
@@ -811,7 +809,7 @@ export const addCollectionItemNoImg = async function (
     const mbid = releaseGroupMbid( searchCategory, item )
     const releaseDate = itemDate( searchCategory, item )
     const label = await getLabel( searchCategory, mbid, releaseDate )
-    const collectionMetadata = ( idCatgeory == 'collection' ) ? {
+    const collectionMetadata = ( idCatgeory == 'collection_id' ) ? {
         'id': item.collection_id,
         'title': item.title,
         'display_name': item.display_name,
@@ -819,6 +817,7 @@ export const addCollectionItemNoImg = async function (
         'created_at': item.created_at
     } : null
 
+    console.log(collectionMetadata)
     addedItems = [...addedItems, {
         "original_id": originalId ?? null,
         "item_position": addedItems.length,
