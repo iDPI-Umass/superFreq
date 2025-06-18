@@ -18,7 +18,7 @@
 	import type { Snippet } from 'svelte'
 	import type { LayoutData } from "./$types"
 	import { injectAnalytics } from '@vercel/analytics/sveltekit'
-
+	
 	let { data, children }: { data: LayoutData, children: Snippet} = $props()
 	let { session, sessionUserId, supabase } = $derived(data)
 

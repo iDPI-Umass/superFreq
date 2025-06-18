@@ -466,3 +466,14 @@ span.search-tooltip {
 	filter: brightness(50%);
 	z-index: 1;
 }
+/* .grid-list-icon {
+	height:  var(--freq-button-font-size-x-large);
+	margin: var(--freq-spacing-3x-small);
+	margin-top: var(--freq-spacing-2x-small);
+} */
+
+.grid-list-img {
+	height: var(--freq-image-thumbnail-medium);
+	width: var(--freq-image-thumbnail-medium);
+	object-fit:cover;
+}

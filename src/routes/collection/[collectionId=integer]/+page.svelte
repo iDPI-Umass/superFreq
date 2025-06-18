@@ -12,11 +12,14 @@
     import GridList from "$lib/components/GridList.svelte"
     import InfoBox from '$lib/components/InfoBox.svelte'
     import InlineMarkdownText from '$lib/components/InlineMarkdownText.svelte'
-
+    import PostReply from 'src/lib/components/Posts/PostReply.svelte'
+    import PostReplyEditor from 'src/lib/components/Posts/PostReplyEditor.svelte'
+    import LikeReact from '$lib/components/Posts/LikeReact.svelte'
     import { collectionData } from '$lib/resources/states.svelte.js'
 
-    let { data } = $props();
-    let { sessionUserId, collectionId, collectionMetadata, collectionContents, viewPermission, editPermission, followData, infoBoxText } = $derived(data);
+
+    let { data, form } = $props();
+    let { sessionUserId, collectionId, collectionMetadata, collectionContents, viewPermission, editPermission, followData, collectionComments, infoBoxText } = $derived(data);
 
     let gridListSelect = $state("grid")
 
@@ -77,9 +80,20 @@
         return items
     }
 
+    let actionSuccess = $derived(form?.success as boolean)
+
+    function replyId ( username: string, createdAt: Date ) {
+        const replyTimestampString = createdAt.toISOString()
+        const replyTimestamp = Date.parse(replyTimestampString).toString()
+        const slug = username?.concat(replyTimestamp)
+        return slug
+    }
+
+    let reactionActive = $derived(collectionMetadata?.reaction_user_ids.includes(sessionUserId)) as boolean
+    let reactionCount = $derived(collectionMetadata?.reaction_count) as number
+
     $effect(() => {
         sortedItems =  sort(sortOption)
-
         collectionData.type = collectionMetadata?.type as string
         collectionData.status = collectionMetadata?.status as string    
         collectionData.updatedAt = collectionMetadata?.updated_at as Date
@@ -96,7 +110,6 @@
 </svelte:head>
 
 <SEO title={collectionMetadata?.title}></SEO>
-
 
 <div class="two-column">
     <div class="collection-container">
@@ -127,6 +140,15 @@
                                 {/if}
                                 </button>
                             </form>
+                        {/if}
+                        {#if sessionUserId}
+                            <LikeReact
+                                collectionId={collectionId}
+                                reactionCount={reactionCount}
+                                reactionActive={reactionActive}
+                                buttonClass="standard"
+                            >
+                            </LikeReact>
                         {/if}
                         {#if sessionUserId && editPermission}
                             <button 
@@ -220,9 +242,33 @@
     </div>
 </div>
 
+<div class="post-panel">
+    <PostReplyEditor
+        collectionId={collectionId}
+        styling="collection"
+        placeholderText="Comment..."
+    ></PostReplyEditor>
+    {#each collectionComments as comment}
+        <div id={ replyId( comment.username, comment.created_at )}>
+            <div class="comment-panel">
+                <PostReply
+                    reply={comment}
+                    sessionUserId={sessionUserId}
+                    userActionSuccess={actionSuccess}
+                    allowReply={true}
+                ></PostReply>
+            </div>
+        </div>
+    {/each}
+</div>
+
 <style>
     span.view-mode {
         padding-top: 0;
         margin-top: 0;
+    }
+    .post-panel {
+        border: none;
+        margin-left: var(--freq-spacing-small);
     }
 </style>

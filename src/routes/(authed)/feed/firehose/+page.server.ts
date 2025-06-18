@@ -74,7 +74,15 @@ export const actions = {
         postId = data.get('post-id') as string
         const reactionType = data.get('reaction-type') as string
 
-        const { reaction } = await insertUpdateReaction( sessionUserId, postId, reactionType )
+        const reactionData = {
+            'user_id': sessionUserId,
+            'post_id': postId,
+            'collection_id': null,
+            'reaction_type': reactionType,
+            'item_type': 'post'
+        } as App.RowData
+
+        const { reaction } = await insertUpdateReaction( reactionData )
 
         updateReaction = reaction ? true : false
 

@@ -82,6 +82,11 @@ export const load: PageServerLoad = async ({ params, url, locals: { safeGetSessi
             const select = await selectNotificationsFeed( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, feedItemTypes )
             const selectedFeedData = select.feedData
 
+            for ( const item of selectedFeedData ) {
+                if ( item.item_type == 'reaction' ) {
+                    console.log(item.collection_id)
+                }
+            }
             feedData.notificationsItems.push(...selectedFeedData)
             feedItemCount = feedData.notificationsItems.length
 
@@ -304,10 +309,18 @@ export const actions = {
         const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
-        const postId = data.get('post-id') as string
         const reactionType = data.get('reaction-type') as string
+        const postId = data.get('post-id') as string ?? data.get('post-reply-id') as string
 
-        const { reaction } = await insertUpdateReaction( sessionUserId, postId, reactionType )
+        const reactionData = {
+            'user_id': sessionUserId,
+            'post_id': postId,
+            'collection_id': null,
+            'reaction_type': reactionType,
+            'item_type': 'post'
+        } as App.RowData
+
+        const { reaction } = await insertUpdateReaction( reactionData )
 
         const userActionSuccess = reaction ? true : false
 

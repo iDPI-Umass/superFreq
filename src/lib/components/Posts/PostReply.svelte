@@ -41,15 +41,26 @@
     const reactionActive = $state( reply.reaction_user_ids.includes(sessionUserId) ? true : false )
     const reactionCount = $state( reply.reaction_count )
 
-    const replyCreatedAt = $state(reply?.created_at ?? reply?.timestamp)
+    const replyCreatedAt = $state(reply?.created_at ?? reply?.timestamp) as Date
+    const permalinkTimestampString = replyCreatedAt.toISOString() as string
+    const permalinkTimestamp = Date.parse(permalinkTimestampString).toString() as string
+ 
+    let permalinkRoot = $state('') as string
+    let permalink = $derived(permalinkRoot.concat(`#${reply.username?.concat(permalinkTimestamp)}`)) as string
 
-    const parentPostTimestampString = reply?.parent_post_created_at.toISOString()
-    const parentPostTimestamp = Date.parse(parentPostTimestampString).toString()
-    const permalinkTimestampString = replyCreatedAt.toISOString()
-    const permalinkTimestamp = Date.parse(permalinkTimestampString).toString()
-    const permalinkRoot = `/posts/${reply.parent_post_username}/now-playing/${parentPostTimestamp}`
-    const permalink = permalinkRoot.concat(`#${reply.username?.concat(permalinkTimestamp)}`)
-    
+    const parentPostTimestampString = reply?.parent_post_created_at ? reply?.parent_post_created_at.toISOString() : null
+    const parentPostTimestamp = Date.parse(parentPostTimestampString).toString() ?? null
+
+    const parentCollectionId = reply.parent_collection_id
+
+
+    if ( !reply.parent_collection_id ) {
+        permalinkRoot = `/posts/${reply.parent_post_username}/now-playing/${parentPostTimestamp}`
+    }
+    else if ( reply.parent_collection_id ) {
+        permalinkRoot = `/collection/${parentCollectionId}`
+    }
+
     let replyToSlug = $state(null) as string | null
 
     if ( reply.reply_to ) {
@@ -69,7 +80,6 @@
         interactionStates.editState = false
         interactionStates.popOverOpenState = false
     })
-
 </script>
 
 <input
@@ -150,6 +160,7 @@
                     postId={reply.post_id ?? reply.id}
                     reactionActive={reactionActive}
                     reactionCount={reactionCount}
+                    collectionId={reply.parent_collection_id ?? reply.collection_id}
                 ></LikeReact>
                 {#if allowReply}
                     <button class="like" onclick={() => showPostReplyEditor = !showPostReplyEditor}>

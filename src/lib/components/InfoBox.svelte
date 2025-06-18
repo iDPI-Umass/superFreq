@@ -15,8 +15,6 @@
     } as App.StringLookupObject
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-
 <div class={boxStyle[mode]} aria-label="hint">
     <p>
         {@render children()}

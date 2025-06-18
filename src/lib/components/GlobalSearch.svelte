@@ -13,8 +13,7 @@
 		mode?: string
 		limit?: string | null
         results: App.RowData[]
-        resultsCategory: string | null
-		collectionEditor?: boolean
+        resultsCategory?: string | null
 	}
 
 	let {
@@ -25,8 +24,7 @@
 		mode = 'search', // "search", "collection"
 		limit = '25',
         results = [],
-        resultsCategory,
-		collectionEditor = false
+        resultsCategory
 	}: ComponentProps = $props()
 
 	let showModal = $state( false )
@@ -38,20 +36,17 @@
 
     let validQuery = $derived( query && query.length > 0 ? true : false)
 
-    async function addCollectionItem ( mode: string, item: App.RowData ) {
-        const collectionItems = await addCollectionItemNoImg( item, collectionData.collectionItems, collectionData.deletedItems, limit, searchCategory, mode )
-        collectionData.collectionItems = collectionItems.addedItems
-        collectionData.deletedItems = collectionItems.deletedItems
-        query = ""
-        searchResults.results = []
-        showModal = false
-        addingItem = false
-        return { query, searchComplete, showModal }
-    }
-
-	$effect(() => {
-		console.log('results returned: ', searchResults.results.length)
-	})
+    // async function addCollectionItem ( mode: string, item: App.RowData ) {
+    //     const collectionItems = await addCollectionItemNoImg( item, collectionData.collectionItems, collectionData.deletedItems, limit, searchCategory, mbidCategory )
+    //     collectionData.collectionItems = collectionItems.addedItems
+    //     collectionData.deletedItems = collectionItems.deletedItems
+    //     query = ""
+    //     searchResults.results = []
+    //     showModal = false
+    //     addingItem = false
+    //     return { query, searchComplete, showModal }
+    // }
+	
 </script>
 
 <div class="search-bar">
