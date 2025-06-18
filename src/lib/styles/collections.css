@@ -412,26 +412,29 @@ span.search-tooltip {
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	padding-top: 30px;
+	background: var(--freq-color-border-panel);
 	align-items: center;
 	justify-content: center;
 }
 .collection-image-trio-column-first {
 	position: absolute;
-	width: var(--freq-image-thumbnail-medium);
+	max-width: var(--freq-image-thumbnail-medium);
+	max-height: var(--freq-image-thumbnail-medium);
 	top: 30px;
 	z-index: 3;
 }
 .collection-image-trio-column-second {
 	position: absolute;
-	width: var(--freq-image-thumbnail-medium);
+	max-width: var(--freq-image-thumbnail-medium);
+	max-height: var(--freq-image-thumbnail-medium);
 	top: 15px;
 	filter: brightness(50%);
 	z-index: 2;
 }
 .collection-image-trio-column-third {
 	position: absolute;
-	width: var(--freq-image-thumbnail-medium);
+	max-width: var(--freq-image-thumbnail-medium);
+	max-height: var(--freq-image-thumbnail-medium);
 	top: 0px;
 	filter: brightness(25%);
 	z-index: 1;

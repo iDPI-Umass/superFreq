@@ -4,6 +4,9 @@
 //	
 */
 
+button {
+	cursor: pointer;
+}
 
 button a {
 	color: var(--freq-color-text); 
@@ -33,7 +36,6 @@ button.standard {
 	background: var(--freq-color-button-background);
 	color: var(--freq-color-text-muted);
 	font-size: var(--freq-button-font-size-small);
-
 }
 
 /* button.standard:is(:hover, :focus),

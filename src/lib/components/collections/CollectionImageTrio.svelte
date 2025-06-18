@@ -44,22 +44,22 @@
 </script>
 
 <div class={imgOrientation[orientation][0]}>
-		<CoverArt
-			item={imageOne ?? null}
-			imgUrl={imgUrl}
-			altText={ imageOne ? `${imageOne['release_group_name']} by ${imageOne['artist_name']}` : 'album cover'}
-			imgClass={imgOrientation[orientation][1]}
-		></CoverArt>
-		<CoverArt
-			item={imageTwo ?? null}
-			imgUrl={imgUrl}
-			altText={ imageTwo ? `${imageTwo['release_group_name']} by ${imageTwo['artist_name']}` : 'album cover'}
-			imgClass={imgOrientation[orientation][2]}
-		></CoverArt>
-		<CoverArt
-			item={imageThree ?? null}
-			imgUrl={imgUrl}
-			altText={ imageThree ? `${imageThree['release_group_name']} by ${imageThree['artist_name']}` : 'album cover'}
-			imgClass={imgOrientation[orientation][3]}
-		></CoverArt>
+	<CoverArt
+		item={imageOne ?? null}
+		imgUrl={imgUrl}
+		altText={ imageOne ? `${imageOne['release_group_name']} by ${imageOne['artist_name']}` : 'album cover'}
+		imgClass={imgOrientation[orientation][1]}
+	></CoverArt>
+	<CoverArt
+		item={imageTwo ?? null}
+		imgUrl={imgUrl}
+		altText={ imageTwo ? `${imageTwo['release_group_name']} by ${imageTwo['artist_name']}` : 'album cover'}
+		imgClass={imgOrientation[orientation][2]}
+	></CoverArt>
+	<CoverArt
+		item={imageThree ?? null}
+		imgUrl={imgUrl}
+		altText={ imageThree ? `${imageThree['release_group_name']} by ${imageThree['artist_name']}` : 'album cover'}
+		imgClass={imgOrientation[orientation][3]}
+	></CoverArt>
 </div>

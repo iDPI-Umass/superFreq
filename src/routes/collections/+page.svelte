@@ -35,13 +35,17 @@
 
 {#snippet spotlightItem(collection: App.RowData)}
 	<div class="spotlight-item">
+		
 		<div class="spotlight-item-images">
+			<div class="grid-list-image-stack">
 			<CollectionImageTrio 
 				collection={collection}
 				orientation='column'
 			></CollectionImageTrio>
+			</div>
 		</div>
 		<div class="spotlight-collection-info">
+			<a href="/collection/{collection.collection_id}">
 			<div class="spotlight-collection-info-text">
 				<span class="spotlight-collection-title">
 					{collection.title}
@@ -55,7 +59,9 @@
 			<span class="spotlight-collection-description">
 				{collection.description}
 			</span>
+			</a>
 		</div>
+		
 	</div>
 {/snippet}
 
@@ -112,6 +118,30 @@
 	.panel {
 		max-width: 90vw;
 	}
+	.spotlight-row {
+		display: grid;
+		grid-template-columns: repeat(6, minmax(0, 1fr));
+	}
+	@media screen and (max-width: 770px) {
+		.spotlight-row {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			grid-template-rows: minmax(min-content, max-content);
+		}
+		.spotlight-item:nth-last-child(-n+3) {
+			border-top: var(--freq-border-panel);
+		}
+	}
+	.spotlight-item {
+		display: flex;
+		flex-direction: column;
+		border-right: var(--freq-border-panel);
+	}
+	.spotlight-item:last-child {
+		border-right: none;
+	}
+	.spotlight-item-images {
+		margin: var(--freq-spacing-x-small) auto;
+	}
 	.spotlight-collection-info {
 		margin: var(--freq-spacing-small);
 	}
@@ -119,6 +149,7 @@
 		font-size: var(--freq-font-size-small);
 		text-transform: uppercase;
 		font-weight: var(--freq-font-weight-medium);
+		color: var(--freq-color-text);
 	}
 	span.spotlight-collection-owner {
 		color: var(--freq-color-mellow);

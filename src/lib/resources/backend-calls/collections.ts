@@ -90,7 +90,7 @@ export const selectRecentOpenPublicCollections = async function ( batchSize: num
             .limit(3)
             .execute()
 
-            collection.images = collectionImages
+            collection.image_trio = collectionImages
         }
 
         return { collections }
@@ -187,7 +187,7 @@ export const selectNewestSpotlightCollections = async function ( batchSize: numb
             .limit(3)
             .execute()
 
-            collection.images = collectionImages
+            collection.image_trio = collectionImages
         }
 
         return { collections }
@@ -240,7 +240,7 @@ export const selectFollowedUsersOpenPublicCollections = async function ( session
             .limit(3)
             .execute()
 
-            collection.images = collectionImages
+            collection.image_trio = collectionImages
         }
 
         return { collections }
