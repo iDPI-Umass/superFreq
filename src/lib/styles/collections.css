@@ -449,6 +449,7 @@ span.search-tooltip {
 	width: var(--freq-image-thumbnail-medium);
 	top: 30px;
 	z-index: 3;
+}
 /* .grid-list-icon {
 	height:  var(--freq-button-font-size-x-large);
 	margin: var(--freq-spacing-3x-small);
