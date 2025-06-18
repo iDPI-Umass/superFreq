@@ -143,14 +143,24 @@
 	.item-links {
 		display: flex;
 		flex-direction: column;
-		width: 100%;
+		width: inherit;
 	}
 	.collection-info-text {
 		margin: 0;
 	}
 	@media screen and (max-width: 600px) {
+		.collection-info-attribution, .collection-identity-half {
+			width: fit-content;
+		}
+		.panel, ul, .item-links {
+			width: fit-content;
+		}
 		li {
 			flex-direction: column;
+			/* align-items: start; */
+			max-width: 100%;
+			/* justify-content: start; */
+			padding: var(--freq-spacing-small);
 		}
 	}
 </style>
