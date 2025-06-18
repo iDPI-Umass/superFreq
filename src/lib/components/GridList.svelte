@@ -12,7 +12,8 @@
 
     import CoverArt from "$lib/components/CoverArt.svelte"
     import CollectionItemTag from "$lib/components/CollectionItemTag.svelte"
-    import { listenUrlWhitelistCheck } from "$lib/resources/parseData";
+    import CollectionImageTrio from "src/lib/components/collections/CollectionImageTrio.svelte"
+    import { displayDate, listenUrlWhitelistCheck } from "$lib/resources/parseData";
     import { promiseStates, collectionData } from "$lib/resources/states.svelte";
 
     import CollectionImageTrio from "$lib/components/collections/CollectionImageTrio.svelte"
@@ -120,6 +121,24 @@
     }
 
     const gridSpacers = $derived(getGridSpacers(items, layout))
+
+    const sampleCollection = {'images' : [
+        {
+            'last_fm_img_url': 'https://ia601609.us.archive.org/19/items/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad-2051756196.jpg',
+            'release_group_name': 'herbie',
+            'artist_name': 'village life'
+        },
+                {
+            'last_fm_img_url': 'https://ia601609.us.archive.org/19/items/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad-2051756196.jpg',
+            'release_group_name': 'herbie',
+            'artist_name': 'village life'
+        },
+                {
+            'last_fm_img_url': 'https://ia601609.us.archive.org/19/items/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad-2051756196.jpg',
+            'release_group_name': 'herbie',
+            'artist_name': 'village life'
+        }
+    ]}
 </script>
 
 <!-- <svelte:options runes={true} /> -->
@@ -303,6 +322,29 @@
                 {item["artist_name"] ?? item["user_added_artist_name"]}
             {/if}
         </span>
+    {:else if itemType.includes("collection")}
+        <CollectionItemTag
+            display={showTags}
+            itemType={itemType}
+        ></CollectionItemTag>
+        <span class="title">
+            {#if mode == "view"}
+                <a href="/collection/{item["connected_collection_id"]}">
+                    {item["connected_collection_title"] ?? item["collection_title"]}
+                </a>
+            {:else}
+                {item["connected_collection_title"] ?? item["collection_title"]}
+            {/if}
+        </span>
+        <span class="artist">
+            {#if mode == "view"}
+                <a href="/user/{item["connected_collection_owner_username"] ?? item["collection_username"]}">
+                by {item["connected_collection_owner_display_name"] ?? item["collection_display_name"]} ({item["connected_collection_owner_username"] ?? item["collection_username"]})
+                </a>
+            {:else}
+                by {item["connected_collection_owner_display_name"] ?? item["collection_display_name"]} 
+            {/if}
+        </span>
     {/if}
 {/snippet}
 
@@ -337,7 +379,9 @@
                     animate:flip="{{duration: flipDurationMs}}" 
                     class={format[layout][1]}
                 >
-                    {@render coverArt(contentItem, ( contentItem["item_type"] ?? collectionType ), mode)}
+                    <div>
+                        {@render coverArt(contentItem, ( contentItem["item_type"] ?? collectionType ), mode)}
+                    </div>
                     <div class="metadata-blurb">
                         {@render metadataBlurb(contentItem, ( contentItem["item_type"] ?? collectionType ), mode)}
                     </div>
@@ -353,10 +397,10 @@
             {#each collectionData.collectionItems as contentItem}                  
                 <li class={format[layout][1]}>
                     {@render coverArt(contentItem, ( contentItem["item_type"] ?? collectionType ), mode)}
-                    <div class="metadata-blurb">
-                        {@render metadataBlurb(contentItem, ( contentItem["item_type"] ?? collectionType ), mode)}
-                    </div>
-                    {@render itemAttribution(contentItem, collectionStatus)}
+                        <div class="metadata-blurb">
+                            {@render metadataBlurb(contentItem, ( contentItem["item_type"] ?? collectionType ), mode)}
+                        </div>
+                        <!-- {@render itemAttribution(contentItem, collectionStatus)} -->
                 </li>
             {/each}
             {@render underSizedCollection()}
@@ -365,6 +409,10 @@
 {/await}
 
 <style>
+    .image-spacing {
+        position: sticky;
+        height:300 px;
+    }
     /* li {
         display: flex;
         flex-direction: row;

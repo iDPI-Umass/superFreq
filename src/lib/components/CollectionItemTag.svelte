@@ -3,6 +3,9 @@
     import Disc from '@lucide/svelte/icons/disc-2'
     import MusicNote from '@lucide/svelte/icons/music'
     import Palette from '@lucide/svelte/icons/palette'
+    import File from '@lucide/svelte/icons/file-music'
+    import SquareLibrary from '@lucide/svelte/icons/square-library'
+
 
     interface ComponentProps {
         display?: boolean
@@ -31,6 +34,9 @@
             {:else if itemType && itemType.includes("episode")}
                 <BoomBox size="12" color="var(--freq-color-text-medium-dark)"></BoomBox>
                 <span>mix</span>
+            {:else if itemType && itemType.includes("collection")}
+                <SquareLibrary size="12" color="var(--freq-color-text-medium-dark)"></SquareLibrary>
+                <span>collection</span>
             {:else}
                 <span>item</span>
             {/if}

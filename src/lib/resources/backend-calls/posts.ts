@@ -755,9 +755,7 @@ export const insertUpdateReaction = async function ( reactionData: App.RowData )
             changelog[timestampISOString] = {
                 active: true
             }
-
-            console.log(reactionData)
-        
+                    
             const insertReaction = await trx
             .insertInto('reactions')
             .values({

@@ -1,7 +1,10 @@
 import { redirect } from '@sveltejs/kit'
 import { parseISO } from "date-fns"
 import type { PageServerLoad, Actions } from './$types'
-import { insertCollection } from 'src/lib/resources/backend-calls/collections'
+import { insertCollection } from '$lib/resources/backend-calls/collections'
+import { searchCollections } from '$lib/resources/backend-calls/search'
+
+const collectionSearchResults = [] as App.RowData[]
 
 export const load: PageServerLoad = async ({ parent, locals: { safeGetSession }}) => {
   const session = await safeGetSession()
@@ -19,7 +22,7 @@ export const load: PageServerLoad = async ({ parent, locals: { safeGetSession }}
   
   const sessionUserId = session.user?.id
 
-  return { sessionUserId }
+  return { sessionUserId, collectionSearchResults }
 }
 
 export const actions = {
@@ -39,7 +42,7 @@ export const actions = {
     const collectionItemsString = data.get('collection-contents') as string
     const changelog: App.Changelog = {}
 
-    const collectionItems = JSON.parse(collectionItemsString) as App.RowData
+    const collectionItems = JSON.parse(collectionItemsString) as App.RowData[]
 
     changelog[timestampISOString] = {
       'title': collectionTitle,
@@ -69,5 +72,18 @@ export const actions = {
     else {
       redirect(303, `/collection/${collectionId}`)
     }
+  },
+  search: async ({ request }) => {
+    const data = await request.formData()
+    const query = data.get('query') as string
+    const resultsLimit = parseInt(data.get('results-limit') as string)
+    const searchCategory = data.get('search-category') as string
+    const queryType = data.get('query-type') as string
+
+    collectionSearchResults.length = 0
+
+    const searchResults = await searchCollections( query, queryType, resultsLimit )
+
+    collectionSearchResults.push(...searchResults.results)
   }
 } satisfies Actions

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import wave from '$lib/assets/images/logo/freq-wave.svg';
 	import CollectionImage from './CollectionImage.svelte';
-	import CollectionImageSpotlight from './CollectionImageSpotlight.svelte';
+	import CollectionImageTrio from './CollectionImageTrio.svelte';
 	import { onMount } from 'svelte';
 
 	interface ComponentProps {
@@ -55,10 +55,10 @@
 
 {#snippet spotlightItem(collection: App.RowData)}
 	<div class="spotlight-item">
-		<CollectionImageSpotlight 
+		<CollectionImageTrio 
 			imgUrl={collection.avatar_url}
 			orientation='column'
-		></CollectionImageSpotlight>
+		></CollectionImageTrio>
 		<div class="spotlight-collection-info">
 			<div class="spotlight-collection-info-text">
 				<h3>{collection.title}</h3>

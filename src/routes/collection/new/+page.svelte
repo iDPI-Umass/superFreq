@@ -12,14 +12,14 @@
 	import InfoBox from 'src/lib/components/InfoBox.svelte'
     import CollectionEditor from '$lib/components/CollectionEditor.svelte'
 
-    import { promiseStates, collectionData } from 'src/lib/resources/states.svelte'
+    import { promiseStates, collectionData, searchResults } from 'src/lib/resources/states.svelte'
 
     interface Props {
         data: any;
     }
 
     let { data }: Props = $props();
-    let { sessionUserId, infoBoxText } = $state(data)
+    let { sessionUserId, infoBoxText, collectionSearchResults } = $derived(data)
 
 	collectionData.title = null
 	collectionData.type = null
@@ -35,6 +35,11 @@
         collectionData.status = null
         collectionData.defaultSort = null
         collectionData.collectionItems = []
+    })
+
+    $effect(() => {
+        searchResults.results = collectionSearchResults
+        searchResults.category = 'collections'
     })
 </script>
 

@@ -82,11 +82,6 @@ export const load: PageServerLoad = async ({ params, url, locals: { safeGetSessi
             const select = await selectNotificationsFeed( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, feedItemTypes )
             const selectedFeedData = select.feedData
 
-            for ( const item of selectedFeedData ) {
-                if ( item.item_type == 'reaction' ) {
-                    console.log(item.collection_id)
-                }
-            }
             feedData.notificationsItems.push(...selectedFeedData)
             feedItemCount = feedData.notificationsItems.length
 
