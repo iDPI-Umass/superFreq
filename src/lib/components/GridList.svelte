@@ -226,13 +226,13 @@
                 {@render editorItemImage(item, item["artist_name"])}
             {/if}
         {/key}
-    <!-- {:else if itemType.includes("collection") && mode == "view"}
+    {:else if itemType.includes("collection") && mode == "view"}
         <div class="grid-list-image">
             <CollectionImageTrio
                 collection={item}
                 orientation="diagonal-stack"
             ></CollectionImageTrio>
-        </div> -->
+        </div>
     {/if}
 {/snippet}
 
@@ -328,19 +328,19 @@
         <span class="title">
             {#if mode == "view"}
                 <a href="/collection/{item["connected_collection_id"]}">
-                    {item["connected_collection_title"]}
+                    {item["connected_collection_title"] ?? item["collection_title"]}
                 </a>
             {:else}
-                {item["connected_collection_title"]}
+                {item["connected_collection_title"] ?? item["collection_title"]}
             {/if}
         </span>
         <span class="artist">
             {#if mode == "view"}
-                <a href="/user/{item["connected_collection_owner_username"]}">
-                by {item["connected_collection_owner_display_name"]} ({item["connected_collection_owner_username"]})
+                <a href="/user/{item["connected_collection_owner_username"] ?? item["collection_username"]}">
+                by {item["connected_collection_owner_display_name"] ?? item["collection_display_name"]} ({item["connected_collection_owner_username"] ?? item["collection_username"]})
                 </a>
             {:else}
-                by {item["connected_collection_owner_display_name"]} 
+                by {item["connected_collection_owner_display_name"] ?? item["collection_display_name"]} 
             {/if}
         </span>
     {/if}

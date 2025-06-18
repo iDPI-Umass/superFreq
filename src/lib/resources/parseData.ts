@@ -735,8 +735,6 @@ export const searchForAlbumMetadata = async function ( album: any ) {
     if ( artist != 'Compilation') {
         const {searchResults} = await musicbrainzAdvancedSearch('album', searchTerms, 3)
 
-        console.log(searchResults)
-
         if ( searchResults['release-groups']){
             for ( const result of searchResults['release-groups'] ) {
                 const resultTitle = result.title

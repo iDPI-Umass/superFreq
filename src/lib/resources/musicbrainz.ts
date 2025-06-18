@@ -776,14 +776,16 @@ export const addCollectionItemNoImg = async function (
     const itemId = item['id']
 
     // Warn if item already in collection and don't add new item.
-    if ( isDuplicate ) {
-        alert(`That item is already in this collection.`)
-        return {
-            addedItems,
-            deletedItems,
-            newItemAdded: false
-        }
-    }
+    // if ( isDuplicate ) {
+    //     alert(`That item is already in this collection.`)
+    //     return {
+    //         addedItems,
+    //         deletedItems,
+    //         newItemAdded: false
+    //     }
+    // }
+
+
 
     // Delete item from deletedItems and warn that it was previously deleted from this collection, but let rest of function proceed.
     let originalId: string |  null = null

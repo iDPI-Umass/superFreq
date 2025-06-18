@@ -16,6 +16,7 @@ export const searchCollections = async function ( query: string, queryType: stri
             'username',
             'display_name',
             'updated_at',
+            'created_at',
             sql`ts_rank(title_search, websearch_to_tsquery(${query}), 1)`.as('rank')
         ])
         .where(sql<boolean>`title_search @@ websearch_to_tsquery(${query})`)
@@ -36,6 +37,7 @@ export const searchCollections = async function ( query: string, queryType: stri
             'username',
             'display_name',
             'updated_at',
+            'created_at',
             sql`GREATEST(word_similarity(${query}, display_name), word_similarity(${query}, username))`.as('rank')
         ])
         .where(sql<boolean>`${query} <% username OR ${query} <% display_name`)
@@ -113,8 +115,6 @@ export const searchUsersAndCollections = async function ( query: string, limit: 
     .execute()
 
     const results = search
-
-    console.log(results)
     
     searchResults.category = 'collections'
     searchResults.results = results

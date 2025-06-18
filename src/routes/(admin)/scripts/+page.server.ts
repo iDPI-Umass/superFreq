@@ -21,8 +21,6 @@ export const load: PageServerLoad = async () => {
 
     collectionsSocial.push(...select)
 
-    console.log(collectionsSocial.length, ' collections_social')
-
     return { collectionsSocial }
 }
 
@@ -43,15 +41,11 @@ export const actions = {
             preparedCollectionsSocial.push(preparedItem)
         }
 
-        console.log(preparedCollectionsSocial)
-
         const insert = await db
         .insertInto('social_graph')
         .values(preparedCollectionsSocial)
         .returning('id')
         .execute()
-
-        console.log(insert.length)
 
         return { success: true }
     }

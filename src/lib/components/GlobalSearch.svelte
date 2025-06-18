@@ -14,6 +14,7 @@
 		limit?: string | null
         results: App.RowData[]
         resultsCategory?: string | null
+		collectionEditor?: boolean
 	}
 
 	let {
@@ -24,7 +25,8 @@
 		mode = 'search', // "search", "collection"
 		limit = '25',
         results = [],
-        resultsCategory
+        resultsCategory,
+		collectionEditor=false
 	}: ComponentProps = $props()
 
 	let showModal = $state( false )
@@ -36,16 +38,17 @@
 
     let validQuery = $derived( query && query.length > 0 ? true : false)
 
-    // async function addCollectionItem ( mode: string, item: App.RowData ) {
-    //     const collectionItems = await addCollectionItemNoImg( item, collectionData.collectionItems, collectionData.deletedItems, limit, searchCategory, mbidCategory )
-    //     collectionData.collectionItems = collectionItems.addedItems
-    //     collectionData.deletedItems = collectionItems.deletedItems
-    //     query = ""
-    //     searchResults.results = []
-    //     showModal = false
-    //     addingItem = false
-    //     return { query, searchComplete, showModal }
-    // }
+    async function addCollectionItem ( mode: string, item: App.RowData ) {
+		console.log(item)
+        const collectionItems = await addCollectionItemNoImg( item, collectionData.collectionItems, collectionData.deletedItems, limit, searchCategory, 'collection' )
+        collectionData.collectionItems = collectionItems.addedItems
+        collectionData.deletedItems = collectionItems.deletedItems
+        query = ""
+        searchResults.results = []
+        showModal = false
+        addingItem = false
+        return { query, searchComplete, showModal }
+    }
 	
 </script>
 
