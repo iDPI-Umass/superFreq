@@ -38,6 +38,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession } 
         viewPermission = collection.viewPermission as boolean
         editPermission = collection.editPermission as boolean
 
+        // console.log(collectionContents)
         followData = {
             'follows_now': collection.followsNow ?? false
         } as App.RowData 

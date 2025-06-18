@@ -226,8 +226,8 @@
                 {@render editorItemImage(item, item["artist_name"])}
             {/if}
         {/key}
-    {:else if itemType.includes("collection") && mode == "view"}
-        <div class="grid-list-image">
+    {:else if itemType == "collection" && mode == "view"}
+        <div class="grid-list-image-stack">
             <CollectionImageTrio
                 collection={item}
                 orientation="diagonal-stack"
@@ -407,6 +407,10 @@
 {/await}
 
 <style>
+    .image-spacing {
+        position: sticky;
+        height:300 px;
+    }
     /* li {
         display: flex;
         flex-direction: row;

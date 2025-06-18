@@ -817,7 +817,6 @@ export const addCollectionItemNoImg = async function (
         'created_at': item.created_at
     } : null
 
-    console.log(collectionMetadata)
     addedItems = [...addedItems, {
         "original_id": originalId ?? null,
         "item_position": addedItems.length,
