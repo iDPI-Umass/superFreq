@@ -81,7 +81,6 @@ export const actions = {
         const commentTimestamp = Date.parse(commentTimestampSlug).toString()
         const permalink = `/posts/${postUsername}/now-playing/${postTimestampDateString}#${username.concat(commentTimestamp)}`
 
-        console.log(permalink)
         if (createdAt) {
             throw redirect(303, permalink)
         }
@@ -95,10 +94,17 @@ export const actions = {
 
         const data = await request.formData()
         const reactionType = data.get('reaction-type') as string
-        const itemId = data.get('post-id') as string ?? data.get('post-reply-id') as string
-        const itemType = 'post'
+        const postId = data.get('post-id') as string ?? data.get('post-reply-id') as string
 
-        const { reaction } = await insertUpdateReaction( sessionUserId, itemId, reactionType, itemType )
+        const reactionData = {
+            'user_id': sessionUserId,
+            'post_id': postId,
+            'collection_id': null,
+            'reaction_type': reactionType,
+            'item_type': 'post'
+        } as App.RowData
+
+        const { reaction } = await insertUpdateReaction( reactionData )
 
         const success = reaction ? true : false
 

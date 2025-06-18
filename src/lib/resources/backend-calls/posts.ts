@@ -709,13 +709,10 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
 
 /* Inserts a reaction to a post, or updates reaction row if sesssion user has already submitted that reaction */
 
-export const insertUpdateReaction = async function ( sessionUserId: string, itemId: string, reactionType: string, itemType: string ) {
+export const insertUpdateReaction = async function ( reactionData: App.RowData ) {
 
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
-
-    const postId = itemType == 'post' ? itemId : null
-    const collectionId = itemType == 'collection' ? itemId : null
 
     const insertUpdateReaction = await db.transaction().execute(async (trx) => {
         try {
@@ -723,10 +720,10 @@ export const insertUpdateReaction = async function ( sessionUserId: string, item
             .selectFrom('reactions')
             .select(['id', 'active', 'changelog'])
             .where(({eb}) => eb.and({
-                post_id: postId,
-                collection_id: collectionId,
-                user_id: sessionUserId,
-                reaction: reactionType
+                post_id: reactionData.post_id,
+                collection_id: reactionData.collection_id,
+                user_id: reactionData.user_id,
+                reaction: reactionData.reaction_type
             }))
             .executeTakeFirstOrThrow()
 
@@ -758,15 +755,17 @@ export const insertUpdateReaction = async function ( sessionUserId: string, item
             changelog[timestampISOString] = {
                 active: true
             }
+
+            console.log(reactionData)
         
             const insertReaction = await trx
             .insertInto('reactions')
             .values({
                 id: sql`default`,
-                post_id: postId,
-                collection_id: collectionId,
-                user_id: sessionUserId,
-                reaction: reactionType,
+                post_id: reactionData.post_id,
+                collection_id: reactionData.collection_id,
+                user_id: reactionData.user_id,
+                reaction: reactionData.reaction_type,
                 updated_at: timestampISO,
                 active: true,
                 changelog: changelog

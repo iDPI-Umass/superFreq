@@ -117,13 +117,21 @@ export const actions = {
 
         const data = await request.formData()
         const reactionType = data.get('reaction-type') as string
-        const collectionId = data.get('collection-id') as string
+        const collectionId = data.get('parent-collection-id') as string ?? data.get('collection-id') as string
         const postId = data.get('post-id') as string ?? data.get('post-reply-id') as string
 
-        const itemId = collectionId ? collectionId : postId
-        const itemType = collectionId ? 'collection' : 'post'
+        const itemType = postId ? 'post' : 'collection'
 
-        const { reaction } = await insertUpdateReaction( sessionUserId, itemId, reactionType, itemType )
+        const reactionData = {
+            'user_id': sessionUserId,
+            'post_id': postId,
+            'collection_id': collectionId,
+            'reaction_type': reactionType,
+            'item_type': itemType
+        } as App.RowData
+
+        console.log(reactionData)
+        const { reaction } = await insertUpdateReaction( reactionData )
 
         const success = reaction ? true : false
 
@@ -149,13 +157,10 @@ export const actions = {
 
         const data = await request.formData()
         const postId = data.get('post-id') as string ?? data.get('post-reply-id') as string
-        const parentPostUsername = data.get('post-username') as string
-        const parentPostId = data.get('parent-post-id') as string
-        const parentPostTimestamp = data.get('parent-post-timestamp') as string
 
         const submitDelete = await deletePost( sessionUserId, postId )
 
-        const permalink = parentPostId ? `/posts/${parentPostUsername}/now-playing/${parentPostTimestamp}` : '/'
+        const permalink = `/collection/${collectionId}`
 
         if ( submitDelete ) {
             throw redirect(303, permalink)

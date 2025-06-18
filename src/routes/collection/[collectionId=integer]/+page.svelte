@@ -86,7 +86,6 @@
         const replyTimestampString = createdAt.toISOString()
         const replyTimestamp = Date.parse(replyTimestampString).toString()
         const slug = username?.concat(replyTimestamp)
-        console.log(slug)
         return slug
     }
 
@@ -99,8 +98,6 @@
         collectionData.status = collectionMetadata?.status as string    
         collectionData.updatedAt = collectionMetadata?.updated_at as Date
         collectionData.collectionItems = collectionContents as App.RowData[]
-
-        console.log(collectionComments)
     })
 
 </script>

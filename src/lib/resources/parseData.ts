@@ -49,6 +49,10 @@ export const displayDate = ( date: Date ) => {
 
 /* Parse timestamp for hyperlinks */
 export function parseTimestamp ( itemTimestamp: Date ) {
+    if (!itemTimestamp) {
+        return null
+    }
+    
     const timestampString = itemTimestamp.toISOString()
     const timestamp = Date.parse(timestampString).toString()
     return timestamp

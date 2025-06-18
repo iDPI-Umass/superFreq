@@ -80,7 +80,6 @@
         interactionStates.editState = false
         interactionStates.popOverOpenState = false
     })
-
 </script>
 
 <input
@@ -161,6 +160,7 @@
                     postId={reply.post_id ?? reply.id}
                     reactionActive={reactionActive}
                     reactionCount={reactionCount}
+                    collectionId={reply.parent_collection_id ?? reply.collection_id}
                 ></LikeReact>
                 {#if allowReply}
                     <button class="like" onclick={() => showPostReplyEditor = !showPostReplyEditor}>
