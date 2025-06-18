@@ -68,6 +68,8 @@ export const load: PageServerLoad = async ({ params, url, locals: { safeGetSessi
             const select = await selectFollowingFeed( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, feedItemTypes )
 
             const selectedFeedData = select.feedData
+
+            console.log(selectedFeedData)
     
             feedData.feedItems.push(...selectedFeedData)
             feedItemCount = feedData.feedItems.length
