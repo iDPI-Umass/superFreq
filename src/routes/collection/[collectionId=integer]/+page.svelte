@@ -139,6 +139,7 @@
                                 collectionId={collectionMetadata.collection_id}
                                 reactionCount={collectionMetadata.reaction_count}
                                 reactionActive={reactionActive}
+                                buttonClass="standard"
                             >
                             </LikeReact>
                         {/if}
