@@ -385,6 +385,27 @@ span.search-tooltip {
 	background-color: var(--freq-color-background-badge);
 }
 
+
+/*
+//
+** Images
+//
+*/
+
+.grid-list-image-stack {
+	height: var(--freq-image-thumbnail-medium);
+	width: var(--freq-image-thumbnail-medium);
+	/* object-fit: cover; */
+	margin-bottom: 30px;
+}
+
+.grid-list-img {
+	height: var(--freq-image-thumbnail-medium);
+	width: var(--freq-image-thumbnail-medium);
+	object-fit:cover;
+}
+
+
 /* Collection image trio */
 .collection-image-trio-row {
 	position: relative;
@@ -455,9 +476,3 @@ span.search-tooltip {
 	margin: var(--freq-spacing-3x-small);
 	margin-top: var(--freq-spacing-2x-small);
 } */
-
-.grid-list-img {
-	height: var(--freq-image-thumbnail-medium);
-	width: var(--freq-image-thumbnail-medium);
-	object-fit:cover;
-}
