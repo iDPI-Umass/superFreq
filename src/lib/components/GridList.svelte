@@ -15,6 +15,8 @@
     import { listenUrlWhitelistCheck } from "$lib/resources/parseData";
     import { promiseStates, collectionData } from "$lib/resources/states.svelte";
 
+    import CollectionImageTrio from "$lib/components/collections/CollectionImageTrio.svelte"
+
     interface ComponentProps {
         collectionReturned?: boolean | null
         collectionType?: string | null

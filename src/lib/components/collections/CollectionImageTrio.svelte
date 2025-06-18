@@ -9,11 +9,11 @@
 
 	let { imgUrl, collection, orientation='column' }: ComponentProps = $props()
 
-	let images = $derived(collection?.images)
+	let images = $derived( collection ? collection?.image_trio : null) 
 
-	let imageOne = $derived(images[0])
-	let imageTwo = $derived(images[1])
-	let imageThree = $derived(images[2])
+	let imageOne = $derived(images ? images[0] : null)
+	let imageTwo = $derived(images ? images[1] : null)
+	let imageThree = $derived(images ? images[2] : null)
 
 	const imgOrientation = {
 		'row': [

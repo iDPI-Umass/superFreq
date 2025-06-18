@@ -1,5 +1,5 @@
 <script lang="ts">
-    import CollectionImageSpotlight from "src/lib/components/collections/CollectionImagoTrio.svelte"
+    import CollectionImageSpotlight from "src/lib/components/collections/CollectionImageTrio.svelte"
 
     const items = [
         {
