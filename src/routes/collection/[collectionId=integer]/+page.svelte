@@ -12,19 +12,14 @@
     import GridList from "$lib/components/GridList.svelte"
     import InfoBox from '$lib/components/InfoBox.svelte'
     import InlineMarkdownText from '$lib/components/InlineMarkdownText.svelte'
-
     import PostReply from 'src/lib/components/Posts/PostReply.svelte'
     import PostReplyEditor from 'src/lib/components/Posts/PostReplyEditor.svelte'
-
     import LikeReact from '$lib/components/Posts/LikeReact.svelte'
-
-
-
     import { collectionData } from '$lib/resources/states.svelte.js'
 
 
     let { data, form } = $props();
-    let { sessionUserId, collectionId, collectionMetadata, collectionContents, viewPermission, editPermission, followData, replies, infoBoxText } = $derived(data);
+    let { sessionUserId, collectionId, collectionMetadata, collectionContents, viewPermission, editPermission, followData, collectionComments, infoBoxText } = $derived(data);
 
     let gridListSelect = $state("grid")
 
@@ -91,6 +86,7 @@
         const replyTimestampString = createdAt.toISOString()
         const replyTimestamp = Date.parse(replyTimestampString).toString()
         const slug = username?.concat(replyTimestamp)
+        console.log(slug)
         return slug
     }
 
@@ -103,6 +99,8 @@
         collectionData.status = collectionMetadata?.status as string    
         collectionData.updatedAt = collectionMetadata?.updated_at as Date
         collectionData.collectionItems = collectionContents as App.RowData[]
+
+        console.log(collectionComments)
     })
 
 </script>
@@ -248,22 +246,16 @@
 </div>
 
 <div class="post-panel">
-    <input
-        type="hidden"
-        form="submitReply"
-        name="collection-id"
-        id="collection-id"
-        value={collectionId}
-    />
     <PostReplyEditor
+        collectionId={collectionId}
         styling="collection"
         placeholderText="Comment..."
     ></PostReplyEditor>
-    {#each replies as reply}
-        <div id={ replyId( reply.username, reply.created_at )}>
+    {#each collectionComments as comment}
+        <div id={ replyId( comment.username, comment.created_at )}>
             <div class="comment-panel">
                 <PostReply
-                    reply={reply}
+                    reply={comment}
                     sessionUserId={sessionUserId}
                     userActionSuccess={actionSuccess}
                     allowReply={true}

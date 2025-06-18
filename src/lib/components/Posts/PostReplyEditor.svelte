@@ -3,11 +3,13 @@
 
     interface ComponentProps {
         reply?: App.RowData
+        collectionId?: string | null
         styling?: string
         placeholderText?: string
     }
     let { 
         reply, 
+        collectionId = null,
         styling='default',
         placeholderText='Reply...'
     }: ComponentProps = $props()
@@ -51,7 +53,7 @@
             type="hidden"
             name="parent-collection-id"
             id="parent-collection-id"
-            value={reply?.parent_collection_id ?? null}
+            value={collectionId ?? reply?.parent_collection_id ?? null}
         />
         <input 
             type="hidden"
