@@ -709,10 +709,13 @@ export const selectUserPostsSample = async function ( sessionUserId: string, use
 
 /* Inserts a reaction to a post, or updates reaction row if sesssion user has already submitted that reaction */
 
-export const insertUpdateReaction = async function ( sessionUserId: string, postId: string, reactionType: string ) {
+export const insertUpdateReaction = async function ( sessionUserId: string, itemId: string, reactionType: string, itemType: string ) {
 
     const timestampISOString: string = new Date().toISOString()
     const timestampISO: Date = parseISO(timestampISOString)
+
+    const postId = itemType == 'post' ? itemId : null
+    const collectionId = itemType == 'collection' ? itemId : null
 
     const insertUpdateReaction = await db.transaction().execute(async (trx) => {
         try {
@@ -721,6 +724,7 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
             .select(['id', 'active', 'changelog'])
             .where(({eb}) => eb.and({
                 post_id: postId,
+                collection_id: collectionId,
                 user_id: sessionUserId,
                 reaction: reactionType
             }))
@@ -729,7 +733,7 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
             const changelog = selectReaction?.changelog as App.Changelog
             const active = selectReaction?.active as boolean
             changelog[timestampISOString] = {
-                active: !active
+                'active': !active
             }
 
             const { id } = selectReaction
@@ -742,7 +746,7 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
                 changelog: changelog
             })
             .where('id', '=', id)
-            .returning(['id', 'reaction', 'active', 'post_id'])
+            .returning(['id', 'reaction', 'active', 'post_id', 'collection_id'])
             .executeTakeFirst()
 
             const reaction = updateReaction as App.RowData
@@ -760,13 +764,14 @@ export const insertUpdateReaction = async function ( sessionUserId: string, post
             .values({
                 id: sql`default`,
                 post_id: postId,
+                collection_id: collectionId,
                 user_id: sessionUserId,
                 reaction: reactionType,
                 updated_at: timestampISO,
                 active: true,
                 changelog: changelog
             })
-            .returning(['id', 'reaction', 'active', 'post_id'])
+            .returning(['id', 'reaction', 'active', 'post_id', 'collection_id'])
             .executeTakeFirst()
 
             const reaction = insertReaction as App.RowData

@@ -95,9 +95,10 @@ export const actions = {
 
         const data = await request.formData()
         const reactionType = data.get('reaction-type') as string
-        const postId = data.get('post-id') ?? data.get('post-reply-id') as string
+        const itemId = data.get('post-id') as string ?? data.get('post-reply-id') as string
+        const itemType = 'post'
 
-        const { reaction } = await insertUpdateReaction( sessionUserId, postId, reactionType )
+        const { reaction } = await insertUpdateReaction( sessionUserId, itemId, reactionType, itemType )
 
         const success = reaction ? true : false
 

@@ -68,6 +68,8 @@ export const load: PageServerLoad = async ({ params, url, locals: { safeGetSessi
             const select = await selectFollowingFeed( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, feedItemTypes )
 
             const selectedFeedData = select.feedData
+
+            console.log(selectedFeedData)
     
             feedData.feedItems.push(...selectedFeedData)
             feedItemCount = feedData.feedItems.length
@@ -304,10 +306,11 @@ export const actions = {
         const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
-        const postId = data.get('post-id') as string
         const reactionType = data.get('reaction-type') as string
+        const itemId = data.get('post-id') as string ?? data.get('post-reply-id') as string
+        const itemType = 'post'
 
-        const { reaction } = await insertUpdateReaction( sessionUserId, postId, reactionType )
+        const { reaction } = await insertUpdateReaction( sessionUserId, itemId, reactionType, itemType )
 
         const userActionSuccess = reaction ? true : false
 

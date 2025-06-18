@@ -214,8 +214,8 @@
                             ></PostReply>
                         </div>
                     </div>
-                <!-- Reaction -->
-                {:else if item?.item_type == 'reaction'}
+                <!-- Post reaction -->
+                {:else if item?.item_type == 'reaction' && item?.reaction_post_id}
                     <a href={ item.reaction_post_type == 'now_playing' ? `/posts/${item.reaction_post_username}/now-playing/${parseTimestamp(item.reaction_post_created_at)}` : `/posts/${item.parent_post_username}/now-playing/${parseTimestamp(item.parent_post_created_at)}#${item.reaction_post_username?.concat(parseTimestamp(item.reaction_post_created_at))}`}>
                         <div class="feed-item">
                             <div class="feed-item-two-liner-user-row">
@@ -232,8 +232,28 @@
                         </div>
 
                     </a>
+                <!-- Collection reaction -->
+                {:else if item?.item_type == 'reaction' && item?.collection_id}
+                    <a href={`/collection/${item.collection_id}`}>
+                        <div class="feed-item">
+                            <div class="feed-item-one-liner">
+                                <CoverArt
+                                    item={avatarItem(item)}
+                                    altText={`${item.display_name}'s avatar`}
+                                    imgClass='feed-avatar'
+                                ></CoverArt>
+                                <span class="blurb">
+                                    {item.user_id == sessionUserId ? 'You' : item.display_name} liked {item.collection_owner_id == sessionUserId ? 'your' : 'the'} collection
+                                    <span class="feed-item-subject">
+                                        {item.collection_title}
+                                    </span>
+                                </span>
+                            </div>
+                            {@render feedItemTag(item)}
+                        </div>
+                    </a>
                 <!-- Collection follow -->
-                {:else if item?.item_type == 'collection_follow' && ( item?.user_id != item?.collection_owner_id )}
+                {:else if item?.item_type == 'collection_follow'}
                     <a href={`/collection/${item.collection_id}`}>
                         <div class="feed-item-one-liner">
                             <CoverArt
@@ -242,11 +262,11 @@
                                 imgClass='feed-avatar'
                             ></CoverArt>
                             <span class="blurb">
-                            {item.user_id == sessionUserId ? 'You' : item.display_name}
-                            followed {item.collection_owner_id == sessionUserId ? 'your' : 'the'} collection: 
-                            <span class="feed-item-subject">
-                                {item.collection_title}
-                            </span>
+                                {item.user_id == sessionUserId ? 'You' : item.display_name}
+                                followed {item.collection_owner_id == sessionUserId ? 'your' : 'the'} collection: 
+                                <span class="feed-item-subject">
+                                    {item.collection_title}
+                                </span>
                             </span>
                         </div>
                     </a>

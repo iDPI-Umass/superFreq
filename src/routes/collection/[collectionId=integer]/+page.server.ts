@@ -2,6 +2,7 @@ import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
 import { selectViewableCollectionContents } from '$lib/resources/backend-calls/collections'
 import { insertUpdateCollectionFollow } from '$lib/resources/backend-calls/users'
+import { insertUpdateReaction } from '$lib/resources/backend-calls/posts'
 
 let loadData = true
 let updateFollow = false
@@ -65,5 +66,20 @@ export const actions = {
         followsNow = follow?.follows_now as boolean
 
         return { success: true }
+    },
+    submitReaction: async ({ request, locals: { safeGetSession } }) => {
+        const { session } = await safeGetSession()
+        const sessionUserId = session?.user.id as string
+
+        const data = await request.formData()
+        const reactionType = data.get('reaction-type') as string
+        const itemId = data.get('collection-id') as string
+        const itemType = 'collection'
+
+        const { reaction } = await insertUpdateReaction( sessionUserId, itemId, reactionType, itemType )
+
+        const success = reaction ? true : false
+
+        return { success }
     }
 } satisfies Actions

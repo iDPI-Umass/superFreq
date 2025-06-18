@@ -113,6 +113,8 @@ export const searchUsersAndCollections = async function ( query: string, limit: 
     .execute()
 
     const results = search
+
+    console.log(results)
     
     searchResults.category = 'collections'
     searchResults.results = results
