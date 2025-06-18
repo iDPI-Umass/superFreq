@@ -12,7 +12,7 @@
 		mode?: string
 		limit?: string | null
         results: App.RowData[]
-        resultsCategory: string | null
+        resultsCategory?: string | null
 	}
 
 	let {
@@ -46,6 +46,7 @@
     //     addingItem = false
     //     return { query, searchComplete, showModal }
     // }
+	
 </script>
 
 <div class="search-bar">

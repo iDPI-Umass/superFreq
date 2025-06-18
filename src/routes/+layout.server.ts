@@ -1,6 +1,9 @@
 import type { LayoutServerLoad } from './$types'
 import { db } from 'src/database.ts'
+import { searchUsersAndCollections } from '$lib/resources/backend-calls/search'
 import wave from "$lib/assets/images/logo/freq-wave.svg"
+
+let siteSearchResults = [] as App.RowData[]
 
 export const load: LayoutServerLoad = async ({ depends, locals: { safeGetSession }, cookies }) => {
   const { session } = await safeGetSession()
@@ -38,5 +41,6 @@ export const load: LayoutServerLoad = async ({ depends, locals: { safeGetSession
     'website': 'https://freq.social'
   }
 
-  return { session, sessionUserId: null, profile, cookies: cookies.getAll() }
+  return { session, sessionUserId: null, profile, cookies: cookies.getAll(), siteSearchResults }
 }
+

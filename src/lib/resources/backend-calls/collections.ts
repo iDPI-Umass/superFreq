@@ -418,17 +418,55 @@ export const selectViewableCollectionContents = async function ( collectionId: s
             .where('item_position', 'is not', null)
             .execute()
 
-            return { viewPermission: true, follows, collectionContents, collectionMetadata }
+
+            const collectionComments = [] as App.RowData[]
+            if ( collectionMetadata.comment_count > 0 ) {
+                const selectComments = await trx
+                .selectFrom('posts_and_engagement as reply')
+                .select([
+                    'id',
+                    'user_id',
+                    'username',
+                    'display_name',
+                    'avatar_url',
+                    'last_fm_avatar_url',
+                    'avatar_release_group_name',
+                    'reply.avatar_artist_name',
+                    'created_at',
+                    'updated_at',
+                    'text',
+                    'status',
+                    'reaction_count',
+                    'reaction_user_ids',
+                    'type',
+                    'parent_post_id',
+                    'parent_post_created_at',
+                    'parent_post_username',
+                    'parent_collection_id',
+                    'reply_to',
+                    'reply_to_user_id',
+                    'reply_to_username',
+                    'reply_to_display_name',
+                    'reply_to_created_at'
+                ])
+                .where('parent_collection_id', '=', collectionId)
+                .orderBy('created_at asc')
+                .execute()
+
+                collectionComments.push(...selectComments)
+            }
+
+            return { viewPermission: true, follows, collectionContents, collectionMetadata, collectionComments }
         }
         catch ( error ) {
-            return { viewPermission: false, follows: null, collectionContents: null, collectionMetadata: null }
+            return { viewPermission: false, follows: null, collectionContents: null, collectionMetadata: null, collectionComments: null }
         }
     })
 
-    const { viewPermission, follows, collectionContents, collectionMetadata } = selectCollection
+    const { viewPermission, follows, collectionContents, collectionMetadata, collectionComments } = selectCollection
 
     if ( !viewPermission ) {
-        return { viewPermission: false, editPermission: false, followsNow: false, collection: null, collectionMetadata: null}
+        return { viewPermission: false, editPermission: false, followsNow: false, collection: null, collectionMetadata: null, collectionComments: null}
     }
 
     const { status, owner_id, collaborators, followers } = follows
@@ -439,7 +477,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
         collaborators.includes(sessionUserId)
     ) ? true : false
 
-    return { viewPermission, editPermission, followsNow, collectionContents, collectionMetadata }
+    return { viewPermission, editPermission, followsNow, collectionContents, collectionMetadata, collectionComments }
 }
 
 /*

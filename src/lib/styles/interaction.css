@@ -36,9 +36,18 @@ button.standard {
 
 }
 
-button.standard:is(:hover, :focus),
+/* button.standard:is(:hover, :focus),
 button.standard:is(:hover, :focus) * {
 	border: var(--freq-border-primary);
+	color: var(--freq-color-text);
+} */
+
+button.standard:is(:hover, :focus) {
+	border: var(--freq-border-primary);
+	color: var(--freq-color-text);
+}
+
+button.standard:is(:hover, :focus) * {
 	color: var(--freq-color-text);
 }
 

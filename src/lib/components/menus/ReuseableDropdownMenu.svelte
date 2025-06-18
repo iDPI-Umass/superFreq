@@ -6,10 +6,12 @@
     import CoverArt from "src/lib/components/CoverArt.svelte";
  
 	type Props = DropdownMenu.Props & {
-		buttonText: string;
-		items: any[];
-        avatar?: any;
-		contentProps?: WithoutChild<DropdownMenu.Content.Props>;
+		buttonText: string
+		items: any[]
+        avatar?: any
+        triggerFontSize?: string
+        screenSize?: string
+		contentProps?: WithoutChild<DropdownMenu.Content.Props>
 		// other component props if needed
 	};
  
@@ -19,21 +21,36 @@
 		buttonText,
 		items,
         avatar,
+        screenSize='desktop',
+        triggerFontSize='medium',
 		contentProps,
 		...restProps
 	}: Props = $props();
+
+    const responsiveStyling = {
+        'mobile': {
+            'fontSize': 'xx-small-font',
+            'triggerStyling': 'nav-mobile',
+            'iconSize': 17
+        },
+        'desktop': {
+            'fontSize': 'medium-font',
+            'triggerStyling': 'nav-desktop',
+            'iconSize': 16
+        }
+    } as any
 </script>
  
 <DropdownMenu.Root bind:open {...restProps}>
-	<DropdownMenu.Trigger>
+	<DropdownMenu.Trigger class={responsiveStyling[screenSize]['triggerStyling']}>
         {#if avatar}
         <CoverArt
             item={avatar}
             altText={avatar['release_group_name']}
         ></CoverArt>
         {/if}
-		{buttonText}
-        <ChevronDown></ChevronDown>
+        <span class={responsiveStyling[screenSize]['fontSize']}>{buttonText}</span>
+        <ChevronDown size={responsiveStyling[screenSize]['iconSize']}></ChevronDown>
 	</DropdownMenu.Trigger>
     <DropdownMenu.Content {...contentProps}>
         {#each items as item}
@@ -51,3 +68,18 @@
         {/each}
     </DropdownMenu.Content>
 </DropdownMenu.Root>
+
+<style>
+    .xx-small-font {
+        font-size: var(--freq-font-size-2x-small);
+    }
+    .x-small-font {
+        font-size: var(--freq-font-size-x-small);
+    }
+    .small-font {
+        font-size: var(--freq-font-size-small);
+    }
+    .medium-font {
+        font-size: var(--freq-font-size-medium);
+    }
+</style>
