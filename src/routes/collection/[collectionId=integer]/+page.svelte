@@ -86,7 +86,8 @@
         return items
     }
 
-    let reactionActive = $state(false)
+    let reactionActive = $derived(collectionMetadata?.reaction_user_ids.includes(sessionUserId)) as boolean
+    let reactionCount = $derived(collectionMetadata?.reaction_count) as number
 
     $effect(() => {
         sortedItems =  sort(sortOption)
@@ -136,8 +137,8 @@
                         {/if}
                         {#if sessionUserId}
                             <LikeReact
-                                collectionId={collectionMetadata.collection_id}
-                                reactionCount={collectionMetadata.reaction_count}
+                                collectionId={collectionId}
+                                reactionCount={reactionCount}
                                 reactionActive={reactionActive}
                                 buttonClass="standard"
                             >
