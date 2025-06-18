@@ -207,6 +207,13 @@
                 {@render editorItemImage(item, item["artist_name"])}
             {/if}
         {/key}
+    {:else if itemType == "collection" && mode == "view"}
+        <div class="grid-list-image-stack">
+            <CollectionImageTrio
+                collection={item}
+                orientation="diagonal-stack"
+            ></CollectionImageTrio>
+        </div>
     {/if}
 {/snippet}
 
