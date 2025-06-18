@@ -98,10 +98,11 @@ export const actions = {
         const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
-        postId = data.get('post-id') as string
         const reactionType = data.get('reaction-type') as string
+        postId = data.get('post-id') as string ?? data.get('post-reply-id') as string
+        const itemType = 'post'
 
-        const { reaction } = await insertUpdateReaction( sessionUserId, postId, reactionType )
+        const { reaction } = await insertUpdateReaction( sessionUserId, postId, reactionType, itemType )
 
         updatedReactionActive = reaction.active as boolean
 
