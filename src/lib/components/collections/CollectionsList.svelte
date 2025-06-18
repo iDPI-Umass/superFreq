@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { displayDate } from '$lib/resources/parseData'
 	import CollectionImage from './CollectionImage.svelte'
-	import CollectionImageTrio from './CollectionImageTrio.svelte';
+	import CollectionImageTrio from './CollectionImageTrio.svelte'
 	import PanelHeader from '$lib/components/PanelHeader.svelte'
 	import CoverArt from '../CoverArt.svelte';
 

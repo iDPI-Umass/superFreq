@@ -12,11 +12,11 @@
 
     import CoverArt from "$lib/components/CoverArt.svelte"
     import CollectionItemTag from "$lib/components/CollectionItemTag.svelte"
-    import CollectionImageTrio from "src/lib/components/collections/CollectionImageTrio.svelte"
+    import CollectionImageTrio from "./collections/CollectionImageTrio.svelte"
     import { displayDate, listenUrlWhitelistCheck } from "$lib/resources/parseData";
     import { promiseStates, collectionData } from "$lib/resources/states.svelte";
 
-    import CollectionImageTrio from "$lib/components/collections/CollectionImageTrio.svelte"
+
 
     interface ComponentProps {
         collectionReturned?: boolean | null
