@@ -1,5 +1,6 @@
 <script lang="ts">
 	import CoverArt from '$lib/components/CoverArt.svelte'
+    import wave from "$lib/assets/images/logo/freq-wave.svg"
 
 	interface ComponentProps {
 		imgUrl?: string
@@ -9,7 +10,7 @@
 
 	let { imgUrl, collection, orientation='column' }: ComponentProps = $props()
 
-	let images = $derived( collection ? collection?.image_trio : null) 
+	let images = $derived( collection ? collection?.image_trio : null)
 
 	let imageOne = $derived(images ? images[0] : null)
 	let imageTwo = $derived(images ? images[1] : null)
@@ -27,10 +28,17 @@
 			'collection-image-trio-column-first',
 			'collection-image-trio-column-second',
 			'collection-image-trio-column-third'
+		],
+		'diagonal-stack': [
+			'collection-image-trio-diagonal-stack',
+			'collection-image-trio-diagonal-stack-first',
+			'collection-image-trio-diagonal-stack-second',
+			'collection-image-trio-diagonal-stack-third'
 		]
 	} as any
 
 	$effect(() => {
+		console.log('images')
 		console.log(images)
 	})
 </script>
