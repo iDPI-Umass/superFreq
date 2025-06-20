@@ -33,7 +33,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession } 
         })
 
         if (checkBlock.blocked) {
-            throw redirect(404, '/user-unavailable')
+            throw redirect(401, '/user-unavailable')
         }
     }
     catch ( error ) {
