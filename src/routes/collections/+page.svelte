@@ -30,18 +30,17 @@
 
 
 {#snippet spotlightItem(collection: App.RowData)}
-	<div class="spotlight-item">
+	<li class="spotlight-item">
 		<div class="spotlight-item-images">
 			<div class="grid-list-image-stack">
-			<CollectionImageTrio 
-				collection={collection}
-				orientation='column'
-			></CollectionImageTrio>
+				<CollectionImageTrio 
+					collection={collection}
+					orientation='column'
+				></CollectionImageTrio>
 			</div>
 		</div>
 		<div class="spotlight-collection-info">
 			<a href="/collection/{collection.collection_id}">
-			<div class="spotlight-collection-info-text">
 				<span class="spotlight-collection-title">
 					{collection.title}
 				</span>
@@ -49,15 +48,13 @@
 				<span class="spotlight-collection-owner">
 					by {collection.display_name}
 				</span>
-			</div>
 			<hr class="spotlight-item-divider" />
 			<span class="spotlight-collection-description">
 				{collection.description}
 			</span>
 			</a>
 		</div>
-		
-	</div>
+	</li>
 {/snippet}
 
 
@@ -72,11 +69,11 @@
 			</button>
 		{/snippet}
 	</PanelHeader>
-	<div class="spotlight-row">
+	<ul class="spotlight">
 		{#each spotlightCollections as collection}
 			{@render spotlightItem(collection)}
 		{/each}
-	</div>
+	</ul>
 </div>
 
 
@@ -113,22 +110,26 @@
 	.panel {
 		max-width: 90vw;
 	}
-	.spotlight-row {
+	ul.spotlight {
 		display: grid;
 		grid-template-columns: repeat(6, minmax(0, 1fr));
+		padding: 0;
+		margin: 0;
 	}
-	.spotlight-item {
+	li.spotlight-item {
 		display: flex;
 		flex-direction: column;
 		border-right: var(--freq-border-panel);
 	}
-	.spotlight-item:last-child {
+	li.spotlight-item:last-child {
 		border-right: none;
 	}
 	.spotlight-item-images {
 		margin: var(--freq-spacing-x-small) auto;
 	}
 	.spotlight-collection-info {
+		max-width: inherit;
+		hyphens: auto;
 		margin: var(--freq-spacing-small);
 	}
 	span.spotlight-collection-title {
@@ -136,6 +137,7 @@
 		text-transform: uppercase;
 		font-weight: var(--freq-font-weight-medium);
 		color: var(--freq-color-text);
+		hyphens: auto;
 	}
 	span.spotlight-collection-owner {
 		color: var(--freq-color-mellow);
@@ -170,12 +172,27 @@
 			0 -2px 50px var(--freq-color-primary);
 	}
 	@media screen and (max-width: 770px) {
-		.spotlight-row {
+		ul.spotlight {
 			grid-template-columns: repeat(3, minmax(0, 1fr));
 			grid-template-rows: minmax(min-content, max-content);
 		}
-		.spotlight-item:nth-last-child(-n+3) {
+		li.spotlight-item {
+			margin-top: 0;
+			padding-top: 0;
+		}
+		li.spotlight-item:nth-last-child(-n+3) {
 			border-top: var(--freq-border-panel);
+		}
+		.spotlight-collection-info {
+			padding-top: 0;
+		}
+		.spotlight-collection-info .spotlight-collection-title,
+		.spotlight-collection-info .spotlight-collection-owner {
+			font-size: var(--freq-font-size-x-small);
+		}
+		.spotlight-collection-info .spotlight-collection-description {
+			margin: var(--freq-spacing-2x-small);
+			font-size: var(--freq-font-size-small);
 		}
 		.jumbotron {
 			gap: var(--freq-spacer-gap-quarter);
