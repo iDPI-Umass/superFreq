@@ -1,4 +1,4 @@
-import type { PageServerLoad, Actions } from './$types'
+import type { PageServerLoad, Actions } from '../$types'
 import { redirect } from '@sveltejs/kit'
 import { selectProfilePageData, insertUpdateBlock, insertUserFlag, insertUpdateUserFollow, insertPostFlag } from 'src/lib/resources/users'
 import { selectNotificationsFeed, selectFollowingFeed } from 'src/lib/resources/feed'

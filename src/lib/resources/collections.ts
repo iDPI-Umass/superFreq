@@ -222,55 +222,35 @@ export const selectListProfileUserViewableCollections = async function ( session
 
         if ( sessionUserId == profileUserId ) {
             selectInfo = await trx
-            .selectFrom('collections_info as info')
-            .innerJoin('social_graph as social', 'social.collection_id', 'info.collection_id')
-            .innerJoin('profiles', 'profiles.id', 'social.user_id')
+            .selectFrom('collection_metadata as collections')
             .select([
-                'info.collection_id as id',
-                'info.title as title',
-                'info.updated_at as updated_at',
-                'profiles.display_name as display_name'
+                'collection_id',
+                'title',
+                'updated_at',
+                'created_at',
+                'display_name',
             ])
-            .where(({eb, and, or}) => and([
-                eb('social.user_id', '=', profileUserId),
-                eb('social.collection_id', 'is not', null),
-                or([
-                    eb('info.status', '=', 'public'),
-                    eb('info.status', '=', 'open'),
-                    eb('info.status', '=', 'private')
-                ]),
-                or([
-                    eb('social.user_role', '=', 'owner'),
-                    eb('social.user_role', '=', 'collaborator')
-                ])
-            ]))
-            .orderBy('info.created_at desc')
+            .where('owner_id', '=', sessionUserId)
+            .where('status', '!=', 'deleted')
+            .orderBy('updated_at desc')
             .execute()
         }
         else if ( sessionUserId != profileUserId ) {
             selectInfo = await trx
-            .selectFrom('collections_info as info')
-            .innerJoin('social_graph as social', 'social.collection_id', 'info.collection_id')
-            .innerJoin('profiles', 'profiles.id', 'social.user_id')
+            .selectFrom('collection_metadata as collections')
             .select([
-                'info.collection_id as id',
-                'info.title as title',
-                'info.updated_at as updated_at',
-                'profiles.display_name as display_name'
+                'collection_id',
+                'title',
+                'updated_at',
+                'created_at',
+                'display_name',
             ])
-            .where(({eb, and, or}) => and([
-                eb('social.user_id', '=', profileUserId),
-                eb('social.collection_id', 'is not', null),
-                or([
-                    eb('info.status', '=', 'public'),
-                    eb('info.status', '=', 'open')
-                ]),
-                or([
-                    eb('social.user_role', '=', 'owner'),
-                    eb('social.user_role', '=', 'collaborator')
-                ])
+            .where('owner_id', '=', profileUserId)
+            .where(({eb, or}) => or([
+                eb('status', '=', 'open'),
+                eb('status', '=', 'public')
             ]))
-            .orderBy('info.created_at desc')
+            .orderBy('updated_at desc')
             .execute()
         }
 

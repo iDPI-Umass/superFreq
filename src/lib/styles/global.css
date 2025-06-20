@@ -138,6 +138,7 @@ body {
 
 .info-box-compact {
     max-width: 50%;
+	width: fit-content;
 	height: fit-content;
     margin: var(--freq-spacing-large) auto;
     padding: var(--freq-spacing-small);
