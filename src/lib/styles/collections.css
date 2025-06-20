@@ -133,10 +133,11 @@ span.search-tooltip {
 .collection-info-attribution {
 	display: flex;
 	flex-direction: column;
-	gap: var(--freq-height-spacer-gap-quarter);
+	gap: 0;
+	margin: 0;
 }
 
-.collection-info-attribution p {
+.collection-info-attribution span {
 	margin: 0;
 }
 
@@ -159,6 +160,13 @@ span.search-tooltip {
 
 .collection-description-text {
 	font-size: var(--freq-font-size-medium);
+}
+
+@media screen and (max-width: 770px) {
+	.collection-info-text,
+	.collection-date-text {
+		font-size: var(--freq-font-size-small);
+	}
 }
 
 /* Metadata formatting classes */
@@ -433,7 +441,7 @@ span.search-tooltip {
 	max-width: var(--freq-image-thumbnail-medium);
 	max-height: var(--freq-image-thumbnail-medium);
 	top: 15px;
-	filter: brightness(50%);
+	filter: brightness(80%);
 	z-index: 2;
 }
 .collection-image-trio-column-third {
@@ -441,7 +449,7 @@ span.search-tooltip {
 	max-width: var(--freq-image-thumbnail-medium);
 	max-height: var(--freq-image-thumbnail-medium);
 	top: 0px;
-	filter: brightness(25%);
+	filter: brightness(60%);
 	z-index: 1;
 }
 

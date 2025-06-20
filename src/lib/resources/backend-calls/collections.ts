@@ -100,78 +100,34 @@ export const selectRecentOpenPublicCollections = async function ( batchSize: num
     return { collections }
 }
 
-export const selectSpotlightCollections = async function ( batchSize: number, batchIterator: number ) {
-
-    const offset = batchSize * batchIterator
-
+export const selectSpotlightCollections = async function ( spotlightCollectionId: string, batchSize: number ) {
     const selectCollections = await db.transaction().execute(async (trx) => {
 
-        const collectionsCount = await trx
-        .selectFrom('collections_info')
-        .select((eb) => eb.fn.count<number>('collection_id').as('count'))
-        .where(({eb, or}) => or([
-            eb('status', '=', 'open'),
-            eb('status', '=', 'public')
-        ]))
-        .execute()
 
-        const collections = await trx
-        .selectFrom('collections_info')
-        .innerJoin('profiles as profile', 'profile.id', 'owner_id')
-        .select([
-            'collections_info.collection_id as collection_id', 
-            'collections_info.created_at as created_at', 
-            'collections_info.updated_at as updated_at', 
-            'collections_info.owner_id as owner_id', 
-            'collections_info.title as title', 
-            'collections_info.type as type',
-            'profile.username as username', 
-            'profile.display_name as display_name',
-            'profile.avatar_url as avatar_url'
-        ])
-        .where(({eb, and, or}) => and([
-            or([
-                eb('status', '=', 'open'),
-                eb('status', '=', 'public')
-            ]),
-            eb('spotlight', '=', true)
-        ]))
-        .orderBy('collections_info.collection_id desc')
-        .limit(batchSize)
-        .offset(offset)
-        .execute()
-
-        return { collectionsCount, collections }
-    })
-
-    const collections = await selectCollections
-    const count = collections.collectionsCount[0].count
-    const remainingCount = count - offset
-    return { collections, remainingCount }
-}
-
-export const selectNewestSpotlightCollections = async function ( batchSize: number ) {
-    const selectCollections = await db.transaction().execute(async (trx) => {
-
+        console.log(spotlightCollectionId, batchSize)
         const selectCollectionsMetadata = await trx
-        .selectFrom('collection_metadata')
+        .selectFrom('collections')
         .select([
-            'collection_id',
-            'title',
-            'username',
-            'display_name',
-            'updated_at',
-            'description',
-            'spotlight',
-            'spotlight_added_at'
+            'connected_collection_id as collection_id',
+            'connected_collection_title as title',
+            'connected_collection_owner_username as username',
+            'connected_collection_owner_display_name as display_name',
+            'connected_collection_created_at as created_at',
+            'connected_collection_description_text as description'
         ])
-        .where('spotlight', '=', true)
-        .orderBy('spotlight_added_at desc')
+        .where(({eb, and}) => and([
+            eb('collection_id', '=', spotlightCollectionId),
+            eb('item_type', '=', 'collection'),
+            eb('item_position', 'is not', null)
+        ]))
+        .where('collection_id', '=', spotlightCollectionId)
+        .orderBy('item_position desc')
         .limit(batchSize)
         .execute()
 
         const collections = selectCollectionsMetadata as App.RowData[]
 
+        console.log(selectCollectionsMetadata)
         for ( const collection of collections ) {
             const collectionId = collection.collection_id
             const collectionImages = await trx

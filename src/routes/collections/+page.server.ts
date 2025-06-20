@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types'
-import { selectNewestSpotlightCollections, selectRecentOpenPublicCollections, selectFollowedUsersOpenPublicCollections } from '$lib/resources/backend-calls/collections'
+import { selectSpotlightCollections, selectRecentOpenPublicCollections, selectFollowedUsersOpenPublicCollections } from '$lib/resources/backend-calls/collections'
 import { add } from 'date-fns'
 import { selectFeedData } from '$lib/resources/backend-calls/feed'
 
@@ -10,8 +10,9 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
     const feedTimestampEnd = new Date()
     const feedTimestampStart = add(feedTimestampEnd, {days: -300})
 
-    const selectSpotlightCollections = await selectNewestSpotlightCollections(6) 
-    const spotlightCollections = selectSpotlightCollections.collections
+    const spotlightCollectionId = '268'
+    const selectSpotlight = await selectSpotlightCollections(spotlightCollectionId, 6) 
+    const spotlightCollections = selectSpotlight.collections
     spotlightCollections.length = 6
     for ( const collection of spotlightCollections ) {
         if ( collection.description.length > 100 ) {
@@ -32,5 +33,5 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 
     const followingUsersCollections = selectUsersCollections.collections
 
-   return { sessionUserId, spotlightCollections, recentCollections, collectionsFeed, followingUsersCollections }
+   return { sessionUserId, spotlightCollectionId, spotlightCollections, recentCollections, collectionsFeed, followingUsersCollections }
 }

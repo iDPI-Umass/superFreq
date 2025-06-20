@@ -161,15 +161,15 @@
                     </div>
                 </div>
             <div class="collection-info-row">
-                <div class="collection-info-attribution">
-                    <p class="collection-info-text">
+                <p class="collection-info-attribution">
+                    <span class="collection-info-text">
                         Collection by 
                         <a href="/user/{collectionMetadata?.username}">
                             {collectionMetadata?.display_name}
                         </a>
-                    </p>
-                    <p class="collection-date-text">Last updated on {updatedAt}</p>
-                </div>
+                    </span>
+                    <span class="collection-date-text">Last updated on {updatedAt}</span>
+                </p>
                 {#if collectionMetadata?.status == 'open' || collectionMetadata?.status == 'private'}
                 <InfoBox
                     mode="inline"

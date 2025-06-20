@@ -4,11 +4,14 @@
 	import CollectionsList from '$lib/components/collections/CollectionsList.svelte';
 	import CollectionImageTrio from 'src/lib/components/collections/CollectionImageTrio.svelte';
 	import Feed from '$lib/components/Feed.svelte'
+	import InlineMarkdownText from '$lib/components/InlineMarkdownText.svelte'
+	import { goto } from '$app/navigation'
 
 	let { data } = $props();
 
 	let {
 		sessionUserId,
+		spotlightCollectionId,
 		spotlightCollections,
 		recentCollections,
 		collectionsFeed,
@@ -50,7 +53,9 @@
 				</span>
 			<hr class="spotlight-item-divider" />
 			<span class="spotlight-collection-description">
-				{collection.description}
+				<InlineMarkdownText
+					text={collection.description}
+				></InlineMarkdownText>
 			</span>
 			</a>
 		</div>
@@ -64,7 +69,7 @@
 			spotlight
 		{/snippet}
 		{#snippet button()}
-			<button class="standard">
+			<button class="standard" onclick={() => goto(`/collection/${spotlightCollectionId}`)}>
 				see all
 			</button>
 		{/snippet}
