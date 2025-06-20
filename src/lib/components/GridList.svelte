@@ -121,24 +121,6 @@
     }
 
     const gridSpacers = $derived(getGridSpacers(items, layout))
-
-    const sampleCollection = {'images' : [
-        {
-            'last_fm_img_url': 'https://ia601609.us.archive.org/19/items/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad-2051756196.jpg',
-            'release_group_name': 'herbie',
-            'artist_name': 'village life'
-        },
-                {
-            'last_fm_img_url': 'https://ia601609.us.archive.org/19/items/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad-2051756196.jpg',
-            'release_group_name': 'herbie',
-            'artist_name': 'village life'
-        },
-                {
-            'last_fm_img_url': 'https://ia601609.us.archive.org/19/items/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad/mbid-f9739d2c-9b44-4ac1-a0e7-327a23d741ad-2051756196.jpg',
-            'release_group_name': 'herbie',
-            'artist_name': 'village life'
-        }
-    ]}
 </script>
 
 <!-- <svelte:options runes={true} /> -->
@@ -413,12 +395,6 @@
         position: sticky;
         height:300 px;
     }
-    /* li {
-        display: flex;
-        flex-direction: row;
-        gap: 0.25em;
-        margin: auto 0;
-    } */
      ul {
         padding: 0;
      }

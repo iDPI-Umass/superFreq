@@ -111,135 +111,134 @@
 
 <SEO title={collectionMetadata?.title}></SEO>
 
-<div class="two-column">
-    <div class="collection-container">
-        <div class="collection-info">
-                <div class="collection-info-row">
-                    <h1>{collectionMetadata?.title}</h1>
-                    <div class="buttons-group">
-                        {#if 
-                            sessionUserId && ( sessionUserId != collectionMetadata?.owner_id )}
-                            <form
-                                method="POST"
-                                action="?/followCollection"
-                            >
-                                <input 
-                                    type="hidden"
-                                    name="collection-id" 
-                                    id="collection-id"
-                                    value={collectionId}
-                                />
-                                <button 
-                                    class="standard" 
-                                    formaction="?/followCollection"
-                                >
-                                {#if followData && followData['follows_now'] == true}
-                                    unfollow
-                                {:else}
-                                    + follow
-                                {/if}
-                                </button>
-                            </form>
-                        {/if}
-                        {#if sessionUserId}
-                            <LikeReact
-                                collectionId={collectionId}
-                                reactionCount={reactionCount}
-                                reactionActive={reactionActive}
-                                buttonClass="standard"
-                            >
-                            </LikeReact>
-                        {/if}
-                        {#if sessionUserId && editPermission}
-                            <button 
-                                class="standard"
-                                onclick={() => goto($page.url.pathname + '/edit')}
-                            >
-                            edit
-                            </button>
-                        {/if}
-                    </div>
-                </div>
-            <div class="collection-info-row">
-                <p class="collection-info-attribution">
-                    <span class="collection-info-text">
-                        Collection by 
-                        <a href="/user/{collectionMetadata?.username}">
-                            {collectionMetadata?.display_name}
-                        </a>
-                    </span>
-                    <span class="collection-date-text">Last updated on {updatedAt}</span>
-                </p>
-                {#if collectionMetadata?.status == 'open' || collectionMetadata?.status == 'private'}
-                <InfoBox
-                    mode="inline"
-                >
-                    {infoBoxText[collectionMetadata?.status]}
-                </InfoBox>
-                {/if}
-            </div>
-            <div class="collection-description-text">
-                <InlineMarkdownText text={collectionMetadata?.description_text}></InlineMarkdownText>
-            </div>
-        </div>
 
-        <div class="sort">
-            <div class="sort-column">
-                <Select.Root type="single" bind:value={selected}>
-                    <Select.Trigger class="sort-options">
-                        <span class="trigger-label">  
-                            {selected ?? 'sort order'}
-                        </span>
-                        <span class="chevron">
-                            <ChevronDown size={16}></ChevronDown>
-                        </span>
-                    </Select.Trigger>
-                    <Select.Portal>
-                        <Select.Content>
-                            {#each sortOptions as option}
-                            <Select.Item value={option} label={option}>
-                                {option}
-                            </Select.Item>
-                            {/each}
-                        </Select.Content>
-                    </Select.Portal>
-                </Select.Root>
-            </div>
-            <div class="sort-column">
-                <Toolbar.Root>
-                    <Toolbar.Group
-                        bind:value={gridListSelect}
-                        type="single"
-                    >
-                        <Toolbar.GroupItem
-                            aria-label="grid"
-                            value="grid"
+<div class="collection-container">
+    <div class="collection-info">
+            <div class="collection-info-row">
+                <h1>{collectionMetadata?.title}</h1>
+                <div class="buttons-group">
+                    {#if 
+                        sessionUserId && ( sessionUserId != collectionMetadata?.owner_id )}
+                        <form
+                            method="POST"
+                            action="?/followCollection"
                         >
-                            <div class="toolbar-icon">
-                                <LayoutGrid size={20}></LayoutGrid>
-                            </div>
-                        </Toolbar.GroupItem>
-                        <Toolbar.GroupItem
-                            aria-label="list"
-                            value="list"
+                            <input 
+                                type="hidden"
+                                name="collection-id" 
+                                id="collection-id"
+                                value={collectionId}
+                            />
+                            <button 
+                                class="standard" 
+                                formaction="?/followCollection"
+                            >
+                            {#if followData && followData['follows_now'] == true}
+                                unfollow
+                            {:else}
+                                + follow
+                            {/if}
+                            </button>
+                        </form>
+                    {/if}
+                    {#if sessionUserId}
+                        <LikeReact
+                            collectionId={collectionId}
+                            reactionCount={reactionCount}
+                            reactionActive={reactionActive}
+                            buttonClass="standard"
                         >
-                            <div class="toolbar-icon">
-                                <AlignJustify size={20}></AlignJustify>
-                            </div>
-                        </Toolbar.GroupItem>
-                    </Toolbar.Group>
-                </Toolbar.Root>
-                <span class="view-mode">view mode: {gridListSelect}</span>
+                        </LikeReact>
+                    {/if}
+                    {#if sessionUserId && editPermission}
+                        <button 
+                            class="standard"
+                            onclick={() => goto($page.url.pathname + '/edit')}
+                        >
+                        edit
+                        </button>
+                    {/if}
+                </div>
             </div>
+        <div class="collection-info-row">
+            <p class="collection-info-attribution">
+                <span class="collection-info-text">
+                    Collection by 
+                    <a href="/user/{collectionMetadata?.username}">
+                        {collectionMetadata?.display_name}
+                    </a>
+                </span>
+                <span class="collection-date-text">Last updated on {updatedAt}</span>
+            </p>
+            {#if collectionMetadata?.status == 'open' || collectionMetadata?.status == 'private'}
+            <InfoBox
+                mode="inline"
+            >
+                {infoBoxText[collectionMetadata?.status]}
+            </InfoBox>
+            {/if}
         </div>
-        <GridList
-            collectionStatus={collectionMetadata.status}
-            collectionReturned={viewPermission}
-            layout={gridListSelect}
-            mode="view"
-        >
-        </GridList>
+        <p class="collection-description-text">
+            <InlineMarkdownText text={collectionMetadata?.description_text}></InlineMarkdownText>
+        </p>
     </div>
+
+    <div class="sort">
+        <div class="sort-column">
+            <Select.Root type="single" bind:value={selected}>
+                <Select.Trigger class="sort-options">
+                    <span class="trigger-label">  
+                        {selected ?? 'sort order'}
+                    </span>
+                    <span class="chevron">
+                        <ChevronDown size={16}></ChevronDown>
+                    </span>
+                </Select.Trigger>
+                <Select.Portal>
+                    <Select.Content>
+                        {#each sortOptions as option}
+                        <Select.Item value={option} label={option}>
+                            {option}
+                        </Select.Item>
+                        {/each}
+                    </Select.Content>
+                </Select.Portal>
+            </Select.Root>
+        </div>
+        <div class="sort-column">
+            <Toolbar.Root>
+                <Toolbar.Group
+                    bind:value={gridListSelect}
+                    type="single"
+                >
+                    <Toolbar.GroupItem
+                        aria-label="grid"
+                        value="grid"
+                    >
+                        <div class="toolbar-icon">
+                            <LayoutGrid size={20}></LayoutGrid>
+                        </div>
+                    </Toolbar.GroupItem>
+                    <Toolbar.GroupItem
+                        aria-label="list"
+                        value="list"
+                    >
+                        <div class="toolbar-icon">
+                            <AlignJustify size={20}></AlignJustify>
+                        </div>
+                    </Toolbar.GroupItem>
+                </Toolbar.Group>
+            </Toolbar.Root>
+            <span class="view-mode">view mode: {gridListSelect}</span>
+        </div>
+    </div>
+    <GridList
+        collectionStatus={collectionMetadata.status}
+        collectionReturned={viewPermission}
+        layout={gridListSelect}
+        mode="view"
+    >
+    </GridList>
 </div>
 
 <div class="post-panel">
@@ -270,5 +269,14 @@
     .post-panel {
         border: none;
         margin-left: var(--freq-spacing-small);
+    }
+    @media screen and (max-width: 770px) {
+        .view-mode {
+            font-size: var(--freq-font-size-x-small);
+        }
+        .post-panel {
+            max-width: 90vw;
+            margin: auto;
+        }
     }
 </style>

@@ -26,12 +26,12 @@
         'like': {
             'textClass': 'descriptor',
             'iconSize': 16,
-            'iconClass': 'likeIcon'
+            'iconClass': 'like-icon'
         },
         'standard': {
-            'textClass': 'standardText',
+            'textClass': 'standard-text',
             'iconSize': 14,
-            'iconClass': 'standardIcon'
+            'iconClass': 'standard-icon'
         }
     } as any
 </script>
@@ -107,15 +107,20 @@
 </form>
 
 <style>
-    .standardText {
+    .standard-text {
         text-transform: uppercase;
         font-size: var(--freq-font-size-x-small);
     }
-    .likeIcon,
-    .standardIcon {
+    .like-icon,
+    .standard-icon {
         color: var(--freq-color-text-muted);
     }
-    .likeIcon:is(:hover,:focus) {
+    .like-icon:is(:hover,:focus) {
         color: var(--freq-color-text);
     }
+    /* @media screen and (max-width: 770px) {
+        .standard-text {
+            font-size: var(--freq-font-size-2x-small);
+        }
+    } */
 </style>

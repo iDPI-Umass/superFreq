@@ -36,6 +36,7 @@
                 <span>mix</span>
             {:else if itemType && itemType.includes("collection")}
                 <SquareLibrary size="12" color="var(--freq-color-text-medium-dark)"></SquareLibrary>
+                <br />
                 <span>collection</span>
             {:else}
                 <span>item</span>
@@ -47,8 +48,8 @@
 <style>
     .collection-item-tag{
         display: flex;
-        flex-direction: row;
-        width: fit-content;
+        flex-flow: row wrap;
+        max-width: fit-content;
         padding:  var(--freq-spacing-2x-small);
         align-items: center;
         gap: var(--freq-inline-gap-double);
@@ -61,6 +62,19 @@
         letter-spacing: var(--freq-letter-spacing-looser);
     }
     .inline-block {
+        width: 100%;
         display: inline-block;
+    }
+    .collection-item-tag span {
+        /* width: 85%; */
+        hyphens: auto;
+        overflow-wrap:break-word;
+    }
+    @media screen and (max-width: 770px) {
+        .collection-item-tag {
+            gap: var(--freq-inline-gap);
+            font-size: var(--freq-font-size-2x-small);
+            letter-spacing: var(--freq-letter-spacing-loose);
+        }
     }
 </style>
