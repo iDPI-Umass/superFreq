@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types'
-import { selectSpotlightCollections, selectRecentOpenPublicCollections, selectFollowedUsersOpenPublicCollections } from '$lib/resources/backend-calls/collections'
+import { selectSpotlightCollections, selectRecentOpenPublicCollections, selectFollowedUsersOpenPublicCollections } from 'src/lib/resources/collections'
 import { add } from 'date-fns'
-import { selectFeedData } from '$lib/resources/backend-calls/feed'
+import { selectFeedData } from 'src/lib/resources/feed'
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
     const { session}  = await safeGetSession()

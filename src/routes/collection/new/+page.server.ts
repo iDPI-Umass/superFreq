@@ -1,8 +1,8 @@
 import { redirect } from '@sveltejs/kit'
 import { parseISO } from "date-fns"
 import type { PageServerLoad, Actions } from './$types'
-import { insertCollection } from '$lib/resources/backend-calls/collections'
-import { searchCollections } from '$lib/resources/backend-calls/search'
+import { insertCollection } from 'src/lib/resources/collections'
+import { searchCollections } from 'src/lib/resources/search'
 
 const collectionSearchResults = [] as App.RowData[]
 
@@ -77,7 +77,6 @@ export const actions = {
     const data = await request.formData()
     const query = data.get('query') as string
     const resultsLimit = parseInt(data.get('results-limit') as string)
-    const searchCategory = data.get('search-category') as string
     const queryType = data.get('query-type') as string
 
     collectionSearchResults.length = 0

@@ -1,5 +1,5 @@
 import type { PageServerLoad, Actions } from "./$types"
-import { searchUsersAndCollections, searchUsers, searchPgUsersCollections } from "$lib/resources/backend-calls/search"
+import { searchUsersAndCollections, searchUsers, searchPgUsersCollections } from "src/lib/resources/search"
 
 const results = [] as App.RowData[]
 

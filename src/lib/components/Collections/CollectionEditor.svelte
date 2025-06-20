@@ -1,10 +1,10 @@
 <script lang="ts">
     import { enhance } from '$app/forms'
-    import GridList from '$lib/components/GridList.svelte'
-    import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
-    import GlobalSearch from '$lib/components/GlobalSearch.svelte'
+    import GridList from 'src/lib/components/Collections/GridList.svelte'
+    import MusicBrainzSearch from 'src/lib/components/Search/MusicBrainzSearch.svelte'
+    import GlobalSearch from 'src/lib/components/Search/GlobalSearch.svelte'
     import ManualAddModal from '$lib/components/modals/ManualAddModal.svelte'
-    import CollectionItemTag from '$lib/components/CollectionItemTag.svelte'
+    import CollectionItemTag from 'src/lib/components/Collections/CollectionItemTag.svelte'
     import { collectionData, searchResults } from '$lib/resources/states.svelte'
 
     interface ComponentProps {

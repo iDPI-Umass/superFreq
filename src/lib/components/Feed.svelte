@@ -4,13 +4,13 @@
     import { Toolbar, Tabs } from 'bits-ui'
     import { parseTimestamp } from '$lib/resources/parseData'
     import decoration from "$lib/assets/images/feed-item-decoration.svg"
-	import PanelHeader from '$lib/components/PanelHeader.svelte'
+	import PanelHeader from 'src/lib/components/layout/PanelHeader.svelte'
     import NowPlayingPost from 'src/lib/components/Posts/NowPlayingPost.svelte'
     import NowPlayingTag from 'src/lib/components/Posts/NowPlayingTag.svelte'
     import PostReply from 'src/lib/components/Posts/PostReply.svelte'
-    import CoverArt from '$lib/components/CoverArt.svelte'
+    import CoverArt from 'src/lib/components/layout/CoverArt.svelte'
     import OptionsMenu from '$lib/components/menus/OptionsMenu.svelte'
-    import MenuRow from '$lib/components/MenuRow.svelte'
+    import MenuRow from 'src/lib/components/layout/MenuRow.svelte'
 	import { feedData } from '$lib/resources/states.svelte'
 
     interface ComponentProps {
@@ -418,13 +418,6 @@
                     {/each}
                 </Tabs.List>
             </div>
-            <!-- {#snippet button()}
-                <OptionsMenu
-                    triggerText='filter'
-                    optionsGroups={optionsGroups}
-                    inputGroup='selected-options'
-                ></OptionsMenu>
-            {/snippet} -->
         </MenuRow>
         {#if feedTabs.includes('following')}
         <Tabs.Content value="following">

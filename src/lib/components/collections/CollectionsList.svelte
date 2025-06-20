@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { displayDate } from '$lib/resources/parseData'
 	import CollectionImageTrio from './CollectionImageTrio.svelte'
-	import PanelHeader from '$lib/components/PanelHeader.svelte'
+	import PanelHeader from 'src/lib/components/layout/PanelHeader.svelte'
 
 
 	interface ComponentProps {

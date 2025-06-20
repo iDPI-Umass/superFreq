@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ListModal from 'src/lib/components/modals/ListModal.svelte'
 	import { mbSearch, addCollectionItemNoImg, getCoverArt, addSingleItemNoImg, mbidCateogory, artistName, artistMbid, releaseGroupName, releaseGroupMbid, releaseGroupMetadata, recordingName, itemDate, artistOrigin, getArtistImage } from '$lib/resources/musicbrainz'
-	import CoverArt from './CoverArt.svelte'
+	import CoverArt from '../layout/CoverArt.svelte'
 
     import { promiseStates, collectionData } from '$lib/resources/states.svelte';
 
@@ -12,7 +12,7 @@
 		mode: string,
 		searchResultsLimit?: string,
 		query?: string,
-		collectionLimit: string | null,
+		collectionLimit?: string | null,
 		continuePromise? : boolean
 	}
 

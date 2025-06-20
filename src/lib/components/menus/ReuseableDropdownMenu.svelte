@@ -3,7 +3,7 @@
 	import { DropdownMenu, type WithoutChild } from "bits-ui";
     import ChevronDown from '@lucide/svelte/icons/chevron-down';
 
-    import CoverArt from "src/lib/components/CoverArt.svelte";
+    import CoverArt from "src/lib/components/layout/CoverArt.svelte";
  
 	type Props = DropdownMenu.Props & {
 		buttonText: string

@@ -1,6 +1,6 @@
 <script lang="ts">
     import SEO from '$lib/components/layout/SEO.svelte'
-    import PanelHeader from '$lib/components/PanelHeader.svelte';
+    import PanelHeader from 'src/lib/components/layout/PanelHeader.svelte';
 
     interface Props {
         data: any;

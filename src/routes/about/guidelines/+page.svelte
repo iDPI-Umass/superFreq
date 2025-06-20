@@ -1,7 +1,7 @@
 <script lang="ts">
 	import SEO from '$lib/components/layout/SEO.svelte'
-	import PanelHeader from "$lib/components/PanelHeader.svelte"
-	import InfoBox from "$lib/components/InfoBox.svelte";
+	import PanelHeader from "src/lib/components/layout/PanelHeader.svelte"
+	import InfoBox from "src/lib/components/layout/InfoBox.svelte";
 	import Guidelines from '$lib/assets/text/community-guidelines.md'
     import Consent from '$lib/assets/text/data-consent.md'
 </script>

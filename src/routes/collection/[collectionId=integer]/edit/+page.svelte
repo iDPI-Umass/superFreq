@@ -1,10 +1,10 @@
 <script lang="ts">
     import { onMount } from 'svelte'
     import SEO from '$lib/components/layout/SEO.svelte'
-    import CollectionEditor from '$lib/components/CollectionEditor.svelte'
-    import Tooltip from '$lib/components/Tooltip.svelte'
-    import InfoBox from '$lib/components/InfoBox.svelte'
-	import PanelHeader from '$lib/components/PanelHeader.svelte'
+    import CollectionEditor from 'src/lib/components/Collections/CollectionEditor.svelte'
+    import Tooltip from 'src/lib/components/layout/Tooltip.svelte'
+    import InfoBox from 'src/lib/components/layout/InfoBox.svelte'
+	import PanelHeader from 'src/lib/components/layout/PanelHeader.svelte'
     import SingleActionModal from '$lib/components/modals/SingleActionModal.svelte'
     import { promiseStates, collectionData, searchResults } from '$lib/resources/states.svelte'
 

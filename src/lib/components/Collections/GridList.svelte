@@ -10,9 +10,9 @@
 
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
-    import CoverArt from "$lib/components/CoverArt.svelte"
-    import CollectionItemTag from "$lib/components/CollectionItemTag.svelte"
-    import CollectionImageTrio from "./collections/CollectionImageTrio.svelte"
+    import CoverArt from "src/lib/components/layout/CoverArt.svelte"
+    import CollectionItemTag from "src/lib/components/Collections/CollectionItemTag.svelte"
+    import CollectionImageTrio from "./CollectionImageTrio.svelte"
     import { displayDate, listenUrlWhitelistCheck } from "$lib/resources/parseData";
     import { promiseStates, collectionData } from "$lib/resources/states.svelte";
 

@@ -436,7 +436,7 @@ export const newSessionProfile = async function ( sessionUserId: string, profile
                 ])
                 .executeTakeFirst()
 
-                return { success: true }
+                return { success: true, usernameTaken: false }
             }
             else {
                 await trx

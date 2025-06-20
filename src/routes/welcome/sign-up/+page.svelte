@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms'
 	import { invalidate, invalidateAll } from '$app/navigation'
     import SEO from '$lib/components/layout/SEO.svelte';
-	import PanelHeader from '$lib/components/PanelHeader.svelte'
+	import PanelHeader from 'src/lib/components/layout/PanelHeader.svelte'
 	import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
 
 	let { form } = $props()
@@ -17,10 +17,10 @@
 
     function modalHeader ( approved: boolean, userId: string | null ) {
         if ( !approved && !userId) {
-            return 'invite requested'
+            return 'Account pending'
         }
         else if ( approved && !userId ) {
-            return 'invite approved'
+            return 'Account pending'
         }
         else if ( approved && userId ) {
             return 'check your inbox'
@@ -32,10 +32,10 @@
 
     function modalBody ( approved: boolean, userId: string | null ) {
         if ( !approved ) {
-            return `Thank you for your interest in joining the Freq beta test! You'll receive an email soon once your invite has been approved.`
+            return `Thank you for your interest in joining the Freq beta test! Check you email for a sign-in link.`
         }
         else if ( !authError && approved && !userId ) {
-            return 'Check your inbox for a sign in link to finish creating your profile.'
+            return 'Check your inbox for a sign-in link to finish creating your profile.'
         }
         else if ( !authError && approved && userId ) {
             return 'You already have an account! Check your inbox for a sign-in link.'
@@ -50,13 +50,13 @@
 	})
 </script>
 
-<SEO title="Invite request"></SEO>
+<SEO title="Sign up for Freq"></SEO>
  
 <div class="panel" id="profile-info">
 	<PanelHeader>
 		{#snippet headerText()}
             <span >
-				request an invite
+				sign up for Freq
 			</span>
 		{/snippet}
 	</PanelHeader>

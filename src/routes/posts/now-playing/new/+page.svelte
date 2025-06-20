@@ -15,8 +15,6 @@
 	})
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-
 <SEO title="New Now Playing post"></SEO>
 
 <NewNowPlayingPost

@@ -1,6 +1,6 @@
 import type { LayoutServerLoad } from './$types'
 import { db } from 'src/database.ts'
-import { searchUsersAndCollections } from '$lib/resources/backend-calls/search'
+import { searchUsersAndCollections } from 'src/lib/resources/search'
 import wave from "$lib/assets/images/logo/freq-wave.svg"
 
 let siteSearchResults = [] as App.RowData[]

@@ -1,5 +1,5 @@
 import type { Actions } from './$types'
-import { inviteRequest } from '$lib/resources/backend-calls/users.ts'
+import { inviteRequest } from 'src/lib/resources/users'
 
 export const actions = {
     invite: async ({ request, locals: { supabase } }) => {

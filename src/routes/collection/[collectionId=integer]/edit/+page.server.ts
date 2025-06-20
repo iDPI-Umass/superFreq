@@ -1,8 +1,8 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
 import { timestampISO } from '$lib/resources/parseData'
-import { selectEditableCollectionContents, updateCollection, deleteCollection } from '$lib/resources/backend-calls/collections'
-import { searchCollections } from 'src/lib/resources/backend-calls/search'
+import { selectEditableCollectionContents, updateCollection, deleteCollection } from 'src/lib/resources/collections'
+import { searchCollections } from 'src/lib/resources/search'
 
 let collectionId: string
 let updatedBy: string

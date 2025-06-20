@@ -2,14 +2,14 @@
     import { onMount } from 'svelte'
     import { slide } from 'svelte/transition'
 
-    import CoverArt from '$lib/components/CoverArt.svelte'
+    import CoverArt from 'src/lib/components/layout/CoverArt.svelte'
     import EditPostBody from '$lib/components/Posts/EditPostBody.svelte'
     import PostReplyEditor from '$lib/components/Posts/PostReplyEditor.svelte'
     import ReplyTag from '$lib/components/Posts/ReplyTag.svelte'
     import PostMenuSessionUser from 'src/lib/components/menus/PostMenuSessionUser.svelte'
     import LikeReact from '$lib/components/Posts/LikeReact.svelte'
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte'
-    import InlineMarkdownText from '$lib/components/InlineMarkdownText.svelte'
+    import InlineMarkdownText from 'src/lib/components/layout/InlineMarkdownText.svelte'
     import { displayDate, parseMarkdown } from '$lib/resources/parseData'
 
     import Reply from '@lucide/svelte/icons/reply'

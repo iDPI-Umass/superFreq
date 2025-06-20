@@ -1,16 +1,10 @@
-<!--
-	Search MusicBrainz database, populate an object with collection items, and insert rows into tables collections_info, collections_contents, and social_graph to create new collection in database.
--->
-
 <script lang="ts">
     import { onMount } from 'svelte'
     import SEO from '$lib/components/layout/SEO.svelte'
-    import PanelHeader from '$lib/components/PanelHeader.svelte'
-    import GridList from '$lib/components/GridList.svelte'
-    import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
-    import Tooltip from '$lib/components/Tooltip.svelte'
-	import InfoBox from 'src/lib/components/InfoBox.svelte'
-    import CollectionEditor from '$lib/components/CollectionEditor.svelte'
+    import PanelHeader from 'src/lib/components/layout/PanelHeader.svelte'
+    import Tooltip from 'src/lib/components/layout/Tooltip.svelte'
+	import InfoBox from 'src/lib/components/layout/InfoBox.svelte'
+    import CollectionEditor from 'src/lib/components/Collections/CollectionEditor.svelte'
 
     import { promiseStates, collectionData, searchResults } from 'src/lib/resources/states.svelte'
 
@@ -19,7 +13,7 @@
     }
 
     let { data }: Props = $props();
-    let { sessionUserId, infoBoxText, collectionSearchResults } = $derived(data)
+    let { infoBoxText, collectionSearchResults } = $derived(data)
 
 	collectionData.title = null
 	collectionData.type = null
@@ -88,52 +82,6 @@
                 bind:value={collectionData.title} 
                 required 
             />
-            <!-- <fieldset>
-                <div class="label-group">
-                    <legend>Type of collection</legend>
-                    <Tooltip>
-                        All items in a collection must be the same type. You can not mix and match artists, ablums, and tracks.
-                    </Tooltip>
-                </div>
-                <span class="label-explainer">
-                    * required
-                </span>
-                <ul>
-                    <li>
-                        <input 
-                            class="radio" 
-                            type="radio" 
-                            name="collection-type" 
-                            id="artists" 
-                            value="artists" 
-                            bind:group={collectionType} 
-                        />
-                        <label for="artists">artists</label>
-                    </li>
-                    <li>
-                        <input 
-                            class="radio" 
-                            type="radio" 
-                            name="collection-type" 
-                            id="albums" 
-                            value="release_groups" 
-                            bind:group={collectionType} 
-                        />
-                        <label for="albums">albums</label>
-                    </li>
-                    <li>
-                        <input 
-                            class="radio" 
-                            type="radio" 
-                            name="collection-type" 
-                            id="tracks" 
-                            value="recordings" 
-                            bind:group={collectionType} 
-                        />
-                        <label for="tracks">tracks</label>
-                    </li>
-                </ul>
-            </fieldset> -->
             <fieldset>
                 <div class="label-group">
                     <legend>view sort</legend>

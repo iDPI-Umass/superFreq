@@ -1,6 +1,6 @@
 <script lang="ts">
-    import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
-    import CoverArt from '$lib/components/CoverArt.svelte'
+    import MusicBrainzSearch from 'src/lib/components/Search/MusicBrainzSearch.svelte'
+    import CoverArt from 'src/lib/components/layout/CoverArt.svelte'
 
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 

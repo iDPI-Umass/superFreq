@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import { insertUpdateTopAlbumsCollection, selectEditableTopAlbumsCollection } from '$lib/resources/backend-calls/collections';
+import { insertUpdateTopAlbumsCollection, selectEditableTopAlbumsCollection } from 'src/lib/resources/collections';
 import { db } from 'src/database.ts'
 
 const collectionsSocial  = [] as App.RowData[]

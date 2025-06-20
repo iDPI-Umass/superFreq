@@ -1,13 +1,11 @@
 import { redirect } from '@sveltejs/kit'
-import { db } from 'src/database.ts'
-
 import type { PageServerLoad, Actions } from './$types'
 import { parseISO } from 'date-fns'
 
-import { selectViewableCollectionContents } from '$lib/resources/backend-calls/collections'
-import { insertUpdateCollectionFollow } from '$lib/resources/backend-calls/users'
-import { insertUpdateReaction, insertPost, updatePost, deletePost } from '$lib/resources/backend-calls/posts'
-import { insertPostFlag } from '$lib/resources/backend-calls/users'
+import { selectViewableCollectionContents } from 'src/lib/resources/collections'
+import { insertUpdateCollectionFollow } from 'src/lib/resources/users'
+import { insertUpdateReaction, insertPost, updatePost, deletePost } from 'src/lib/resources/posts'
+import { insertPostFlag } from 'src/lib/resources/users'
 
 let loadData = true
 let updateFollow = false

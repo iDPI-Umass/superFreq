@@ -1,9 +1,9 @@
-import type { PageServerLoad, Actions, Posts } from './$types'
+import type { PageServerLoad, Actions } from './$types'
 import { redirect } from '@sveltejs/kit'
-import { selectProfilePageData, insertUpdateBlock, insertUserFlag, insertUpdateUserFollow, insertPostFlag } from '$lib/resources/backend-calls/users'
-import { selectFeedData, selectNotificationsFeed, selectFollowingFeed } from '$lib/resources/backend-calls/feed'
-import { selectUserPostsSample, insertPost, insertUpdateReaction, updatePost, deletePost } from '$lib/resources/backend-calls/posts'
-import { selectListSessionUserCollections, saveItemToCollection } from 'src/lib/resources/backend-calls/collections'
+import { selectProfilePageData, insertUpdateBlock, insertUserFlag, insertUpdateUserFollow, insertPostFlag } from 'src/lib/resources/users'
+import { selectNotificationsFeed, selectFollowingFeed } from 'src/lib/resources/feed'
+import { selectUserPostsSample, insertPost, insertUpdateReaction, updatePost, deletePost } from 'src/lib/resources/posts'
+import { selectListSessionUserCollections, saveItemToCollection } from 'src/lib/resources/collections'
 import { getListenUrlData, validStringCheck } from '$lib/resources/parseData'
 import { add, parseISO } from 'date-fns'
 import { metadata } from '$lib/assets/text/updates.md'
@@ -23,8 +23,6 @@ let sessionUserCollections = [] as App.RowData[]
 
 let feedMode = 'following'
 
-const feedOptions = {'feed_item_types': ['now_playing_post', 'comment', 'reaction', 'social_follow', 'collection_follow', 'collection_edit']}
-
 export const load: PageServerLoad = async ({ params, url, locals: { safeGetSession }}) => {
 
     const { session } = await safeGetSession()
@@ -43,8 +41,8 @@ export const load: PageServerLoad = async ({ params, url, locals: { safeGetSessi
         throw redirect(303, '/')
     }
 
-    const profileUserId = profileData.profileUserData.id
-    const profileUsername = profileData.profileUserData.username
+    const profileUserId = profileData.profileUserData.id as string
+    const profileUsername = profileData.profileUserData.username as string
 
     if ( url.pathname != feedData.feedSlug ) {
         loadData = true

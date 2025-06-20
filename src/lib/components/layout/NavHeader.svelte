@@ -1,10 +1,10 @@
 <script lang="ts">
   import { page } from '$app/state'
   import Dropdown from '$lib/components/menus/ReuseableDropdownMenu.svelte'
-  import SiteSearch from '$lib/components/SiteSearch.svelte';
+  import SiteSearch from 'src/lib/components/Search/SiteSearch.svelte';
   import logo from "$lib/assets/images/logo/freq-logo-dark.svg"
 
-  import CoverArt from "src/lib/components/CoverArt.svelte";
+  import CoverArt from "src/lib/components/layout/CoverArt.svelte";
   import { searchResults } from "$lib/resources/states.svelte"
 
   interface ComponentProps {

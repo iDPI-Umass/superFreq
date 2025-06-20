@@ -52,8 +52,6 @@
 	})
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-
 <Header
 	sessionUserId={sessionUserId}
 	username={username}
@@ -66,13 +64,7 @@
 <div class="buffer"></div>
 
 <style>
-    .bottom-double-border {
-        padding-top: var(--freq-spacing-3x-small);
-    }
     .buffer {
         padding-bottom: var(--freq-spacing-large);
     }
-	img.hidden-logo {
-		display: none;
-	}
 </style>

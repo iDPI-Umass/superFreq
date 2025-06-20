@@ -1,5 +1,5 @@
 <script lang="ts">
-    import PanelHeader from '$lib/components/PanelHeader.svelte';
+    import PanelHeader from 'src/lib/components/layout/PanelHeader.svelte';
     import { searchResults } from '$lib/resources/states.svelte'
     const { data } = $props()
 

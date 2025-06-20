@@ -1,14 +1,12 @@
 import type { PageServerLoad, Actions } from './$types'
-import { searchUsersAndCollections } from "$lib/resources/backend-calls/search"
+import { searchUsersAndCollections } from "src/lib/resources/search"
 
 let siteSearchResults = [] as App.RowData[]
 let query: string | null
-let type: string | null
 
-export const load: PageServerLoad = async ({ url, route, params }) => {
+export const load: PageServerLoad = async ({ url }) => {
     const searchParams = url.searchParams
     query = searchParams.get('query')
-    type = searchParams.get('type')
 
     if ( query ) {
         const search = await searchUsersAndCollections(query, 10)

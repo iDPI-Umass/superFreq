@@ -1,8 +1,8 @@
 import type { PageServerLoad, Actions } from './$types'
-import { selectFeedData, selectFirehoseFeed } from '$lib/resources/backend-calls/feed'
-import { insertPostFlag } from '$lib/resources/backend-calls/users'
-import { insertUpdateReaction, deletePost, updatePost } from '$lib/resources/backend-calls/posts'
-import { selectListSessionUserCollections, saveItemToCollection } from '$lib/resources/backend-calls/collections'
+import { selectFeedData, selectFirehoseFeed } from 'src/lib/resources/feed'
+import { insertPostFlag } from 'src/lib/resources/users'
+import { insertUpdateReaction, deletePost, updatePost } from 'src/lib/resources/posts'
+import { selectListSessionUserCollections, saveItemToCollection } from 'src/lib/resources/collections'
 import { add } from 'date-fns'
 import { feedData } from '$lib/resources/states.svelte'
 
@@ -69,15 +69,6 @@ export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) 
             feedData.firehoseFeedItems.push(...selectedFirehoseFeedData)
         }
 
-        // const select = await selectFeedData( sessionUserId, batchSize, batchIterator, timestampStart, timestampEnd, feedItemTypes )
-
-        // const selectedFeedData = select.feedData
-
-        // feedData.feedItems.push(...selectedFeedData)
-        // feedItemCount = feedData.feedItems.length
-
-        // totalAvailableItems = select.totalRowCount as number
-        // remaining = totalRowCount - feedItemCount
         loadData = !loadData
 
     }

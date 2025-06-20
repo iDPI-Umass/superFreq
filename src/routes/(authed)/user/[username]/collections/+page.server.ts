@@ -1,5 +1,5 @@
 import { redirect } from "@sveltejs/kit"
-import { selectListProfileUserViewableCollections } from "$lib/resources/backend-calls/collections"
+import { selectListProfileUserViewableCollections } from "src/lib/resources/collections"
 import type { PageServerLoad } from "./$types"
 
 export const load: PageServerLoad = async ({ params, locals: { safeGetSession } }) => {
@@ -9,7 +9,7 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession } 
     
     const collections = await selectListProfileUserViewableCollections( sessionUserId, username )
 
-    if ( collections.length == 0 ) {
+    if ( collections?.length == 0 ) {
         throw redirect(303, `/user/${username}`)
     }
 
