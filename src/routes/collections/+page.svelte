@@ -82,7 +82,7 @@
 		<CollectionsList 
 			panelHeaderText="recently updated collections"
 			collections={recentCollections}
-			mode="wide"
+			mode="detailed"
 			imgMode="trio"
 		></CollectionsList>
 	</div>
@@ -98,7 +98,7 @@
 			<CollectionsList
 				panelHeaderText="friends' collections"
 				collections={followingUsersCollections}
-				mode="narrow"
+				mode="succint"
 				imgMode="trio"
 			></CollectionsList>
 		{/if}
@@ -108,17 +108,21 @@
 
 <style>
 	.panel {
-		max-width: 90vw;
+		max-width: var(--freq-max-width-primary);
+		padding: 0;
 	}
 	ul.spotlight {
 		display: grid;
 		grid-template-columns: repeat(6, minmax(0, 1fr));
+		width: 100%;
 		padding: 0;
 		margin: 0;
+		padding: 0;
 	}
 	li.spotlight-item {
 		display: flex;
 		flex-direction: column;
+		width: 100%;
 		border-right: var(--freq-border-panel);
 	}
 	li.spotlight-item:last-child {
@@ -172,6 +176,13 @@
 			0 -2px 50px var(--freq-color-primary);
 	}
 	@media screen and (max-width: 770px) {
+		.jumbotron {
+			gap: var(--freq-spacer-gap-quarter);
+			margin: var(--freq-height-spacer) auto var(--freq-height-spacer-double) auto;
+		}
+		.jumbotron p {
+			font-size: var(--freq-font-size-medium);
+		}
 		ul.spotlight {
 			grid-template-columns: repeat(3, minmax(0, 1fr));
 			grid-template-rows: minmax(min-content, max-content);
@@ -186,20 +197,18 @@
 		.spotlight-collection-info {
 			padding-top: 0;
 		}
-		.spotlight-collection-info .spotlight-collection-title,
+		.spotlight-collection-info .spotlight-collection-title {
+			/* word-wrap: break-word; */
+			/* word-break: break-all; */
+			overflow-wrap:break-word;
+			hyphens: auto;
+		}
 		.spotlight-collection-info .spotlight-collection-owner {
 			font-size: var(--freq-font-size-x-small);
 		}
 		.spotlight-collection-info .spotlight-collection-description {
 			margin: var(--freq-spacing-2x-small);
 			font-size: var(--freq-font-size-small);
-		}
-		.jumbotron {
-			gap: var(--freq-spacer-gap-quarter);
-			margin: var(--freq-height-spacer) auto var(--freq-height-spacer-double) auto;
-		}
-		.jumbotron p {
-			font-size: var(--freq-font-size-medium);
 		}
 	}
 </style>

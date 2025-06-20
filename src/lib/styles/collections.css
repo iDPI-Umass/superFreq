@@ -399,7 +399,7 @@ span.search-tooltip {
 	top: 0;
 	bottom: 0;
 	left: 10px;
-	filter: brightness(50%);
+	filter: brightness(80%);
 	z-index: 2;
 }
 .collection-image-trio-row-third {
@@ -409,7 +409,7 @@ span.search-tooltip {
 	top: 0;
 	bottom: 0;
 	left: 0px;
-	filter: brightness(25%);
+	filter: brightness(60%);
 	z-index: 1;
 }
 
@@ -482,9 +482,6 @@ span.search-tooltip {
 }
 
 @media screen and (max-width: 770px) {
-	/* .collection-image-trio-column {
-		padding-bottom: 0;
-	} */
 	.collection-image-trio-column-first {
 		max-width: var(--freq-image-thumbnail-small);
 		max-height: var(--freq-image-thumbnail-small);

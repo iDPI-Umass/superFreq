@@ -31,7 +31,7 @@ body {
 .column-two-thirds {
 	display: flex;
 	flex-direction: column;
-	margin: var(--freq-spacing-large);
+	margin:  var(--freq-spacing-large);
 	max-width: calc(100% * 0.66);
 }
 
@@ -65,6 +65,7 @@ body {
 	.two-column,
 	.panel-no-border {
 		flex-direction: column;
+		gap: 0;
 	}
 
 	.column-half,
@@ -73,6 +74,11 @@ body {
 		max-width: var(--freq-max-width-primary);
 		align-items: center;
 		justify-content: center;
+	}
+
+	.column-two-thirds,
+	.column-one-third {
+		margin: var(--freq-spacing-2x-small) var(--freq-spacing-x-small);
 	}
 }
 
