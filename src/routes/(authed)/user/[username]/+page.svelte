@@ -224,7 +224,6 @@
                 </a>
             </div>
         </div>
-        
     </div>
 </div>
 <div class="border-full-vw"></div>
