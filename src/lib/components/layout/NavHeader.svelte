@@ -286,7 +286,7 @@
   .nav-row {
     display: flex;
     flex-direction: row;
-    width: 100%;
+    width: inherit;
     align-items: center;
     justify-content: space-between;
   }
@@ -324,11 +324,11 @@
     a.logo-desktop {
       display: none;
     }
-    img {
-      position: sticky;
-      height: 140px; 
-      width: 200px;
-      margin: auto;
+    .logo img {
+      max-height: 30px;
+      height: 30px;
+      width: auto;
+      margin: auto 1vw;
      }
     nav.wide {
       display: none;
@@ -336,7 +336,7 @@
     nav.narrow {
       display: flex;
       flex-direction: column;
-      max-width: 100vw;
+      width: 100%;
       gap: var(--freq-inline-gap);
     }
   }

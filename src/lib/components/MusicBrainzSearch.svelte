@@ -257,7 +257,7 @@
 		margin-left: auto;
 		margin-right: 0;
 	}
-	@media screen and (max-width: 600px) {
+	@media screen and (max-width: 770px) {
 		form.search {
 			display: flex;
 			flex-wrap: wrap-reverse;

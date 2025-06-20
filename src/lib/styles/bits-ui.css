@@ -297,6 +297,7 @@
 [data-tabs-list] {
 	display: flex;
 	margin-top: var(--freq-spacing-medium);
+	margin-left: auto;
 	padding: 0 var(--freq-spacing-x-large);
 	gap: var(--freq-spacer-gap);
 	border-bottom: var(--freq-border-panel);
@@ -317,7 +318,6 @@
 [data-tabs-trigger]:is(:hover, :focus) {
 	background: var(--freq-color-panel);
 	border-color: var(--freq-color-border-panel-light);
-	/* border-bottom: 1px solid var(--freq-color-panel-background); */
 	color: var(--freq-color-text);
 	text-decoration: underline;
 }
@@ -329,6 +329,16 @@
 	color: var(--freq-color-text-medium);
     margin-bottom: -1px;
 	text-decoration: underline;
+}
+
+@media screen and (max-width: 770px) {
+	[data-tabs-list] {
+		padding: 0 var(--freq-spacing-medium);
+	}
+	[data-tabs-trigger] {
+		padding: var(--freq-spacing-x-small);
+		font-size: var(--freq-font-size-x-small);
+	}
 }
 
 /* Select */
