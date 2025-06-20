@@ -89,6 +89,7 @@ html {
     --freq-width-spacer-half: calc(0.5 * var(--freq-width-spacer));
     --freq-width-spacer-quarter: calc(0.25 * var(--freq-width-spacer));
     --freq-height-spacer: 1.3125rem;
+    --freq-height-spacer-double: 2.625rem;
     --freq-height-spacer-half: calc(0.5 * var(--freq-height-spacer));
     --freq-height-spacer-quarter: calc(0.25 * var(--freq-height-spacer));
     --freq-border-radius: 0.625rem;

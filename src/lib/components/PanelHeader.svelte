@@ -1,16 +1,14 @@
 <script lang="ts">
-    import type { Snippet } from 'svelte'
     import decoration from "$lib/assets/images/panel-header-decoration.svg"
 
     let { headerText, button }: {headerText: any, button?: any} = $props()
 </script>
-<!-- <svelte:options runes={true} /> -->
 
 <div class="panel-header">
     <img src={decoration} alt="decoration" />
-    <h1>
+    <h2>
         {@render headerText()}
-    </h1>
+    </h2>
     <!-- {@render children?.()} -->
     <div class="button-spacing">
         {@render button?.()}
@@ -26,7 +24,7 @@
         margin: var(--freq-spacing-3x-small) 0;
         align-items: center;
     }
-    h1 {
+    h2 {
         text-transform: uppercase;
         font-size: var(--freq-font-size-medium);
         font-weight: var(--freq-font-weight-light);
@@ -36,5 +34,10 @@
     .button-spacing {
         margin-left: auto;
         margin-right: var(--freq-width-spacer-half);
+    }
+    @media screen and (max-width: 770px) {
+        h2 {
+            font-size: var(--freq-font-size-small);
+        }
     }
 </style>

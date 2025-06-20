@@ -19,23 +19,18 @@
 
 <SEO title="Explore collections"></SEO>
 
-<div class="jumbotron-container">
-	<div class="jumbotron-item-wrapper">
-		<div class="jumbotron-text">
-			<h3>Collect, curate, and share. Collections are the perfect way to group Albums.</h3>
-		</div>
-		<div class="jumbotron-button">
-			<button class="double-border-top">
-				<div class="inner-border">Create a Collection</div>
-			</button>
-		</div>
-	</div>
+<div class="jumbotron">
+	<p>
+		Collect, curate, and share. Collections are the perfect way to group Albums.
+	</p>
+	<button class="double-border-top">
+		<div class="inner-border">Create a Collection</div>
+	</button>
 </div>
 
 
 {#snippet spotlightItem(collection: App.RowData)}
 	<div class="spotlight-item">
-		
 		<div class="spotlight-item-images">
 			<div class="grid-list-image-stack">
 			<CollectionImageTrio 
@@ -122,15 +117,6 @@
 		display: grid;
 		grid-template-columns: repeat(6, minmax(0, 1fr));
 	}
-	@media screen and (max-width: 770px) {
-		.spotlight-row {
-			grid-template-columns: repeat(3, minmax(0, 1fr));
-			grid-template-rows: minmax(min-content, max-content);
-		}
-		.spotlight-item:nth-last-child(-n+3) {
-			border-top: var(--freq-border-panel);
-		}
-	}
 	.spotlight-item {
 		display: flex;
 		flex-direction: column;
@@ -163,21 +149,19 @@
 		width: 35%;
 		background: linear-gradient(90deg, var(--freq-color-primary) 35%, #000000 100%) padding-box;
 	}
-	.jumbotron-container {
+	.jumbotron {
+		display: flex;
+		flex-direction: column;
+		max-width: calc( var(--freq-max-width-primary) * 0.5);
+		align-items: center;
+		gap: var(--freq-spacer-gap-half);
 		background-color: black;
-		min-height: 15rem;
-		max-height: fit-content;
-		align-content: center;
+		margin: var(--freq-height-spacer-double) auto;
 	}
 
-	.jumbotron-item-wrapper {
-		max-width: 50%;
-		max-height: auto;
-		margin-left: auto;
-		margin-right: auto;
-	}
-
-	.jumbotron-text {
+	.jumbotron p {
+		font-family: var(--freq-font-mono);
+		font-size: var(--freq-font-size-large);
 		text-align: center;
 		text-shadow:
 			-2px 0 50px var(--freq-color-primary),
@@ -185,11 +169,20 @@
 			2px 0 50px var(--freq-color-primary),
 			0 -2px 50px var(--freq-color-primary);
 	}
-
-	.jumbotron-button {
-		max-width: fit-content;
-
-		margin-left: auto;
-		margin-right: auto;
+	@media screen and (max-width: 770px) {
+		.spotlight-row {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			grid-template-rows: minmax(min-content, max-content);
+		}
+		.spotlight-item:nth-last-child(-n+3) {
+			border-top: var(--freq-border-panel);
+		}
+		.jumbotron {
+			gap: var(--freq-spacer-gap-quarter);
+			margin: var(--freq-height-spacer) auto var(--freq-height-spacer-double) auto;
+		}
+		.jumbotron p {
+			font-size: var(--freq-font-size-medium);
+		}
 	}
 </style>

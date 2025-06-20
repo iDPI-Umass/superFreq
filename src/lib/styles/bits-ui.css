@@ -89,6 +89,13 @@
     border: none;
 }
 
+@media screen and (max-width: 770px) {
+	[data-dropdown-menu-content] {
+		padding: var(--freq-spacing-x-small);
+		font-size: var(--freq-font-size-small);
+	}
+}
+
 /* Toolbar */
 
 [data-toolbar-root], [data-toolbar-root] > * {

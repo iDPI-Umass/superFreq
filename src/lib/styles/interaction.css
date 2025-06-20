@@ -67,6 +67,13 @@ button.standard:is(:disabled, :disabled:hover, :disabled:focus, :disabled:active
 	scale: 100%;
 }
 
+@media screen and (max-width: 770px) {
+	button.standard {
+		padding: var(--freq-spacing-2x-small) var(--freq-spacing-small);
+		font-size: var(--freq-font-size-2x-small);
+	}
+}
+
 /* 
 Styles to create button with second top border, intended for tag format
 
@@ -80,6 +87,7 @@ Styles to create button with second top border, intended for tag format
 
 button.double-border-top {
 	height: fit-content;
+	width: fit-content;
 	padding: 0;
 	background: var(--freq-color-button-background);
 	border: var(--freq-border-button);
@@ -140,6 +148,13 @@ button.double-border-top:is(:disabled, :disabled:hover, :disabled:focus, :disabl
 button.double-border-top:is(:disabled, :disabled:hover, :disabled:focus, :disabled:active) .inner-border-condensed {
 	border-top: var(--freq-border-button-disabled);
 	color: var(--freq-color-text-muted);
+}
+
+@media screen and (max-width: 770px) {
+	button.double-border-top .inner-border{
+		padding: var(--freq-spacing-2x-small) var(--freq-spacing-small);
+		font-size: var(--freq-font-size-2x-small);
+	}
 }
 
 /* Like button */

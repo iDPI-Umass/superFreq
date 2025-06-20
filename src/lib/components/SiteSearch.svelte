@@ -135,8 +135,10 @@
         flex-flow: row;
         align-items: center;
         gap: var(--freq-inline-gap-double);
-        margin: var(--freq-spacing-small) auto var(--freq-spacing-2x-small) auto;
-        padding: 0 var(--freq-spacing-medium);
+        padding: var(--freq-spacing-x-small);
+    }
+    form input {
+        margin: 0;
     }
     .result-row {
         display: flex;
@@ -158,5 +160,17 @@
     }
     .medium-font {
         font-size: var(--freq-font-size-medium);
+    }
+
+    @media screen and (max-width: 770px) {
+        form {
+            margin: 0;
+            padding: 0;
+        }
+        form input {
+            margin: 0;
+            font-size: var(--freq-font-size-x-small);
+            line-height: var(--freq-line-height-densest);
+        }
     }
 </style>
