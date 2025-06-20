@@ -74,8 +74,6 @@ select
   profile.last_fm_avatar_url,
   info.title_search,
   info.description_text as description,
-  info.spotlight,
-  info.spotlight_added_at,
   count(distinct reaction.id) as reaction_count,
   array_agg(distinct reaction.user_id) as reaction_user_ids,
   count(distinct comments.id) as comment_count,
