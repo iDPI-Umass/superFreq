@@ -17,7 +17,7 @@
 	let {
 		sessionUserId,
 		panelHeaderText,
-		mode = 'wide',
+		mode = 'detailed',
 		imgMode = 'single',
 		remaining,
 		collection,
@@ -30,7 +30,7 @@
 	} as App.StringLookupObject
 
 	const modeWidth = $derived(cssMode[mode])
-	// const displayTitle = $derived(panelHeaderText)
+
 </script>
 
 {#snippet listItem(collection: App.RowData)}
@@ -144,16 +144,13 @@
 		align-items: start;
 		justify-content: start;
 	}
-	/* .collection-info-attribution {
-		margin: 0 auto;
-		padding: 0 auto;
-	} */
 	.collection-info-attribution * {
 		line-height: var(--freq-line-height-denser);
 		margin: 0 auto;
 	}
 	.collection-info-text {
 		margin: 0;
+		line-height: var(--freq-line-height-dense);
 	}
 	@media screen and (max-width: 770px) {
 		.panel, ul, .item-links {

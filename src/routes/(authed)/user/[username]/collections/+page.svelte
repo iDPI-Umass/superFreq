@@ -1,33 +1,25 @@
 <script lang="ts">
     import SEO from '$lib/components/layout/SEO.svelte'
-    import PanelHeader from "src/lib/components/layout/PanelHeader.svelte"
-    interface Props {
-        data: any;
-    }
+    import CollectionsList from '$lib/components/collections/CollectionsList.svelte'
 
-    let { data }: Props = $props();
+    let { data } = $props()
 
-    let { collections, username } = $state(data)
+    let { collections, username } = $derived(data)
 
     let displayName = $derived(collections[0]["display_name"])
 </script>
 
 <SEO title="{username}'s collections"></SEO>
 
-<div class="panel">
-    <PanelHeader
-    >
-        {#snippet headerText()}
-        {`${displayName}'s collections`}
-        {/snippet}
-    </PanelHeader>
-    <ul>
-        {#each collections as collection}
-        <li>
-            <a href="/collection/{collection.id}">
-                {collection.title}
-            </a>
-        </li>
-        {/each}
-    </ul>
+<div class="column-two-thirds">
+    <CollectionsList
+        panelHeaderText={`${displayName}'s collections`}
+        collections={collections}
+    ></CollectionsList>
 </div>
+
+<style>
+    .column-two-thirds {
+        margin: var(--freq-spacing-large) auto;
+    }
+</style>

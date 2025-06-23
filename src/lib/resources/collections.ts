@@ -250,8 +250,29 @@ export const selectListProfileUserViewableCollections = async function ( session
             .execute()
         }
 
-        const info = selectInfo
-        return info
+        const collections = selectInfo as App.RowData[]
+
+        for ( const collection of collections ) {
+            const collectionId = collection.collection_id
+
+            const collectionImageTrio = await trx
+            .selectFrom('collections')
+            .select([
+                'img_url',
+                'last_fm_img_url',
+                'artist_name',
+                'release_group_name'
+            ])
+            .where('collection_id', '=', collectionId)
+            .where('item_position', 'is not', null)
+            .where('last_fm_img_url', 'is not', null)
+            .limit(3)
+            .execute()
+
+            collection.image_trio = collectionImageTrio
+        }
+        
+        return collections
     })
 
     const collections = await selectCollections
