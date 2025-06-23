@@ -4,7 +4,6 @@
 	import "$lib/styles/collections.css";
 	import "$lib/styles/feed.css";
 	import "$lib/styles/fonts.css";
-	import "$lib/styles/freq-dark-theme.css";
 	import "$lib/styles/global.css";
 	import "$lib/styles/interaction.css";
 	import "$lib/styles/posts.css";

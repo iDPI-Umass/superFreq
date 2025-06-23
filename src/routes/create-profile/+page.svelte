@@ -114,7 +114,7 @@
                 </span>
 			</div>
 			<span class="tip">
-				letters, digits, and underscores allowed
+				Letters, digits, and underscores allowed. Minimum of three characters.
 			</span>
 			<input
 				class="text"
@@ -251,7 +251,7 @@
 	{/snippet}
 	{#snippet message()}
 		<span >
-			Usernamess only contain letters (a-z or A-Z), digits (0-9), and underscores(_).
+			Usernamess only contain letters (a-z or A-Z), digits (0-9), and underscores(_) and must be at least 3 characters long.
 		</span>
 	{/snippet}
 </NotificationModal>

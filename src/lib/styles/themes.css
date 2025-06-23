@@ -69,8 +69,43 @@ html.freq-theme-light {
     --freq-color-panel-background: #FBFBFB;
 }
   
-html.freq-font-arial {
+/* Typography */
+
+html {
     --freq-font-family: "Arial";
+    --freq-font-mono: 'Krona_One', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+    --freq-font-sans: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    --freq-font-serif: Georgia, 'Times New Roman', serif;
+
+    --freq-font-size-3x-small: 0.5rem; /* 8px */
+    --freq-font-size-2x-small: 0.625rem; /* 10px */
+    --freq-font-size-x-small: 0.75rem; /* 12px */
+    --freq-font-size-small: 0.875rem; /* 14px */
+    --freq-font-size-medium: 1rem; /* 16px */
+    --freq-font-size-large: 1.25rem; /* 20px */
+    --freq-font-size-x-large: 1.5rem; /* 24px */
+    --freq-font-size-2x-large: 2.25rem; /* 36px */
+    --freq-font-size-3x-large: 3rem; /* 48px */
+    --freq-font-size-4x-large: 4.5rem; /* 72px */
+
+    --freq-font-weight-light: 300;
+    --freq-font-weight-normal: 400;
+    --freq-font-weight-semibold: 500;
+    --freq-font-weight-bold: 700;
+
+    --freq-letter-spacing-denser: -0.03em;
+    --freq-letter-spacing-dense: -0.015em;
+    --freq-letter-spacing-normal: normal;
+    --freq-letter-spacing-loose: 0.075em;
+    --freq-letter-spacing-looser: 0.15em;
+
+    --freq-line-height-densest: 0.6;
+    --freq-line-height-denser: 1;
+    --freq-line-height-dense: 1.4;
+    --freq-line-height-normal: 1.8;
+    --freq-line-height-loose: 2.2;
+    --freq-line-height-looser: 2.6;
 }
 
 /* Body sizing and breakpoints */
@@ -159,4 +194,149 @@ html {
     --freq-grid-dark-background: var(--freq-grid-dark) 0% 0% repeat padding-box;
     --freq-grid-extra-dark: url('$lib/assets/images/repeat-grid-extra-dark.svg');
     --freq-grid-extra-dark-background: var(--freq-grid-extra-dark) 0% 0% repeat padding-box;
+}
+
+/* Border radii */
+
+html {
+    --freq-border-radius-small: 0.1875rem; /* 3px */
+    --freq-border-radius-medium: 0.25rem; /* 4px */
+    --freq-border-radius-large: 0.5rem; /* 8px */
+    --freq-border-radius-x-large: 1rem; /* 16px */
+
+    --freq-border-radius-circle: 50%;
+    --freq-border-radius-pill: 9999px;
+}
+
+/* Elevations */
+
+html {
+    --freq-shadow-x-small: 0 1px 2px rgb(0 0 0 / 18%);
+    --freq-shadow-small: 0 1px 2px rgb(0 0 0 / 24%);
+    --freq-shadow-medium: 0 2px 4px rgb(0 0 0 / 24%);
+    --freq-shadow-large: 0 2px 8px rgb(0 0 0 / 24%);
+    --freq-shadow-x-large: 0 4px 16px rgb(0 0 0 / 24%);
+}
+
+/* Spacings */
+
+html {
+    --freq-spacing-3x-small: 0.125rem; /* 2px */
+    --freq-spacing-2x-small: 0.25rem; /* 4px */
+    --freq-spacing-x-small: 0.5rem; /* 8px */
+    --freq-spacing-small: 0.75rem; /* 12px */
+    --freq-spacing-medium: 1rem; /* 16px */
+    --freq-spacing-large: 1.25rem; /* 20px */
+    --freq-spacing-x-large: 1.75rem; /* 28px */
+    --freq-spacing-2x-large: 2.25rem; /* 36px */
+    --freq-spacing-3x-large: 3rem; /* 48px */
+    --freq-spacing-4x-large: 4.5rem; /* 72px */
+}
+
+/* Gaps */
+
+html {
+    --freq-grid-gap: 0.0625rem; /* 1px */
+    --freq-inline-gap: 0.25rem; /* 4px */
+    --freq-inline-gap-double: calc( var(--freq-inline-gap) * 2 );
+    --freq-spacer-gap: var(--freq-width-spacer);
+    --freq-spacer-gap-half: calc( var(--freq-width-spacer) * 0.5 );
+    --freq-spacer-gap-quarter: calc( var(--freq-width-spacer) * 0.25 );
+    --freq-height-spacer-gap: var(--freq-height-spacer);
+    --freq-height-spacer-gap-half: calc( var(--freq-height-spacer) * 0.5 );
+    --freq-height-spacer-gap-quarter: calc( var(--freq-height-spacer) * 0.25);
+}
+
+/* Transitions */
+
+html {
+    --freq-transition-x-slow: 1000ms;
+    --freq-transition-slow: 500ms;
+    --freq-transition-medium: 250ms;
+    --freq-transition-fast: 150ms;
+    --freq-transition-x-fast: 50ms;
+}
+
+/* Forms */
+
+html {
+    /* Buttons */
+    --freq-button-font-size-small: var(--freq-font-size-x-small);
+    --freq-button-font-size-medium: var(--freq-font-size-small);
+    --freq-button-font-size-large: var(--freq-font-size-medium);
+    --freq-button-font-size-x-large: var(--freq-font-size-large);
+
+    /* Inputs */
+    --freq-input-height-2x-small: 0.625rem; /* 10px */
+    --freq-input-height-x-small: 1.25rem; /* 20px */
+    --freq-input-height-small: 1.875rem; /* 30px */
+    --freq-input-height-medium: 2.5rem; /* 40px */
+    --freq-input-height-large: 3.125rem; /* 50px */
+    --freq-input-height-search-bar: 2.01rem;
+
+    --freq-input-background-color: var(--freq-color-neutral-0);
+    --freq-input-background-color-hover: var(--freq-input-background-color);
+    --freq-input-background-color-focus: var(--freq-input-background-color);
+    --freq-input-background-color-disabled: var(--freq-color-neutral-100);
+    --freq-input-border-color: var(--freq-color-neutral-300);
+    --freq-input-border-color-hover: var(--freq-color-neutral-400);
+    --freq-input-border-color-focus: var(--freq-color-primary-500);
+    --freq-input-border-color-disabled: var(--freq-color-neutral-300);
+    --freq-input-border-width: 1px;
+    --freq-input-required-content: '*';
+    --freq-input-required-content-offset: -2px;
+    --freq-input-required-content-color: var(--freq-input-label-color);
+
+    --freq-input-border-radius-small: var(--freq-border-radius-medium);
+    --freq-input-border-radius-medium: var(--freq-border-radius-medium);
+    --freq-input-border-radius-large: var(--freq-border-radius-medium);
+
+    --freq-input-font-family: var(--freq-font-sans);
+    --freq-input-font-weight: var(--freq-font-weight-normal);
+    --freq-input-font-size-small: var(--freq-font-size-small);
+    --freq-input-font-size-medium: var(--freq-font-size-medium);
+    --freq-input-font-size-large: var(--freq-font-size-large);
+    --freq-input-letter-spacing: var(--freq-letter-spacing-normal);
+
+    --freq-input-color: var(--freq-color-neutral-700);
+    --freq-input-color-hover: var(--freq-color-neutral-700);
+    --freq-input-color-focus: var(--freq-color-neutral-700);
+    --freq-input-color-disabled: var(--freq-color-neutral-900);
+    --freq-input-icon-color: var(--freq-color-neutral-500);
+    --freq-input-icon-color-hover: var(--freq-color-neutral-600);
+    --freq-input-icon-color-focus: var(--freq-color-neutral-600);
+    --freq-input-placeholder-color: var(--freq-color-neutral-500);
+    --freq-input-placeholder-color-disabled: var(--freq-color-neutral-600);
+    --freq-input-spacing-small: var(--freq-spacing-small);
+    --freq-input-spacing-medium: var(--freq-spacing-medium);
+    --freq-input-spacing-large: var(--freq-spacing-large);
+
+    --freq-input-focus-ring-color: hsl(198.6 88.7% 48.4% / 40%);
+    --freq-input-focus-ring-offset: 0;
+
+    --freq-input-filled-background-color: var(--freq-color-neutral-100);
+    --freq-input-filled-background-color-hover: var(--freq-color-neutral-100);
+    --freq-input-filled-background-color-focus: var(--freq-color-neutral-100);
+    --freq-input-filled-background-color-disabled: var(--freq-color-neutral-100);
+    --freq-input-filled-color: var(--freq-color-neutral-800);
+    --freq-input-filled-color-hover: var(--freq-color-neutral-800);
+    --freq-input-filled-color-focus: var(--freq-color-neutral-700);
+    --freq-input-filled-color-disabled: var(--freq-color-neutral-800);
+
+    /* Labels */
+    --freq-input-label-font-size-small: var(--freq-font-size-small);
+    --freq-input-label-font-size-medium: var(--freq-font-size-medium);
+    --freq-input-label-font-size-large: var(--freq-font-size-large);
+    --freq-input-label-color: inherit;
+
+    /* Help text */
+    --freq-input-help-text-font-size-small: var(--freq-font-size-x-small);
+    --freq-input-help-text-font-size-medium: var(--freq-font-size-small);
+    --freq-input-help-text-font-size-large: var(--freq-font-size-medium);
+    --freq-input-help-text-color: var(--freq-color-neutral-500);
+
+    /* Toggles (checkboxes, radios, switches) */
+    --freq-toggle-size-small: 0.875rem; /* 14px */
+    --freq-toggle-size-medium: 1.125rem; /* 18px */
+    --freq-toggle-size-large: 1.375rem; /* 22px */
 }
