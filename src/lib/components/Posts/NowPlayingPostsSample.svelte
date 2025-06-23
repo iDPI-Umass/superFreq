@@ -1,7 +1,7 @@
 <script lang="ts">
     import { enhance } from "$app/forms"
     import { goto } from "$app/navigation"
-    import PanelHeader from "$lib/components/PanelHeader.svelte"
+    import PanelHeader from "src/lib/components/layout/PanelHeader.svelte"
     import NowPlayingPost from "./NowPlayingPost.svelte"
     import PostReply from "./PostReply.svelte"
 

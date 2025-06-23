@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
-import { selectSessionProfile, updateSessionProfile } from '$lib/resources/backend-calls/users'
+import { selectSessionProfile, updateSessionProfile } from 'src/lib/resources/users'
 import { sessionUserProfile } from '$lib/resources/states.svelte'
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {

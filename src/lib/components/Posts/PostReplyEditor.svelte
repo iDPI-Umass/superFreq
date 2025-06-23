@@ -1,18 +1,40 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
 
-    let { reply }: { reply?: App.RowData } = $props()
+    interface ComponentProps {
+        reply?: App.RowData
+        collectionId?: string | null
+        styling?: string
+        placeholderText?: string
+    }
+    let { 
+        reply, 
+        collectionId = null,
+        styling='default',
+        placeholderText='Reply...'
+    }: ComponentProps = $props()
 
     let loading = $state(false)
+
+    const styleClasses = {
+        'default': {
+            'panel': 'reply-editor',
+            'form': 'reply'
+        },
+        'collection': {
+            'panel': 'collection-reply-editor',
+            'form': 'collection-reply'
+        }
+    } as any
 </script>
 
-<div class="reply-editor">
-    <form name="submitReply" id="submitReply" class="reply" method="post" action="?/submitReply" use:enhance={({ formElement }) => {
+<div class={styleClasses[styling]["panel"]}>
+    <form name="submitReply" id="submitReply" class={styleClasses[styling]["form"]} method="post" action="?/submitReply" use:enhance={({ formElement }) => {
         loading = true;
         return async ({ update }) => {
             await update();
             loading = false;
-            formElement.reset(); // needs formElement to reset the form
+            formElement.reset()
         }
     }}>
         <input
@@ -26,6 +48,12 @@
             name="parent-post-id"
             id="parent-post-id"
             value={reply?.parent_post_id ?? null}
+        />
+        <input
+            type="hidden"
+            name="parent-collection-id"
+            id="parent-collection-id"
+            value={collectionId ?? reply?.parent_collection_id ?? null}
         />
         <input 
             type="hidden"
@@ -45,7 +73,7 @@
             id="reply-text"
             name="reply-text"
             spellcheck=true 
-            placeholder="Reply..."
+            placeholder={placeholderText}
             required
         ></textarea>
         <button class="standard" formaction="?/submitReply" disabled={loading}>

@@ -2,7 +2,7 @@
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte'
     import EditPostBody from 'src/lib/components/Posts/EditPostBody.svelte'
     import LikeReact from 'src/lib/components/Posts/LikeReact.svelte'
-    import SaveToCollection from '$lib/components/SaveToCollection.svelte'
+    import SaveToCollection from 'src/lib/components/Collections/SaveToCollection.svelte'
     import { displayDate, parseMarkdown } from '$lib/resources/parseData'
     import { interactionStates } from '$lib/resources/states.svelte'
 
@@ -10,8 +10,8 @@
     import Link from '@lucide/svelte/icons/link-2'
 	import ListenEmbed from 'src/lib/components/Posts/ListenEmbed.svelte'
     import NowPlayingTag from 'src/lib/components/Posts/NowPlayingTag.svelte'
-    import CoverArt from '$lib/components/CoverArt.svelte'
-    import InlineMarkdownText from '$lib/components/InlineMarkdownText.svelte'
+    import CoverArt from 'src/lib/components/layout/CoverArt.svelte'
+    import InlineMarkdownText from 'src/lib/components/layout/InlineMarkdownText.svelte'
 
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 	import { itemDate } from 'src/lib/resources/musicbrainz';

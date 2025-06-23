@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import { parseISO } from "date-fns"
 import type { PageServerLoad, Actions } from './$types'
-import { insertPost } from '$lib/resources/backend-calls/posts'
+import { insertPost } from 'src/lib/resources/posts'
 import { getListenUrlData, validStringCheck } from '$lib/resources/parseData'
 
 let parsedUrlInfo = null as App.RowData | null

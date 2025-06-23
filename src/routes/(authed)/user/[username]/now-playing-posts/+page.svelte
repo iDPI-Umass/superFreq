@@ -3,9 +3,7 @@
 
     import SEO from '$lib/components/layout/SEO.svelte'
     import NowPlayingPost from 'src/lib/components/Posts/NowPlayingPost.svelte'
-    import PostReply from 'src/lib/components/Posts/PostReply.svelte'
-	import PanelHeader from '$lib/components/PanelHeader.svelte'
-    import RedirectModal from '$lib/components/modals/RedirectModal.svelte'
+	import PanelHeader from 'src/lib/components/layout/PanelHeader.svelte'
     import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
 
     interface Props {
@@ -78,11 +76,6 @@
             showSaveSucessModal={showSaveSucessModal}
         >
         </NowPlayingPost>
-        <!-- {:else if post.type == "reply"}
-        <PostReply
-            reply={post}
-            sessionUserId={sessionUserId}
-        ></PostReply> -->
     {/each}
     </div>
 </div>

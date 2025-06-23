@@ -1,6 +1,5 @@
 import type { PageServerLoad, Actions } from './$types'
-import { redirect } from '@sveltejs/kit'
-import { updateUsername } from '$lib/resources/backend-calls/users'
+import { updateUsername } from 'src/lib/resources/users'
 import { validateUsernameCharacters } from "$lib/resources/parseData"
 import { sessionUserProfile } from "$lib/resources/states.svelte"
 

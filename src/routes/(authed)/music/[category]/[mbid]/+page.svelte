@@ -2,10 +2,9 @@
     import { getYear, format } from 'date-fns'
     import SEO from 'src/lib/components/layout/SEO.svelte'
     import wave from "$lib/assets/images/logo/freq-wave.svg"
-	import { AppWindow } from '@lucide/svelte';
 
     const { data } = $props()
-    const { musicbrainzMetadata, wikipediaExtract, discogsData, category, mbid } = $derived(data)
+    const { musicbrainzMetadata, wikipediaExtract, discogsData, category } = $derived(data)
 
     const pageTitle = $derived(musicbrainzMetadata?.name ?? musicbrainzMetadata?.title) as string
 

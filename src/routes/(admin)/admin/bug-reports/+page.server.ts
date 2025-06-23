@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
-import { getBugReports, updateBugReport } from '$lib/resources/backend-calls/moderation'
+import { getBugReports, updateBugReport } from 'src/lib/resources/moderation'
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
     const { session } = await safeGetSession()

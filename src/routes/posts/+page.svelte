@@ -1,11 +1,11 @@
 <script lang="ts">
     import SEO from '$lib/components/layout/SEO.svelte'
     import NowPlayingPost from 'src/lib/components/Posts/NowPlayingPost.svelte'
-    import PanelHeader from '$lib/components/PanelHeader.svelte'
+    import PanelHeader from 'src/lib/components/layout/PanelHeader.svelte'
 
-    let { data, form } = $props()
+    let { data } = $props()
 
-    let { posts, postCount } = $derived(data)
+    let { posts } = $derived(data)
 
     let displayPosts = $derived([...posts])
 

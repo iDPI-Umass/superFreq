@@ -18,6 +18,7 @@ html {
     --freq-color-text: #FFFFFF;
     --freq-color-text-muted: #9EACC8;
     --freq-color-text-menu: #7F90A2;
+    --freq-color-text-hr: #7F90A2;
     --freq-color-text-medium: #b0c0e3;
     --freq-color-text-medium-dark: #99a9ca;
     --freq-color-text-dark: #313751;
@@ -88,6 +89,7 @@ html {
     --freq-width-spacer-half: calc(0.5 * var(--freq-width-spacer));
     --freq-width-spacer-quarter: calc(0.25 * var(--freq-width-spacer));
     --freq-height-spacer: 1.3125rem;
+    --freq-height-spacer-double: 2.625rem;
     --freq-height-spacer-half: calc(0.5 * var(--freq-height-spacer));
     --freq-height-spacer-quarter: calc(0.25 * var(--freq-height-spacer));
     --freq-border-radius: 0.625rem;

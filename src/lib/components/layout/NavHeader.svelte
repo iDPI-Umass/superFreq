@@ -1,9 +1,11 @@
 <script lang="ts">
   import { page } from '$app/state'
   import Dropdown from '$lib/components/menus/ReuseableDropdownMenu.svelte'
+  import SiteSearch from 'src/lib/components/Search/SiteSearch.svelte';
   import logo from "$lib/assets/images/logo/freq-logo-dark.svg"
 
-  import CoverArt from "src/lib/components/CoverArt.svelte";
+  import CoverArt from "src/lib/components/layout/CoverArt.svelte";
+  import { searchResults } from "$lib/resources/states.svelte"
 
   interface ComponentProps {
     sessionUserId: string | null
@@ -20,6 +22,7 @@
   }: ComponentProps = $props()
 
   const thisUrl = page.url
+
 </script>
 
 <!-- <svelte:options runes={true} /> -->
@@ -29,8 +32,8 @@
 
 <div class="grid-background">
   <header>
-    <a class="logo" href="/">
-      <img class="logo" alt="Freq" src={logo} />
+    <a class="logo-desktop" href="/">
+      <img alt="Freq" src={logo} />
     </a>
     <nav class="wide">
       {#if sessionUserId}
@@ -39,33 +42,32 @@
           feed
         </button>
       </a>
+      <a href="/posts/now-playing/new">
+        <button class="nav">
+          post
+        </button>
+      </a>
       <Dropdown
-        buttonText="create"
+        buttonText="collections"
+        screenSize="desktop"
         items={[
           {
-            'text': 'new post',
-            'url': '/posts/now-playing/new'
-          },
-          {
-            'text': 'new collection',
-            'url': '/collection/new'
-          },
-        ]}
-      ></Dropdown>
-      <Dropdown
-        buttonText="discover"
-        items={[
-          {
-            'text': 'collections',
+            'text': 'discover',
             'url': '/collections'
           },
           {
-            'text': 'users',
-            'url': '/users'
-          },
+            'text': 'create',
+            'url': '/collection/new'
+          }
         ]}
       ></Dropdown>
-      <Dropdown
+      <SiteSearch
+          searchPlaceholder="search"
+          formAction="search"
+          mode="redirect"
+          screenSize="desktop"
+      ></SiteSearch>
+      <!-- <Dropdown
         buttonText="about"
         items={[
           {
@@ -81,10 +83,11 @@
             'url': '/about/guidelines'
           },
         ]}
-      ></Dropdown>
+      ></Dropdown> -->
       <Dropdown
         avatar={avatarItem}
         buttonText={displayName ?? 'display name'} 
+        screenSize="desktop"
         items={[
           {
             'text': 'profile',
@@ -103,6 +106,10 @@
             'url': `/account`
           },
           {
+            'text': 'about Freq',
+            'url': '/about'
+          },
+          {
             'text': 'sign out',
             'url': `/sign-out`
           },
@@ -111,6 +118,7 @@
       {:else}
         <Dropdown
           buttonText="explore"
+          screenSize="desktop"
           items={[
             {
               'text': 'collections',
@@ -136,68 +144,78 @@
     </nav>
     <nav class="narrow">
       {#if sessionUserId}
-        <Dropdown
-          buttonText="explore"
-          items={[
-            {
-              'text': 'feed',
-              'url': `/feed`
-            },
-            {
-              'text': 'new post',
-              'url': `/posts/now-playing/new`
-            },
-            {
-              'text': 'new collection',
-              'url': `/collection/new`
-            },
-            {
-              'text': 'about',
-              'url': `/about`
-            },
-            {
-              'text': 'updates',
-              'url': `/about/updates`
-            },
-            {
-              'text': 'discover collections',
-              'url': `/collections`
-            },
-            {
-              'text': 'discover users',
-              'url': `/users`
-            },
-          ]}
-        ></Dropdown>
-        <Dropdown
-          avatar={avatarItem}
-          buttonText={displayName ?? 'display name'} 
-          items={[
-            {
-              'text': 'profile',
-              'url': `/user/${username}`
-            },
-            {
-              'text': 'my collections',
-              'url': `/user/${username}/collections`
-            },
-            {
-              'text': 'my posts',
-              'url': `/user/${username}/now-playing-posts`
-            },
-            {
-              'text': 'account',
-              'url': `/account`
-            },
-            {
-              'text': 'sign out',
-              'url': `/sign-out`
-            },
-          ]}
-        ></Dropdown>
+        <div class="nav-row">
+          <a class="logo" href="/">
+            <img class="logo" alt="Freq" src={logo} />
+          </a>
+          <SiteSearch
+            searchPlaceholder="search"
+            formAction="search"
+            mode="redirect"
+            screenSize="mobile"
+          ></SiteSearch>
+        </div>
+        <div class="nav-row">
+          <a href="/feed">
+            <button class="nav">
+              feed
+            </button>
+          </a>
+          <a href="/posts/now-playing/new">
+            <button class="nav">
+              post
+            </button>
+          </a>
+          <Dropdown
+            buttonText="collections"
+            screenSize="mobile"
+            items={[
+              {
+                'text': 'discover',
+                'url': '/collections'
+              },
+              {
+                'text': 'create',
+                'url': '/collection/new'
+              }
+            ]}
+          ></Dropdown>
+          <Dropdown
+            avatar={avatarItem}
+            buttonText={displayName ?? 'display name'} 
+            screenSize="mobile"
+            items={[
+              {
+                'text': 'profile',
+                'url': `/user/${username}`
+              },
+              {
+                'text': 'my collections',
+                'url': `/user/${username}/collections`
+              },
+              {
+                'text': 'my posts',
+                'url': `/user/${username}/now-playing-posts`
+              },
+              {
+                'text': 'account',
+                'url': `/account`
+              },
+              {
+                'text': 'sign out',
+                'url': `/sign-out`
+              },
+            ]}
+          ></Dropdown>
+        </div>
       {:else}
+      <div class="nav-row">
+        <a class="logo" href="/">
+          <img class="logo" alt="Freq" src={logo} />
+        </a>
         <Dropdown
           buttonText="explore"
+          screenSize="mobile"
           items={[
             {
               'text': 'about',
@@ -218,6 +236,7 @@
             log in/sign up
           </button>
         </a>
+        </div>
       {/if}
     </nav>
   </header>
@@ -225,9 +244,9 @@
     <a class="report" target="_blank" href="/report-bug?path={thisUrl}">
       <button class="standard">report a bug</button>
     </a>
-    <a class="report" target="_blank" href="https://forms.gle/27Q7qg6qLWiFnLHv7">
+    <!-- <a class="report" target="_blank" href="https://forms.gle/27Q7qg6qLWiFnLHv7">
       <button class="standard">feedback and requests</button>
-    </a>
+    </a> -->
   </div>
 </div>
 
@@ -251,47 +270,73 @@
     align-items: center;
     justify-content: space-between;
   }
-  img {
-      position: sticky;
-      height: 46px; 
-      width: auto;
-      margin: auto 1vw;
-  }
-  img.logo {
-    cursor: pointer;
-  }
   nav {
     display: flex;
     flex-direction: row;
   }
+  nav.wide {
+    height: 50px;
+  }
+  nav.wide * {
+    font-size: var(--freq-font-size-);
+  }
   nav.narrow {
     display: none
   }
+  .nav-row {
+    display: flex;
+    flex-direction: row;
+    width: inherit;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-row button {
+    font-size: var(--freq-font-size-2x-small);
+  }
+  a, a button {
+    cursor: pointer;
+  }
+  .logo-desktop img {
+    /* position: sticky; */
+    /* height: 100%;  */
+    height: 46px;
+    /* width: 160px; */
+    margin: auto 1vw;
+    cursor: pointer;
+    /* width: 100%; */
+  }
   a.report {
-    margin: auto auto var(--freq-spacing-large) auto;
+    margin: auto;
   }
   .buttons-group {
     display: flex;
     max-width: 80%;
-    flex-direction: row;
+    flex-flow: row wrap;
+    margin: 0 auto var(--freq-spacing-large) auto;
+  }
+  .buttons-group button {
     margin: 0 auto;
   }
   @media screen and (max-width: 770px) {
     header {
       justify-content: center;
     }
-    img {
-      position: sticky;
-      height: 32px; 
-      width: auto;
-      margin: auto;
+    a.logo-desktop {
+      display: none;
     }
+    .logo img {
+      max-height: 30px;
+      height: 30px;
+      width: auto;
+      margin: auto 1vw;
+     }
     nav.wide {
       display: none;
     }
     nav.narrow {
       display: flex;
-      max-width: 100vw;
+      flex-direction: column;
+      width: 100%;
       gap: var(--freq-inline-gap);
     }
   }

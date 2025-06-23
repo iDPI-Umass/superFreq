@@ -566,7 +566,9 @@ export const getCoverArtClientSide = async function ( releaseGroup: App.RowData,
         return  { coverArtArchiveUrl, lastFmCoverArtUrl, wave: wave, success: false }
     }
 
-    const coverArtArchiveUrl = releaseGroup.release_group_mbid ? `https://coverartarchive.org/release-group/${releaseGroup.release_group_mbid}/front` : null
+    // const coverArtArchiveUrl = releaseGroup.release_group_mbid ? `https://coverartarchive.org/release-group/${releaseGroup.release_group_mbid}/front` : null
+    
+    const coverArtArchiveUrl =  null
     
     const lastFmCoverArtUrl = null as string | null
     const lastFmResUrl = await getLastFmCoverArt( releaseGroup ) as string
@@ -652,7 +654,8 @@ export const getArtistImage = async function ( mbid: string, milliseconds: numbe
 
 // Check if item is already in collection
 export const checkDuplicate = function ( mbid: string, addedItems: App.RowData | App.RowData[], deletedItems: App.RowData[], mbidCategory: string ) {
-    if ( deletedItems.length < 1 ) {
+    console.log(mbid, mbidCategory, addedItems)
+    if ( deletedItems.length < 1 || !mbid ) {
         return { isDuplicate: false, duplicateItem: null }
     }
     const findMbidDuplicate = addedItems.find((element) => element[mbidCategory] == mbid)
@@ -765,13 +768,12 @@ export const addCollectionItemNoImg = async function (
     deletedItems: App.RowData[],
     limit: string | null, 
     searchCategory: string,
-    mbidCategory: string, 
+    idCatgeory: string,
 ) {
-    const { isDuplicate } = checkDuplicate( item["id"], addedItems, deletedItems, mbidCategory )
-    const wasDeleted = checkDeleted( item, deletedItems, mbidCategory )
+    const itemId = item["id"] || item["collection_id"]
+    const { isDuplicate } = checkDuplicate( itemId, addedItems, deletedItems, idCatgeory )
+    const wasDeleted = checkDeleted( item, deletedItems, idCatgeory )
     const limitReached = checkLimit ( limit, addedItems )
-
-    const itemMbid = item['id']
 
     // Warn if item already in collection and don't add new item.
     if ( isDuplicate ) {
@@ -787,7 +789,7 @@ export const addCollectionItemNoImg = async function (
     let originalId: string |  null = null
 
     if ( wasDeleted ) {
-        const deletedItem = deletedItems.find((item) => item[mbidCategory] == itemMbid)
+        const deletedItem = deletedItems.find((item) => item[idCatgeory] == itemId)
         originalId = deletedItem?.original_id
         deletedItems = deletedItems.filter((item) => item != deletedItem)
         alert(`That item was previously deleted from this collection, but will now be added back in.`)
@@ -807,6 +809,13 @@ export const addCollectionItemNoImg = async function (
     const mbid = releaseGroupMbid( searchCategory, item )
     const releaseDate = itemDate( searchCategory, item )
     const label = await getLabel( searchCategory, mbid, releaseDate )
+    const collectionMetadata = ( idCatgeory == 'collection_id' ) ? {
+        'id': item.collection_id,
+        'title': item.title,
+        'display_name': item.display_name,
+        'username': item.username,
+        'created_at': item.created_at
+    } : null
 
     addedItems = [...addedItems, {
         "original_id": originalId ?? null,
@@ -818,6 +827,11 @@ export const addCollectionItemNoImg = async function (
         "recording_mbid": recordingMbid( searchCategory, item ),
         "recording_name": recordingName( searchCategory, item ),
         "remixer_mbid": remixerMbid( searchCategory, item ) ?? null,
+        "connected_collection_id": collectionMetadata?.id ?? null,
+        "collection_title": collectionMetadata?.title ?? null,
+        "collection_display_name": collectionMetadata?.display_name ?? null,
+        "collection_username": collectionMetadata?.username ?? null,
+        "colllection_created_at": collectionMetadata?.created_at ?? null,
         "release_date": releaseDate,
         "img_url": null,
         "last_fm_img_url": null,

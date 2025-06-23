@@ -1,5 +1,5 @@
 import type { PageServerLoad, Actions } from "../(authed)/account/$types"
-import { newSessionProfile } from "$lib/resources/backend-calls/users"
+import { newSessionProfile } from "src/lib/resources/users"
 import { validateUsernameCharacters } from "$lib/resources/parseData"
 import wave from "$lib/assets/images/logo/freq-wave.svg"
 
@@ -42,7 +42,7 @@ export const actions = {
 
         const update = await newSessionProfile( sessionUserId, profileData, email, avatarItem )
 
-        const { success, usernameTaken } = update as boolean
+        const { success, usernameTaken } = update
 
         return { success, validUsername: true, usernameTaken }
     }

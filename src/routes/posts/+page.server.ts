@@ -1,7 +1,7 @@
 import type { PageServerLoad, Actions } from './$types'
 import { mobyDickArray } from '$lib/assets/text/mobyDick'
 import logo from '$lib/assets/images/logo/freq-logo-dark.svg'
-import { selectRandomPosts } from '$lib/resources/backend-calls/posts'
+import { selectRandomPosts } from 'src/lib/resources/posts'
 
 export const load: PageServerLoad = async () => {
 

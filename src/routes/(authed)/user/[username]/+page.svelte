@@ -1,35 +1,24 @@
 <script lang="ts">
     import { goto } from '$app/navigation'
     import { enhance } from '$app/forms'
-    import { onMount } from 'svelte'
 
     import SEO from '$lib/components/layout/SEO.svelte'
     import NowPlayingTag from '$lib/components/Posts/NowPlayingTag.svelte'
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte'
-    import PanelHeader from '$lib/components/PanelHeader.svelte'
-    import GridList from "$lib/components/GridList.svelte"
+    import PanelHeader from 'src/lib/components/layout/PanelHeader.svelte'
+    import GridList from "src/lib/components/Collections/GridList.svelte"
 	import NewNowPlayingPost from 'src/lib/components/Posts/NewNowPlayingPost.svelte'
     import Feed from '$lib/components/Feed.svelte'
 	import NowPlayingPostsSample from 'src/lib/components/Posts/NowPlayingPostsSample.svelte'
-    import CoverArt from '$lib/components/CoverArt.svelte'
-    import InfoBox from '$lib/components/InfoBox.svelte'
+    import CoverArt from 'src/lib/components/layout/CoverArt.svelte'
+    import InfoBox from 'src/lib/components/layout/InfoBox.svelte'
 
     import { collectionData, viewProfile, feedData } from '$lib/resources/states.svelte.js'
 
 
     let { data, form } = $props();
 
-    let { sessionUserId, profileData, feedItems, notificationsItems, selectedOptions, remaining, sessionUserCollections, updatesPageUpdatedAt }: {
-        sessionUserId: string
-        profileData: any
-        feedItems: any
-        notificationsItems: any
-        totalAvailableItems: number
-        remaining: number
-        profileUsername: string | null
-        sessionUserCollections: App.RowData[]
-        updatesPageUpdatedAt: string
-    } = $derived(data)
+    let { sessionUserId, profileData, feedItems, notificationsItems, selectedOptions, remaining, sessionUserCollections, updatesPageUpdatedAt } = $derived(data)
 
     let { profileUserData, followInfo, permission, profileUserBlockInfo, profileUserFlagInfo } = $derived(profileData)
 
@@ -69,7 +58,7 @@
         viewProfile.metrics.nowPlayingPostsCount = permission ? profileData?.nowPlayingPostsCount as number : null
         viewProfile.topAlbumsCollection = permission ? profileData?.topAlbumsCollection.slice(0, 8) as App.ProfileObject[] : []
 
-        collectionData.collectionItems = profileData?.topAlbumsCollection
+        collectionData.collectionItems = profileData?.topAlbumsCollection as App.RowData[]
 
         feedData.selectedOptions = selectedOptions
         feedData.feedItems = feedItems
@@ -124,13 +113,6 @@
                         edit profile
                     </div>
                 </button>
-                <!-- <button class="double-border-top">
-                    <div class="inner-border-condensed">
-                        <div class="buttons-group-icon">
-                            <Settings size="16"></Settings>
-                        </div>
-                    </div>
-                </button> -->
             {:else}
                 <form
                     method="POST"
@@ -224,7 +206,6 @@
                 </a>
             </div>
         </div>
-        
     </div>
 </div>
 <div class="border-full-vw"></div>

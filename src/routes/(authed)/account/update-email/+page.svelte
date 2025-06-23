@@ -2,7 +2,7 @@
     import type { PageData, ActionData } from './$types'
 
     import SEO from '$lib/components/layout/SEO.svelte'
-    import PanelHeader from "$lib/components/PanelHeader.svelte"
+    import PanelHeader from "src/lib/components/layout/PanelHeader.svelte"
 
     interface Props {
         data: PageData;
@@ -14,7 +14,7 @@
     let newEmail = $state('')
     let confirmEmail = $state('')
 
-	let { sessionUserId, sessionUserEmail } = $derived(data)
+	let { sessionUserEmail } = $derived(data)
 
 </script>
 

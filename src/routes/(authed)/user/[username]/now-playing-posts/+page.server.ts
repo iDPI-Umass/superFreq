@@ -1,9 +1,8 @@
 import type { PageServerLoad, Actions } from "./$types"
 import { redirect  } from "@sveltejs/kit"
-import { selectUserNowPlayingPosts, updatePost, deletePost, insertUpdateReaction, selectUserPostsSample } from "$lib/resources/backend-calls/posts"
-import { insertPostFlag } from "$lib/resources/backend-calls/users"
-import { validStringCheck } from "$lib/resources/parseData"
-import { selectListSessionUserCollections, saveItemToCollection } from "$lib/resources/backend-calls/collections"
+import { updatePost, deletePost, insertUpdateReaction, selectUserPostsSample } from "src/lib/resources/posts"
+import { insertPostFlag } from "src/lib/resources/users"
+import { selectListSessionUserCollections, saveItemToCollection } from "src/lib/resources/collections"
 
 let sessionUserCollections = [] as App.RowData[]
 
@@ -73,8 +72,16 @@ export const actions = {
         const data = await request.formData()
         const postId = data.get('post-id') as string
         const reactionType = data.get('reaction-type') as string
+        
+        const reactionData = {
+            'user_id': sessionUserId,
+            'post_id': postId,
+            'collection_id': null,
+            'reaction_type': reactionType,
+            'item_type': 'post'
+        } as App.RowData
 
-        const reaction = await insertUpdateReaction( sessionUserId, postId, reactionType )
+        const { reaction } = await insertUpdateReaction( reactionData )
 
         const reactionSuccess = reaction ? true : false
 
@@ -95,25 +102,9 @@ export const actions = {
 
         const data = await request.formData()
         const collectionId = data.get('collection-id') as string
-        const artistMbid = data.get('artist-mbid') as string
-        const releaseGroupMbid = data.get('release-group-mbid') as string
-        const recordingMbid = data.get('recording-mbid') as string
-        const userAddedMetadataId = data.get('user-added-metadata-id') as string
-        const itemType = data.get('item-type') as string
         const fromPostId = data.get('saved-from-post') as string
-        const fromCollectionId = data.get('saved-from-collection') as string
-
-        const item = {
-            artist_mbid: validStringCheck(artistMbid),
-            release_group_mbid: validStringCheck(releaseGroupMbid),
-            recording_mbid: validStringCheck(recordingMbid),
-            item_type: itemType,
-            from_post_id: validStringCheck(fromPostId),
-            from_collection_id: validStringCheck(fromCollectionId),
-            user_added_metadata_id: validStringCheck(userAddedMetadataId)
-        }
-
-        const update = await saveItemToCollection( sessionUserId, item, collectionId )
+        
+        const update = await saveItemToCollection( sessionUserId, fromPostId, collectionId )
 
         return { updateSuccess: update }
     }
