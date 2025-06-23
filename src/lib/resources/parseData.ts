@@ -62,7 +62,7 @@ export function parseTimestamp ( itemTimestamp: Date ) {
 /* Make sure username only contains letters, numbers, and underscore */
 
 export const validateUsernameCharacters = function ( username: string) {
-	const valid = /\W+/.test(username) ? false : true
+	const valid = (/\W+/.test(username) || username.length < 3) ? false : true
 
     return valid
 }

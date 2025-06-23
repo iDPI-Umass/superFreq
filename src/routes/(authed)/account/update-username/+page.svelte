@@ -86,7 +86,7 @@
                 New Username
             </label>
             <span class="label-explainer">
-                letters, digits, and underscores allowed
+                Letters, digits, and underscores allowed. Minimum 3 characters.
             </span>
             <input
                 class="text"
@@ -132,7 +132,7 @@
 >
 	{#snippet headerText()}
 		<span >
-			Username contains bad characters
+			Username contains bad characters or is shorter than 3 characters.
 		</span>
 	{/snippet}
 	{#snippet message()}

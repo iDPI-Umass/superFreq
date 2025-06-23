@@ -2,6 +2,7 @@ import type { PageServerLoad } from './$types'
 import { selectSpotlightCollections, selectRecentOpenPublicCollections, selectFollowedUsersOpenPublicCollections } from 'src/lib/resources/collections'
 import { add } from 'date-fns'
 import { selectFeedData } from 'src/lib/resources/feed'
+import { PUBLIC_SPOTLIGHT_COLLECTION_ID } from '$env/static/public'
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
     const { session}  = await safeGetSession()
@@ -10,7 +11,7 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
     const feedTimestampEnd = new Date()
     const feedTimestampStart = add(feedTimestampEnd, {days: -300})
 
-    const spotlightCollectionId = '268'
+    const spotlightCollectionId = PUBLIC_SPOTLIGHT_COLLECTION_ID
     const selectSpotlight = await selectSpotlightCollections(spotlightCollectionId, 6) 
     const spotlightCollections = selectSpotlight.collections
     spotlightCollections.length = 6
