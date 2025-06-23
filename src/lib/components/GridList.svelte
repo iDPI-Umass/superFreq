@@ -425,7 +425,7 @@
         text-align: right;
         text-decoration: underline;
     }
-    @media screen and (max-width: 600px) {
+    @media screen and (max-width: 770px) {
         .editor-interactions {
             justify-content:right;
             gap: var(--freq-width-spacer-half);

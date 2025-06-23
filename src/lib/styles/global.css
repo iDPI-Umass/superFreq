@@ -56,7 +56,7 @@ body {
 	gap: var(--freq-width-spacer);
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 770px) {
 	.panel,
 	.panel-no-border {
 		margin: 1vh auto;
@@ -306,7 +306,7 @@ form.horizontal {
 	margin: var(--freq-height-spacer) var(--freq-width-spacer);
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 770px) {
 	form.horizontal {
 		flex-direction: column;
 	}
@@ -535,7 +535,7 @@ dialog::backdrop {
 	opacity: 70%;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 770px) {
 	.panel {
 		width: 80%;
 	}

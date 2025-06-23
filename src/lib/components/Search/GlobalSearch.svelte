@@ -159,11 +159,6 @@
 </div>
 
 <style>
-	.search-layout {
-		display: flex;
-		flex-direction: row;
-		flex-wrap: nowrap;
-	}
     .search-bar {
         display: flex;
         flex-direction: row;
@@ -177,24 +172,11 @@
 	.input-sizing {
 		max-width: 100%;
 	}
-	.result-image {
-		width: 100px;
-		margin-left: auto;
-		margin-right: 0;
-	}
-    span.username {
-        font-style: italic;
-        color: var(--freq-color-text-muted);
-    }
-	@media screen and (max-width: 600px) {
+	@media screen and (max-width: 770px) {
 		form.search {
 			display: flex;
 			flex-wrap: wrap-reverse;
 			align-items: start;
 		}
-        /* .search-bar * {
-            flex-direction: column;
-			align-items: start;
-        } */
     }
 </style>

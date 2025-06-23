@@ -78,7 +78,7 @@ html {
     --freq-desktop-width: 1500px;
     --freq-laptop-width: 1000px;
     --freq-tablet-width: 880px;
-    --freq-narrow-tablet-width: 600px;
+    --freq-narrow-tablet-width: 770px;
     --freq-mobile-width: 470px;
 }
 
@@ -111,7 +111,7 @@ html {
     }
 }
 
-@media( max-width: 600px ) {
+@media( max-width: 770px ) {
     html {
         --freq-max-width-primary: calc(var(--freq-narrow-tablet-width) * 0.9);
     }
