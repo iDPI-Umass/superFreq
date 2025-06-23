@@ -39,11 +39,6 @@
             'iconSize': 16
         }
     } as any
-
-    $effect(() => {
-        console.log(siteSearchResults)
-        console.log(searchResults.results)
-    })
 </script>
 
 <div class="constrain">

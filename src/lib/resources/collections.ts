@@ -102,9 +102,6 @@ export const selectRecentOpenPublicCollections = async function ( batchSize: num
 
 export const selectSpotlightCollections = async function ( spotlightCollectionId: string, batchSize: number ) {
     const selectCollections = await db.transaction().execute(async (trx) => {
-
-
-        console.log(spotlightCollectionId, batchSize)
         const selectCollectionsMetadata = await trx
         .selectFrom('collections')
         .select([
@@ -127,7 +124,6 @@ export const selectSpotlightCollections = async function ( spotlightCollectionId
 
         const collections = selectCollectionsMetadata as App.RowData[]
 
-        console.log(selectCollectionsMetadata)
         for ( const collection of collections ) {
             const collectionId = collection.collection_id
             const collectionImages = await trx

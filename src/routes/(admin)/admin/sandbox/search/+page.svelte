@@ -4,9 +4,6 @@
 
     let { results } = $derived(data)
 
-    $effect(() => {
-        console.log(results)
-    })
 </script>
 
 <div class="half-width-panel">

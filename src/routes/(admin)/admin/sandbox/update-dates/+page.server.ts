@@ -37,7 +37,5 @@ export const actions = {
         })
 
         const {updatedRow} = await updateCollection
-
-        console.log(updatedRow)
     },
 } satisfies Actions

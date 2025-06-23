@@ -16,11 +16,7 @@ export const actions = {
 
         const searchResults = await searchUsersAndCollections(collectionQuery, 25)
 
-        // console.log(searchResults)
-
         results.push(...searchResults.results)
-
-        // const success = results.length > 0 ? true : false
         
         return { success: true }
 

@@ -36,11 +36,6 @@
 			'collection-image-trio-diagonal-stack-third'
 		]
 	} as any
-
-	$effect(() => {
-		console.log('images')
-		console.log(images)
-	})
 </script>
 
 <div class={imgOrientation[orientation][0]}>
