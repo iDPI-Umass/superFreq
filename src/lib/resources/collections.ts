@@ -271,7 +271,7 @@ export const selectListProfileUserViewableCollections = async function ( session
 
             collection.image_trio = collectionImageTrio
         }
-        
+
         return collections
     })
 
@@ -290,30 +290,61 @@ export const selectListProfileUserFollowingCollections = async function ( userna
 
         const profileUserId = selectProfile?.id as string
 
-        const selectCollectionsList = await trx
-        .selectFrom('profile_display')
-        .select('viewable_collection_follows')
+        const collectionList = await trx
+        .selectFrom('social_graph')
+        .select('collection_id')
+        .where('collection_id', 'is not', null)
         .where('user_id', '=', profileUserId)
-        .executeTakeFirst()
-
-        const collectionList = await selectCollectionsList?.viewable_collection_follows
-
-        const selectCollections = await trx
-        .selectFrom('collections_info as info')
-        .leftJoin('profiles', 'profiles.id', 'info.owner_id')
-        .select([
-            'info.collection_id as collection_id', 
-            'info.title as title', 
-            'info.updated_at as updated_at',
-            'profiles.username as username',
-            'profiles.display_name as display_name'
-        ])
-        .where('info.collection_id', 'in', collectionList)
-        .orderBy('info.updated_at desc')
+        .where('follows_now', '=', true)
         .execute()
 
-        const info = selectCollections
-        return info
+        let followingCollections = [] as string[]
+        for ( const collection of collectionList ) {
+            followingCollections.push(collection.collection_id)
+        }
+
+        const selectCollections = await trx
+        .selectFrom('collection_metadata')
+        .select([
+            'collection_id', 
+            'title', 
+            'updated_at',
+            'created_at',
+            'username',
+            'display_name'
+        ])
+        .where('collection_id', 'in', followingCollections)
+        .where(({eb, or}) => or([
+            eb('status', '=', 'open'),
+            eb('status', '=', 'public'),
+        ]))
+        .where('owner_id', '!=', profileUserId)
+        .orderBy('updated_at desc')
+        .execute()
+
+        const collections = selectCollections
+
+        for ( const collection of collections ) {
+            const collectionId = collection.collection_id
+
+            const collectionImageTrio = await trx
+            .selectFrom('collections')
+            .select([
+                'img_url',
+                'last_fm_img_url',
+                'artist_name',
+                'release_group_name'
+            ])
+            .where('collection_id', '=', collectionId)
+            .where('item_position', 'is not', null)
+            .where('last_fm_img_url', 'is not', null)
+            .limit(3)
+            .execute()
+
+            collection.image_trio = collectionImageTrio
+        }
+
+        return collections
     })
 
     const collections = await selectCollections
