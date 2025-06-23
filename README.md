@@ -37,10 +37,12 @@ Nothing aside from Supabase Auth is Supabase-specific in the project, so you can
 [Freq.social](https://freq.social) uses Supabase currently. It provides a lot of services you could spin up and maintain yourself with the time, resources, and expertise. Until you have the time, resources, and expertise though, you might just want to use Supabase.
 
 ## Installation
-These instructions detail how to set up Freq’s frontend features. 
+These instructions detail how to get your own implementation of Super Freq up and running.
+
 1. Clone this repository and open the folder in your preferred code editor. 
 2. Enter `pnpm install` in your command line interface. This installs key packages such as SvelteKit, Kysely, bits.ui, and Lucide as dependencies. 
 3. Enter `pnpm dev` in your command line interface. The development environment opens. 
 4. Spin up a PostgreSQL server somewhere.
 5. Set up variables in your .env.local file
 6. Enter `pnpm exec kysely-codegen --env-file .env.local` to generate types for local development
+7. Deploy front end somewhere like Vercel or Cloudflare.
