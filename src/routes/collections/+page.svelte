@@ -1,8 +1,8 @@
 <script lang="ts">
 	import SEO from '$lib/components/layout/SEO.svelte'
 	import PanelHeader from '$lib/components/layout/PanelHeader.svelte'
-	import CollectionsList from '$lib/components/Collections/CollectionsList.svelte'
-	import CollectionImageTrio from 'src/lib/components/Collections/CollectionImageTrio.svelte'
+	import CollectionsList from 'src/lib/components/collections/CollectionsList.svelte'
+	import CollectionImageTrio from 'src/lib/components/collections/CollectionImageTrio.svelte'
 	import Feed from '$lib/components/Feed.svelte'
 	import InlineMarkdownText from '$lib/components/layout/InlineMarkdownText.svelte'
 	import { goto } from '$app/navigation'

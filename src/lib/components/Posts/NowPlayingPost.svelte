@@ -2,7 +2,7 @@
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte'
     import EditPostBody from 'src/lib/components/Posts/EditPostBody.svelte'
     import LikeReact from 'src/lib/components/Posts/LikeReact.svelte'
-    import SaveToCollection from 'src/lib/components/Collections/SaveToCollection.svelte'
+    import SaveToCollection from 'src/lib/components/collections/SaveToCollection.svelte'
     import { displayDate, parseMarkdown } from '$lib/resources/parseData'
     import { interactionStates } from '$lib/resources/states.svelte'
 

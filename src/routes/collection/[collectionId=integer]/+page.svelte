@@ -8,7 +8,7 @@
     import AlignJustify from '@lucide/svelte/icons/align-justify'
 
     import SEO from '$lib/components/layout/SEO.svelte'
-    import GridList from "src/lib/components/Collections/GridList.svelte"
+    import GridList from "src/lib/components/collections/GridList.svelte"
     import InfoBox from 'src/lib/components/layout/InfoBox.svelte'
     import InlineMarkdownText from 'src/lib/components/layout/InlineMarkdownText.svelte'
     import PostReply from 'src/lib/components/Posts/PostReply.svelte'

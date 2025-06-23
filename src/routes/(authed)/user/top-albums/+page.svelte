@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte'
 	import SEO from '$lib/components/layout/SEO.svelte'
     import PanelHeader from 'src/lib/components/layout/PanelHeader.svelte'
-	import CollectionEditor from 'src/lib/components/CollectionEditor.svelte'
+	import CollectionEditor from 'src/lib/components/collections/CollectionEditor.svelte'
 	import { enhance } from '$app/forms'
 	import { promiseStates, collectionData } from '$lib/resources/states.svelte'
 

@@ -6,7 +6,7 @@
     import NowPlayingTag from '$lib/components/Posts/NowPlayingTag.svelte'
     import UserActionsMenu from '$lib/components/menus/UserActionsMenu.svelte'
     import PanelHeader from 'src/lib/components/layout/PanelHeader.svelte'
-    import GridList from "src/lib/components/Collections/GridList.svelte"
+    import GridList from "src/lib/components/collections/GridList.svelte"
 	import NewNowPlayingPost from 'src/lib/components/Posts/NewNowPlayingPost.svelte'
     import Feed from '$lib/components/Feed.svelte'
 	import NowPlayingPostsSample from 'src/lib/components/Posts/NowPlayingPostsSample.svelte'
