@@ -1,5 +1,6 @@
 <script lang="ts">
     import { goto } from '$app/navigation'
+    import { enhance } from '$app/forms'
     
     import { Toolbar } from "bits-ui"
     import { Select } from "bits-ui"
@@ -17,7 +18,7 @@
     import { collectionData } from '$lib/resources/states.svelte.ts'
 
     let { data, form } = $props();
-    let { sessionUserId, collectionId, collectionMetadata, collectionContents, viewPermission, editPermission, followData, collectionComments, infoBoxText } = $derived(data);
+    let { sessionUserId, collectionId, collectionMetadata, collectionContents, totalContents, viewPermission, editPermission, followData, collectionComments, infoBoxText, batchSize, batchIterator } = $derived(data)
 
     let gridListSelect = $state("grid")
 
@@ -84,17 +85,45 @@
     let reactionActive = $derived(collectionMetadata?.reaction_user_ids.includes(sessionUserId)) as boolean
     let reactionCount = $derived(collectionMetadata?.reaction_count) as number
 
+    let showLoadMore = $state(false)
+    
     $effect(() => {
+        // const offset = batchSize * ( batchIterator + 1 )
+        
+        // console.log(offset)
+        // const initialCollectionLength = collectionData.collectionItems.length 
+
+        // console.log(collectionData)
+
+        // let addMoreCollectionItems = true
+
+        // if ( collectionData.title && collectionData.collectionItems[initialCollectionLength - 1]['item_position'] == collectionContents[batchSize - 1]['item_position']) {
+        //     addMoreCollectionItems = false
+        // }
+
+        // if (!addMoreCollectionItems) {
+        //     collectionData.collectionItems.length = offset
+        // }
+
+        console.log(collectionMetadata)
         sortedItems =  sort(sortOption)
         collectionData.type = collectionMetadata?.type as string
         collectionData.status = collectionMetadata?.status as string    
         collectionData.updatedAt = collectionMetadata?.updated_at as Date
         collectionData.collectionItems = collectionContents as App.RowData[]
+
+        // let newCollectionLength = 0
+        // if ( addMoreCollectionItems ) {
+        //     collectionData.collectionItems.push(...collectionContents)
+
+        //     newCollectionLength = collectionData.collectionItems.length
+        // }
+
+        // showLoadMore = ( newCollectionLength == totalContents ) ? false : true
     })
 
 </script>
 
-<!-- <svelte:options runes={true} /> -->
 <svelte:head>
 	<title>
 		{collectionMetadata?.title}
@@ -231,6 +260,19 @@
         mode="view"
     >
     </GridList>
+    {#if showLoadMore}
+    <form method="POST" action="?/loadMore" use:enhance>
+        <input
+            type="hidden"
+            name="iterator"
+            id="iterator"
+            value={batchIterator}
+        />
+        <button type="submit" class="standard">
+            load more
+        </button>
+    </form>
+    {/if}
 </div>
 
 <div class="post-panel">

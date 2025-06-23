@@ -371,7 +371,9 @@ Fetches collection for viewing if collection is open or public, or session user 
 */
 
 
-export const selectViewableCollectionContents = async function ( collectionId: string, sessionUserId: string ) {
+export const selectViewableCollectionContents = async function ( collectionId: string, sessionUserId: string, limit=50, iterator=0 ) {
+
+    const offset = limit * iterator
 
     const selectCollection = await db.transaction().execute(async (trx) => {
         try {
@@ -395,11 +397,22 @@ export const selectViewableCollectionContents = async function ( collectionId: s
             .where('collection_id', '=', collectionId)
             .executeTakeFirst()
 
+            const collectionContentsCount = await trx
+            .selectFrom('collections_contents')
+            .select((eb) => eb.fn.count<number>('id').as('count'))
+            .where('item_position', 'is not', null)
+            .where('collection_id', '=', collectionId)
+            .executeTakeFirst()
+
+            const totalContents =  collectionContentsCount.count as number
+
             const collectionContents = await trx
             .selectFrom('collections')
             .selectAll()
             .where('collection_id', '=', collectionId)
             .where('item_position', 'is not', null)
+            .limit(limit)
+            .offset(offset)
             .execute() as App.RowData[]
 
             for ( const collection of collectionContents ) {
@@ -424,7 +437,6 @@ export const selectViewableCollectionContents = async function ( collectionId: s
                     collection.image_trio = collectionImageTrio
                 }
             }
-
 
             const collectionComments = [] as App.RowData[]
             if ( collectionMetadata.comment_count > 0 ) {
@@ -463,17 +475,17 @@ export const selectViewableCollectionContents = async function ( collectionId: s
                 collectionComments.push(...selectComments)
             }
 
-            return { viewPermission: true, follows, collectionContents, collectionMetadata, collectionComments }
+            return { viewPermission: true, follows, collectionContents, totalContents, collectionMetadata, collectionComments }
         }
         catch ( error ) {
-            return { viewPermission: false, follows: null, collectionContents: null, collectionMetadata: null, collectionComments: null }
+            return { viewPermission: false, follows: null, collectionContents: null, totalContents: null, collectionMetadata: null, collectionComments: null }
         }
     })
 
-    const { viewPermission, follows, collectionContents, collectionMetadata, collectionComments } = selectCollection
+    const { viewPermission, follows, collectionContents, totalContents, collectionMetadata, collectionComments } = selectCollection
 
     if ( !viewPermission ) {
-        return { viewPermission: false, editPermission: false, followsNow: false, collection: null, collectionMetadata: null, collectionComments: null}
+        return { viewPermission: false, editPermission: false, followsNow: false, collectionContents: null, totalContents: null, collectionMetadata: null, collectionComments: null}
     }
 
     const { status, owner_id, collaborators, followers } = follows
@@ -484,7 +496,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
         collaborators.includes(sessionUserId)
     ) ? true : false
 
-    return { viewPermission, editPermission, followsNow, collectionContents, collectionMetadata, collectionComments }
+    return { viewPermission, editPermission, followsNow, collectionContents, totalContents, collectionMetadata, collectionComments }
 }
 
 /*
