@@ -4,7 +4,7 @@
     import PanelHeader from 'src/lib/components/layout/PanelHeader.svelte'
     import Tooltip from 'src/lib/components/layout/Tooltip.svelte'
 	import InfoBox from 'src/lib/components/layout/InfoBox.svelte'
-    import CollectionEditor from 'src/lib/components/Collections/CollectionEditor.svelte'
+    import CollectionEditor from 'src/lib/components/CollectionEditor.svelte'
 
     import { promiseStates, collectionData, searchResults } from 'src/lib/resources/states.svelte'
 

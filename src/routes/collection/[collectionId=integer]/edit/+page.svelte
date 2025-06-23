@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte'
     import SEO from '$lib/components/layout/SEO.svelte'
-    import CollectionEditor from 'src/lib/components/Collections/CollectionEditor.svelte'
+    import CollectionEditor from 'src/lib/components/CollectionEditor.svelte'
     import Tooltip from 'src/lib/components/layout/Tooltip.svelte'
     import InfoBox from 'src/lib/components/layout/InfoBox.svelte'
 	import PanelHeader from 'src/lib/components/layout/PanelHeader.svelte'
