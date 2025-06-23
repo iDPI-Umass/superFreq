@@ -12,3 +12,5 @@ vite.config.ts.timestamp-*
 .vscode
 .vscode/*
 .vscode/settings.json
+supabase
+supabase/*
