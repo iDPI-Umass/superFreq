@@ -1,11 +1,9 @@
 <script lang="ts">
     import { invalidateAll } from '$app/navigation'
-    import type { PageData, ActionData } from './$types'
     import { enhance } from '$app/forms'
 
     import SEO from '$lib/components/layout/SEO.svelte'
-    import PanelHeader from "$lib/components/PanelHeader.svelte"
-    import Tooltip from '$lib/components/Tooltip.svelte'
+    import PanelHeader from "src/lib/components/layout/PanelHeader.svelte"
     import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
 	import RedirectModal from '$lib/components/modals/RedirectModal.svelte'
     import { validateUsernameCharacters } from "$lib/resources/parseData"
@@ -35,10 +33,7 @@
 
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-
 <SEO title="Update username"></SEO>
-
 
 <div class="panel" id="profile-info">
     <PanelHeader>

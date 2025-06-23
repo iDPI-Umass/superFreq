@@ -1,8 +1,16 @@
 ---
 title: Updates
 layout: about
-updated: 05/30/2025
+updated: 06/23/2025
 ---
+### June 23, 2025
+#### Updates
+Freq is now at 1.0! The following have added, and the navigation menu changed accordingly:
+- A proper collections landing page at '/collecitons/'
+- Search for users and collections
+- Like and comment on collections
+- Lots and lots of tiny tweaks
+
 ### May 30, 2025
 #### Bugs
 - Fixed issue with redirect after replying to a comment

@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
-import { checkLoginPermission } from '$lib/resources/backend-calls/users'
+import { checkLoginPermission } from 'src/lib/resources/users'
 
 
 export const load: PageServerLoad = async ({ parent }) => {

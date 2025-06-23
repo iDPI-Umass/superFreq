@@ -1,10 +1,9 @@
 import { redirect } from '@sveltejs/kit'
 import { parseISO } from "date-fns"
 import type { PageServerLoad, Actions } from './$types'
-import { selectPostAndReplies, insertPost, updatePost, deletePost, insertUpdateReaction } from '$lib/resources/backend-calls/posts'
-import { insertPostFlag } from '$lib/resources/backend-calls/users'
-import { selectListSessionUserCollections, saveItemToCollection } from 'src/lib/resources/backend-calls/collections.js'
-import { validStringCheck } from '$lib/resources/parseData'
+import { selectPostAndReplies, insertPost, updatePost, deletePost, insertUpdateReaction } from 'src/lib/resources/posts'
+import { insertPostFlag } from 'src/lib/resources/users'
+import { selectListSessionUserCollections, saveItemToCollection } from 'src/lib/resources/collections.js'
 
 let collections = [] as App.RowData[]
 
@@ -31,7 +30,7 @@ export const load: PageServerLoad = async ({ params, parent, locals: { safeGetSe
     let replies: App.RowData[] = []
     let permission: boolean = true
 
-    let post: App.RowData = {}
+    let post = {} as App.RowData
 
     const select = await selectPostAndReplies( sessionUserId, username, timestampString )
 
@@ -81,7 +80,6 @@ export const actions = {
         const commentTimestamp = Date.parse(commentTimestampSlug).toString()
         const permalink = `/posts/${postUsername}/now-playing/${postTimestampDateString}#${username.concat(commentTimestamp)}`
 
-        console.log(permalink)
         if (createdAt) {
             throw redirect(303, permalink)
         }
@@ -95,9 +93,17 @@ export const actions = {
 
         const data = await request.formData()
         const reactionType = data.get('reaction-type') as string
-        const postId = data.get('post-id') ?? data.get('post-reply-id') as string
+        const postId = data.get('post-id') as string ?? data.get('post-reply-id') as string
 
-        const { reaction } = await insertUpdateReaction( sessionUserId, postId, reactionType )
+        const reactionData = {
+            'user_id': sessionUserId,
+            'post_id': postId,
+            'collection_id': null,
+            'reaction_type': reactionType,
+            'item_type': 'post'
+        } as App.RowData
+
+        const { reaction } = await insertUpdateReaction( reactionData )
 
         const success = reaction ? true : false
 
@@ -123,7 +129,7 @@ export const actions = {
         const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
-        const postId = data.get('post-id') ?? data.get('post-reply-id') as string
+        const postId = data.get('post-id') as string ?? data.get('post-reply-id') as string
         const parentPostUsername = data.get('post-username') as string
         const parentPostId = data.get('parent-post-id') as string
         const parentPostTimestamp = data.get('parent-post-timestamp') as string
@@ -144,7 +150,7 @@ export const actions = {
         const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
-        const postId = data.get('post-id') ?? data.get('post-reply-id') as string
+        const postId = data.get('post-id') as string ?? data.get('post-reply-id') as string
 
         const flag = await insertPostFlag( sessionUserId, postId )
 

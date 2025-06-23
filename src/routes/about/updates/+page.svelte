@@ -1,6 +1,6 @@
 <script lang="ts">
     import SEO from '$lib/components/layout/SEO.svelte'
-	import PanelHeader from "$lib/components/PanelHeader.svelte"
+	import PanelHeader from "src/lib/components/layout/PanelHeader.svelte"
 	import Updates from '$lib/assets/text/updates.md'
     import Bugs from '$lib/assets/text/known-bugs.md'
     import Roadmap from '$lib/assets/text/roadmap.md'

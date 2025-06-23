@@ -2,7 +2,7 @@
     import type { ActionData } from './$types'
     import { enhance } from '$app/forms'
     import SEO from '$lib/components/layout/SEO.svelte'
-	import PanelHeader from "$lib/components/PanelHeader.svelte"
+	import PanelHeader from "src/lib/components/layout/PanelHeader.svelte"
     import NotificationModal from "src/lib/components/modals/NotificationModal.svelte"
 
     interface Props {
@@ -79,7 +79,7 @@
     {/snippet}
     {#snippet message()}
         <span >
-            <p>You are not yet approved to sign up for Freq. You can <a href="/welcome/invite-request">request an invite.</a></p>
+            <p>Email address not found, but you're welcome to <a href="/welcome/sign-up">sign up for Freq.</a></p>
         </span>
     {/snippet}
 </NotificationModal>

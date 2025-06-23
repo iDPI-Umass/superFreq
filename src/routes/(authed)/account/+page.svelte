@@ -1,17 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import { enhance } from '$app/forms'
-	import { invalidate, invalidateAll } from '$app/navigation'
-	import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
+	import { invalidateAll } from '$app/navigation'
 
 	import SEO from '$lib/components/layout/SEO.svelte'
-	import PanelHeader from '$lib/components/PanelHeader.svelte'
+	import PanelHeader from 'src/lib/components/layout/PanelHeader.svelte'
 	import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
-	import CoverArt from '$lib/components/CoverArt.svelte'
-	import AvatarSearch from '$lib/components/AvatarSearch.svelte'
+	import AvatarSearch from 'src/lib/components/Search/AvatarSearch.svelte'
 
-	import wave from "$lib/assets/images/logo/freq-wave.svg"
-	import { tick } from 'svelte';
 	import { collectionData, promiseStates } from '$lib/resources/states.svelte.js'
 
 	let { data, form } = $props();
@@ -247,30 +243,13 @@
 		gap: var(--freq-width-spacer);
 		margin: var(--freq-height-spacer) var(--freq-width-spacer);
 	}
-	.mb-search {
-		margin: var(--freq-height-spacer-half) 0;
-	}
-	.actions {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: space-between;
-		margin: var(--freq-height-spacer-quarter) 0;
-	}
-	img {
-		margin: var(--freq-height-spacer-half) 0 0 0;
-		width: 90%;
-	}
-	@media screen and (max-width: 700px) {
+	@media screen and (max-width: 770px) {
 		.form-wrapper {
 			max-width: 700px;
 			display: flex;
 			flex-direction: column;
 			gap: var(--freq-width-spacer);
 			margin: var(--freq-height-spacer) var(--freq-width-spacer);
-		}
-		img {
-			width: 50%;
 		}
 	}
 </style>

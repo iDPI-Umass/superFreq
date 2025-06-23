@@ -4,15 +4,12 @@
 	import { enhance } from "$app/forms"
 
 	import SEO from '$lib/components/layout/SEO.svelte'
-    import PanelHeader from "$lib/components/PanelHeader.svelte"
-    import MusicBrainzSearch from "$lib/components/MusicBrainzSearch.svelte"
+    import PanelHeader from "src/lib/components/layout/PanelHeader.svelte"
     import NotificationModal from "src/lib/components/modals/NotificationModal.svelte"
     import RedirectModal from "$lib/components/modals/RedirectModal.svelte"
-	import AvatarSearch from "$lib/components/AvatarSearch.svelte"
+	import AvatarSearch from "src/lib/components/Search/AvatarSearch.svelte"
 	import { validateUsernameCharacters } from "$lib/resources/parseData"
 	import { promiseStates, collectionData } from "src/lib/resources/states.svelte"
-
-	import wave from "$lib/assets/images/logo/freq-wave.svg"
 
 	let { data, form } = $props();
 
@@ -78,14 +75,12 @@
 			method="POST"
 			action="?/create"
 			use:enhance={() => {
-				// avatarPromise = true
 				const validUsername = validateUsernameCharacters(username)
 				if ( !validUsername ) {
 					invalidUsername = true
 					return
 				}
 				return async ({ update }) => {
-					// avatarPromise = false
 					await update()
 				}}
 			}
@@ -285,19 +280,12 @@
 		gap: var(--freq-width-spacer);
 		margin: var(--freq-height-spacer) var(--freq-width-spacer);
 	}
-	.mb-search {
-		margin: var(--freq-height-spacer-half) 0;
-	}
 	.actions {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		justify-content: space-between;
 		margin: var(--freq-height-spacer-quarter) 0;
-	}
-	img {
-		margin: var(--freq-height-spacer-half) 0 0 0;
-		width: 90%;
 	}
 	@media screen and (max-width: 700px) {
 		.form-wrapper {
@@ -306,9 +294,6 @@
 			flex-direction: column;
 			gap: var(--freq-width-spacer);
 			margin: var(--freq-height-spacer) var(--freq-width-spacer);
-		}
-		img {
-			width: 50%;
 		}
 	}
 </style>

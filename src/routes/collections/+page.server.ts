@@ -1,33 +1,37 @@
-import type { PageServerLoad, Actions } from './$types'
-import { selectAllOpenPublicCollections } from '$lib/resources/backend-calls/collections'
+import type { PageServerLoad } from './$types'
+import { selectSpotlightCollections, selectRecentOpenPublicCollections, selectFollowedUsersOpenPublicCollections } from 'src/lib/resources/collections'
+import { add } from 'date-fns'
+import { selectFeedData } from 'src/lib/resources/feed'
 
-export const load: PageServerLoad = async () => {
-    const batchSize = 25
-    const batchIterator = 0
+export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
+    const { session}  = await safeGetSession()
+    const sessionUserId = session?.user.id as string
 
-    const { batch, remainingCount } = await selectAllOpenPublicCollections( batchSize, batchIterator )
+    const feedTimestampEnd = new Date()
+    const feedTimestampStart = add(feedTimestampEnd, {days: -300})
 
-    const totalCollections = batch.collectionsCount[0].count
-
-    const collections = batch.collections
-    const remaining = remainingCount
-
-    return { collections, remaining, totalCollections, batchSize, batchIterator }
-}
-
-export const actions = {
-    loadMore: async ({ request }) => {
-        const data = await request.formData()
-        const collections = JSON.parse(data.get('collections') as string)
-        const batchSize = parseInt(data.get('batch-size') as string)
-        let batchIterator = parseInt(data.get('batch-iterator') as string)
-        batchIterator ++
-
-        const { batch, remainingCount } = await selectAllOpenPublicCollections( batchSize, batchIterator )
-
-        collections.push(...batch.collections)
-        const remaining = remainingCount as number
-        
-        return { collections, remaining, batchIterator }
+    const spotlightCollectionId = '268'
+    const selectSpotlight = await selectSpotlightCollections(spotlightCollectionId, 6) 
+    const spotlightCollections = selectSpotlight.collections
+    spotlightCollections.length = 6
+    for ( const collection of spotlightCollections ) {
+        if ( collection.description.length > 100 ) {
+            let splitPosition = collection.description.indexOf(' ', 100)
+            let splitString = collection.description.substring(0, splitPosition)
+            splitString = splitString.concat('...')
+            collection.description = splitString
+        }
     }
-} satisfies Actions
+
+    const selectRecentCollections = await selectRecentOpenPublicCollections(10, 0)
+    const recentCollections = selectRecentCollections.collections
+
+    const selectCollectionsFeed = await selectFeedData(sessionUserId, 10, 0, feedTimestampStart, feedTimestampEnd, {'items': [ 'collection_follow', 'collection_edit']} )
+    const collectionsFeed = selectCollectionsFeed
+
+    const selectUsersCollections = await selectFollowedUsersOpenPublicCollections(sessionUserId, 10, 0)
+
+    const followingUsersCollections = selectUsersCollections.collections
+
+   return { sessionUserId, spotlightCollectionId, spotlightCollections, recentCollections, collectionsFeed, followingUsersCollections }
+}

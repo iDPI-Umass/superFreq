@@ -1,8 +1,8 @@
 <script lang="ts">
     import { enhance } from '$app/forms'
-    import PanelHeader from '$lib/components/PanelHeader.svelte'
-    import MusicBrainzSearch from '$lib/components/MusicBrainzSearch.svelte'
-    import Tooltip from '$lib/components/Tooltip.svelte'
+    import PanelHeader from 'src/lib/components/layout/PanelHeader.svelte'
+    import MusicBrainzSearch from 'src/lib/components/Search/MusicBrainzSearch.svelte'
+    import Tooltip from 'src/lib/components/layout/Tooltip.svelte'
     import { collectionData } from 'src/lib/resources/states.svelte'
 
     import { Tabs } from "bits-ui";
@@ -15,13 +15,6 @@
         parsedUrlInfo
     }: ComponentProps = $props()
 
-    // interface ComponentProps {
-    //     addedItem?: any
-    // }
-
-    // let {
-    //     addedItem = $bindable({}),
-    // }: ComponentProps = $props()
     let addedItem = $derived(collectionData.singleItem)
 
     let imgUrl = $derived(addedItem["img_url"]) as string
@@ -44,7 +37,6 @@
         }, timeoutDurationMs)
     }
 </script>
-<!-- <svelte:options runes={true} /> -->
 
 {#snippet postForm( itemType: string, addedItem: App.RowData )}
     <form method="POST" action="?/post" class="vertical" use:enhance={() => {
@@ -351,7 +343,6 @@
                     searchCategory="release_groups"
                     searchButtonText="search"
                     searchPlaceholder="look up an album"
-                    bind:addedItems={addedItem}
                     mode="single"
                     limit="10"
                 ></MusicBrainzSearch>
@@ -367,7 +358,6 @@
                     searchCategory="recordings"
                     searchButtonText="search"
                     searchPlaceholder="look up a track"
-                    bind:addedItems={addedItem}
                     mode="single"
                 ></MusicBrainzSearch>
                 <Tooltip>

@@ -1,6 +1,5 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import { invalidate, invalidateAll } from "$app/navigation"
+    import { invalidateAll } from "$app/navigation"
     import type { PageData } from "./$types"
 
     interface Props {
@@ -13,7 +12,6 @@
 
     $effect(() => {invalidateAll()})
 </script>
-<!-- <svelte:options runes={true} /> -->
 
 <form class="horizontal" method="POST" action="?/confirm">
     <input

@@ -10,7 +10,7 @@
     gap: 0;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 770px) {
     .post-panel {
         width: inherit;
         margin: var(--freq-spacing-medium);
@@ -106,7 +106,7 @@
 }
 
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 770px) {
     .comment-panel {
         max-width: 100%;
         margin: var(--freq-spacing-small) var(--freq-spacing-small) 0 0;
@@ -155,11 +155,22 @@
     border-top: none;
 }
 
+.collection-reply-editor {
+    /* display: flex;
+    flex-direction: column; */
+    border: var(--freq-border-panel);
+}
 
 form.reply {
 	display: flex;
 	flex-direction: column;
 	padding: var(--freq-height-spacer) var(--freq-width-spacer);
+}
+
+form.collection-reply {
+	display: flex;
+	flex-direction: column;
+    padding: var(--freq-height-spacer) var(--freq-width-spacer);
 }
 
 /* Inline styles */

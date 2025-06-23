@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
-import { getModerationQueueItems, updateModerationItem } from '$lib/resources/backend-calls/moderation'
+import { getModerationQueueItems, updateModerationItem } from 'src/lib/resources/moderation'
 import { timestampISO, timestampISOString } from '$lib/resources/parseData'
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {

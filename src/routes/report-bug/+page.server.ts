@@ -1,5 +1,5 @@
 import type { PageServerLoad, Actions } from './$types'
-import { reportBug } from '$lib/resources/backend-calls/moderation.ts'
+import { reportBug } from 'src/lib/resources/moderation'
 
 export const load: PageServerLoad = async ({ url, locals: { safeGetSession }}) => {
     const { session } = await safeGetSession()
@@ -14,7 +14,7 @@ export const load: PageServerLoad = async ({ url, locals: { safeGetSession }}) =
 export const actions = {
     submit: async ({ request, locals: { safeGetSession }}) => {
         const { session } = await safeGetSession()
-        const sessionUserId = session?.user.id
+        const sessionUserId = session?.user.id as string
 
         const data = await request.formData()
         const type = data.get('bug-type') as string

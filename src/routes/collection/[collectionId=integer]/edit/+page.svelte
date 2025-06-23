@@ -1,22 +1,23 @@
 <script lang="ts">
     import { onMount } from 'svelte'
     import SEO from '$lib/components/layout/SEO.svelte'
-    import CollectionEditor from '$lib/components/CollectionEditor.svelte'
-    import Tooltip from '$lib/components/Tooltip.svelte'
-    import InfoBox from '$lib/components/InfoBox.svelte'
-	import PanelHeader from '$lib/components/PanelHeader.svelte'
-    import SingleActionModal from 'src/lib/components/modals/SingleActionModal.svelte'
-    import { promiseStates, collectionData } from '$lib/resources/states.svelte'
+    import CollectionEditor from 'src/lib/components/collections/CollectionEditor.svelte'
+    import Tooltip from 'src/lib/components/layout/Tooltip.svelte'
+    import InfoBox from 'src/lib/components/layout/InfoBox.svelte'
+	import PanelHeader from 'src/lib/components/layout/PanelHeader.svelte'
+    import SingleActionModal from '$lib/components/modals/SingleActionModal.svelte'
+    import { promiseStates, collectionData, searchResults } from '$lib/resources/states.svelte'
 
     let { form, data } = $props()
     let { collection } = $state(data)
 
-    const { sessionUserId, collectionId, infoBoxText }: 
+    const { sessionUserId, collectionId, infoBoxText, collectionSearchResults }: 
     {
         sessionUserId: string
         collectionId: string
         infoBoxText: App.StringLookupObject
-    } = $state(data)
+        collectionSearchResults: App.RowData[]
+    } = $derived(data)
 
     const collectionMetadata = $state(collection?.collectionMetadata as App.RowData)
 
@@ -37,6 +38,11 @@
     onMount(() => {
         promiseStates.newItemAdded = false
         promiseStates.imgPromise = null
+    })
+
+    $effect(() => {
+        searchResults.results = collectionSearchResults
+        searchResults.category = 'collections'
     })
 </script>
 

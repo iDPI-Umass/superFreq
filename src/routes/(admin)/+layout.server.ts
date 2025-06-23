@@ -1,4 +1,4 @@
-import { moderatorPermissions } from "$lib/resources/backend-calls/moderation"
+import { moderatorPermissions } from "src/lib/resources/moderation"
 import { redirect } from "@sveltejs/kit"
 import type { PageServerLoad } from "../$types"
 

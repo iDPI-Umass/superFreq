@@ -1,15 +1,14 @@
 <script lang="ts">
     import SEO from '$lib/components/layout/SEO.svelte'
-    import PanelHeader from "$lib/components/PanelHeader.svelte"
-    import CoverArt from "$lib/components/CoverArt.svelte"
-    import wave from "$lib/assets/images/logo/freq-wave.svg"
+    import PanelHeader from "src/lib/components/layout/PanelHeader.svelte"
+    import CoverArt from "src/lib/components/layout/CoverArt.svelte"
     interface Props {
         data: any;
     }
 
     let { data }: Props = $props();
 
-    let { users, profileDisplayName, username } = $derived(data)
+    let { users, profileDisplayName } = $derived(data)
 </script>
 
 <SEO title="Users {profileDisplayName} follows"></SEO>

@@ -1,7 +1,7 @@
 <script lang="ts">
     import SEO from '$lib/components/layout/SEO.svelte'
-    import PanelHeader from "$lib/components/PanelHeader.svelte"
-    import CoverArt from "$lib/components/CoverArt.svelte"
+    import PanelHeader from "src/lib/components/layout/PanelHeader.svelte"
+    import CoverArt from "src/lib/components/layout/CoverArt.svelte"
     import wave from "$lib/assets/images/logo/freq-wave.svg"
 
     let { data } = $props();
@@ -56,9 +56,6 @@
 
 
 <style>
-    h1 {
-        margin: 3vh 3vw;
-    }
     li {
         list-style: none;
     }

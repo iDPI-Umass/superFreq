@@ -129,7 +129,7 @@ a.profile-website:active {
         width: auto;
     }
     .profile-buttons-group {
-        margin: 0;
+        margin: var(--freq-spacing-small) 0 0 0;
     }
     .profile-info-box-right {
         border-left: none;

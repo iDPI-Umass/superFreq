@@ -9,8 +9,6 @@ The following features are intended for this software. Some will come after the 
     - scripts to get metadata from Bandcamp, Soundcloud, Mixcloud, and YouTube links
     - scripts to submit metadata from those links as well as manually added metadata to MusicBrainz
     - richer interaction with radio show archives and DJ mixes
-- A spotlight page for high quality Collections
-- Search
 - Granular filtering for the Feed and Collections
 - [GOBO](https://gobo.social/) compatibility
 - Groups and relevant moderation tools

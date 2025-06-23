@@ -6,12 +6,7 @@
 
     let { data, form } = $props();
 
-    let { post, replies, collections, postTimestamp }: {
-        post: App.RowData
-        replies?: App.RowData[]
-        collections?: App.RowData[]
-        postTimestamp: string
-    } = $derived(data)
+    let { post, replies, collections, postTimestamp } = $derived(data)
 
     let sessionUserId = data?.sessionUserId as string
 

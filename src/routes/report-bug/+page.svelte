@@ -1,6 +1,6 @@
 <script lang="ts">
     import { enhance } from '$app/forms'
-	import PanelHeader from "$lib/components/PanelHeader.svelte"
+	import PanelHeader from "src/lib/components/layout/PanelHeader.svelte"
     import NotificationModal from '$lib/components/modals/NotificationModal.svelte'
 
     let { data, form } = $props()

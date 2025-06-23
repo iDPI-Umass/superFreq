@@ -15,8 +15,6 @@ export const actions = {
 
             const createdAt = selectCollection?.created_at
 
-            console.log(createdAt)
-
             let updatedRow = null as App.RowData | null
             if (createdAt) {
                 const updateTable = await trx
@@ -39,7 +37,5 @@ export const actions = {
         })
 
         const {updatedRow} = await updateCollection
-
-        console.log(updatedRow)
     },
 } satisfies Actions

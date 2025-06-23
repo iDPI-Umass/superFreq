@@ -1,5 +1,5 @@
 import { redirect } from "@sveltejs/kit"
-import { selectListUserFollowing } from "$lib/resources/backend-calls/users"
+import { selectListUserFollowing } from "src/lib/resources/users"
 import type { PageServerLoad } from "./$types"
 
 export const load: PageServerLoad = async ({ params, locals: { safeGetSession } }) => {

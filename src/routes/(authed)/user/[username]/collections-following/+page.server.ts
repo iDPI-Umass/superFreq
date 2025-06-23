@@ -1,5 +1,5 @@
 import { redirect } from "@sveltejs/kit"
-import { selectListProfileUserFollowingCollections } from "$lib/resources/backend-calls/collections"
+import { selectListProfileUserFollowingCollections } from "src/lib/resources/collections"
 import type { PageServerLoad } from "./$types"
 
 export const load: PageServerLoad = async ({ params }) => {
