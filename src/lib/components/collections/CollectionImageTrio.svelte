@@ -1,6 +1,5 @@
 <script lang="ts">
 	import CoverArt from 'src/lib/components/layout/CoverArt.svelte'
-    import wave from "$lib/assets/images/logo/freq-wave.svg"
 
 	interface ComponentProps {
 		imgUrl?: string
