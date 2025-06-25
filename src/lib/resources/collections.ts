@@ -250,8 +250,29 @@ export const selectListProfileUserViewableCollections = async function ( session
             .execute()
         }
 
-        const info = selectInfo
-        return info
+        const collections = selectInfo as App.RowData[]
+
+        for ( const collection of collections ) {
+            const collectionId = collection.collection_id
+
+            const collectionImageTrio = await trx
+            .selectFrom('collections')
+            .select([
+                'img_url',
+                'last_fm_img_url',
+                'artist_name',
+                'release_group_name'
+            ])
+            .where('collection_id', '=', collectionId)
+            .where('item_position', 'is not', null)
+            .where('last_fm_img_url', 'is not', null)
+            .limit(3)
+            .execute()
+
+            collection.image_trio = collectionImageTrio
+        }
+
+        return collections
     })
 
     const collections = await selectCollections
@@ -269,30 +290,61 @@ export const selectListProfileUserFollowingCollections = async function ( userna
 
         const profileUserId = selectProfile?.id as string
 
-        const selectCollectionsList = await trx
-        .selectFrom('profile_display')
-        .select('viewable_collection_follows')
+        const collectionList = await trx
+        .selectFrom('social_graph')
+        .select('collection_id')
+        .where('collection_id', 'is not', null)
         .where('user_id', '=', profileUserId)
-        .executeTakeFirst()
-
-        const collectionList = await selectCollectionsList?.viewable_collection_follows
-
-        const selectCollections = await trx
-        .selectFrom('collections_info as info')
-        .leftJoin('profiles', 'profiles.id', 'info.owner_id')
-        .select([
-            'info.collection_id as collection_id', 
-            'info.title as title', 
-            'info.updated_at as updated_at',
-            'profiles.username as username',
-            'profiles.display_name as display_name'
-        ])
-        .where('info.collection_id', 'in', collectionList)
-        .orderBy('info.updated_at desc')
+        .where('follows_now', '=', true)
         .execute()
 
-        const info = selectCollections
-        return info
+        let followingCollections = [] as string[]
+        for ( const collection of collectionList ) {
+            followingCollections.push(collection.collection_id)
+        }
+
+        const selectCollections = await trx
+        .selectFrom('collection_metadata')
+        .select([
+            'collection_id', 
+            'title', 
+            'updated_at',
+            'created_at',
+            'username',
+            'display_name'
+        ])
+        .where('collection_id', 'in', followingCollections)
+        .where(({eb, or}) => or([
+            eb('status', '=', 'open'),
+            eb('status', '=', 'public'),
+        ]))
+        .where('owner_id', '!=', profileUserId)
+        .orderBy('updated_at desc')
+        .execute()
+
+        const collections = selectCollections
+
+        for ( const collection of collections ) {
+            const collectionId = collection.collection_id
+
+            const collectionImageTrio = await trx
+            .selectFrom('collections')
+            .select([
+                'img_url',
+                'last_fm_img_url',
+                'artist_name',
+                'release_group_name'
+            ])
+            .where('collection_id', '=', collectionId)
+            .where('item_position', 'is not', null)
+            .where('last_fm_img_url', 'is not', null)
+            .limit(3)
+            .execute()
+
+            collection.image_trio = collectionImageTrio
+        }
+
+        return collections
     })
 
     const collections = await selectCollections
@@ -319,7 +371,9 @@ Fetches collection for viewing if collection is open or public, or session user 
 */
 
 
-export const selectViewableCollectionContents = async function ( collectionId: string, sessionUserId: string ) {
+export const selectViewableCollectionContents = async function ( collectionId: string, sessionUserId: string, limit=50, iterator=0 ) {
+
+    const offset = limit * iterator
 
     const selectCollection = await db.transaction().execute(async (trx) => {
         try {
@@ -343,11 +397,22 @@ export const selectViewableCollectionContents = async function ( collectionId: s
             .where('collection_id', '=', collectionId)
             .executeTakeFirst()
 
+            const collectionContentsCount = await trx
+            .selectFrom('collections_contents')
+            .select((eb) => eb.fn.count<number>('id').as('count'))
+            .where('item_position', 'is not', null)
+            .where('collection_id', '=', collectionId)
+            .executeTakeFirst()
+
+            const totalContents =  collectionContentsCount.count as number
+
             const collectionContents = await trx
             .selectFrom('collections')
             .selectAll()
             .where('collection_id', '=', collectionId)
             .where('item_position', 'is not', null)
+            .limit(limit)
+            .offset(offset)
             .execute() as App.RowData[]
 
             for ( const collection of collectionContents ) {
@@ -372,7 +437,6 @@ export const selectViewableCollectionContents = async function ( collectionId: s
                     collection.image_trio = collectionImageTrio
                 }
             }
-
 
             const collectionComments = [] as App.RowData[]
             if ( collectionMetadata.comment_count > 0 ) {
@@ -411,17 +475,17 @@ export const selectViewableCollectionContents = async function ( collectionId: s
                 collectionComments.push(...selectComments)
             }
 
-            return { viewPermission: true, follows, collectionContents, collectionMetadata, collectionComments }
+            return { viewPermission: true, follows, collectionContents, totalContents, collectionMetadata, collectionComments }
         }
         catch ( error ) {
-            return { viewPermission: false, follows: null, collectionContents: null, collectionMetadata: null, collectionComments: null }
+            return { viewPermission: false, follows: null, collectionContents: null, totalContents: null, collectionMetadata: null, collectionComments: null }
         }
     })
 
-    const { viewPermission, follows, collectionContents, collectionMetadata, collectionComments } = selectCollection
+    const { viewPermission, follows, collectionContents, totalContents, collectionMetadata, collectionComments } = selectCollection
 
     if ( !viewPermission ) {
-        return { viewPermission: false, editPermission: false, followsNow: false, collection: null, collectionMetadata: null, collectionComments: null}
+        return { viewPermission: false, editPermission: false, followsNow: false, collectionContents: null, totalContents: null, collectionMetadata: null, collectionComments: null}
     }
 
     const { status, owner_id, collaborators, followers } = follows
@@ -432,7 +496,7 @@ export const selectViewableCollectionContents = async function ( collectionId: s
         collaborators.includes(sessionUserId)
     ) ? true : false
 
-    return { viewPermission, editPermission, followsNow, collectionContents, collectionMetadata, collectionComments }
+    return { viewPermission, editPermission, followsNow, collectionContents, totalContents, collectionMetadata, collectionComments }
 }
 
 /*

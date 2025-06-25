@@ -438,7 +438,6 @@
   --freq-button-font-size-x-large: var(--freq-font-size-large);
 
   /* Inputs */
-  --freq-input-height-2x-small: 0.625rem; /* 10px */
   --freq-input-height-x-small: 1.25rem; /* 20px */
   --freq-input-height-small: 1.875rem; /* 30px */
   --freq-input-height-medium: 2.5rem; /* 40px */

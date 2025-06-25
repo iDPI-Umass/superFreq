@@ -19,6 +19,8 @@ let editPermission: boolean
 let followData: App.RowData
 
 let followsNow: boolean
+let batchIterator = 0
+
 
 export const load: PageServerLoad = async ({ params, locals: { safeGetSession } }) => {
 
@@ -27,16 +29,20 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession } 
     const session = await safeGetSession()
     const sessionUserId = session.user?.id as string
 
+    const batchSize = 100
+
+    let totalContents = 0
+
     if ( loadData ) {
-        const collection =  await selectViewableCollectionContents(collectionId, sessionUserId)
+        const collection =  await selectViewableCollectionContents(collectionId, sessionUserId, batchSize, batchIterator)
 
         collectionMetadata = collection.collectionMetadata as App.RowData
         collectionContents = collection.collectionContents as App.RowData[]
         collectionComments = collection.collectionComments as App.RowData[]
         viewPermission = collection.viewPermission as boolean
         editPermission = collection.editPermission as boolean
+        totalContents = collection.totalContents as number
 
-        // console.log(collectionContents)
         followData = {
             'follows_now': collection.followsNow ?? false
         } as App.RowData 
@@ -53,10 +59,16 @@ export const load: PageServerLoad = async ({ params, locals: { safeGetSession } 
         followData['follows_now'] = followsNow
     }
 
-    return { sessionUserId, collectionId, collectionMetadata, collectionContents, collectionComments, viewPermission, editPermission, followData }
+    return { sessionUserId, collectionId, collectionMetadata, collectionContents, totalContents, collectionComments, viewPermission, editPermission, followData, batchSize, batchIterator }
 }
 
 export const actions = {
+    loadMore: async () => {
+        batchIterator++
+        loadData = true
+
+        return
+    },
     followCollection: async ({ request, locals: { safeGetSession } }) => {
         updateFollow = true
         loadData = false

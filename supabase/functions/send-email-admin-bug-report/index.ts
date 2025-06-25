@@ -23,7 +23,7 @@ console.log(`Function "send-email-admin-bug-report" up and running!`)
 Deno.serve(async (req) => {
   try {
     const { record } = await req.json()
-    const { id, created_at, user_id, type, path, description } = record
+    const { id, created_at, user_id, type, path, description, email } = record
     const createdAtDate = new Date(created_at).toLocaleString("en-US", { timeZone: 'America/New_York' })
 
     const supabase = createClient(
@@ -51,8 +51,8 @@ Deno.serve(async (req) => {
           subject: `New bug report: ${id}`,
           // text: 'test',
           // text: `New bug report ${id}.`,
-          text: `New bug report (${id}) by ${display_name} (${username}) at ${createdAtDate}.\r\n\r\n Type:\r\n ${type}\r\n\r\n Path:\r\n ${path} \r\n\r\n Description: \r\n ${description} \r\n\r\n Bug report dashboard:\r\n https://freq.social/admin/bug-reports`,
-          html: `<h2>New bug report: ${id}</h2><p>By <a href=\"https://freq.social/user/${username}\">${display_name} (${username})</a> at ${createdAtDate}</p><p><b>Type</b><br /> ${type}</p><p><b>Path</b><br />${path}</p><p><b>Description</b><br /> ${description}</p><p>Bug report dashboard: <br /> <a href=\"https://freq.social/admin/bug-reports\">https://freq.social/admin/bug-reports</a></p>`
+          text: `New bug report (${id}) by ${display_name} (${username}) ${email} at ${createdAtDate}.\r\n\r\n Type:\r\n ${type}\r\n\r\n Path:\r\n ${path} \r\n\r\n Description: \r\n ${description} \r\n\r\n Bug report dashboard:\r\n https://freq.social/admin/bug-reports`,
+          html: `<h2>New bug report: ${id}</h2><p>By <a href=\"https://freq.social/user/${username}\">${display_name} (${username})</a> <a href=\"mailto:${email}\">${email}</a> at ${createdAtDate}</p><p><b>Type</b><br /> ${type}</p><p><b>Path</b><br />${path}</p><p><b>Description</b><br /> ${description}</p><p>Bug report dashboard: <br /> <a href=\"https://freq.social/admin/bug-reports\">https://freq.social/admin/bug-reports</a></p>`
         }, error => {
           if (error) {
             console.log('smtp error:', error)
@@ -69,7 +69,7 @@ Deno.serve(async (req) => {
       }
     })
   } catch (error) {
-    console.log('error sending')
+    console.log(error)
     return new Response(error.message, { status: 500 })
   }
 
@@ -91,6 +91,6 @@ Deno.serve(async (req) => {
   curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/send-email-admin-bug-report' \
     --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0' \
     --header 'Content-Type: application/json' \
-    --data '{"collectionTitle":"Freq beta test listening club March 2025","collectionLink":"https://www.freq.social/collection/193","bugReportLink":"https://docs.google.com/forms/d/e/1FAIpQLSfKj4FlApgfM-Kc4rYwAxNQslBMS9rk-DdfowMa5qcHlRYhew/viewform"}'
+    --data '{"id":"000","username":"username", "display_name": "display_name", "email": "email", "createdAtDate": "date", "type": "type", "path": "path", "description": "description"}'
 
 */

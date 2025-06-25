@@ -132,7 +132,7 @@
 >
 	{#snippet headerText()}
 		<span >
-			Username contains bad characters or is shorter than 3 characters.
+			Username contains bad characters or is not at least 3 characters long.
 		</span>
 	{/snippet}
 	{#snippet message()}

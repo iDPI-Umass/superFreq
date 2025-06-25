@@ -139,7 +139,8 @@ export const reportBug = async ( sessionUserId: string, bugData: App.RowData ) =
         user_id: sessionUserId,
         type: bugData.type,
         path: bugData.path,
-        description: bugData.description
+        description: bugData.description,
+        email: bugData.email
     })
     .returning('id')
     .executeTakeFirstOrThrow()
