@@ -15,6 +15,7 @@ export const actions = {
     submit: async ({ request, locals: { safeGetSession }}) => {
         const { session } = await safeGetSession()
         const sessionUserId = session?.user.id as string
+        const sessionUserEmail = session.user?.email as string
 
         const data = await request.formData()
         const type = data.get('bug-type') as string
@@ -24,7 +25,8 @@ export const actions = {
         const bugData = {
             'type': type,
             'path': path,
-            'description': description
+            'description': description,
+            'email': sessionUserEmail
         } as App.RowData
 
         const submit = await reportBug( sessionUserId, bugData )
