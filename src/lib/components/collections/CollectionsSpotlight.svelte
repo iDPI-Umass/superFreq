@@ -55,10 +55,7 @@
 
 {#snippet spotlightItem(collection: App.RowData)}
 	<div class="spotlight-item">
-		<CollectionImageTrio 
-			imgUrl={collection.avatar_url}
-			orientation='column'
-		></CollectionImageTrio>
+		<CollectionImageTrio imgUrl={collection.avatar_url} orientation="column"></CollectionImageTrio>
 		<div class="spotlight-collection-info">
 			<div class="spotlight-collection-info-text">
 				<h3>{collection.title}</h3>

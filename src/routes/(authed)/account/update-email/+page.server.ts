@@ -1,28 +1,24 @@
-import type { PageServerLoad, Actions } from './$types'
+import type { PageServerLoad, Actions } from './$types';
 
-export const load: PageServerLoad = async ({ locals: { safeGetSession }}) => {
+export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
+	const session = await safeGetSession();
+	const sessionUserId = session.user?.id as string;
+	const sessionUserEmail = session.user?.email as string;
 
-    const session = await safeGetSession()
-    const sessionUserId = session.user?.id as string
-    const sessionUserEmail = session.user?.email as string
-
-    return { sessionUserId, sessionUserEmail}
-}
+	return { sessionUserId, sessionUserEmail };
+};
 
 export const actions = {
-    default: async ({ request, locals: { supabase }}) => {
+	default: async ({ request, locals: { supabase } }) => {
+		const formData = await request.formData();
+		const confirmEmail = formData.get('confirm-email') as string;
 
-        const formData = await request.formData()
-        const confirmEmail = formData.get('confirm-email') as string
+		const updateEmail = await supabase.auth.updateUser({ email: confirmEmail });
 
-        const updateEmail = await supabase.auth.updateUser({email: confirmEmail})
-
-        if ( updateEmail ) {
-            return { success: true }
-        }
-        else {
-            return { success: false }
-        }
-        
-    }
-} satisfies Actions
+		if (updateEmail) {
+			return { success: true };
+		} else {
+			return { success: false };
+		}
+	}
+} satisfies Actions;

@@ -10,7 +10,6 @@ layout: about
     import Roadmap from '$lib/assets/text/roadmap.md'
 </script>
 
-
 <div class="section-link-box">
     <ul>
         <li>
@@ -27,6 +26,7 @@ layout: about
 </div>
 
 Some text
+
 <hr />
 
 <h2 id="section-1">
