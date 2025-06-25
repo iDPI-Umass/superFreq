@@ -10,7 +10,7 @@ For more information about Freq, check out our [website docs](https://freq.socia
 ## About superFreq
 superFreq is the software powering Freq. It was developed at the [Iniatiative for Digital Public Infrastructure at UMass Amherst](https://publicinfrastructure.org) in accordance with our white paper [The Three-Legged Stool: A Manifesto for a Smaller, Denser Internet](https://publicinfrastructure.org/2023/03/29/the-three-legged-stool/).
 
-superFreq was built specifically for a social media website dedicated to discussing and cataloguing recorded music, but its parts can likely be of use to other social or music cataloging projects.
+superFreq is [super Freqy](https://www.youtube.com/watch?v=QYHxGBH6o4M). It was built specifically for a social media website dedicated to discussing and cataloguing recorded music. You're welcome to experiment with using parts of it for other social or music projects.
 
 This is software built from scratch with no AI assistance. The stack is basically a JS framework frontend and a PostgreSQL backend. 
 
