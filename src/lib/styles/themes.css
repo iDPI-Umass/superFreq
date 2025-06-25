@@ -1,6 +1,7 @@
 /* Default to dark mode */
   
 html {
+    color-scheme: dark;
     --freq-color-null: #454C6C;
     --freq-color-panel: #313751;
     --freq-color-border-panel: #454C6C;
