@@ -60,6 +60,7 @@
 	username={username}
 	displayName={display_name}
 	avatarItem={avatarItem}
+	logo={logo}
 ></Header>
 <div class="double-border-full-vw"></div>
 {@render children()}
