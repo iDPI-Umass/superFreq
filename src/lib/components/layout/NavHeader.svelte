@@ -2,7 +2,6 @@
   import { page } from '$app/state'
   import Dropdown from '$lib/components/menus/ReuseableDropdownMenu.svelte'
   import SiteSearch from 'src/lib/components/Search/SiteSearch.svelte';
-  import logo from "$lib/assets/images/logo/freq-logo-dark.svg"
 
   import CoverArt from "src/lib/components/layout/CoverArt.svelte";
   import { searchResults } from "$lib/resources/states.svelte"
@@ -12,13 +11,15 @@
     username: string
     displayName: string
     avatarItem: App.StringLookupObject
+    logo: any
   }
 
   let {
     sessionUserId,
     username,
     displayName,
-    avatarItem
+    avatarItem, 
+    logo
   }: ComponentProps = $props()
 
   const thisUrl = page.url
