@@ -1,11 +1,11 @@
 <script lang="ts">
-	import SEO from '$lib/components/layout/SEO.svelte'
-	import PanelHeader from '$lib/components/layout/PanelHeader.svelte'
-	import CollectionsList from 'src/lib/components/collections/CollectionsList.svelte'
-	import CollectionImageTrio from 'src/lib/components/collections/CollectionImageTrio.svelte'
-	import Feed from '$lib/components/Feed.svelte'
-	import InlineMarkdownText from '$lib/components/layout/InlineMarkdownText.svelte'
-	import { goto } from '$app/navigation'
+	import SEO from '$lib/components/layout/SEO.svelte';
+	import PanelHeader from '$lib/components/layout/PanelHeader.svelte';
+	import CollectionsList from 'src/lib/components/collections/CollectionsList.svelte';
+	import CollectionImageTrio from 'src/lib/components/collections/CollectionImageTrio.svelte';
+	import Feed from '$lib/components/Feed.svelte';
+	import InlineMarkdownText from '$lib/components/layout/InlineMarkdownText.svelte';
+	import { goto } from '$app/navigation';
 
 	let { data } = $props();
 
@@ -15,31 +15,24 @@
 		spotlightCollections,
 		recentCollections,
 		collectionsFeed,
-		followingUsersCollections,
+		followingUsersCollections
 	} = $derived(data);
-	
 </script>
 
 <SEO title="Explore collections"></SEO>
 
 <div class="jumbotron">
-	<p>
-		Collect, curate, and share. Collections are the perfect way to group Albums.
-	</p>
+	<p>Collect, curate, and share. Collections are the perfect way to group Albums.</p>
 	<button class="double-border-top">
 		<div class="inner-border">Create a Collection</div>
 	</button>
 </div>
 
-
 {#snippet spotlightItem(collection: App.RowData)}
 	<li class="spotlight-item">
 		<div class="spotlight-item-images">
 			<div class="grid-list-image-stack">
-				<CollectionImageTrio 
-					collection={collection}
-					orientation='column'
-				></CollectionImageTrio>
+				<CollectionImageTrio {collection} orientation="column"></CollectionImageTrio>
 			</div>
 		</div>
 		<div class="spotlight-collection-info">
@@ -51,17 +44,14 @@
 				<span class="spotlight-collection-owner">
 					by {collection.display_name}
 				</span>
-			<hr class="spotlight-item-divider" />
-			<span class="spotlight-collection-description">
-				<InlineMarkdownText
-					text={collection.description}
-				></InlineMarkdownText>
-			</span>
+				<hr class="spotlight-item-divider" />
+				<span class="spotlight-collection-description">
+					<InlineMarkdownText text={collection.description}></InlineMarkdownText>
+				</span>
 			</a>
 		</div>
 	</li>
 {/snippet}
-
 
 <div class="panel">
 	<PanelHeader>
@@ -81,10 +71,9 @@
 	</ul>
 </div>
 
-
 <div class="two-column">
 	<div class="column-two-thirds">
-		<CollectionsList 
+		<CollectionsList
 			panelHeaderText="recently updated collections"
 			collections={recentCollections}
 			mode="detailed"
@@ -94,11 +83,7 @@
 
 	<div class="column-one-third">
 		{#if sessionUserId}
-			<Feed
-				sessionUserId={sessionUserId}
-				feedItems={collectionsFeed.feedData}
-				mode="feed"
-				type="collections"
+			<Feed {sessionUserId} feedItems={collectionsFeed.feedData} mode="feed" type="collections"
 			></Feed>
 			<CollectionsList
 				panelHeaderText="friends' collections"
@@ -109,7 +94,6 @@
 		{/if}
 	</div>
 </div>
-
 
 <style>
 	.panel {
@@ -163,7 +147,7 @@
 	.jumbotron {
 		display: flex;
 		flex-direction: column;
-		max-width: calc( var(--freq-max-width-primary) * 0.5);
+		max-width: calc(var(--freq-max-width-primary) * 0.5);
 		align-items: center;
 		gap: var(--freq-spacer-gap-half);
 		background-color: black;
@@ -196,7 +180,7 @@
 			margin-top: 0;
 			padding-top: 0;
 		}
-		li.spotlight-item:nth-last-child(-n+3) {
+		li.spotlight-item:nth-last-child(-n + 3) {
 			border-top: var(--freq-border-panel);
 		}
 		.spotlight-collection-info {
@@ -205,7 +189,7 @@
 		.spotlight-collection-info .spotlight-collection-title {
 			/* word-wrap: break-word; */
 			/* word-break: break-all; */
-			overflow-wrap:break-word;
+			overflow-wrap: break-word;
 			hyphens: auto;
 		}
 		.spotlight-collection-info .spotlight-collection-owner {

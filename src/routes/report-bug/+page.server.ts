@@ -1,38 +1,38 @@
-import type { PageServerLoad, Actions } from './$types'
-import { reportBug } from 'src/lib/resources/moderation'
+import type { PageServerLoad, Actions } from './$types';
+import { reportBug } from 'src/lib/resources/moderation';
 
-export const load: PageServerLoad = async ({ url, locals: { safeGetSession }}) => {
-    const { session } = await safeGetSession()
+export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) => {
+	const { session } = await safeGetSession();
 
-    const userSession = session ? true : false
+	const userSession = session ? true : false;
 
-    const referredPath = url.searchParams?.get('path') ?? ''
-    
-    return { userSession, referredPath  }
-}
+	const referredPath = url.searchParams?.get('path') ?? '';
+
+	return { userSession, referredPath };
+};
 
 export const actions = {
-    submit: async ({ request, locals: { safeGetSession }}) => {
-        const { session } = await safeGetSession()
-        const sessionUserId = session?.user.id as string
-        const sessionUserEmail = session.user?.email as string
+	submit: async ({ request, locals: { safeGetSession } }) => {
+		const { session } = await safeGetSession();
+		const sessionUserId = session?.user.id as string;
+		const sessionUserEmail = session.user?.email as string;
 
-        const data = await request.formData()
-        const type = data.get('bug-type') as string
-        const path = data.get('bug-path') as string
-        const description = data.get('bug-description') as string
+		const data = await request.formData();
+		const type = data.get('bug-type') as string;
+		const path = data.get('bug-path') as string;
+		const description = data.get('bug-description') as string;
 
-        const bugData = {
-            'type': type,
-            'path': path,
-            'description': description,
-            'email': sessionUserEmail
-        } as App.RowData
+		const bugData = {
+			type: type,
+			path: path,
+			description: description,
+			email: sessionUserEmail
+		} as App.RowData;
 
-        const submit = await reportBug( sessionUserId, bugData )
+		const submit = await reportBug(sessionUserId, bugData);
 
-        const success = submit.reportId ? true : false
+		const success = submit.reportId ? true : false;
 
-        return { success }
-    }
-} satisfies Actions
+		return { success };
+	}
+} satisfies Actions;
