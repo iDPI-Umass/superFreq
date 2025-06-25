@@ -3,7 +3,7 @@ Freq is a community-based social media platform for groups of music listeners to
 
 The site is populated by music data obtained from [MusicBrainz's](https://musicbrainz.org/) extensive database. Images are obtained from the [Cover Art Archive](https://coverartarchive.org), [Last.fm](https://www.last.fm), and [Discogs](https://www.discogs.com). Some data from [Wikipedia](https://wikipedia.org) is used.
 
-This project is still in development, but it is open to be cloned and edited according to our [license]([insert link to license](https://opensource.org/license/mit)). 
+This project is still in development, but it is open to be cloned and edited according to our [license](https://github.com/groovehost/superFreq/blob/master/LICENSE). 
 
 For more information about Freq, check out our [website docs](https://freq.socia/about).
 
