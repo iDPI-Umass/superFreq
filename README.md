@@ -8,7 +8,7 @@ This project is still in development, but it is open to be cloned and edited acc
 For more information about Freq, check out our [website docs](https://freq.socia/about).
 
 ## About superFreq
-superFreq is the software powering [Freq](https://freq.social). It was developed at the [Iniatiative for Digital Public Infrastructure at UMass Amherst](https://publicinfrastructure.org) in accordance with our white paper [The Three-Legged Stool: A Manifesto for a Smaller, Denser Internet](https://publicinfrastructure.org/2023/03/29/the-three-legged-stool/).
+superFreq is the software powering [Freq](https://freq.social) written by (@sugzone)[https://github.com/sugzone]. It was developed at the [Iniatiative for Digital Public Infrastructure at UMass Amherst](https://publicinfrastructure.org) in accordance with our white paper [The Three-Legged Stool: A Manifesto for a Smaller, Denser Internet](https://publicinfrastructure.org/2023/03/29/the-three-legged-stool/).
 
 superFreq is [super Freqy](https://www.youtube.com/watch?v=QYHxGBH6o4M). It was built specifically for a social media website dedicated to discussing and cataloguing recorded music. You're welcome to experiment with using parts of it for other social or music projects.
 
