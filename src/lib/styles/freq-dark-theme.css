@@ -1,37 +1,20 @@
-  
-
 :root,
-
 :host,
-
 .freq-theme-dark {
-
 color-scheme: dark;
 
-  
-
 /*
-
 * Color Primitives
-
 */
-
-  
 
 /* Gray */
 
 --freq-color-gray-50: hsl(240 5.1% 15%);
-
 --freq-color-gray-100: hsl(240 5.7% 18.2%);
-
 --freq-color-gray-200: hsl(240 4.6% 22%);
-
 --freq-color-gray-300: hsl(240 5% 27.6%);
-
 --freq-color-gray-400: hsl(240 5% 35.5%);
-
 --freq-color-gray-500: hsl(240 3.7% 44%);
-
 --freq-color-gray-600: hsl(240 5.3% 58%);
 
 --freq-color-gray-700: hsl(240 5.6% 73%);

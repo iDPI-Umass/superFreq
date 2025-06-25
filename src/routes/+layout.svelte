@@ -9,8 +9,8 @@
 	import "$lib/styles/posts.css";
 	import "$lib/styles/profile.css";
 	import "$lib/styles/themes.css";
-	import "$lib/styles/freq-dark-theme.css";
-	import "$lib/styles/freq-light-theme.css";
+	// import "$lib/styles/freq-dark-theme.css";
+	// import "$lib/styles/freq-light-theme.css";
 
 	import { onMount } from 'svelte' 
 	import { dev } from '$app/environment'
