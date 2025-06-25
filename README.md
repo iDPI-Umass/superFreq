@@ -1,14 +1,16 @@
 ## About Freq
-Freq is a community-based social media platform for groups of music listeners to share, talk about, and enjoy music together. 
+[Freq](https://freq.social) is a community-based social media platform for groups of music listeners to share, talk about, and enjoy music together. 
 
 The site is populated by music data obtained from [MusicBrainz's](https://musicbrainz.org/) extensive database. Images are obtained from the [Cover Art Archive](https://coverartarchive.org), [Last.fm](https://www.last.fm), and [Discogs](https://www.discogs.com). Some data from [Wikipedia](https://wikipedia.org) is used.
 
-This project is still in development, but it is open to be cloned and edited according to our [license](insert link to license). 
+This project is still in development, but it is open to be cloned and edited according to our [license](https://github.com/groovehost/superFreq/blob/master/LICENSE). 
 
 For more information about Freq, check out our [website docs](https://freq.socia/about).
 
-## About Super Freq
-Super Freq is the software powering Freq. It was developed at the [Iniatiative for Digital Public Infrastructure at UMass Amherst](https://publicinfrastructure.org) in accordance with our white paper [The Three-Legged Stool: A Manifesto for a Smaller, Denser Internet](https://publicinfrastructure.org/2023/03/29/the-three-legged-stool/).
+## About superFreq
+superFreq is the software powering [Freq](https://freq.social). It was developed at the [Iniatiative for Digital Public Infrastructure at UMass Amherst](https://publicinfrastructure.org) in accordance with our white paper [The Three-Legged Stool: A Manifesto for a Smaller, Denser Internet](https://publicinfrastructure.org/2023/03/29/the-three-legged-stool/).
+
+superFreq is [super Freqy](https://www.youtube.com/watch?v=QYHxGBH6o4M). It was built specifically for a social media website dedicated to discussing and cataloguing recorded music. You're welcome to experiment with using parts of it for other social or music projects.
 
 This is software built from scratch with no AI assistance. The stack is basically a JS framework frontend and a PostgreSQL backend. 
 
