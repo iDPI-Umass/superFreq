@@ -8,7 +8,7 @@ const lastFmApiKey = PUBLIC_LAST_FM_API_KEY
 const musicbrainzRequestHeader = {
     mode: 'cors',
     headers: {
-        "User-Agent": "Freq/0.1 ( hello@freq.social )"
+        "User-Agent": "App/version (contact)"
     }
 }
 
