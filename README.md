@@ -3,12 +3,14 @@ Freq is a community-based social media platform for groups of music listeners to
 
 The site is populated by music data obtained from [MusicBrainz's](https://musicbrainz.org/) extensive database. Images are obtained from the [Cover Art Archive](https://coverartarchive.org), [Last.fm](https://www.last.fm), and [Discogs](https://www.discogs.com). Some data from [Wikipedia](https://wikipedia.org) is used.
 
-This project is still in development, but it is open to be cloned and edited according to our [license](insert link to license). 
+This project is still in development, but it is open to be cloned and edited according to our [license]([insert link to license](https://opensource.org/license/mit)). 
 
 For more information about Freq, check out our [website docs](https://freq.socia/about).
 
-## About Super Freq
-Super Freq is the software powering Freq. It was developed at the [Iniatiative for Digital Public Infrastructure at UMass Amherst](https://publicinfrastructure.org) in accordance with our white paper [The Three-Legged Stool: A Manifesto for a Smaller, Denser Internet](https://publicinfrastructure.org/2023/03/29/the-three-legged-stool/).
+## About superFreq
+superFreq is the software powering Freq. It was developed at the [Iniatiative for Digital Public Infrastructure at UMass Amherst](https://publicinfrastructure.org) in accordance with our white paper [The Three-Legged Stool: A Manifesto for a Smaller, Denser Internet](https://publicinfrastructure.org/2023/03/29/the-three-legged-stool/).
+
+superFreq was built specifically for a social media website dedicated to discussing and cataloguing recorded music, but its parts can likely be of use to other social or music cataloging projects.
 
 This is software built from scratch with no AI assistance. The stack is basically a JS framework frontend and a PostgreSQL backend. 
 
