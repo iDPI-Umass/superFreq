@@ -290,6 +290,9 @@ export const selectSessionProfile = async function ( sessionUserId: string ) {
 /* Logs invite request after checking if email is associated with approved invite or active account */
 export const inviteRequest = async function ( email: string, referredBy: string ) {
 
+    const timestampISOString: string = new Date().toISOString()
+    const timestampISO: Date = parseISO(timestampISOString)
+
     const invite = await db.transaction().execute(async (trx) => {
         
         try {
@@ -313,7 +316,8 @@ export const inviteRequest = async function ( email: string, referredBy: string 
             .values({
                 email: email,
                 referred_by: referredBy,
-                approved: true
+                approved: true,
+                approved_at: timestampISO
             })
             .returning(['approved', 'user_id'])
             .executeTakeFirst()
