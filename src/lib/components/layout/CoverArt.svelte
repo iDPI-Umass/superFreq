@@ -50,7 +50,7 @@ Currently configured to server Last.fm images on the client side by default on a
         'release_group_mbid': item?.release_group_mbid ?? null
     })
 
-    const coverArtArchiveImgUrl = $derived( item ? coverArtItem['img_url'] : null )
+    const waveStaticUrl = 'https://www.freq.social/images/logo/freq-wave.svg'
 
     const continuePromise = $derived( promiseStates.continueClientSideImgPromise )
 
@@ -73,24 +73,20 @@ Currently configured to server Last.fm images on the client side by default on a
 
     const { validUrl, url } = $derived( imageSelector( coverArtItem ))
 
+    console.log(wave)
+
 </script>
 
 {#if validUrl } 
-    <img src={url} alt={altText} class={imgClass}  /> 
+    <img src={url} onerror={(event) => event.currentTarget.src = wave} alt={altText} class={imgClass} loading='lazy' /> 
 {:else if !validUrl && clientSideLoad }
     {#await getCoverArtClientSide(coverArtSearchTerms, continuePromise)}
-        <img src={wave} alt="loading" class={imgClass} />
+        <img src={wave} alt="loading" class={imgClass} loading='lazy' />
     {:then result}
-        <img src={result.lastFmCoverArtUrl ?? result.coverArtArchiveUrl ??  result.wave} alt={result ? altText : 'not found'} class={imgClass}  />
+        <img src={result.lastFmCoverArtUrl} onerror={(event) => event.currentTarget.src = wave} alt={result ? altText : 'not found'} class={imgClass} loading='lazy' />
     {:catch}
-        <img src={wave} alt="not found" class={imgClass}  />
+        <img src={wave} alt="not found" class={imgClass} loading='lazy' />
     {/await}
 {:else if !validUrl && !clientSideLoad }
-    <img src={wave} alt="not found" class={imgClass}  />
+    <img src={wave} alt="not found" class={imgClass} loading='lazy' />
 {/if}
-
-<!-- <style>
-    img {
-        width: inherit;
-    }
-</style> -->

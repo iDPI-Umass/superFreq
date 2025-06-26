@@ -1,8 +1,12 @@
 ---
 title: Updates
 layout: about
-updated: 06/23/2025
+updated: 06/26/2025
 ---
+### June 26, 2026
+#### Bug Fixes
+- Fixed image sizing in metadata search for posts
+
 ### June 23, 2025
 #### Updates
 Freq is now at 1.0! The following have added, and the navigation menu changed accordingly:

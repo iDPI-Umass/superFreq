@@ -626,3 +626,10 @@ dialog.notification {
 	font-weight: var(--freq-font-weight-semi-bold);
 	letter-spacing: var(--freq-letter-spacing-looser);
 }
+
+.result-image {
+	max-width: 75px;
+	height: 75px;
+	margin-left: auto;
+	margin-right: 0;
+}
