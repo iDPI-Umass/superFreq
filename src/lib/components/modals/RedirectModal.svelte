@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { onDestroy, onMount, tick } from 'svelte'
     import type { Snippet } from 'svelte'
     import { goto, preloadData } from '$app/navigation'
 
@@ -37,8 +36,6 @@
     })
 
 </script>
-
-<!-- <svelte:options runes={true} /> -->
 
 <dialog class="notification"
     aria-label="redirect-modal"

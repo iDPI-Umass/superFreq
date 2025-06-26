@@ -128,7 +128,6 @@
 	    if (dialog && !showModal) dialog.close()
 	})
 </script>
-<!-- <svelte:options runes={true} /> -->
 
 <svelte:window
 	onkeydown={(e) => {

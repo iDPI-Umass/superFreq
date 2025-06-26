@@ -17,7 +17,6 @@
         itemType
     }: ComponentProps = $props()
 </script>
-<!-- <svelte:options runes={true} /> -->
 
 {#if display}
     <span class="inline-block">

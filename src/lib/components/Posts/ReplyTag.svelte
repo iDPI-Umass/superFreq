@@ -15,7 +15,6 @@
         replyToSlug
     }: ComponentProps = $props()
 </script>
-<!-- <svelte:options runes={true} /> -->
 
 <a href={permalinkRoot.concat(replyToSlug as string)}>
     <span 

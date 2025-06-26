@@ -3,9 +3,6 @@
   import Dropdown from '$lib/components/menus/ReuseableDropdownMenu.svelte'
   import SiteSearch from 'src/lib/components/Search/SiteSearch.svelte';
 
-  import CoverArt from "src/lib/components/layout/CoverArt.svelte";
-  import { searchResults } from "$lib/resources/states.svelte"
-
   interface ComponentProps {
     sessionUserId: string | null
     username: string
@@ -25,11 +22,6 @@
   const thisUrl = page.url
 
 </script>
-
-<!-- <svelte:options runes={true} /> -->
-<!-- <svelte:head>
-  <title>Freq</title>
-</svelte:head> -->
 
 <div class="grid-background">
   <header>

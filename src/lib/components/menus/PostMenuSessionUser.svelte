@@ -44,7 +44,6 @@
 	})
 </script>
 
-<!-- <svelte:options runes={true} /> -->
 <svelte:window
 	onkeydown={(e) => {
 		if (e.key === 'Escape') {

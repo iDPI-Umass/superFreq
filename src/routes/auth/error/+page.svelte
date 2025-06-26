@@ -9,7 +9,6 @@
 
     const redirectFromParam = data?.redirectFromParam as string
 </script>
-<!-- <svelte:options runes={true} /> -->
 
 <p>some error with your login</p>
 

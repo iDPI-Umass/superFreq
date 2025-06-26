@@ -1,11 +1,6 @@
 <script lang="ts">
-    import type { Snippet } from 'svelte'
-    import decoration from "$lib/assets/images/panel-header-decoration.svg"
-
     let { button, children }: {button?: any, children?:any } = $props()
 </script>
-<!-- <svelte:options runes={true} /> -->
-
 <div class="panel-header">
     {@render children?.()}
     <div class="button-spacing">

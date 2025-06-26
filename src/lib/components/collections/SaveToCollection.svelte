@@ -33,8 +33,6 @@
 
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-
 <form 
     method="POST"
     action="?/getCollectionList" 
