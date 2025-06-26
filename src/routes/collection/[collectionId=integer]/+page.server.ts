@@ -6,6 +6,7 @@ import { selectViewableCollectionContents } from 'src/lib/resources/collections'
 import { insertUpdateCollectionFollow } from 'src/lib/resources/users';
 import { insertUpdateReaction, insertPost, updatePost, deletePost } from 'src/lib/resources/posts';
 import { insertPostFlag } from 'src/lib/resources/users';
+import { validStringCheck } from '$lib/resources/parseData';
 
 let loadData = true;
 let updateFollow = false;
@@ -152,8 +153,8 @@ export const actions = {
 
 		const reactionData = {
 			user_id: sessionUserId,
-			post_id: postId,
-			collection_id: collectionId,
+            post_id: validStringCheck(postId),
+            collection_id: validStringCheck(collectionId),
 			reaction_type: reactionType,
 			item_type: itemType
 		} as App.RowData;
