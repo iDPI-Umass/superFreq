@@ -312,7 +312,8 @@ export const inviteRequest = async function ( email: string, referredBy: string 
             .insertInto('invites')
             .values({
                 email: email,
-                referred_by: referredBy
+                referred_by: referredBy,
+                approved: true
             })
             .returning(['approved', 'user_id'])
             .executeTakeFirst()
