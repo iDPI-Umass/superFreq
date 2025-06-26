@@ -51,8 +51,8 @@ Deno.serve(async (req) => {
           subject: `New bug report: ${id}`,
           // text: 'test',
           // text: `New bug report ${id}.`,
-          text: `New bug report (${id}) by ${display_name} (${username}) ${email} at ${createdAtDate}.\r\n\r\n Type:\r\n ${type}\r\n\r\n Path:\r\n ${path} \r\n\r\n Description: \r\n ${description} \r\n\r\n Bug report dashboard:\r\n https://freq.social/admin/bug-reports`,
-          html: `<h2>New bug report: ${id}</h2><p>By <a href=\"https://freq.social/user/${username}\">${display_name} (${username})</a> <a href=\"mailto:${email}\">${email}</a> at ${createdAtDate}</p><p><b>Type</b><br /> ${type}</p><p><b>Path</b><br />${path}</p><p><b>Description</b><br /> ${description}</p><p>Bug report dashboard: <br /> <a href=\"https://freq.social/admin/bug-reports\">https://freq.social/admin/bug-reports</a></p>`
+          text: `New bug report (${id}) by ${display_name} (${username}) ${email} at ${createdAtDate}.\r\n\r\n Type:\r\n ${type}\r\n\r\n Path:\r\n ${path} \r\n\r\n Description: \r\n ${description}`,
+          html: `<h2>New bug report: ${id}</h2><p>By <a href=\"https://freq.social/user/${username}\">${display_name} (${username})</a> <a href=\"mailto:${email}\">${email}</a> at ${createdAtDate}</p><p><b>Type</b><br /> ${type}</p><p><b>Path</b><br />${path}</p><p><b>Description</b><br /> ${description}</p>`
         }, error => {
           if (error) {
             console.log('smtp error:', error)
