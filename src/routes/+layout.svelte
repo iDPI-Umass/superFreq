@@ -67,43 +67,49 @@
 
 <div class="buffer"></div>
 
-<div class="double-border-full-vw"></div>
-<footer>
-	<div class="site-identity">
-    <a class="logo-footer" href="/">
-      <img alt="Freq" src={logo} />
-    </a>
-	<span>A place to hang out and discover cool music.</span>
-	</div>
-	<ul>
-		<li>
-			<a href="/about">about</a>
-		</li>
-		<li>
-			<a href="/about/guidelines">community guidlines</a>
-		</li>
-		<li>
-			<a href="/about#data">data and consent</a>
-		</li>
-		<li>
-			<a href="/about/updates#updates">updates</a>
-		</li>
-		<li>
-			<a href="mailto:hello@freq.social">
-				contact
-				<SquareArrow class="redirect-icon" size="12"></SquareArrow>
-			</a>
-		</li>
-	</ul>
-</footer>
+<div class="footer-spacing">
+	<div class="double-border-full-vw"></div>
+	<footer>
+		<div class="site-identity">
+		<a class="logo-footer" href="/">
+		<img alt="Freq" src={logo} />
+		</a>
+		<span>A place to hang out and discover cool music.</span>
+		</div>
+		<ul>
+			<li>
+				<a href="/about">about</a>
+			</li>
+			<li>
+				<a href="/about/guidelines">community guidlines</a>
+			</li>
+			<li>
+				<a href="/about#data">data and consent</a>
+			</li>
+			<li>
+				<a href="/about/updates#updates">updates</a>
+			</li>
+			<li>
+				<a href="mailto:hello@freq.social">
+					contact
+					<SquareArrow class="redirect-icon" size="12"></SquareArrow>
+				</a>
+			</li>
+		</ul>
+	</footer>
+</div>
 
 <style>
     .buffer {
         padding-bottom: var(--freq-spacing-large);
     }
+	.footer-spacing {
+		margin-top: auto;
+	}
 	footer {
 		display: flex;
 		flex-direction: row;
+		flex-shrink: 0;
 		max-width: 100vw;
 		padding: var(--freq-spacing-large) var(--freq-spacing-x-large);
 		background-color: var(--freq-background-grid-fallback);
