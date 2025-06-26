@@ -1,5 +1,4 @@
 <script lang="ts">
-	// export let embedInfo: App.Embed
 	interface ComponentProps {
 		embedInfo: App.Embed;
 	}
@@ -7,14 +6,13 @@
 	let { id, source } = $derived(embedInfo);
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-
 {#if source == 'bandcamp'}
 	<iframe
 		style="border: 0; width: 100%; height: 42px;"
 		src="https://bandcamp.com/EmbeddedPlayer/{id}/size=small/bgcol=333333/linkcol=ffffff/transparent=true/"
 		title="Bandcamp player"
 		seamless
+		loading="lazy"
 	></iframe>
 {:else if source == 'soundcloud'}
 	<iframe
@@ -25,6 +23,7 @@
 		allow="autoplay"
 		src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/{id}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
 		title="Soundcloud player"
+		loading="lazy"
 	></iframe>
 {:else if source == 'youtube'}
 	<div class="youtube">
@@ -36,6 +35,7 @@
 			allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 			referrerpolicy="strict-origin-when-cross-origin"
 			allowfullscreen
+			loading="lazy"
 		></iframe>
 	</div>
 {:else if source == 'mixcloud'}
@@ -45,10 +45,9 @@
 		src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&feed={id}"
 		frameborder="0"
 		title="Mixcloud player"
+		loading="lazy"
 	></iframe>
 {/if}
-
-<!-- {@debug} -->
 
 <style>
 	.youtube {
