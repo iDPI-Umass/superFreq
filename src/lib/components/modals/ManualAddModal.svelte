@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { add } from 'date-fns';
 	import type { Snippet } from 'svelte'
     import { listenUrlWhitelistCheck } from '$lib/resources/parseData'
-    import { collectionData } from '$lib/resources/states.svelte';
+    import { collectionData } from '$lib/resources/states.svelte'
 
 
 	interface ComponentProps {
@@ -69,8 +68,6 @@
         return verifiedUrl 
     }
 </script>
-
-<!-- <svelte:options runes={true} /> -->
 
 <svelte:window
 	on:keydown={(e) => {

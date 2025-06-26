@@ -127,8 +127,6 @@
 	}
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-
 <div class="search-bar">
 	<ListModal bind:showModal>
 		{#snippet headerText()}

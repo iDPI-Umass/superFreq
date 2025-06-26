@@ -16,7 +16,6 @@
     }: ComponentProps = $props()
 
 </script>
-<!-- <svelte:options runes={true} /> -->
 
 {#if itemType == "release_group"}
     <span 

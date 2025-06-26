@@ -25,8 +25,6 @@
     }
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-
 <SEO title="Explore users"></SEO>
 
 <div class="panel">

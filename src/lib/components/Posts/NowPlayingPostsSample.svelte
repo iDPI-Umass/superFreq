@@ -1,9 +1,7 @@
 <script lang="ts">
     import { enhance } from "$app/forms"
-    import { goto } from "$app/navigation"
     import PanelHeader from "src/lib/components/layout/PanelHeader.svelte"
     import NowPlayingPost from "./NowPlayingPost.svelte"
-    import PostReply from "./PostReply.svelte"
 
     interface ComponentProps {
         posts: any
@@ -30,8 +28,6 @@
     }: ComponentProps = $props()
     
 </script>
-
-<!-- <svelte:options runes={true} /> -->
 
 {#if posts && posts.length > 0}
 <div class="panel-medium">

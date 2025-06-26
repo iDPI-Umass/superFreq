@@ -36,8 +36,6 @@
     } as any
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-
 <form 
     method="POST" 
     id="submitReaction"
