@@ -81,7 +81,7 @@
 	</ul>
 </div>
 
-
+<div class="center">
 <div class="two-column">
 	<div class="column-two-thirds">
 		<CollectionsList 
@@ -109,12 +109,20 @@
 		{/if}
 	</div>
 </div>
-
+</div>
 
 <style>
 	.panel {
 		max-width: var(--freq-max-width-primary);
+		margin: auto;
 		padding: 0;
+	}
+	/* .two-column {
+		max-width: var(--freq-max-width-primary);
+		margin: var(--freq-spacing-large) auto;
+	} */
+	.center {
+		margin: 0 auto;
 	}
 	ul.spotlight {
 		display: grid;
@@ -169,7 +177,6 @@
 		background-color: black;
 		margin: var(--freq-height-spacer-double) auto;
 	}
-
 	.jumbotron p {
 		font-family: var(--freq-font-mono);
 		font-size: var(--freq-font-size-large);

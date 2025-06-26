@@ -88,38 +88,11 @@
     let showLoadMore = $state(false)
     
     $effect(() => {
-        // const offset = batchSize * ( batchIterator + 1 )
-        
-        // console.log(offset)
-        // const initialCollectionLength = collectionData.collectionItems.length 
-
-        // console.log(collectionData)
-
-        // let addMoreCollectionItems = true
-
-        // if ( collectionData.title && collectionData.collectionItems[initialCollectionLength - 1]['item_position'] == collectionContents[batchSize - 1]['item_position']) {
-        //     addMoreCollectionItems = false
-        // }
-
-        // if (!addMoreCollectionItems) {
-        //     collectionData.collectionItems.length = offset
-        // }
-
-        console.log(collectionMetadata)
         sortedItems =  sort(sortOption)
         collectionData.type = collectionMetadata?.type as string
         collectionData.status = collectionMetadata?.status as string    
         collectionData.updatedAt = collectionMetadata?.updated_at as Date
         collectionData.collectionItems = collectionContents as App.RowData[]
-
-        // let newCollectionLength = 0
-        // if ( addMoreCollectionItems ) {
-        //     collectionData.collectionItems.push(...collectionContents)
-
-        //     newCollectionLength = collectionData.collectionItems.length
-        // }
-
-        // showLoadMore = ( newCollectionLength == totalContents ) ? false : true
     })
 
 </script>

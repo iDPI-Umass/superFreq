@@ -121,6 +121,8 @@ html {
 /* Spacings */
 html {
     --freq-max-width-primary: 50rem;
+    --freq-max-width-double: calc(var(--freq-max-width-primary) * 2.1);
+    --freq-max-width-half: calc(var(--freq-max-width-primary) * 0.5);
     --freq-width-spacer: 1.5625rem;
     --freq-width-spacer-half: calc(0.5 * var(--freq-width-spacer));
     --freq-width-spacer-quarter: calc(0.25 * var(--freq-width-spacer));
