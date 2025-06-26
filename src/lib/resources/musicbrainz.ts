@@ -505,9 +505,7 @@ export const getLastFmCoverArt = async function ( releaseGroup: App.RowData ) {
     try {
         const lastFmEndpoint = `https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=${lastFmApiKey}&artist=${releaseGroup.artist_name}&album=${releaseGroup.release_group_name}&format=json`
         const lastFmRes = await fetch(lastFmEndpoint)
-        // console.log(lastFmRes)
         const lastFmData = await lastFmRes.json()
-        // console.log(lastFmData)
         const imgArray = lastFmData["album"]["image"]
         const megaImg = imgArray.find(getMegaImage)
         const coverArtUrl = megaImg["#text"] ?? null as string | null
@@ -568,8 +566,6 @@ export const getCoverArtClientSide = async function ( releaseGroup: App.RowData,
         throw Error
     }
 
-    // const coverArtArchiveUrl =  null
-
     if ( !continuePromise ) {
         throw Error
     }
@@ -580,7 +576,6 @@ export const getCoverArtClientSide = async function ( releaseGroup: App.RowData,
     try {
         const lastFmResUrl = await getLastFmCoverArt( releaseGroup ) as string
 
-        console.log(lastFmResUrl)
         return { coverArtArchiveUrl, lastFmCoverArtUrl: lastFmResUrl, wave: wave, success: true }
     }
     catch ( error ) {
@@ -651,7 +646,6 @@ export const getArtistImage = async function ( mbid: string, milliseconds: numbe
 
 // Check if item is already in collection
 export const checkDuplicate = function ( mbid: string, addedItems: App.RowData | App.RowData[], deletedItems: App.RowData[], mbidCategory: string ) {
-    console.log(mbid, mbidCategory, addedItems)
     if ( deletedItems.length < 1 || !mbid ) {
         return { isDuplicate: false, duplicateItem: null }
     }

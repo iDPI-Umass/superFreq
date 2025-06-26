@@ -1,15 +1,7 @@
-<!-- 
-Needs *either* an item object *or* imgUrl, aritstName, and releaseGroupName props. 
- 
-Currently configured to server Last.fm images on the client side by default on account of Internet Archive's Cover Art Archive being down.
--->
-
-
 <script lang="ts">
-    import { onMount } from "svelte"
-    import { checkFetchedCoverArt, getLastFmCoverArt, getCoverArt, getCoverArtClientSide } from "$lib/resources/musicbrainz"
+    import { getCoverArtClientSide } from "$lib/resources/musicbrainz"
     import wave from "$lib/assets/images/logo/freq-wave.svg"
-    import { promiseStates } from "$lib/resources/states.svelte";
+    import { promiseStates } from "$lib/resources/states.svelte"
 
     interface ComponentProps {
         item?: any
@@ -50,8 +42,6 @@ Currently configured to server Last.fm images on the client side by default on a
         'release_group_mbid': item?.release_group_mbid ?? null
     })
 
-    const waveStaticUrl = 'https://www.freq.social/images/logo/freq-wave.svg'
-
     const continuePromise = $derived( promiseStates.continueClientSideImgPromise )
 
     const imageSelector = function ( coverArtItem: App.RowData ) {
@@ -72,8 +62,6 @@ Currently configured to server Last.fm images on the client side by default on a
     }
 
     const { validUrl, url } = $derived( imageSelector( coverArtItem ))
-
-    console.log(wave)
 
 </script>
 
