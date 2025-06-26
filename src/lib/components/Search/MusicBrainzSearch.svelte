@@ -197,6 +197,7 @@
 									<CoverArt
 										item={coverArtItem(item, searchCategory)}
 										altText='album {releaseGroupName(searchCategory, item)} by artist {artistName(searchCategory, item)}'
+										imgClass="result-image"
 										clientSideLoad={true}
 									></CoverArt>
 								</div>
@@ -234,11 +235,6 @@
 </div>
 
 <style>
-	.search-layout {
-		display: flex;
-		flex-direction: row;
-		flex-wrap: nowrap;
-	}
     .search-bar {
         display: flex;
         flex-direction: row;
@@ -252,20 +248,11 @@
 	.input-sizing {
 		max-width: 100%;
 	}
-	.result-image {
-		width: 100px;
-		margin-left: auto;
-		margin-right: 0;
-	}
 	@media screen and (max-width: 770px) {
 		form.search {
 			display: flex;
 			flex-wrap: wrap-reverse;
 			align-items: start;
 		}
-        /* .search-bar * {
-            flex-direction: column;
-			align-items: start;
-        } */
     }
 </style>

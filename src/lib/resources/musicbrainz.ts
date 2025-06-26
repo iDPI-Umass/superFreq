@@ -505,15 +505,21 @@ export const getLastFmCoverArt = async function ( releaseGroup: App.RowData ) {
     try {
         const lastFmEndpoint = `https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=${lastFmApiKey}&artist=${releaseGroup.artist_name}&album=${releaseGroup.release_group_name}&format=json`
         const lastFmRes = await fetch(lastFmEndpoint)
+        // console.log(lastFmRes)
         const lastFmData = await lastFmRes.json()
+        // console.log(lastFmData)
         const imgArray = lastFmData["album"]["image"]
         const megaImg = imgArray.find(getMegaImage)
-        const coverArtUrl = megaImg["#text"] as string
+        const coverArtUrl = megaImg["#text"] ?? null as string | null
+
+        if ( !coverArtUrl ) {
+            throw Error
+        }
+
         return coverArtUrl
     }
     catch ( error ) {
-        const coverArtUrl = null
-        return coverArtUrl
+        throw Error
     }
 }
 
@@ -562,32 +568,23 @@ export const getCoverArtClientSide = async function ( releaseGroup: App.RowData,
         throw Error
     }
 
+    // const coverArtArchiveUrl =  null
+
     if ( !continuePromise ) {
-        return  { coverArtArchiveUrl, lastFmCoverArtUrl, wave: wave, success: false }
+        throw Error
     }
 
-    // const coverArtArchiveUrl = releaseGroup.release_group_mbid ? `https://coverartarchive.org/release-group/${releaseGroup.release_group_mbid}/front` : null
-    
-    const coverArtArchiveUrl =  null
-    
-    const lastFmCoverArtUrl = null as string | null
-    const lastFmResUrl = await getLastFmCoverArt( releaseGroup ) as string
+    const coverArtArchiveUrl = releaseGroup.release_group_mbid ? `https://coverartarchive.org/release-group/${releaseGroup.release_group_mbid}/front` : null
+
 
     try {
-        const httpLastFm = new XMLHttpRequest()
-        httpLastFm.open('HEAD', lastFmResUrl, false)
-        httpLastFm.send()
-        const lastFmCoverArtUrl = ( httpLastFm.status == 404 ) ? null : lastFmResUrl
+        const lastFmResUrl = await getLastFmCoverArt( releaseGroup ) as string
 
-        if ( !lastFmCoverArtUrl ) {
-            throw Error
-        }
-        else {
-            return { coverArtArchiveUrl, lastFmCoverArtUrl, wave: wave, success: true }
-        }
+        console.log(lastFmResUrl)
+        return { coverArtArchiveUrl, lastFmCoverArtUrl: lastFmResUrl, wave: wave, success: true }
     }
     catch ( error ) {
-        return  { coverArtArchiveUrl, lastFmCoverArtUrl, wave: wave, success: false }
+        throw Error
     }
 }
 
