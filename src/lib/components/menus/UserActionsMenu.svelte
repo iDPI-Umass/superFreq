@@ -33,8 +33,6 @@
         success
     }: ComponentProps = $props()
 
-    // let actionSuccess = $derived(success)
-
     let popOverOpenState = $state(interactionStates.popOverOpenState)
     let showModal: boolean = $state(false)
     let dialog: any
@@ -100,16 +98,7 @@
         success = null
     }
 
-    let buttonsInactive = $state(false)
-
-    function runningAction () {
-        buttonsInactive = true
-        Promise.resolve(success).then(() => {
-            buttonsInactive = false
-            return
-        })
-    }
-
+    let loading = $state(false)
 
     $effect(() => {
 		dialog.addEventListener("click", e => {
@@ -251,7 +240,12 @@
         method="POST" 
         id={formIDs[dialogMode]} 
         action={formActions[dialogMode]}
-        use:enhance
+        use:enhance={() => {
+            loading = true
+            return async ({ update }) => {
+                await update()
+                loading = false
+            }}}
     >
         <input
             type="hidden"
@@ -277,7 +271,7 @@
                     formmethod="dialog" 
                     class="standard"
                     onclick={closeDialog}
-                    disabled={buttonsInactive}
+                    disabled={loading}
                 >
                     cancel
                 </button>
@@ -286,8 +280,7 @@
                     type="submit"
                     class="standard"
                     formaction={formActions[dialogMode]}
-                    onclick={runningAction}
-                    disabled={buttonsInactive}
+                    disabled={loading}
                 >
                     {dialogConfirmButtonOptions[dialogMode]}
                 </button>
