@@ -153,8 +153,8 @@ export const actions = {
 
 		const reactionData = {
 			user_id: sessionUserId,
-            post_id: validStringCheck(postId),
-            collection_id: validStringCheck(collectionId),
+			post_id: validStringCheck(postId),
+			collection_id: validStringCheck(collectionId),
 			reaction_type: reactionType,
 			item_type: itemType
 		} as App.RowData;

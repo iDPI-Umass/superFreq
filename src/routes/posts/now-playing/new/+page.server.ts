@@ -47,7 +47,8 @@ export const actions = {
 		const data = await request.formData();
 		const itemType = data.get('item-type') as string;
 		const listenUrl = data.get('listen-url') as string;
-		const listenUrlData = JSON.parse(data.get('parsed-url-data')) as App.RowData;
+		const parsedUrlData = validStringCheck(data.get('parsed-url-data') as string);
+		const listenUrlData = parsedUrlData ? JSON.parse(parsedUrlData) : null;
 		const artistMbid = data.get('artist-mbid') as string;
 		const artistName = data.get('artist-name') as string;
 		const releaseGroupMbid = data.get('release-group-mbid') as string;
@@ -66,9 +67,9 @@ export const actions = {
 		async function urlData(listenUrl: string, listenUrlData: App.RowData) {
 			if (!listenUrl) {
 				return null;
-			} else if (listenUrl && listenUrlData.id) {
+			} else if (listenUrl && listenUrlData) {
 				return listenUrlData;
-			} else if (listenUrl && !listenUrlData.id) {
+			} else if (listenUrl && !listenUrlData) {
 				const data = await getListenUrlData(listenUrl);
 				return data;
 			}
