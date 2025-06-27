@@ -144,9 +144,7 @@ export const actions = {
             'item_type': itemType
         } as App.RowData
 
-        console.log(reactionData)
         const { reaction } = await insertUpdateReaction( reactionData )
-        console.log(reaction)
 
         const success = reaction ? true : false
 
