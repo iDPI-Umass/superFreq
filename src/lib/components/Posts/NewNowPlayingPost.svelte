@@ -27,7 +27,16 @@
 	const timeoutDurationMs = 1000;
 	let parseFormSubmit = null;
 
-	async function getUrlData(listenUrl: string) {
+	async function getUrlData() {
+		const artistName = document.getElementById('artist-name');
+		const releaseGroupName = document.getElementById('release-group-name');
+		const recordingName = document.getElementById('recording-name');
+		const episode = document.getElementById('episode');
+
+		if (artistName && (releaseGroupName || recordingName || episode)) {
+			return;
+		}
+
 		clearTimeout(timeout);
 		timeout = await setTimeout(async function () {
 			return parseFormSubmit.requestSubmit();
@@ -93,7 +102,7 @@
 			<Tooltip>A link from Bandcamp, Soundcloud, or YouTube can be embedded in your post.</Tooltip>
 		</div>
 		<input
-			oninput={() => getUrlData(listenUrl)}
+			oninput={() => getUrlData()}
 			class="text"
 			id="listen-url"
 			name="listen-url"
