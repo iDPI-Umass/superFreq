@@ -185,10 +185,14 @@ export const actions = {
         const episodeName = data.get('episode') as string
         const listenUrlString = data.get('listen-url') as string
 
+        console.log('parsing?')
+
         if ( !( artistName || releaseGroupName || recordingName || episodeName) )
         {
             parsedUrlInfo = await getListenUrlData(listenUrlString)
         }
+
+        console.log(parsedUrlInfo)
 
         return { success: true }
     },
