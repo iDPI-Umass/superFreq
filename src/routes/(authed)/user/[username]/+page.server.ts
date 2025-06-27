@@ -22,6 +22,8 @@ let remainingNotificationsItems = 0
 let sessionUserCollections = [] as App.RowData[]
 
 let feedMode = 'following'
+let parsedUrlInfo = null as App.RowData | null
+
 
 export const load: PageServerLoad = async ({ params, url, locals: { safeGetSession }}) => {
 
@@ -116,7 +118,7 @@ export const load: PageServerLoad = async ({ params, url, locals: { safeGetSessi
     const totalAvailableItems = ( feedMode == 'following' ) ? totalAvailableFollowingItems : totalAvailableNotificationsItems
     const remaining = ( feedMode == 'following' ) ? remainingFollowingItems : remainingNotificationsItems
 
-    return { sessionUserId, profileData, feedItems: feedData.feedItems, notificationsItems: feedData.notificationsItems, selectedOptions: feedData.selectedOptions, totalAvailableItems, remaining, profileUsername, sessionUserCollections, updatesPageUpdatedAt }
+    return { sessionUserId, profileData, feedItems: feedData.feedItems, notificationsItems: feedData.notificationsItems, selectedOptions: feedData.selectedOptions, totalAvailableItems, remaining, profileUsername, sessionUserCollections, updatesPageUpdatedAt, parsedUrlInfo }
 }
 
 export const actions = { 
@@ -177,11 +179,22 @@ export const actions = {
     },
     parseListenUrl: async ({ request }) => {
         const data = await request.formData()
+        const artistName = data.get('artist-name') as string
+        const releaseGroupName = data.get('release-group-name') as string
+        const recordingName = data.get('recording-name') as string
+        const episodeName = data.get('episode') as string
         const listenUrlString = data.get('listen-url') as string
 
-        const embedInfo = await getListenUrlData(listenUrlString)
+        console.log('parsing?')
 
-        return { embedInfo, success: true }
+        if ( !( artistName || releaseGroupName || recordingName || episodeName) )
+        {
+            parsedUrlInfo = await getListenUrlData(listenUrlString)
+        }
+
+        console.log(parsedUrlInfo)
+
+        return { success: true }
     },
 	post:async ({ request, locals: { safeGetSession } }) => {
         const { session } = await safeGetSession()
@@ -193,6 +206,8 @@ export const actions = {
         const data = await request.formData()
         const itemType = data.get('item-type') as string
 		const listenUrl = data.get('listen-url') as string
+        const parsedUrlData = validStringCheck(data.get('parsed-url-data') as string)
+        const listenUrlData = parsedUrlData ? JSON.parse(parsedUrlData) : null
         const artistMbid = data.get('artist-mbid') as string
         const artistName = data.get('artist-name') as string
         const releaseGroupMbid = data.get('release-group-mbid') as string
@@ -208,7 +223,20 @@ export const actions = {
         const showName = data.get('show') as string
         const postText = data.get('post-text') as string
 
-        const embedInfo = listenUrl ? await getListenUrlData(listenUrl) : null
+        async function urlData ( listenUrl: string, listenUrlData: App.RowData ) {
+            if ( !listenUrl ) {
+                return null
+            }
+            else if ( listenUrl && listenUrlData ) {
+                return listenUrlData
+            }
+            else if ( listenUrl && !listenUrlData ) {
+                const data = await getListenUrlData(listenUrl)
+                return data
+            }
+        }
+
+        const embedInfo = await urlData( listenUrl, listenUrlData )
 
         const postData = {
             user_id: sessionUserId,

@@ -20,8 +20,6 @@
     let editedText = $state() as string
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-
 <form 
     method="POST" 
     name="editPostText" 

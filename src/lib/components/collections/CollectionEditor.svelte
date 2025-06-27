@@ -73,8 +73,6 @@
     let showManualAddModal = $state(false)
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-
 <div class="collection-search" >
     {#if !(mode?.includes('artist')) && !(mode?.includes('release_group')) && !(mode?.includes('recording')) }
     <div class="form-column">

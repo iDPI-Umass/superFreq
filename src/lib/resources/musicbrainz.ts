@@ -508,12 +508,16 @@ export const getLastFmCoverArt = async function ( releaseGroup: App.RowData ) {
         const lastFmData = await lastFmRes.json()
         const imgArray = lastFmData["album"]["image"]
         const megaImg = imgArray.find(getMegaImage)
-        const coverArtUrl = megaImg["#text"] as string
+        const coverArtUrl = megaImg["#text"] ?? null as string | null
+
+        if ( !coverArtUrl ) {
+            throw Error
+        }
+
         return coverArtUrl
     }
     catch ( error ) {
-        const coverArtUrl = null
-        return coverArtUrl
+        throw Error
     }
 }
 
@@ -563,31 +567,19 @@ export const getCoverArtClientSide = async function ( releaseGroup: App.RowData,
     }
 
     if ( !continuePromise ) {
-        return  { coverArtArchiveUrl, lastFmCoverArtUrl, wave: wave, success: false }
+        throw Error
     }
 
-    // const coverArtArchiveUrl = releaseGroup.release_group_mbid ? `https://coverartarchive.org/release-group/${releaseGroup.release_group_mbid}/front` : null
-    
-    const coverArtArchiveUrl =  null
-    
-    const lastFmCoverArtUrl = null as string | null
-    const lastFmResUrl = await getLastFmCoverArt( releaseGroup ) as string
+    const coverArtArchiveUrl = releaseGroup.release_group_mbid ? `https://coverartarchive.org/release-group/${releaseGroup.release_group_mbid}/front` : null
+
 
     try {
-        const httpLastFm = new XMLHttpRequest()
-        httpLastFm.open('HEAD', lastFmResUrl, false)
-        httpLastFm.send()
-        const lastFmCoverArtUrl = ( httpLastFm.status == 404 ) ? null : lastFmResUrl
+        const lastFmResUrl = await getLastFmCoverArt( releaseGroup ) as string
 
-        if ( !lastFmCoverArtUrl ) {
-            throw Error
-        }
-        else {
-            return { coverArtArchiveUrl, lastFmCoverArtUrl, wave: wave, success: true }
-        }
+        return { coverArtArchiveUrl, lastFmCoverArtUrl: lastFmResUrl, wave: wave, success: true }
     }
     catch ( error ) {
-        return  { coverArtArchiveUrl, lastFmCoverArtUrl, wave: wave, success: false }
+        throw Error
     }
 }
 
@@ -654,7 +646,6 @@ export const getArtistImage = async function ( mbid: string, milliseconds: numbe
 
 // Check if item is already in collection
 export const checkDuplicate = function ( mbid: string, addedItems: App.RowData | App.RowData[], deletedItems: App.RowData[], mbidCategory: string ) {
-    console.log(mbid, mbidCategory, addedItems)
     if ( deletedItems.length < 1 || !mbid ) {
         return { isDuplicate: false, duplicateItem: null }
     }

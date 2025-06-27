@@ -123,8 +123,6 @@
     const gridSpacers = $derived(getGridSpacers(items, layout))
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-
 {#snippet editorInteractions(item: any, labelText: string)}
     <div class="editor-interactions">
         <button class="standard" onclick={() => deleteItem(item)}>

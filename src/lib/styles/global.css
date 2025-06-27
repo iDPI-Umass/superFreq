@@ -5,8 +5,9 @@
 */
 
 body {
-	display: block;
-	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
 	margin: 0 auto;
 	background: var(--freq-color-panel-background);
 	color: var(--freq-color-text);
@@ -16,30 +17,38 @@ body {
 .two-column {
 	display: flex;
 	flex-direction: row;
-	margin: var(--freq-spacing-large);
-	max-width: calc(var(--freq-max-width-primary) * 2.1);
+	margin: var(--freq-spacing-large) auto;
+	max-width: var(--freq-max-width-double);
 	gap: var(--freq-width-spacer);
+}
+
+.two-column:first-child {
+	margin-right: var(--freq-spacing-large)!important;
+}
+
+.two-column:last-child {
+	margin-left: var(--freq-spacing-large)!important;
 }
 
 .column-half {
 	display: flex;
 	flex-direction: column;
 	margin: var(--freq-spacing-large);
-	max-width: calc(var(--freq-max-width-primary) * 0.5);
+	max-width: var(--freq-max-width-half);
 }
 
 .column-two-thirds {
 	display: flex;
 	flex-direction: column;
-	margin:  var(--freq-spacing-large);
-	max-width: calc(100% * 0.66);
+	margin:  var(--freq-spacing-large) auto;
+	max-width: calc(var(--freq-max-width-double) * 0.66);
 }
 
 .column-one-third {
 	display: flex;
 	flex-direction: column;
-	margin: var(--freq-spacing-large);
-	max-width: calc(100% * 0.33);
+	margin: var(--freq-spacing-large) auto;
+	max-width: calc(var(--freq-max-width-double) * 0.33);
 }
 
 .panel {
@@ -625,4 +634,11 @@ dialog.notification {
 	text-transform: uppercase;
 	font-weight: var(--freq-font-weight-semi-bold);
 	letter-spacing: var(--freq-letter-spacing-looser);
+}
+
+.result-image {
+	max-width: 75px;
+	height: 75px;
+	margin-left: auto;
+	margin-right: 0;
 }

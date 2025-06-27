@@ -22,9 +22,9 @@ console.log(`Function "send-email-smtp" up and running!`)
 Deno.serve(async (req) => {
   try {
     const { record } = await req.json()
-    const { email, approved, approved_at, user_id, group } = record
+    const { email, approved, approved_at, user_id } = record
     await new Promise<void>((resolve, reject) => {
-      if ( approved && approved_at && group && !user_id) {
+      if ( approved && approved_at && !user_id) {
         transport.sendMail({
           from: Deno.env.get('SMTP_FROM')!,
           to: email,

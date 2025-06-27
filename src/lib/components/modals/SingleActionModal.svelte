@@ -56,8 +56,6 @@
 	})
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-
 <dialog class="notification"
     aria-label="notification modal"
     bind:this={dialog}

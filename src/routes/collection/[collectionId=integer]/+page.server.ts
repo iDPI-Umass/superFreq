@@ -6,6 +6,7 @@ import { selectViewableCollectionContents } from 'src/lib/resources/collections'
 import { insertUpdateCollectionFollow } from 'src/lib/resources/users'
 import { insertUpdateReaction, insertPost, updatePost, deletePost } from 'src/lib/resources/posts'
 import { insertPostFlag } from 'src/lib/resources/users'
+import { validStringCheck } from '$lib/resources/parseData'
 
 let loadData = true
 let updateFollow = false
@@ -130,15 +131,15 @@ export const actions = {
 
         const data = await request.formData()
         const reactionType = data.get('reaction-type') as string
-        const collectionId = data.get('parent-collection-id') as string ?? data.get('collection-id') as string
+        const collectionId = data.get('parent-collection-id') as string ?? data.get('collection-id') as string | null
         const postId = data.get('post-id') as string ?? data.get('post-reply-id') as string
 
         const itemType = postId ? 'post' : 'collection'
 
         const reactionData = {
             'user_id': sessionUserId,
-            'post_id': postId,
-            'collection_id': collectionId,
+            'post_id': validStringCheck(postId),
+            'collection_id': validStringCheck(collectionId),
             'reaction_type': reactionType,
             'item_type': itemType
         } as App.RowData

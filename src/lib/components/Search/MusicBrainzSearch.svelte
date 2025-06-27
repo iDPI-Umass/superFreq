@@ -1,7 +1,7 @@
 <script lang="ts">
-	import ListModal from 'src/lib/components/modals/ListModal.svelte'
+	import ListModal from '$lib/components/modals/ListModal.svelte'
 	import { mbSearch, addCollectionItemNoImg, getCoverArt, addSingleItemNoImg, mbidCateogory, artistName, artistMbid, releaseGroupName, releaseGroupMbid, releaseGroupMetadata, recordingName, itemDate, artistOrigin, getArtistImage } from '$lib/resources/musicbrainz'
-	import CoverArt from '../layout/CoverArt.svelte'
+	import CoverArt from '$lib/components/layout/CoverArt.svelte'
 
     import { promiseStates, collectionData } from '$lib/resources/states.svelte';
 
@@ -127,8 +127,6 @@
 	}
 </script>
 
-<!-- <svelte:options runes={true} /> -->
-
 <div class="search-bar">
 	<ListModal bind:showModal>
 		{#snippet headerText()}
@@ -197,6 +195,7 @@
 									<CoverArt
 										item={coverArtItem(item, searchCategory)}
 										altText='album {releaseGroupName(searchCategory, item)} by artist {artistName(searchCategory, item)}'
+										imgClass="result-image"
 										clientSideLoad={true}
 									></CoverArt>
 								</div>
@@ -234,11 +233,6 @@
 </div>
 
 <style>
-	.search-layout {
-		display: flex;
-		flex-direction: row;
-		flex-wrap: nowrap;
-	}
     .search-bar {
         display: flex;
         flex-direction: row;
@@ -252,20 +246,11 @@
 	.input-sizing {
 		max-width: 100%;
 	}
-	.result-image {
-		width: 100px;
-		margin-left: auto;
-		margin-right: 0;
-	}
 	@media screen and (max-width: 770px) {
 		form.search {
 			display: flex;
 			flex-wrap: wrap-reverse;
 			align-items: start;
 		}
-        /* .search-bar * {
-            flex-direction: column;
-			align-items: start;
-        } */
     }
 </style>

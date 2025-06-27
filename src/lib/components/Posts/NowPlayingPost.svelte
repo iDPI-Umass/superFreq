@@ -3,8 +3,7 @@
     import EditPostBody from 'src/lib/components/Posts/EditPostBody.svelte'
     import LikeReact from 'src/lib/components/Posts/LikeReact.svelte'
     import SaveToCollection from 'src/lib/components/collections/SaveToCollection.svelte'
-    import { displayDate, parseMarkdown } from '$lib/resources/parseData'
-    import { interactionStates } from '$lib/resources/states.svelte'
+    import { displayDate } from '$lib/resources/parseData'
 
     import Reply from '@lucide/svelte/icons/reply'
     import Link from '@lucide/svelte/icons/link-2'
@@ -12,9 +11,6 @@
     import NowPlayingTag from 'src/lib/components/Posts/NowPlayingTag.svelte'
     import CoverArt from 'src/lib/components/layout/CoverArt.svelte'
     import InlineMarkdownText from 'src/lib/components/layout/InlineMarkdownText.svelte'
-
-    import wave from "$lib/assets/images/logo/freq-wave.svg"
-	import { itemDate } from 'src/lib/resources/musicbrainz';
 
     interface ComponentProps {
         sessionUserId?: string | null
@@ -80,8 +76,6 @@
     let editState = $state(false)
 
 </script>
-
-<!-- <svelte:options runes={true} /> -->
 
 <div class="box">
     <div class="double-border">

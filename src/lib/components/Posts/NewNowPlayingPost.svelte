@@ -6,6 +6,7 @@
     import { collectionData } from 'src/lib/resources/states.svelte'
 
     import { Tabs } from "bits-ui";
+	import { onMount } from 'svelte';
 
     interface ComponentProps {
         parsedUrlInfo?: App.RowData | null
@@ -27,15 +28,30 @@
 
     // submit form to parse data at listenUrl and autocomplete 'post' form when url is entered, after a short delay to make sure user has stopped typing
     let timeout = null
-    const timeoutDurationMs = 1000
+    const timeoutDurationMs = 500
     let parseFormSubmit = null
 
-    async function getUrlData ( listenUrl: string ) {
+    let urlData = $state()
+
+    async function getUrlData () {
+        const artistName = (document.getElementById("artist-name") as HTMLInputElement).value
+        const releaseGroupName = (document.getElementById("release-group-name") as HTMLInputElement).value
+        const recordingName = (document.getElementById("recording-name") as HTMLInputElement).value
+        const episode = (document.getElementById("episode") as HTMLInputElement).value
+
+        if ( artistName && ( releaseGroupName || recordingName || episode )) {
+            return
+        }
+
         clearTimeout(timeout)
         timeout = await setTimeout(async function() {
             return parseFormSubmit.requestSubmit()
         }, timeoutDurationMs)
     }
+
+    onMount(() => {
+        collectionData.singleItem = {}
+    })
 </script>
 
 {#snippet postForm( itemType: string, addedItem: App.RowData )}
@@ -104,7 +120,7 @@
             id="parsed-url-data"
             name="parsed-url-data"
             type="hidden"
-            value={JSON.stringify(parsedUrlInfo)}
+            value={JSON.stringify(urlData)}
         />
         <div class="tooltip-group">
             <label 
@@ -118,7 +134,7 @@
             </Tooltip>
         </div>
         <input 
-            oninput={() => getUrlData(listenUrl)}
+            oninput={() => getUrlData()}
             class="text" 
             id="listen-url" 
             name="listen-url" 

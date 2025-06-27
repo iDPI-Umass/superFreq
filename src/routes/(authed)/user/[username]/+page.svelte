@@ -18,7 +18,7 @@
 
     let { data, form } = $props();
 
-    let { sessionUserId, profileData, feedItems, notificationsItems, selectedOptions, remaining, sessionUserCollections, updatesPageUpdatedAt } = $derived(data)
+    let { sessionUserId, profileData, feedItems, notificationsItems, selectedOptions, remaining, sessionUserCollections, updatesPageUpdatedAt, parsedUrlInfo } = $derived(data)
 
     let { profileUserData, followInfo, permission, profileUserBlockInfo, profileUserFlagInfo } = $derived(profileData)
 
@@ -255,7 +255,9 @@
         <InfoBox mode="compact">
             New <a href="/about/updates#updates">updates and bug fixes</a> as of {updatesPageUpdatedAt}
         </InfoBox>
-        <NewNowPlayingPost></NewNowPlayingPost>
+        <NewNowPlayingPost
+            parsedUrlInfo={parsedUrlInfo}
+        ></NewNowPlayingPost>
         <Feed
             sessionUserId={sessionUserId}
             mode="feed"
