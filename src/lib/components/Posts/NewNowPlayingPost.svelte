@@ -34,10 +34,10 @@
     let urlData = $state()
 
     async function getUrlData () {
-        const artistName = document.getElementById("artist-name")
-        const releaseGroupName = document.getElementById("release-group-name")
-        const recordingName = document.getElementById("recording-name")
-        const episode = document.getElementById("episode")
+        const artistName = (document.getElementById("artist-name") as HTMLInputElement).value
+        const releaseGroupName = (document.getElementById("release-group-name") as HTMLInputElement).value
+        const recordingName = (document.getElementById("recording-name") as HTMLInputElement).value
+        const episode = (document.getElementById("episode") as HTMLInputElement).value
 
         if ( artistName && ( releaseGroupName || recordingName || episode )) {
             return
