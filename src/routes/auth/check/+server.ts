@@ -1,50 +1,47 @@
-import { redirect } from '@sveltejs/kit'
-import type { RequestHandler } from './$types'
-import { db } from 'src/database.ts'
-import { sessionUserProfile } from '$lib/resources/states.svelte'
+import { redirect } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
+import { db } from 'src/database.ts';
+import { sessionUserProfile } from '$lib/resources/states.svelte';
 
-export const GET: RequestHandler = async ({ locals: { safeGetSession }}) => {
+export const GET: RequestHandler = async ({ locals: { safeGetSession } }) => {
+	const session = await safeGetSession();
 
-    const session = await safeGetSession()
+	const sessionUserId = session.user?.id as string;
 
-    const sessionUserId = session.user?.id as string
+	let userId: string | null = null;
+	let username: string | null = null;
+	let display_name: string | null = null;
+	let avatar_url: string | null = null;
+	let select: any;
 
-    let userId: string | null = null
-    let username: string | null = null
-    let display_name: string | null = null
-    let avatar_url: string | null = null
-    let select: any
+	try {
+		select = await db
+			.selectFrom('profiles')
+			.select(['id', 'username', 'display_name', 'avatar_url'])
+			.where('id', '=', sessionUserId)
+			.executeTakeFirstOrThrow();
 
-    try {
-      select = await db
-        .selectFrom("profiles")
-        .select(['id', 'username', 'display_name', 'avatar_url'])
-        .where("id", '=', sessionUserId)
-        .executeTakeFirstOrThrow()
+		const profile = await select;
+		userId = profile?.id as string;
+		username = profile?.username as string;
+		display_name = profile?.display_name as string;
+		avatar_url = profile?.avatar_url as string;
+	} catch (error) {
+		select = null;
+	}
 
-      const profile = await select
-      userId = profile?.id as string
-      username = profile?.username as string
-      display_name = profile?.display_name as string
-      avatar_url = profile?.avatar_url as string
-    }
-    catch (error) {
-      select = null
-    }
+	if (userId && username) {
+		((sessionUserProfile.username = username),
+			(sessionUserProfile.display_name = display_name),
+			(sessionUserProfile.avatar_url = avatar_url),
+			(sessionUserProfile.user_id = userId));
 
-    if ( userId && username ) {
-      sessionUserProfile.username = username,
-      sessionUserProfile.display_name = display_name,
-      sessionUserProfile.avatar_url = avatar_url,
-      sessionUserProfile.user_id = userId
+		return redirect(303, `/user/${username}`);
+	} else if (userId && !username) {
+		return redirect(303, '/create-profile');
+	}
 
-      return redirect(303, `/user/${username}`)
-    }
-    else if ( userId && !username ) {
-      return redirect(303, '/create-profile')
-    }
-
-    const errorPath = new URL ( '/auth/error' )
-    errorPath.searchParams.set('redirectFrom', 'check')
-    return redirect(303, errorPath)
-}
+	const errorPath = new URL('/auth/error');
+	errorPath.searchParams.set('redirectFrom', 'check');
+	return redirect(303, errorPath);
+};

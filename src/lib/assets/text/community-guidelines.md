@@ -1,7 +1,7 @@
 ---
 title: Community Guidelines
 layout: about
-moreInfo: "You can also find these on the [About page](/about)."
+moreInfo: 'You can also find these on the [About page](/about).'
 ---
 
 Freq’s primary goals are to empower music lovers, grow music communities, and preserve music history. Like any healthy community, there are certain guidelines members must follow to maintain a productive environment. Please consider the following guidelines when using Freq and interacting with other users.

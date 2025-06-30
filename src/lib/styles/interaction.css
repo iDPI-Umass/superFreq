@@ -9,7 +9,7 @@ button {
 }
 
 button a {
-	color: var(--freq-color-text); 
+	color: var(--freq-color-text);
 }
 
 button:enabled {
@@ -84,7 +84,6 @@ Styles to create button with second top border, intended for tag format
 </button>
 */
 
-
 button.double-border-top {
 	height: fit-content;
 	width: fit-content;
@@ -95,7 +94,6 @@ button.double-border-top {
 	text-transform: uppercase;
 	text-wrap: nowrap;
 }
-
 
 button.double-border-top:is(:hover, :focus) {
 	border: var(--freq-border-primary);
@@ -144,14 +142,16 @@ button.double-border-top:active .inner-border-condensed {
 }
 
 button.double-border-top:is(:disabled, :disabled:hover, :disabled:focus, :disabled:active),
-button.double-border-top:is(:disabled, :disabled:hover, :disabled:focus, :disabled:active) .inner-border,
-button.double-border-top:is(:disabled, :disabled:hover, :disabled:focus, :disabled:active) .inner-border-condensed {
+button.double-border-top:is(:disabled, :disabled:hover, :disabled:focus, :disabled:active)
+	.inner-border,
+button.double-border-top:is(:disabled, :disabled:hover, :disabled:focus, :disabled:active)
+	.inner-border-condensed {
 	border-top: var(--freq-border-button-disabled);
 	color: var(--freq-color-text-muted);
 }
 
 @media screen and (max-width: 770px) {
-	button.double-border-top .inner-border{
+	button.double-border-top .inner-border {
 		padding: var(--freq-spacing-2x-small) var(--freq-spacing-small);
 		font-size: var(--freq-font-size-2x-small);
 	}
@@ -160,38 +160,38 @@ button.double-border-top:is(:disabled, :disabled:hover, :disabled:focus, :disabl
 /* Like button */
 
 button.like {
-    display: flex;
-    flex-direction: row;
-    align-items: start;
-    gap: var(--freq-inline-gap-double);
-    border: none;
-    background: none;
-    color: var(--freq-color-text-muted);
-    font-size: var(--freq-font-size-small);
-    scale: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: start;
+	gap: var(--freq-inline-gap-double);
+	border: none;
+	background: none;
+	color: var(--freq-color-text-muted);
+	font-size: var(--freq-font-size-small);
+	scale: 100%;
 }
 
 button.like:is(:hover, :focus) {
-    background: var(--freq-color-button-lens-active);
-    transition: 0.5s cubic;
+	background: var(--freq-color-button-lens-active);
+	transition: 0.5s cubic;
 }
 
 button.like:active {
-    background: var(--freq-color-button-lens-active);
-    scale: 90%;
+	background: var(--freq-color-button-lens-active);
+	scale: 90%;
 }
 
 button.like:disabled,
-button.like:is( :disabled:hover, :disabled:focus, :disabled:active ) {
-    background: none;
-    scale: 100%;
+button.like:is(:disabled:hover, :disabled:focus, :disabled:active) {
+	background: none;
+	scale: 100%;
 }
 
 /* Mini button */
 button.mini {
-    width: fit-content;
-    border: var(--freq-border-button);
-    background: var(--freq-color-button-background);
+	width: fit-content;
+	border: var(--freq-border-button);
+	background: var(--freq-color-button-background);
 	color: var(--freq-color-text-muted);
 	text-transform: lowercase;
 	padding: var(--freq-spacing-3x-small) var(--freq-spacing-2x-small);
@@ -199,7 +199,7 @@ button.mini {
 }
 
 button.mini:is(:hover, :focus) {
-    border: var(--freq-border-primary);
+	border: var(--freq-border-primary);
 	color: var(--freq-color-text);
 }
 
@@ -232,7 +232,6 @@ button.add {
 	background: var(--freq-color-button-background);
 	color: var(--freq-color-text-muted);
 	font-size: var(--freq-button-font-size-small);
-
 }
 
 button.add:is(:hover, :focus),
@@ -258,39 +257,39 @@ button.add:is(:disabled, :disabled:hover, :disabled:focus, :disabled:active) {
 /* Popover button */
 button.popover-item {
 	display: flex;
-    flex-direction: row;
+	flex-direction: row;
 	width: 100%;
-    align-items: end;
-    gap: var(--freq-inline-gap);
+	align-items: end;
+	gap: var(--freq-inline-gap);
 	border: none;
 	background: none;
-    color: var(--freq-color-text-muted);
-    font-size: var(--freq-font-size-small);
+	color: var(--freq-color-text-muted);
+	font-size: var(--freq-font-size-small);
 }
 
 button.popover-item:is(:hover, :focus) {
-    background: var(--freq-color-button-lens-active);
-    transition: 0.5s cubic;
+	background: var(--freq-color-button-lens-active);
+	transition: 0.5s cubic;
 }
 
 button.popover-item:active {
-    background: var(--freq-color-button-lens-active);
-    scale: 90%;
+	background: var(--freq-color-button-lens-active);
+	scale: 90%;
 }
 
 button.popover-item:disabled,
-button.popover-item:is( :disabled:hover, :disabled:focus, :disabled:active ) {
-    background: none;
-    scale: 100%;
+button.popover-item:is(:disabled:hover, :disabled:focus, :disabled:active) {
+	background: none;
+	scale: 100%;
 }
 
 /* Buttons layout */
 
 .buttons-group {
-    display: flex;
-    flex-direction: row;
-    margin: auto var(--freq-spacing-x-small) auto auto;
-    gap: var(--freq-spacer-gap-half);
+	display: flex;
+	flex-direction: row;
+	margin: auto var(--freq-spacing-x-small) auto auto;
+	gap: var(--freq-spacer-gap-half);
 }
 
 @media screen and (max-width: 770px) {
@@ -305,9 +304,9 @@ button.popover-item:is( :disabled:hover, :disabled:focus, :disabled:active ) {
 }
 
 .buttons-group-icon {
-    display: flex;
-    height: 11px;
-    align-items: center;
+	display: flex;
+	height: 11px;
+	align-items: center;
 }
 
 .panel-button-buffer {
@@ -324,7 +323,6 @@ button.popover-item:is( :disabled:hover, :disabled:focus, :disabled:active ) {
 //	
 */
 
-
 nav {
 	display: flex;
 	flex-direction: row;
@@ -335,7 +333,7 @@ nav {
 nav button.nav {
 	display: flex;
 	flex-direction: row;
-	color: var( --freq-color-text-muted);
+	color: var(--freq-color-text-muted);
 	background: transparent;
 	font-family: 'Krona_One', monospace;
 	border: none;
@@ -363,8 +361,8 @@ nav button.nav:active {
 }
 
 nav img {
-    max-height: 20px;
-    margin-right: var(--freq-spacing-small);
+	max-height: 20px;
+	margin-right: var(--freq-spacing-small);
 }
 
 /*
@@ -377,7 +375,6 @@ ol.list-modal {
 	padding: 0;
 	list-style: none;
 	font-size: var(--freq-font-size-small);
-
 }
 
 li.list-modal {
@@ -388,7 +385,7 @@ li.list-modal {
 	margin: var(--freq-spacing-2x-small) 0;
 	padding: var(--freq-spacing-small) 0;
 	border-bottom: 1px solid transparent;
-	border-image: linear-gradient(90deg, #7F90A2 35%, #000000 100%);
+	border-image: linear-gradient(90deg, #7f90a2 35%, #000000 100%);
 	border-image-slice: 1;
 }
 
@@ -402,7 +399,7 @@ li.list-modal:last-child {
 	display: flex;
 	flex-direction: row;
 	align-items: start;
-	margin: 0 calc( var(--freq-inline-gap) * 2 );
+	margin: 0 calc(var(--freq-inline-gap) * 2);
 }
 
 .list-modal-li-row-button-spacing {

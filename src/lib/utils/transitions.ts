@@ -1,5 +1,5 @@
-import { cubicOut } from "svelte/easing";
-import type { TransitionConfig } from "svelte/transition";
+import { cubicOut } from 'svelte/easing';
+import type { TransitionConfig } from 'svelte/transition';
 
 type FlyAndScaleParams = {
 	y?: number;
@@ -11,14 +11,10 @@ const defaultFlyAndScaleParams = { y: -8, start: 0.95, duration: 200 };
 
 export function flyAndScale(node: Element, params?: FlyAndScaleParams): TransitionConfig {
 	const style = getComputedStyle(node);
-	const transform = style.transform === "none" ? "" : style.transform;
+	const transform = style.transform === 'none' ? '' : style.transform;
 	const withDefaults = { ...defaultFlyAndScaleParams, ...params };
 
-	const scaleConversion = (
-		valueA: number,
-		scaleA: [number, number],
-		scaleB: [number, number]
-	) => {
+	const scaleConversion = (valueA: number, scaleA: [number, number], scaleB: [number, number]) => {
 		const [minA, maxA] = scaleA;
 		const [minB, maxB] = scaleB;
 
@@ -32,7 +28,7 @@ export function flyAndScale(node: Element, params?: FlyAndScaleParams): Transiti
 		return Object.keys(style).reduce((str, key) => {
 			if (style[key] === undefined) return str;
 			return `${str}${key}:${style[key]};`;
-		}, "");
+		}, '');
 	};
 
 	return {
@@ -44,9 +40,9 @@ export function flyAndScale(node: Element, params?: FlyAndScaleParams): Transiti
 
 			return styleToString({
 				transform: `${transform} translate3d(0, ${y}px, 0) scale(${scale})`,
-				opacity: t,
+				opacity: t
 			});
 		},
-		easing: cubicOut,
+		easing: cubicOut
 	};
 }

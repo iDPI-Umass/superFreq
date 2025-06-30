@@ -10,7 +10,6 @@ layout: about
     import Roadmap from '$lib/assets/text/roadmap.md'
 </script>
 
-
 <div class="section-link-box">
     <ul>
         <li>
@@ -63,13 +62,14 @@ What’s missing is a purpose-built place to talk about, listen to, and spread k
 A lot of natural and incredible music discovery comes from the sharing of music within small communities and social groups, and Freq works to provide that small community structure on a platform-wide scale. Music communities are among the most vibrant groups across the world, and we provide a community-focused structure on our platform. 
 
 Got a question or just want to say hey? Reach out to <a href="mailto:hello@freq.social">hello@freq.social</a>
+
 <hr />
 
 <h2 id="features">
 How Freq works
 </h2>
 
-Right now, there are three things you can do on Freq.  
+Right now, there are three things you can do on Freq.
 
 <div class="list">
 1. You can post about what you’re currently listening to, and people can like that post or comment on it.
@@ -87,7 +87,6 @@ Right now, there are three things you can do on Freq.
 Community guidelines
 
 </h2>
-
 
 <Guidelines></Guidelines>
 

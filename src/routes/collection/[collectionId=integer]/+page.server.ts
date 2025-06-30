@@ -1,198 +1,212 @@
-import { redirect } from '@sveltejs/kit'
-import type { PageServerLoad, Actions } from './$types'
-import { parseISO } from 'date-fns'
+import { redirect } from '@sveltejs/kit';
+import type { PageServerLoad, Actions } from './$types';
+import { parseISO } from 'date-fns';
 
-import { selectViewableCollectionContents } from 'src/lib/resources/collections'
-import { insertUpdateCollectionFollow } from 'src/lib/resources/users'
-import { insertUpdateReaction, insertPost, updatePost, deletePost } from 'src/lib/resources/posts'
-import { insertPostFlag } from 'src/lib/resources/users'
-import { validStringCheck } from '$lib/resources/parseData'
+import { selectViewableCollectionContents } from 'src/lib/resources/collections';
+import { insertUpdateCollectionFollow } from 'src/lib/resources/users';
+import { insertUpdateReaction, insertPost, updatePost, deletePost } from 'src/lib/resources/posts';
+import { insertPostFlag } from 'src/lib/resources/users';
+import { validStringCheck } from '$lib/resources/parseData';
 
-let loadData = true
-let updateFollow = false
+let loadData = true;
+let updateFollow = false;
 
-let collectionId: string
-let collectionMetadata: App.RowData
-let collectionContents: App.RowData[]
-let collectionComments: App.RowData[]
-let viewPermission: boolean
-let editPermission: boolean
-let followData: App.RowData
+let collectionId: string;
+let collectionMetadata: App.RowData;
+let collectionContents: App.RowData[];
+let collectionComments: App.RowData[];
+let viewPermission: boolean;
+let editPermission: boolean;
+let followData: App.RowData;
 
-let followsNow: boolean
-let batchIterator = 0
-
+let followsNow: boolean;
+let batchIterator = 0;
 
 export const load: PageServerLoad = async ({ params, locals: { safeGetSession } }) => {
+	collectionId = parseInt(params.collectionId).toString();
 
-    collectionId = parseInt(params.collectionId).toString();
+	const session = await safeGetSession();
+	const sessionUserId = session.user?.id as string;
 
-    const session = await safeGetSession()
-    const sessionUserId = session.user?.id as string
+	const batchSize = 100;
 
-    const batchSize = 100
+	let totalContents = 0;
 
-    let totalContents = 0
+	if (loadData) {
+		const collection = await selectViewableCollectionContents(
+			collectionId,
+			sessionUserId,
+			batchSize,
+			batchIterator
+		);
 
-    if ( loadData ) {
-        const collection =  await selectViewableCollectionContents(collectionId, sessionUserId, batchSize, batchIterator)
+		collectionMetadata = collection.collectionMetadata as App.RowData;
+		collectionContents = collection.collectionContents as App.RowData[];
+		collectionComments = collection.collectionComments as App.RowData[];
+		viewPermission = collection.viewPermission as boolean;
+		editPermission = collection.editPermission as boolean;
+		totalContents = collection.totalContents as number;
 
-        collectionMetadata = collection.collectionMetadata as App.RowData
-        collectionContents = collection.collectionContents as App.RowData[]
-        collectionComments = collection.collectionComments as App.RowData[]
-        viewPermission = collection.viewPermission as boolean
-        editPermission = collection.editPermission as boolean
-        totalContents = collection.totalContents as number
+		followData = {
+			follows_now: collection.followsNow ?? false
+		} as App.RowData;
 
-        followData = {
-            'follows_now': collection.followsNow ?? false
-        } as App.RowData 
+		if (!viewPermission) {
+			throw redirect(307, '/collections');
+		}
+	}
 
-        if ( !viewPermission ) {
-            throw redirect(307, '/collections')
-        }
-    }
+	if (updateFollow) {
+		updateFollow = false;
+		loadData = true;
 
-    if ( updateFollow ) {
-        updateFollow = false
-        loadData = true
+		followData['follows_now'] = followsNow;
+	}
 
-        followData['follows_now'] = followsNow
-    }
-
-    return { sessionUserId, collectionId, collectionMetadata, collectionContents, totalContents, collectionComments, viewPermission, editPermission, followData, batchSize, batchIterator }
-}
+	return {
+		sessionUserId,
+		collectionId,
+		collectionMetadata,
+		collectionContents,
+		totalContents,
+		collectionComments,
+		viewPermission,
+		editPermission,
+		followData,
+		batchSize,
+		batchIterator
+	};
+};
 
 export const actions = {
-    loadMore: async () => {
-        batchIterator++
-        loadData = true
+	loadMore: async () => {
+		batchIterator++;
+		loadData = true;
 
-        return
-    },
-    followCollection: async ({ request, locals: { safeGetSession } }) => {
-        updateFollow = true
-        loadData = false
+		return;
+	},
+	followCollection: async ({ request, locals: { safeGetSession } }) => {
+		updateFollow = true;
+		loadData = false;
 
-        const session = await safeGetSession()
-        const sessionUserId = session.user?.id as string
-        
-        const data = await request.formData()
-        const collectionId = data.get('collection-id') as string
+		const session = await safeGetSession();
+		const sessionUserId = session.user?.id as string;
 
-        const follow = await insertUpdateCollectionFollow(sessionUserId, collectionId)
+		const data = await request.formData();
+		const collectionId = data.get('collection-id') as string;
 
-        followsNow = follow?.follows_now as boolean
+		const follow = await insertUpdateCollectionFollow(sessionUserId, collectionId);
 
-        return { success: true }
-    },
-    submitReply: async ({ request, locals: { safeGetSession } })=> {
-        const { session } = await safeGetSession()
-        const sessionUserId = session?.user.id as string
+		followsNow = follow?.follows_now as boolean;
 
-        const timestampISOString: string = new Date().toISOString()
-        const timestampISO: Date = parseISO(timestampISOString)
+		return { success: true };
+	},
+	submitReply: async ({ request, locals: { safeGetSession } }) => {
+		const { session } = await safeGetSession();
+		const sessionUserId = session?.user.id as string;
 
-        const data = await request.formData()
-        const replyText = data.get('reply-text') as string
-        const postId = data.get('post-id') as string
-        const replyToId = data.get('reply-to-id') as string
-        const parentCollectionId = data.get('parent-collection-id') as string
-        const parentPostId = data.get('parent-post-id') as string
+		const timestampISOString: string = new Date().toISOString();
+		const timestampISO: Date = parseISO(timestampISOString);
 
-        const postData = {
-            user_id: sessionUserId,
-            type: "reply",
-            status: "new",
-            text: replyText,
-            created_at: timestampISO,
-            updated_at: timestampISO,
-            parent_post_id: !parentPostId ? postId : parentPostId,
-            parent_collection_id: parentCollectionId ?? null,
-            reply_to: !replyToId ? postId : replyToId
-        }
+		const data = await request.formData();
+		const replyText = data.get('reply-text') as string;
+		const postId = data.get('post-id') as string;
+		const replyToId = data.get('reply-to-id') as string;
+		const parentCollectionId = data.get('parent-collection-id') as string;
+		const parentPostId = data.get('parent-post-id') as string;
 
-        const { username, createdAt } = await insertPost( postData )
+		const postData = {
+			user_id: sessionUserId,
+			type: 'reply',
+			status: 'new',
+			text: replyText,
+			created_at: timestampISO,
+			updated_at: timestampISO,
+			parent_post_id: !parentPostId ? postId : parentPostId,
+			parent_collection_id: parentCollectionId ?? null,
+			reply_to: !replyToId ? postId : replyToId
+		};
 
-        const commentTimestampSlug = createdAt.toString()
-        const commentTimestamp = Date.parse(commentTimestampSlug).toString()
-        const permalink = `/collection/${parentCollectionId}#${username.concat(commentTimestamp)}`
+		const { username, createdAt } = await insertPost(postData);
 
-        if (createdAt) {
-            throw redirect(303, permalink)
-        }
-        else { 
-            return { success: false }
-        }
-    },
-    submitReaction: async ({ request, locals: { safeGetSession } }) => {
-        const { session } = await safeGetSession()
-        const sessionUserId = session?.user.id as string
+		const commentTimestampSlug = createdAt.toString();
+		const commentTimestamp = Date.parse(commentTimestampSlug).toString();
+		const permalink = `/collection/${parentCollectionId}#${username.concat(commentTimestamp)}`;
 
-        const data = await request.formData()
-        const reactionType = data.get('reaction-type') as string
-        const collectionId = data.get('parent-collection-id') as string ?? data.get('collection-id') as string | null
-        const postId = data.get('post-id') as string ?? data.get('post-reply-id') as string
+		if (createdAt) {
+			throw redirect(303, permalink);
+		} else {
+			return { success: false };
+		}
+	},
+	submitReaction: async ({ request, locals: { safeGetSession } }) => {
+		const { session } = await safeGetSession();
+		const sessionUserId = session?.user.id as string;
 
-        const itemType = postId ? 'post' : 'collection'
+		const data = await request.formData();
+		const reactionType = data.get('reaction-type') as string;
+		const collectionId =
+			(data.get('parent-collection-id') as string) ?? (data.get('collection-id') as string | null);
+		const postId = (data.get('post-id') as string) ?? (data.get('post-reply-id') as string);
 
-        const reactionData = {
-            'user_id': sessionUserId,
-            'post_id': validStringCheck(postId),
-            'collection_id': validStringCheck(collectionId),
-            'reaction_type': reactionType,
-            'item_type': itemType
-        } as App.RowData
+		const itemType = postId ? 'post' : 'collection';
 
-        const { reaction } = await insertUpdateReaction( reactionData )
+		const reactionData = {
+			user_id: sessionUserId,
+			post_id: validStringCheck(postId),
+			collection_id: validStringCheck(collectionId),
+			reaction_type: reactionType,
+			item_type: itemType
+		} as App.RowData;
 
-        const success = reaction ? true : false
+		const { reaction } = await insertUpdateReaction(reactionData);
 
-        return { success }
-    },
-    editPost: async ({ request, locals: { safeGetSession } }) => {
-        const { session } = await safeGetSession()
-        const sessionUserId = session?.user.id as string
+		const success = reaction ? true : false;
 
-        const data = await request.formData()
-        const editedText = data.get('edited-text') as string
-        const postData = JSON.parse(data.get('post-data') as string) as App.RowData
+		return { success };
+	},
+	editPost: async ({ request, locals: { safeGetSession } }) => {
+		const { session } = await safeGetSession();
+		const sessionUserId = session?.user.id as string;
 
-        const submitEdit = await updatePost( sessionUserId, postData, editedText )
+		const data = await request.formData();
+		const editedText = data.get('edited-text') as string;
+		const postData = JSON.parse(data.get('post-data') as string) as App.RowData;
 
-        const success =  submitEdit ? true : false
+		const submitEdit = await updatePost(sessionUserId, postData, editedText);
 
-        return { success }
-    },
-    deletePost: async ({ request, locals: { safeGetSession } }) => {
-        const { session } = await safeGetSession()
-        const sessionUserId = session?.user.id as string
+		const success = submitEdit ? true : false;
 
-        const data = await request.formData()
-        const postId = data.get('post-id') as string ?? data.get('post-reply-id') as string
+		return { success };
+	},
+	deletePost: async ({ request, locals: { safeGetSession } }) => {
+		const { session } = await safeGetSession();
+		const sessionUserId = session?.user.id as string;
 
-        const submitDelete = await deletePost( sessionUserId, postId )
+		const data = await request.formData();
+		const postId = (data.get('post-id') as string) ?? (data.get('post-reply-id') as string);
 
-        const permalink = `/collection/${collectionId}`
+		const submitDelete = await deletePost(sessionUserId, postId);
 
-        if ( submitDelete ) {
-            throw redirect(303, permalink)
-        }
-        else { 
-            return { success: false }
-        }
-    },
-    flagPost: async ({ request, locals: { safeGetSession } }) => {
-        const { session } = await safeGetSession()
-        const sessionUserId = session?.user.id as string
+		const permalink = `/collection/${collectionId}`;
 
-        const data = await request.formData()
-        const postId = data.get('post-id') as string ?? data.get('post-reply-id') as string
+		if (submitDelete) {
+			throw redirect(303, permalink);
+		} else {
+			return { success: false };
+		}
+	},
+	flagPost: async ({ request, locals: { safeGetSession } }) => {
+		const { session } = await safeGetSession();
+		const sessionUserId = session?.user.id as string;
 
-        const flag = await insertPostFlag( sessionUserId, postId )
+		const data = await request.formData();
+		const postId = (data.get('post-id') as string) ?? (data.get('post-reply-id') as string);
 
-        const success = flag ? true : false
+		const flag = await insertPostFlag(sessionUserId, postId);
 
-        return { success }
-    },
-} satisfies Actions
+		const success = flag ? true : false;
+
+		return { success };
+	}
+} satisfies Actions;

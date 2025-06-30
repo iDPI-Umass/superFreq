@@ -1,24 +1,27 @@
-import type { PageServerLoad, Actions } from "./$types"
-import { searchUsersAndCollections, searchUsers, searchPgUsersCollections } from "src/lib/resources/search"
+import type { PageServerLoad, Actions } from './$types';
+import {
+	searchUsersAndCollections,
+	searchUsers,
+	searchPgUsersCollections
+} from 'src/lib/resources/search';
 
-const results = [] as App.RowData[]
+const results = [] as App.RowData[];
 
 export const load: PageServerLoad = async () => {
-    return { results }
-}
+	return { results };
+};
 
 export const actions = {
-    searchCollections: async ({ request }) => {
-        const data = await request.formData()
-        const collectionQuery = data.get('collection-query') as string
+	searchCollections: async ({ request }) => {
+		const data = await request.formData();
+		const collectionQuery = data.get('collection-query') as string;
 
-        results.length = 0
+		results.length = 0;
 
-        const searchResults = await searchUsersAndCollections(collectionQuery, 25)
+		const searchResults = await searchUsersAndCollections(collectionQuery, 25);
 
-        results.push(...searchResults.results)
-        
-        return { success: true }
+		results.push(...searchResults.results);
 
-    }
-} satisfies Actions
+		return { success: true };
+	}
+} satisfies Actions;

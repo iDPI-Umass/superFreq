@@ -1,8 +1,8 @@
 <script lang="ts">
-	import SEO from '$lib/components/layout/SEO.svelte'
-	import PanelHeader from "src/lib/components/layout/PanelHeader.svelte"
-    import { metadata } from '$lib/assets/text/about.md'
-	import About from '$lib/assets/text/about.md'
+	import SEO from '$lib/components/layout/SEO.svelte';
+	import PanelHeader from 'src/lib/components/layout/PanelHeader.svelte';
+	import { metadata } from '$lib/assets/text/about.md';
+	import About from '$lib/assets/text/about.md';
 </script>
 
 <SEO title="About"></SEO>

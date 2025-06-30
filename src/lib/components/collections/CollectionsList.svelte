@@ -1,17 +1,16 @@
 <script lang="ts">
-	import { displayDate } from '$lib/resources/parseData'
-	import CollectionImageTrio from './CollectionImageTrio.svelte'
-	import PanelHeader from 'src/lib/components/layout/PanelHeader.svelte'
-
+	import { displayDate } from '$lib/resources/parseData';
+	import CollectionImageTrio from './CollectionImageTrio.svelte';
+	import PanelHeader from 'src/lib/components/layout/PanelHeader.svelte';
 
 	interface ComponentProps {
-		sessionUserId?: string
-		panelHeaderText: string
-		mode?: string
-		imgMode?: string
-		remaining?: number
-		collection?: App.RowData
-		collections?: App.RowData[]
+		sessionUserId?: string;
+		panelHeaderText: string;
+		mode?: string;
+		imgMode?: string;
+		remaining?: number;
+		collection?: App.RowData;
+		collections?: App.RowData[];
 	}
 
 	let {
@@ -21,16 +20,15 @@
 		imgMode = 'single',
 		remaining,
 		collection,
-		collections = [],
+		collections = []
 	}: ComponentProps = $props();
 
 	const cssMode = {
-		'succint': 'collection-identity-attribution',
-		'detailed': 'collection-identity-no-attribution'
-	} as App.StringLookupObject
+		succint: 'collection-identity-attribution',
+		detailed: 'collection-identity-no-attribution'
+	} as App.StringLookupObject;
 
-	const modeWidth = $derived(cssMode[mode])
-
+	const modeWidth = $derived(cssMode[mode]);
 </script>
 
 {#snippet listItem(collection: App.RowData)}
@@ -38,10 +36,7 @@
 		<a class={modeWidth} href="/collection/{collection.collection_id}">
 			<div class="item-images">
 				<div class="item-images-layout">
-					<CollectionImageTrio 
-						collection={collection}
-						orientation='row'
-					></CollectionImageTrio>
+					<CollectionImageTrio {collection} orientation="row"></CollectionImageTrio>
 				</div>
 			</div>
 			<div class="item-links">
@@ -51,18 +46,19 @@
 						by {collection.display_name}
 					</span>
 				{/if}
-				
 			</div>
 		</a>
 		{#if mode == 'detailed'}
 			<div class="collection-info-attribution">
 				<span class="collection-info-text">
-					Collection by 
+					Collection by
 					<a href="/user/{collection.username}">
 						{collection.display_name}
 					</a>
 				</span>
-				<span class="collection-date-text">Last updated on {displayDate(collection.updated_at)}</span>
+				<span class="collection-date-text"
+					>Last updated on {displayDate(collection.updated_at)}</span
+				>
 			</div>
 		{/if}
 	</li>
@@ -117,7 +113,7 @@
 		flex-direction: row;
 		align-items: center;
 		justify-content: center;
-		gap: calc(var(--freq-inline-gap-double) *2);
+		gap: calc(var(--freq-inline-gap-double) * 2);
 		width: 50%;
 		margin: 0;
 		font-size: var(--freq-font-size-medium);
@@ -153,7 +149,9 @@
 		line-height: var(--freq-line-height-dense);
 	}
 	@media screen and (max-width: 770px) {
-		.panel, ul, .item-links {
+		.panel,
+		ul,
+		.item-links {
 			width: fit-content;
 		}
 		li {

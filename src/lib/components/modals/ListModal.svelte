@@ -1,37 +1,32 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte'
-
+	import type { Snippet } from 'svelte';
 
 	interface ComponentProps {
-        showModal: boolean | null
-        headerText: Snippet
-        list: Snippet
-    }
+		showModal: boolean | null;
+		headerText: Snippet;
+		list: Snippet;
+	}
 
-	let {         
-		showModal = $bindable(),
-        headerText,
-        list 
-	}: ComponentProps = $props()
+	let { showModal = $bindable(), headerText, list }: ComponentProps = $props();
 
-    let dialog: any = $state()
+	let dialog: any = $state();
 
-    $effect(() => {
-		dialog.addEventListener("click", e => {
-			const dialogDimensions = dialog.getBoundingClientRect()
+	$effect(() => {
+		dialog.addEventListener('click', (e) => {
+			const dialogDimensions = dialog.getBoundingClientRect();
 			if (
 				e.clientX < dialogDimensions.left ||
 				e.clientX > dialogDimensions.right ||
 				e.clientY < dialogDimensions.top ||
 				e.clientY > dialogDimensions.bottom
 			) {
-				dialog.close()
+				dialog.close();
 			}
-		})
+		});
 
-		if ( dialog && showModal ) dialog.showModal()
-		if ( dialog && !showModal ) dialog.close()
-	})
+		if (dialog && showModal) dialog.showModal();
+		if (dialog && !showModal) dialog.close();
+	});
 </script>
 
 <svelte:window
@@ -42,32 +37,22 @@
 	}}
 />
 
-<dialog
-    aria-label="modal"
-    bind:this={dialog}
-	onclose={() => (showModal = false)}
->
+<dialog aria-label="modal" bind:this={dialog} onclose={() => (showModal = false)}>
 	<div class="dialog-header">
 		<h2>
 			{@render headerText?.()}
 		</h2>
-		<button 
-			aria-label="close modal" 
-			formmethod="dialog" 
-			onclick={() => dialog.close()}
-		>
-			x
-		</button>
+		<button aria-label="close modal" formmethod="dialog" onclick={() => dialog.close()}> x </button>
 	</div>
-    {@render list?.()}
+	{@render list?.()}
 </dialog>
 
 <style>
 	dialog {
 		max-width: 500px;
-        text-decoration: none;
+		text-decoration: none;
 		margin-top: 15%;
-    }
+	}
 	.dialog-header {
 		display: flex;
 		flex-direction: row;
